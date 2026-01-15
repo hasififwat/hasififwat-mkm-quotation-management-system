@@ -11,7 +11,7 @@ export function meta() {
 
 export default function DashboardPage() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute title="Dashboard">
       <Dashboard />
     </ProtectedRoute>
   );

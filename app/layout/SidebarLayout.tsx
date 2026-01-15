@@ -1,0 +1,154 @@
+import {
+  Home,
+  Users,
+  LogOut,
+  Menu,
+  FileText,
+  Package,
+  History,
+} from "lucide-react";
+import { Link } from "react-router";
+import type { ReactNode } from "react";
+import { Button } from "~/components/ui/button";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "~/components/ui/sidebar";
+import { useAuthentication } from "~/features/authentication /provider/AuthenticationProvider";
+import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
+
+const menuItems = [
+  {
+    title: "Dashboard",
+    icon: Home,
+    url: "/dashboard",
+  },
+  {
+    title: "Quotation",
+    icon: FileText,
+    url: "/quotation",
+  },
+  {
+    title: "History",
+    icon: History,
+    url: "/quotation-history",
+  },
+  {
+    title: "Clients",
+    icon: Users,
+    url: "/clients",
+  },
+  {
+    title: "Packages",
+    icon: Package,
+    url: "/packages",
+  },
+];
+
+interface SidebarLayoutProps {
+  children: ReactNode;
+  title?: string;
+}
+
+export function SidebarLayout({ children, title }: SidebarLayoutProps) {
+  const { user, signOut } = useAuthentication();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Failed to sign out:", error);
+    }
+  };
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        {/* Sidebar */}
+        <Sidebar>
+          <SidebarHeader className="border-b px-6 py-4">
+            <div className="flex items-center gap-2">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Home className="size-4" />
+              </div>
+              <span className="text-lg font-semibold">MKM Quotation</span>
+            </div>
+          </SidebarHeader>
+
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <Link to={item.url}>
+                          <item.icon className="size-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+
+          <SidebarFooter className="border-t p-4">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 px-2 py-1.5">
+                <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                  <span className="text-sm font-medium">
+                    {user?.email?.charAt(0).toUpperCase() || "U"}
+                  </span>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-medium truncate">
+                    {user?.email || "User"}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSignOut}
+                className="w-full justify-start"
+              >
+                <LogOut className="size-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
+            <SidebarTrigger>
+              <Menu className="size-5" />
+            </SidebarTrigger>
+            <div className="flex-1">
+              {title && <h1 className="text-lg font-semibold">{title}</h1>}
+            </div>
+            <ThemeToggle />
+          </header>
+
+          {/* Main Content Area */}
+          <main className="flex-1 overflow-auto p-8">{children}</main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}

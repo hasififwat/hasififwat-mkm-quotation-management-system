@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuthentication } from "~/features/authentication /provider/AuthenticationProvider";
+import { SidebarLayout } from "~/layout/SidebarLayout";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  title?: string;
 }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, title }: ProtectedRouteProps) {
   const { user, loading } = useAuthentication();
   const navigate = useNavigate();
 
@@ -31,5 +33,5 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return null;
   }
 
-  return <>{children}</>;
+  return <SidebarLayout title={title}>{children}</SidebarLayout>;
 }
