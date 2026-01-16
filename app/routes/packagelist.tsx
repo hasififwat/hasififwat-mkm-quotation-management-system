@@ -15,7 +15,8 @@ export default function PackageListPage() {
   const navigate = useNavigate();
 
   const handleEdit = (pkg: PackageDetails) => {
-    navigate("/packages/create", { state: { editingPackage: pkg } });
+    console.log("Editing package:", pkg);
+    navigate(`/packages/edit/${pkg.id}`);
   };
 
   const handleAdd = () => {

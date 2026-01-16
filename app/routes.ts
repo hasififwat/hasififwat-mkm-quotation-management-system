@@ -8,6 +8,11 @@ export default [
   route("/quotation-history", "routes/quotation-history.tsx"),
   route("/clients", "routes/clientlist.tsx"),
   route("/clients/create", "routes/clientform.tsx"),
+  route("/clients/edit/:id", "routes/clientform.tsx", { id: "client-edit" }),
   route("/packages", "routes/packagelist.tsx"),
   route("/packages/create", "routes/packagebuilder.tsx"),
+  route("/packages/edit/:pid", "routes/packagebuilder.tsx", {
+    id: "package-edit",
+  }),
+  route("/flight", "routes/flight.tsx"),
 ] satisfies RouteConfig;

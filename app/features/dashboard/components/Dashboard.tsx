@@ -1,4 +1,5 @@
 import { Users, Settings, BarChart3, FileText } from "lucide-react";
+import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -7,7 +8,24 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export function Dashboard() {
+import useClientServices from "~/services/supabase-api/users";
+
+function Dashboard() {
+  const { getAllUsers } = useClientServices();
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const users = await getAllUsers();
+        console.log("Fetched users in Dashboard:", users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    }
+
+    fetchUsers();
+  }, [getAllUsers]);
+
   return (
     <div>
       <div className="mx-auto max-w-7xl space-y-6">
@@ -118,3 +136,5 @@ export function Dashboard() {
     </div>
   );
 }
+
+export { Dashboard };
