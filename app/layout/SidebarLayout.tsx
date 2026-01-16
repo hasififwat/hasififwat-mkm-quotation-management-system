@@ -33,21 +33,21 @@ const menuItems = [
     icon: Home,
     url: "/dashboard",
   },
-  {
-    title: "Quotation",
-    icon: FileText,
-    url: "/quotation",
-  },
-  {
-    title: "History",
-    icon: History,
-    url: "/quotation-history",
-  },
-  {
-    title: "Clients",
-    icon: Users,
-    url: "/clients",
-  },
+  // {
+  //   title: "Quotation",
+  //   icon: FileText,
+  //   url: "/quotation",
+  // },
+  // {
+  //   title: "History",
+  //   icon: History,
+  //   url: "/quotation-history",
+  // },
+  // {
+  //   title: "Clients",
+  //   icon: Users,
+  //   url: "/clients",
+  // },
   {
     title: "Packages",
     icon: Package,

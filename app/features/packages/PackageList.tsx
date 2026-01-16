@@ -15,6 +15,7 @@ import {
   Eye,
   EyeOff,
   FileText,
+  Copy,
 } from "lucide-react";
 import PackagePreviewModal from "./PackagePreviewModal";
 
@@ -182,9 +183,7 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                     <th className="hidden md:table-cell text-left p-4 font-semibold text-slate-600">
                       Transport
                     </th>
-                    <th className="text-left p-3 md:p-4 font-semibold text-slate-600">
-                      Room Prices
-                    </th>
+
                     <th className="hidden sm:table-cell text-left p-4 font-semibold text-slate-600">
                       Status
                     </th>
@@ -195,7 +194,6 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredPackages.map((pkg) => {
-                    const enabledRooms = pkg.rooms.filter((r) => r.enabled);
                     return (
                       <tr
                         key={pkg.id}
@@ -229,33 +227,7 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                             )}
                           </div>
                         </td>
-                        <td className="p-3 md:p-4">
-                          <div className="flex flex-col gap-0.5">
-                            {enabledRooms.slice(0, 2).map((room) => (
-                              <div
-                                key={room.id}
-                                className="flex items-center gap-1"
-                              >
-                                <span className="text-[11px] font-bold text-slate-400 uppercase w-12">
-                                  {room.room_type}
-                                </span>
-                                <span className="font-medium">
-                                  RM{room.price.toLocaleString()}
-                                </span>
-                              </div>
-                            ))}
-                            {enabledRooms.length > 2 && (
-                              <span className="text-[11px] text-slate-400">
-                                +{enabledRooms.length - 2} more
-                              </span>
-                            )}
-                            {enabledRooms.length === 0 && (
-                              <span className="text-[11px] text-slate-400">
-                                Not configured
-                              </span>
-                            )}
-                          </div>
-                        </td>
+
                         <td className="hidden sm:table-cell p-4">
                           <span
                             className={`inline-flex items-center px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${
@@ -269,7 +241,7 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                         </td>
                         <td className="p-3 md:p-4 text-right">
                           <div className="flex justify-end gap-0.5 md:gap-1">
-                            <Button
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
@@ -285,21 +257,26 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                               ) : (
                                 <Eye className="w-3.5 h-3.5" />
                               )}
-                            </Button>
+                            </Button> */}
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
+                              disabled={!pkg.rooms || pkg.rooms[0].price === 0}
                               onClick={() => {
                                 setPreviewPackage(pkg);
                                 setIsPreviewOpen(true);
                               }}
                               title="Preview Package"
                             >
-                              <FileText className="w-3.5 h-3.5 text-purple-600" />
+                              <Copy
+                                className={`w-3.5 h-3.5 ${
+                                  pkg.rooms[0].price ? "text-green-600" : ""
+                                }`}
+                              />
                             </Button>
 
-                            <Button
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
@@ -347,15 +324,15 @@ const PackageList: React.FC<Props> = ({ onEdit, onAdd }) => {
                               }}
                             >
                               <Edit2 className="w-3.5 h-3.5 text-blue-600" />
-                            </Button>
-                            <Button
+                            </Button> */}
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
                               onClick={() => handleDelete(pkg.id)}
                             >
                               <Trash2 className="w-3.5 h-3.5 text-red-500" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </td>
                       </tr>

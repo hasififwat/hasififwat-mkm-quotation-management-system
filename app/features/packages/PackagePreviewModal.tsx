@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { SupabasePackageDetails } from "../quotation/types";
 import {
   Dialog,
@@ -26,6 +26,14 @@ interface Props {
 
 const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
   const [selectedFlightId, setSelectedFlightId] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
 
   const selectedFlight = pkg.flights.find((f) => f.id === selectedFlightId);
 
@@ -139,7 +147,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
         <DialogHeader>
           <DialogTitle>Package Preview</DialogTitle>
           <DialogDescription>
@@ -149,13 +157,12 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
         <div className="space-y-4">
           {/* Flight Selection */}
-          <div className="space-y-2">
-            <Label>Select Flight Dates</Label>
+          <div className="space-y-2 ">
             <Select
               value={selectedFlightId}
               onValueChange={setSelectedFlightId}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose departure and return dates" />
               </SelectTrigger>
               <SelectContent>
@@ -264,10 +271,12 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
                   const previewText = generatePreviewText();
                   if (previewText) {
                     navigator.clipboard.writeText(previewText);
+                    setCopied(true);
                   }
                 }}
+                className={copied ? "bg-green-600 hover:bg-green-700" : ""}
               >
-                Copy Preview
+                {copied ? "Copied" : "Copy Preview"}
               </Button>
             )}
           </div>
