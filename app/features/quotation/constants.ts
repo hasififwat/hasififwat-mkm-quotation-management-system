@@ -13,6 +13,7 @@ export interface PackageDetails {
   priceDouble: number;
   priceTriple: number;
   priceQuad: number;
+  status: "published" | "unpublished";
 }
 
 export const MOCK_PACKAGES: PackageDetails[] = [
