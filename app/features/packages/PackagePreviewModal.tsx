@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "~/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -75,8 +75,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
     // Dates
     lines.push(
       `${formatDate(selectedFlight.departure_date)} - ${formatDate(
-        selectedFlight.return_date
-      )}`
+        selectedFlight.return_date,
+      )}`,
     );
 
     // Duration
@@ -86,8 +86,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
     lines.push(
       `✈ ${getFlightRoute(
         selectedFlight.departure_sector,
-        selectedFlight.return_sector
-      )}`
+        selectedFlight.return_sector,
+      )}`,
     );
 
     // Empty line
@@ -106,8 +106,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
         room.room_type === "Quad"
           ? "4"
           : room.room_type === "Triple"
-          ? "3"
-          : "2";
+            ? "3"
+            : "2";
       lines.push(`Bilik ${roomNum} : ${formatPrice(room.price)}`);
     });
 
@@ -139,7 +139,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
     // Footer note
     lines.push("");
     lines.push(
-      "(setaraf bermaksud memiliki kualiti yang setanding dengan hotel yang diberi)"
+      "(setaraf bermaksud memiliki kualiti yang setanding dengan hotel yang diberi)",
     );
 
     return lines.join("\n");
@@ -191,7 +191,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
                     ✈{" "}
                     {getFlightRoute(
                       selectedFlight.departure_sector,
-                      selectedFlight.return_sector
+                      selectedFlight.return_sector,
                     )}
                   </div>
 
@@ -215,8 +215,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
                           {room.room_type === "Quad"
                             ? "4"
                             : room.room_type === "Triple"
-                            ? "3"
-                            : "2"}{" "}
+                              ? "3"
+                              : "2"}{" "}
                           : {formatPrice(room.price)}
                         </div>
                       ))}

@@ -21,7 +21,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "~/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { User, Package, Users, Eye, ListFilter } from "lucide-react";
 
@@ -29,7 +29,7 @@ interface Props {
   formData: QuotationData;
   selectedPkg: PackageDetails;
   onInputChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   onRoomTypeChange: (type: "double" | "triple" | "quad") => void;
   onPreview: () => void;
@@ -48,7 +48,7 @@ const QuotationForm: React.FC<Props> = ({
   const endDateRef = useRef<HTMLInputElement>(null);
 
   const [availablePackages, setAvailablePackages] = useState<PackageDetails[]>(
-    []
+    [],
   );
   const [savedClients, setSavedClients] = useState<Client[]>([]);
   const [showClientPicker, setShowClientPicker] = useState(false);
@@ -56,14 +56,14 @@ const QuotationForm: React.FC<Props> = ({
   useEffect(() => {
     clientNameRef.current?.focus();
     setAvailablePackages(
-      packageStore.getAll().filter((p) => p.status === "published")
+      packageStore.getAll().filter((p) => p.status === "published"),
     );
     setSavedClients(clientStore.getAll());
   }, []);
 
   const handleKeyDown = (
     e: React.KeyboardEvent,
-    nextRef?: React.RefObject<HTMLInputElement | null>
+    nextRef?: React.RefObject<HTMLInputElement | null>,
   ) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -76,8 +76,8 @@ const QuotationForm: React.FC<Props> = ({
     formData.roomType === "double"
       ? selectedPkg.priceDouble
       : formData.roomType === "triple"
-      ? selectedPkg.priceTriple
-      : selectedPkg.priceQuad;
+        ? selectedPkg.priceTriple
+        : selectedPkg.priceQuad;
   const estimatedTotal = unitPrice * currentPax;
 
   const handlePackageChange = (id: string) => {

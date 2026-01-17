@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "~/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { TreeSelect } from "@/components/ui/tree-select";
 import { Textarea } from "@/components/ui/textarea";
@@ -125,10 +125,10 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
 
   // State for textarea inputs
   const [inclusionsText, setInclusionsText] = useState<string>(
-    editingPackage?.inclusions.join("\n") || ""
+    editingPackage?.inclusions.join("\n") || "",
   );
   const [exclusionsText, setExclusionsText] = useState<string>(
-    editingPackage?.exclusions.join("\n") || ""
+    editingPackage?.exclusions.join("\n") || "",
   );
 
   // Update form when editingPackage changes
@@ -187,10 +187,10 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
 
   const importFromPackage = (
     type: "inclusions" | "exclusions",
-    sourcePackageId: string
+    sourcePackageId: string,
   ) => {
     const sourcePackage = availablePackages.find(
-      (p) => p.id === sourcePackageId
+      (p) => p.id === sourcePackageId,
     );
     if (sourcePackage) {
       if (type === "inclusions") {
@@ -241,7 +241,7 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
 
   const handleMealChange = (
     hotelKey: (typeof HOTEL_LIST)[number],
-    meals: string[]
+    meals: string[],
   ) => {
     setPkg((prev) => ({
       ...prev,
@@ -279,8 +279,8 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                     currentStep === step.id
                       ? "text-primary font-semibold"
                       : index < currentStepIndex
-                      ? "text-primary hover:text-primary/80"
-                      : "text-muted-foreground hover:text-foreground"
+                        ? "text-primary hover:text-primary/80"
+                        : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <div
@@ -288,8 +288,8 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                       currentStep === step.id
                         ? "border-primary bg-primary text-primary-foreground"
                         : index < currentStepIndex
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-muted-foreground"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground"
                     }`}
                   >
                     {index < currentStepIndex ? (
@@ -568,7 +568,7 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                       setPkg((prev) => ({
                         ...prev,
                         rooms: prev.rooms.map((r, i) =>
-                          i === index ? { ...r, enabled: !r.enabled } : r
+                          i === index ? { ...r, enabled: !r.enabled } : r,
                         ),
                       }))
                     }
@@ -597,7 +597,7 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                                     ...r,
                                     value: parseFloat(e.target.value) || 0,
                                   }
-                                : r
+                                : r,
                             ),
                           }))
                         }
