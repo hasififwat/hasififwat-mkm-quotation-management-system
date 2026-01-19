@@ -94,11 +94,7 @@ const PackageBuilder: React.FC = () => {
     }
   };
 
-  const goToPreviousStep = (i: string) => {
-    if (i === "exit") {
-      return;
-    }
-
+  const goToPreviousStep = () => {
     const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
     if (currentIndex > 0) {
       setCurrentStep(STEPS[currentIndex - 1].id);

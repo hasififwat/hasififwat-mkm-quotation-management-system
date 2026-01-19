@@ -1,6 +1,6 @@
 import { Form, useActionData, useNavigation, Link } from "react-router";
-import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -8,12 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "~/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 
 // Define the shape of the data returned by the action
@@ -33,7 +28,7 @@ export function LoginForm({
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div>
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
@@ -56,15 +51,15 @@ export function LoginForm({
                 />
               </Field>
 
-              {/* <Field>
+              <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Link
-                    to="/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
+                  {/* <Link
+                      to="/forgot-password"
+                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </Link> */}
                 </div>
                 <Input
                   id="password"
@@ -72,7 +67,7 @@ export function LoginForm({
                   type="password"
                   required
                 />
-              </Field> */}
+              </Field>
 
               {/* ✅ 4. Display server errors here */}
               {actionData?.error && (
@@ -81,14 +76,14 @@ export function LoginForm({
                 </div>
               )}
 
-              {/* <Field>
+              <Field>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Logging in..." : "Login"}
                 </Button>
-                <FieldDescription className="text-center">
+                {/* <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
-                </FieldDescription>
-              </Field> */}
+                </FieldDescription> */}
+              </Field>
             </FieldGroup>
           </Form>
         </CardContent>

@@ -11,7 +11,9 @@ export default [
     "routes/chrome-devtools.ts",
   ),
   index("routes/login.tsx"),
+
   route("/sign-up", "routes/sign-up.tsx"),
+  route("/logout", "routes/logout.tsx"),
 
   layout("routes/_protected.tsx", [
     route("dashboard", "routes/_protected/dashboard.tsx"),
