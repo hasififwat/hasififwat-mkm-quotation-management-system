@@ -1,14 +1,7 @@
-import {
-  Home,
-  Users,
-  LogOut,
-  Menu,
-  FileText,
-  Package,
-  History,
-} from "lucide-react";
-import { Link } from "react-router";
+import { Home, LogOut, Menu, Package } from "lucide-react";
+import { Link, Form } from "react-router"; // ✅ Import Form
 import type { ReactNode } from "react";
+import type { User } from "@supabase/supabase-js"; // ✅ Import User type
 import { Button } from "~/components/ui/button";
 import {
   Sidebar,
@@ -24,7 +17,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "~/components/ui/sidebar";
-import { useAuthentication } from "~/features/authentication /provider/AuthenticationProvider";
 import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
 
 const menuItems = [
@@ -33,21 +25,6 @@ const menuItems = [
     icon: Home,
     url: "/dashboard",
   },
-  // {
-  //   title: "Quotation",
-  //   icon: FileText,
-  //   url: "/quotation",
-  // },
-  // {
-  //   title: "History",
-  //   icon: History,
-  //   url: "/quotation-history",
-  // },
-  // {
-  //   title: "Clients",
-  //   icon: Users,
-  //   url: "/clients",
-  // },
   {
     title: "Packages",
     icon: Package,
@@ -58,19 +35,10 @@ const menuItems = [
 interface SidebarLayoutProps {
   children: ReactNode;
   title?: string;
+  user: User | null;
 }
 
-export function SidebarLayout({ children, title }: SidebarLayoutProps) {
-  const { user, signOut } = useAuthentication();
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Failed to sign out:", error);
-    }
-  };
-
+export function SidebarLayout({ children, title, user }: SidebarLayoutProps) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -119,15 +87,19 @@ export function SidebarLayout({ children, title }: SidebarLayoutProps) {
                   </p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-                className="w-full justify-start"
-              >
-                <LogOut className="size-4 mr-2" />
-                Sign Out
-              </Button>
+
+              {/* ✅ NEW: Logout via Server Action */}
+              <Form action="/logout" method="post" className="w-full">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="submit"
+                  className="w-full justify-start"
+                >
+                  <LogOut className="size-4 mr-2" />
+                  Sign Out
+                </Button>
+              </Form>
             </div>
           </SidebarFooter>
         </Sidebar>

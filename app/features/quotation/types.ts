@@ -12,7 +12,7 @@ export interface RoomType {
 }
 
 export interface PackageDetails {
-  id: string;
+  id?: string | undefined;
   name: string;
   duration: string;
   hotels: {

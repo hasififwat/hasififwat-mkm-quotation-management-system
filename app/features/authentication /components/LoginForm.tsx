@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { Form, useActionData, useNavigation, Link } from "react-router";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
@@ -16,33 +15,22 @@ import {
   FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { useAuthentication } from "~/features/authentication /provider/AuthenticationProvider";
+
+// Define the shape of the data returned by the action
+interface ActionResponse {
+  error?: string;
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { signIn } = useAuthentication();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // ✅ 1. Get the result from the server action (null if no submission yet)
+  const actionData = useActionData() as ActionResponse | undefined;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      await signIn(email, password);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign in");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ✅ 2. Check global navigation state to handle loading
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -54,21 +42,20 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          {/* ✅ 3. Use React Router Form instead of HTML form */}
+          <Form method="post">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                {/** biome-ignore lint/correctness/useUniqueElementIds: <explanation> */}
                 <Input
                   id="email"
+                  name="email" // Key for formData
                   type="email"
                   placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   required
-                  disabled={loading}
                 />
               </Field>
+
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -79,27 +66,31 @@ export function LoginForm({
                     Forgot your password?
                   </Link>
                 </div>
-                {/** biome-ignore lint/correctness/useUniqueElementIds: <explanation> */}
                 <Input
                   id="password"
+                  name="password" // Key for formData
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
-                  disabled={loading}
                 />
               </Field>
-              {error && <div className="text-sm text-red-500">{error}</div>}
+
+              {/* ✅ 4. Display server errors here */}
+              {actionData?.error && (
+                <div className="text-sm text-red-500 font-medium">
+                  {actionData.error}
+                </div>
+              )}
+
               <Field>
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Logging in..." : "Login"}
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
-          </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

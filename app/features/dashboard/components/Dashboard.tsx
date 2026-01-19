@@ -8,24 +8,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import useClientServices from "~/services/supabase-api/users";
-
 function Dashboard() {
-  const { getAllUsers } = useClientServices();
-
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const users = await getAllUsers();
-        console.log("Fetched users in Dashboard:", users);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    }
-
-    fetchUsers();
-  }, [getAllUsers]);
-
   return (
     <div>
       <div className="mx-auto max-w-7xl space-y-6">

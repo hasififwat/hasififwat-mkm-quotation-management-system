@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import type { PackageDetails } from "../quotation/types";
-import { packageStore } from "./packageStore";
+import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+import { Form, Link } from "react-router";
+
 import {
   Card,
   CardContent,
@@ -12,24 +13,29 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
+
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
 import { Separator } from "@/components/ui/separator";
 import { TreeSelect } from "@/components/ui/tree-select";
 import { Textarea } from "@/components/ui/textarea";
-import { Save, ChevronLeft, ChevronRight, Check } from "lucide-react";
-import { useUmrahPackageService } from "~/services/supabase-api/umrah-packages";
-import { useParams } from "react-router";
+import { Save, ChevronLeft, ChevronRight } from "lucide-react";
 
-interface Props {
-  editingPackage?: PackageDetails;
-  onBack: () => void;
-}
+import { useForm, FormProvider, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  packageDetailsSchema,
+  type HotelDetails,
+  type PackageDetailsForm,
+} from "@/schema";
+
+import { useLoaderData, useParams } from "react-router";
 
 type Step = "basic" | "hotels" | "inclusions" | "pricing" | "preview";
 
@@ -55,212 +61,62 @@ const MEAL_OPTIONS = [
   },
 ] as const;
 
-const ROOM_TYPES = [
-  { label: "Double", value: 0, enabled: true },
-  { label: "Triple", value: 0, enabled: true },
-  { label: "Quad", value: 0, enabled: true },
-  { label: "Queen", value: 0, enabled: false },
-  { label: "Suite", value: 0, enabled: false },
-];
-
-export async function clientLoader() {
-  const { pid } = useParams();
-  const { getPackageById } = useUmrahPackageService();
-
-  // And/or fetch data on the client
-  if (!pid) return null;
-
-  const data = getPackageById(pid);
-  // Return the data to expose through useLoaderData()
-  return data;
-}
-
-const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
-  const { savePackage } = useUmrahPackageService();
+const PackageBuilder: React.FC = () => {
+  const { initialData } = useLoaderData();
   const { pid } = useParams();
 
-  const [currentStep, setCurrentStep] = useState<Step>("basic");
-  const [pkg, setPkg] = useState<PackageDetails>(() => {
-    if (editingPackage) {
-      return {
-        ...editingPackage,
-        rooms: editingPackage.rooms || ROOM_TYPES.map((rt) => ({ ...rt })),
-      };
-    }
-    return {
-      id: `pkg-${Date.now()}`,
-      name: "",
-      duration: "",
-      hotels: {
-        makkah: {
-          name: "",
-          enabled: true,
-          meals: [],
-          placeholder:
-            "eg: MOVEPICK HOTEL @ SETARAF (+-50 METER DARI DATARAN MASJIDIL HARAM)",
-        },
-        madinah: {
-          name: "",
-          enabled: true,
-          meals: [],
-          placeholder:
-            "eg: EMAAR ELITE HOTEL @ SETARAF (+-100 METER DARI DATARAN MASJID NABAWI)",
-        },
-        taif: {
-          name: "",
-          enabled: false,
-          meals: [],
-          placeholder: "eg: IRIS BOUTIQUE HALL @ SETARAF ",
-        },
-      },
-      transport: "",
-      inclusions: [],
-      exclusions: [],
-      rooms: ROOM_TYPES.map((rt) => ({ ...rt })),
-      status: "unpublished",
-    };
+  // 1. Initialize Hook Form
+  const methods = useForm<PackageDetailsForm>({
+    resolver: zodResolver(packageDetailsSchema),
+    defaultValues: initialData,
+    mode: "onChange",
   });
 
-  const [availablePackages] = useState<PackageDetails[]>(packageStore.getAll());
+  const { control, watch, setValue, getValues } = methods;
 
-  // State for textarea inputs
-  const [inclusionsText, setInclusionsText] = useState<string>(
-    editingPackage?.inclusions.join("\n") || "",
-  );
-  const [exclusionsText, setExclusionsText] = useState<string>(
-    editingPackage?.exclusions.join("\n") || "",
-  );
-
-  // Update form when editingPackage changes
-  useEffect(() => {
-    if (editingPackage) {
-      setPkg({
-        ...editingPackage,
-        rooms: editingPackage.rooms || ROOM_TYPES.map((rt) => ({ ...rt })),
-      });
-      setInclusionsText(editingPackage.inclusions.join("\n"));
-      setExclusionsText(editingPackage.exclusions.join("\n"));
-    }
-  }, [editingPackage]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPkg((prev) => ({
-      ...prev,
-      [name]: name.startsWith("price")
-        ? value === ""
-          ? 0
-          : parseFloat(value)
-        : value,
-    }));
+  const hotelsState = watch("hotels") as {
+    makkah: HotelDetails;
+    madinah: HotelDetails;
+    taif: HotelDetails;
   };
 
-  const handleSave = async () => {
-    try {
-      if (!pkg.name || !pkg.duration) {
-        alert("Please fill in at least Package Name and Duration.");
-        return;
-      }
+  const { fields } = useFieldArray({
+    control,
+    name: "rooms", // Matches your schema key
+  });
 
-      // Parse textarea content into arrays before saving
-      const inclusions = inclusionsText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-      const exclusions = exclusionsText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-
-      const packageToSave = {
-        ...pkg,
-        inclusions,
-        exclusions,
-      };
-
-      await savePackage(packageToSave);
-      onBack();
-    } catch (error) {
-      console.error("Error saving package:", error);
-    }
-  };
-
-  const importFromPackage = (
-    type: "inclusions" | "exclusions",
-    sourcePackageId: string,
-  ) => {
-    const sourcePackage = availablePackages.find(
-      (p) => p.id === sourcePackageId,
-    );
-    if (sourcePackage) {
-      if (type === "inclusions") {
-        const currentItems = inclusionsText ? inclusionsText.split("\n") : [];
-        const newItems = [...currentItems, ...sourcePackage.inclusions];
-        setInclusionsText(newItems.join("\n"));
-      } else {
-        const currentItems = exclusionsText ? exclusionsText.split("\n") : [];
-        const newItems = [...currentItems, ...sourcePackage.exclusions];
-        setExclusionsText(newItems.join("\n"));
-      }
-    }
-  };
+  const [currentStep, setCurrentStep] = useState<Step>("basic");
 
   const goToNextStep = () => {
-    // Parse textarea content into arrays when leaving inclusions step
-    if (currentStep === "inclusions") {
-      const inclusions = inclusionsText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-      const exclusions = exclusionsText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-
-      setPkg((prev) => ({
-        ...prev,
-        inclusions,
-        exclusions,
-      }));
-    }
-
     const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
     if (currentIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentIndex + 1].id);
     }
   };
 
-  const goToPreviousStep = () => {
+  const goToPreviousStep = (i: string) => {
+    if (i === "exit") {
+      return;
+    }
+
     const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
     if (currentIndex > 0) {
       setCurrentStep(STEPS[currentIndex - 1].id);
     }
   };
 
-  const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
-
-  const handleMealChange = (
-    hotelKey: (typeof HOTEL_LIST)[number],
-    meals: string[],
-  ) => {
-    setPkg((prev) => ({
-      ...prev,
-      hotels: {
-        ...prev.hotels,
-        [hotelKey]: {
-          ...prev.hotels[hotelKey],
-          meals,
-        },
-      },
-    }));
-  };
-
   return (
     <div className="max-w-4xl mx-auto py-6 space-y-6 animate-slideIn">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
+        <Link to="/packages" className="text-sm text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => goToPreviousStep("exit")}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+        </Link>
         <h2 className="text-2xl font-bold tracking-tight">
           {pid ? "Edit Package" : "Create Package"}
         </h2>
@@ -276,27 +132,23 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                   type="button"
                   onClick={() => setCurrentStep(step.id)}
                   className={`flex items-center gap-2 transition-colors ${
-                    currentStep === step.id
-                      ? "text-primary font-semibold"
-                      : index < currentStepIndex
-                        ? "text-primary hover:text-primary/80"
-                        : "text-muted-foreground hover:text-foreground"
+                    currentStep === step.id && "text-primary font-semibold"
+                    // : index < currentStepIndex
+                    //   ? "text-primary hover:text-primary/80"
+                    //   : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <div
                     className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors ${
-                      currentStep === step.id
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : index < currentStepIndex
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground"
+                      currentStep === step.id &&
+                      "border-primary bg-primary text-primary-foreground"
+                      // ? ""
+                      // : index < currentStepIndex
+                      //   ? "border-primary bg-primary text-primary-foreground"
+                      //   : "border-muted-foreground"
                     }`}
                   >
-                    {index < currentStepIndex ? (
-                      <Check className="w-4 h-4" />
-                    ) : (
-                      <span className="text-sm">{index + 1}</span>
-                    )}
+                    <span className="text-sm">{index + 1}</span>
                   </div>
                   <span className="hidden md:inline text-sm">{step.label}</span>
                 </button>
@@ -309,10 +161,9 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
         </CardContent>
       </Card>
 
-      {/* Step Content */}
-      <div className="space-y-6">
-        {currentStep === "basic" && (
-          <Card>
+      <Form method="post" className="space-y-6">
+        <FormProvider {...methods}>
+          <Card hidden={currentStep !== "basic"}>
             <CardHeader>
               <CardTitle>Basic Details</CardTitle>
               <CardDescription>
@@ -320,47 +171,53 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-4">
-              <div className="space-y-2">
-                <Label>Package Name</Label>
-                <Input
-                  name="name"
-                  value={pkg.name}
-                  onChange={handleChange}
-                  placeholder="e.g. UMJ STANDARD 2026"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Duration String</Label>
-                <Input
-                  name="duration"
-                  value={pkg.duration}
-                  onChange={handleChange}
-                  placeholder="e.g. 12 HARI 10 MALAM"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Transport</Label>
-                <Input
-                  name="transport"
-                  value={pkg.transport}
-                  onChange={handleChange}
-                  placeholder="e.g. SPEED TRAIN"
-                />
-              </div>
+              <FormField
+                control={control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Package Name</FormLabel>
+                    <FormControl>
+                      <div>
+                        <input type="hidden" name="id" value={pid} />
+                        <Input
+                          placeholder="e.g. UMJ STANDARD 2026"
+                          {...field}
+                          name="name"
+                        />
+                      </div>
+                    </FormControl>
+                    {/* This automatically shows Zod error messages */}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Duration String</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. 12 HARI 10 MALAM" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="ghost" onClick={onBack}>
-                Cancel
-              </Button>
+              <Link to="/packages" className="text-sm text-muted-foreground">
+                <Button variant="ghost">Cancel</Button>
+              </Link>
+
               <Button onClick={goToNextStep}>
                 Next <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </CardFooter>
           </Card>
-        )}
 
-        {currentStep === "hotels" && (
-          <div className="space-y-4">
+          <div hidden={currentStep !== "hotels"} className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Hotels Details</CardTitle>
@@ -371,79 +228,108 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </CardHeader>
               <CardContent className="grid grid-cols-1 gap-4">
                 {HOTEL_LIST.map((hotelKey) => {
-                  const hotel = pkg.hotels[hotelKey];
+                  // 2. Get the specific hotel data from the watched state
+                  const hotelData = hotelsState[hotelKey];
                   const hotelLabel =
                     hotelKey.charAt(0).toUpperCase() + hotelKey.slice(1);
 
                   return (
+                    // <div key={hotelKey}> {JSON.stringify(hotelData)}</div>
                     <Card
                       key={hotelKey}
-                      className={`cursor-pointer transition-all  ${
-                        hotel.enabled ? "" : "opacity-50 py-2"
+                      className={`transition-all duration-200  ${
+                        hotelData.enabled
+                          ? "py-4" // Active styles
+                          : "py-2 opacity-60 " // Inactive styles
                       }`}
                     >
+                      {/* --- TOGGLE HEADER --- */}
                       <CardHeader
-                        className="gap-0"
-                        onClick={() =>
-                          setPkg((prev) => ({
-                            ...prev,
-                            hotels: {
-                              ...prev.hotels,
-                              [hotelKey]: {
-                                ...prev.hotels[hotelKey],
-                                enabled: !prev.hotels[hotelKey].enabled,
-                              },
+                        className="cursor-pointer select-none py-0 gap-0"
+                        onClick={() => {
+                          // 3. Update the boolean value in RHF
+                          setValue(
+                            `hotels.${hotelKey}.enabled`,
+                            !hotelData.enabled,
+                            {
+                              shouldDirty: true,
+                              shouldValidate: true,
                             },
-                          }))
-                        }
+                          );
+                        }}
                       >
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-base">
+                          <CardTitle className="text-base font-semibold">
                             Hotel {hotelLabel}
                           </CardTitle>
                           <span
-                            className={`text-xs px-2 py-1 rounded-full ${
-                              hotel.enabled
+                            className={`text-xs px-2.5 py-0.5 rounded-full font-medium transition-colors ${
+                              hotelData.enabled
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
-                            {hotel.enabled ? "Enabled" : "Disabled"}
+                            {hotelData.enabled ? "Enabled" : "Disabled"}
                           </span>
                         </div>
                       </CardHeader>
-                      {hotel.enabled && (
-                        <CardContent className="space-y-3">
-                          <div className="space-y-2">
-                            <Label>Hotel Name</Label>
-                            <Input
-                              value={hotel.name}
-                              onChange={(e) =>
-                                setPkg((prev) => ({
-                                  ...prev,
-                                  hotels: {
-                                    ...prev.hotels,
-                                    [hotelKey]: {
-                                      ...prev.hotels[hotelKey],
-                                      name: e.target.value,
-                                    },
-                                  },
-                                }))
-                              }
-                              placeholder={hotel.placeholder}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Meals</Label>
-                            <TreeSelect
-                              options={MEAL_OPTIONS}
-                              value={hotel.meals}
-                              onChange={(meals) =>
-                                handleMealChange(hotelKey, meals)
-                              }
-                              placeholder="Select meals"
-                            />
-                          </div>
+
+                      {/* --- FORM CONTENT (Only show if enabled) --- */}
+                      {hotelData.enabled && (
+                        <CardContent className="space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ">
+                          {/* 4. HOTEL NAME INPUT */}
+                          <FormField
+                            control={control}
+                            // Dynamic path: hotels.makkah.name
+                            name={`hotels.${hotelKey}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Hotel Name</FormLabel>
+                                <FormControl>
+                                  <div>
+                                    <input
+                                      type="hidden"
+                                      name={`hotels.${hotelKey}.id`}
+                                      value={hotelData?.id}
+                                    />
+                                    <Input
+                                      placeholder={
+                                        hotelData.placeholder ||
+                                        `Enter ${hotelLabel} hotel name...`
+                                      }
+                                      {...field}
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* 5. MEALS SELECTOR */}
+                          <FormField
+                            control={control}
+                            // Dynamic path: hotels.makkah.meals
+                            name={`hotels.${hotelKey}.meals`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Meals</FormLabel>
+                                <FormControl>
+                                  {/** biome-ignore lint/complexity/noUselessFragments: <need this for hidden input> */}
+                                  <div>
+                                    <input type="hidden" {...field} />
+                                    <TreeSelect
+                                      options={MEAL_OPTIONS}
+                                      value={field.value as string[]} // Pass RHF value (string[])
+                                      onChange={field.onChange}
+                                      placeholder="Select meals included..."
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </CardContent>
                       )}
                     </Card>
@@ -451,8 +337,8 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
                 })}
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="ghost" onClick={onBack}>
-                  Cancel
+                <Button variant="ghost" onClick={goToPreviousStep}>
+                  Previous
                 </Button>
                 <Button onClick={goToNextStep}>
                   Next <ChevronRight className="w-4 h-4 ml-2" />
@@ -460,78 +346,70 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </CardFooter>
             </Card>
           </div>
-        )}
 
-        {currentStep === "inclusions" && (
-          <div className="space-y-6">
+          <div hidden={currentStep !== "inclusions"} className="space-y-6">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
                 <CardTitle className="text-sm font-bold uppercase tracking-wider">
                   Inclusions
                 </CardTitle>
-                <div className="flex gap-2">
-                  <Select
-                    onValueChange={(id) => importFromPackage("inclusions", id)}
-                  >
-                    <SelectTrigger className="w-[140px] h-8">
-                      <SelectValue placeholder="Import..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availablePackages
-                        .filter((p) => p.id !== pkg.id)
-                        .map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Label>Enter each inclusion on a new line</Label>
-                <Textarea
-                  value={inclusionsText}
-                  onChange={(e) => setInclusionsText(e.target.value)}
-                  placeholder="Enter inclusions, one per line..."
-                  rows={8}
-                  className="font-mono text-sm"
+                <FormField
+                  control={control}
+                  // Dynamic path: hotels.makkah.name
+                  name={`inclusions`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="inclusion">
+                        Enter each inclusion on a new line
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          id="inclusion"
+                          name="inclusions"
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          placeholder="Enter inclusions, one per line..."
+                          rows={12}
+                          className="font-mono text-sm"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
                 <CardTitle className="text-sm font-bold uppercase tracking-wider">
                   Exclusions
                 </CardTitle>
-                <div className="flex gap-2">
-                  <Select
-                    onValueChange={(id) => importFromPackage("exclusions", id)}
-                  >
-                    <SelectTrigger className="w-[140px] h-8">
-                      <SelectValue placeholder="Import..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availablePackages
-                        .filter((p) => p.id !== pkg.id)
-                        .map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Label>Enter each exclusion on a new line</Label>
-                <Textarea
-                  value={exclusionsText}
-                  onChange={(e) => setExclusionsText(e.target.value)}
-                  placeholder="Enter exclusions, one per line..."
-                  rows={8}
-                  className="font-mono text-sm"
+                <FormField
+                  control={control}
+                  // Dynamic path: hotels.makkah.name
+                  name={`exclusions`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="exclusion">
+                        Enter each exclusion on a new line
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          id="exclusion"
+                          name="exclusions"
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          placeholder="Enter exclusions, one per line..."
+                          rows={12}
+                          className="font-mono text-sm"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               </CardContent>
             </Card>
@@ -544,10 +422,8 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </Button>
             </div>
           </div>
-        )}
 
-        {currentStep === "pricing" && (
-          <Card>
+          <Card hidden={currentStep !== "pricing"}>
             <CardHeader>
               <CardTitle>Pricing (RM)</CardTitle>
               <CardDescription>
@@ -555,60 +431,86 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {pkg.rooms.map((room, index) => (
-                <div
-                  key={room.label}
-                  className={`flex items-center gap-4 p-3 rounded-lg border transition-all ${
-                    room.enabled ? "bg-background" : "bg-muted/30 opacity-60"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPkg((prev) => ({
-                        ...prev,
-                        rooms: prev.rooms.map((r, i) =>
-                          i === index ? { ...r, enabled: !r.enabled } : r,
-                        ),
-                      }))
-                    }
-                    className="flex items-center gap-3 cursor-pointer flex-1 text-left"
-                  >
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        room.enabled
-                          ? "bg-green-500 animate-pulse"
-                          : "bg-muted-foreground/30"
-                      }`}
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    {/* We wrap the whole row in the "Enabled" controller logic */}
+                    <FormField
+                      control={control}
+                      name={`rooms.${index}.enabled`}
+                      render={({ field: enabledField }) => (
+                        <FormItem>
+                          <FormControl>
+                            <div
+                              className={`flex items-center gap-4 p-3 rounded-lg border transition-all ${
+                                enabledField.value
+                                  ? "bg-background"
+                                  : "bg-muted/30 opacity-60"
+                              }`}
+                            >
+                              <input
+                                type="hidden"
+                                name={`rooms.${index}.enabled`}
+                                value={enabledField.value ? "true" : "false"}
+                              />
+                              <input
+                                type="hidden"
+                                name={`rooms.${index}.id`}
+                                value={field.id}
+                              />
+                              {/* TOGGLE BUTTON */}
+                              <button
+                                type="button"
+                                // 2. Simply toggle the boolean value
+                                onClick={() =>
+                                  enabledField.onChange(!enabledField.value)
+                                }
+                                className="flex items-center gap-3 cursor-pointer flex-1 text-left"
+                              >
+                                <span
+                                  className={`w-2 h-2 rounded-full transition-colors ${
+                                    enabledField.value
+                                      ? "bg-green-500 animate-pulse"
+                                      : "bg-muted-foreground/30"
+                                  }`}
+                                />
+                                <span className="font-medium capitalize">
+                                  {field.room_type}
+                                </span>
+                              </button>
+
+                              {/* PRICE INPUT */}
+                              {/* Only render if enabled. Note: We use a nested FormField for the price */}
+                              {enabledField.value && (
+                                <FormField
+                                  control={control}
+                                  // 3. Bind specifically to the 'price' (price) property
+                                  name={`rooms.${index}.price`}
+                                  render={({ field: priceField }) => (
+                                    <div className="w-full max-w-[140px]">
+                                      <Input
+                                        {...priceField}
+                                        type="number"
+                                        placeholder="0.00"
+                                        className="h-9 text-right"
+                                        // Prevent closing the toggle when clicking input
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </div>
+                                  )}
+                                />
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <span className="font-medium">{room.label}</span>
-                  </button>
-                  {room.enabled && (
-                    <div className="w-full max-w-sm">
-                      <Input
-                        type="number"
-                        value={room.value}
-                        onChange={(e) =>
-                          setPkg((prev) => ({
-                            ...prev,
-                            rooms: prev.rooms.map((r, i) =>
-                              i === index
-                                ? {
-                                    ...r,
-                                    value: parseFloat(e.target.value) || 0,
-                                  }
-                                : r,
-                            ),
-                          }))
-                        }
-                        placeholder="0.00"
-                        className="h-9"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </CardContent>
+
             <CardFooter className="flex justify-between">
               <Button variant="outline" onClick={goToPreviousStep}>
                 <ChevronLeft className="w-4 h-4 mr-2" /> Previous
@@ -618,156 +520,144 @@ const PackageBuilder: React.FC<Props> = ({ editingPackage, onBack }) => {
               </Button>
             </CardFooter>
           </Card>
-        )}
 
-        {currentStep === "preview" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Package Preview</CardTitle>
-              <CardDescription>
-                Review your package details before saving.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Basic Information</h3>
-                <div className="space-y-1 text-sm">
-                  <p>
-                    <span className="text-muted-foreground">Name:</span>{" "}
-                    {pkg.name || "—"}
-                  </p>
-                  <p>
-                    <span className="text-muted-foreground">Duration:</span>{" "}
-                    {pkg.duration || "—"}
-                  </p>
-                  <p>
-                    <span className="text-muted-foreground">Transport:</span>{" "}
-                    {pkg.transport || "—"}
-                  </p>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-2">Hotels & Meals</h3>
-                <div className="space-y-2 text-sm">
-                  {pkg.hotels.makkah.enabled && (
-                    <div>
-                      <p className="font-medium">Makkah</p>
-                      <p className="text-muted-foreground">
-                        {pkg.hotels.makkah.name || "—"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Meals:{" "}
-                        {pkg.hotels.makkah.meals.length === 0
-                          ? "NOT INCLUDED"
-                          : pkg.hotels.makkah.meals.join(", ")}
-                      </p>
-                    </div>
-                  )}
-                  {pkg.hotels.madinah.enabled && (
-                    <div>
-                      <p className="font-medium">Madinah</p>
-                      <p className="text-muted-foreground">
-                        {pkg.hotels.madinah.name || "—"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Meals:{" "}
-                        {pkg.hotels.madinah.meals.length === 0
-                          ? "NOT INCLUDED"
-                          : pkg.hotels.madinah.meals.join(", ")}
-                      </p>
-                    </div>
-                  )}
-                  {pkg.hotels.taif.enabled && (
-                    <div>
-                      <p className="font-medium">Taif</p>
-                      <p className="text-muted-foreground">
-                        {pkg.hotels.taif.name || "—"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Meals:{" "}
-                        {pkg.hotels.taif.meals.length === 0
-                          ? "NOT INCLUDED"
-                          : pkg.hotels.taif.meals.join(", ")}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <Separator />
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-2">Inclusions</h3>
-                {pkg.inclusions.length > 0 ? (
-                  <ul className="list-disc list-inside text-sm space-y-1">
-                    {pkg.inclusions.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No inclusions added
-                  </p>
-                )}
-              </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-2">Exclusions</h3>
-                {pkg.exclusions.length > 0 ? (
-                  <ul className="list-disc list-inside text-sm space-y-1">
-                    {pkg.exclusions.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No exclusions added
-                  </p>
-                )}
-              </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-2">Pricing (RM)</h3>
-                {pkg.rooms.filter((room) => room.enabled).length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    {pkg.rooms
-                      .filter((room) => room.enabled)
-                      .map((room) => (
-                        <div key={room.label}>
-                          <p className="text-muted-foreground">{room.label}</p>
-                          <p className="text-lg font-semibold">
-                            RM {room.value.toFixed(2)}
-                          </p>
-                        </div>
-                      ))}
+          {currentStep === "preview" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Package Preview</CardTitle>
+                <CardDescription>
+                  Review your package details before saving.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="font-semibold mb-2">Basic Information</h3>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <span className="text-muted-foreground">Name:</span>{" "}
+                      {getValues("name") || "—"}
+                    </p>
+                    <p>
+                      <span className="text-muted-foreground">Duration:</span>{" "}
+                      {getValues("duration") || "—"}
+                    </p>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No room types enabled
-                  </p>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={goToPreviousStep}>
-                <ChevronLeft className="w-4 h-4 mr-2" /> Previous
-              </Button>
-              <Button className="gap-2" onClick={handleSave}>
-                <Save className="w-4 h-4" /> Save Package
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-      </div>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Hotels & Meals</h3>
+                  <div className="space-y-2 text-sm">
+                    {HOTEL_LIST.map((hotelKey) => {
+                      const pkg = getValues();
+
+                      return (
+                        pkg.hotels[hotelKey].enabled && (
+                          <div key={hotelKey}>
+                            <p className="font-medium">
+                              {hotelKey.charAt(0).toUpperCase() +
+                                hotelKey.slice(1)}
+                            </p>
+                            <p className="text-muted-foreground">
+                              {pkg.hotels[hotelKey].name || "—"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Meals:{" "}
+                              {pkg.hotels[hotelKey]?.meals?.length === 0
+                                ? "NOT INCLUDED"
+                                : pkg.hotels[hotelKey]?.meals?.length === 2
+                                  ? "HALFBOARD"
+                                  : pkg.hotels[hotelKey]?.meals?.length === 3
+                                    ? "FULLBOARD"
+                                    : pkg.hotels[hotelKey]?.meals
+                                        ?.map((meal) => meal)
+                                        .join(", ")}
+                            </p>
+                          </div>
+                        )
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Inclusions</h3>
+                  {getValues("inclusions").length > 0 ? (
+                    <ul className="list-disc list-inside text-sm space-y-1 ">
+                      {getValues("inclusions")
+                        .split("\n")
+                        .map((line, i) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No inclusions added
+                    </p>
+                  )}
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Exclusions</h3>
+                  {getValues("exclusions").length > 0 ? (
+                    <ul className="list-disc list-inside text-sm space-y-1 ">
+                      {getValues("exclusions")
+                        .split("\n")
+                        .map((line, i) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No exclusions added
+                    </p>
+                  )}
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Pricing (RM)</h3>
+                  {getValues("rooms").filter((room) => room.enabled).length >
+                  0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                      {getValues("rooms")
+                        .filter((room) => room.enabled)
+                        .map((room) => (
+                          <div key={room.room_type} className="space-y-1">
+                            <p className="text-muted-foreground">
+                              {room.room_type}
+                            </p>
+                            <p className="text-lg font-semibold">
+                              RM {room.price.toLocaleString("en-US")}
+                            </p>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No room types enabled
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button variant="outline" onClick={goToPreviousStep}>
+                  <ChevronLeft className="w-4 h-4 mr-2" /> Previous
+                </Button>
+                <Button className="gap-2 " type="submit">
+                  <Save className="w-4 h-4" /> Save Package
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+        </FormProvider>
+      </Form>
     </div>
   );
 };

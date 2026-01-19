@@ -27,19 +27,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Copy, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
+import { Link } from "react-router";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   handlePreview: (pkg: TData) => void;
-  handleEdit: (pkg: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   handlePreview,
-  handleEdit,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -78,7 +77,7 @@ export function DataTable<TData, TValue>({
     return `${day}/${month}/${year}`;
   }, []);
 
-  const renderDropdownMenu = useCallback(() => {
+  const renderDropdownMenu = useCallback((pkg: TData & { id: string }) => {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -88,10 +87,12 @@ export function DataTable<TData, TValue>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => handleEdit}>
-            <PencilIcon />
-            Edit
-          </DropdownMenuItem>
+          <Link to={`/packages/edit/${pkg.id}`}>
+            <DropdownMenuItem>
+              <PencilIcon />
+              Edit
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
             <Trash />
             Delete
@@ -99,7 +100,7 @@ export function DataTable<TData, TValue>({
         </DropdownMenuContent>
       </DropdownMenu>
     );
-  }, [handleEdit]);
+  }, []);
 
   const renderCell = useCallback(
     (cell: Cell<TData, unknown>) => {
@@ -133,7 +134,7 @@ export function DataTable<TData, TValue>({
       }
 
       if (columnId === "action") {
-        return renderDropdownMenu();
+        return renderDropdownMenu(cell.row.original as TData & { id: string });
       }
 
       return flexRender(cell.column.columnDef.cell, cell.getContext());
@@ -169,8 +170,6 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => {
-                  console.log("cell:", cell);
-                  console.log("row:", row);
                   return (
                     <TableCell key={cell.id}>{renderCell(cell)}</TableCell>
                   );

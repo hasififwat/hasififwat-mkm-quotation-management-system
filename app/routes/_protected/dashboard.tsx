@@ -1,5 +1,3 @@
-import type { Route } from "./+types/dashboard";
-import { ProtectedRoute } from "~/features/authentication /components/ProtectedRoute";
 import { Dashboard } from "~/features/dashboard/components/Dashboard";
 
 export function meta() {
@@ -10,9 +8,5 @@ export function meta() {
 }
 
 export default function DashboardPage() {
-  return (
-    <ProtectedRoute title="Dashboard">
-      <Dashboard />
-    </ProtectedRoute>
-  );
+  return <Dashboard />;
 }

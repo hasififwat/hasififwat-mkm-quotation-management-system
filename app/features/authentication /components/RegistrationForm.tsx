@@ -16,13 +16,11 @@ import {
   FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { useAuthentication } from "~/features/authentication /provider/AuthenticationProvider";
 
 export function RegistrationForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { signUp, signIn } = useAuthentication();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,11 +50,9 @@ export function RegistrationForm({
     }
 
     try {
-      await signUp(email, password);
       setSuccess(true);
 
       // Automatically sign in the user after successful registration
-      await signIn(email, password);
 
       // Navigate to dashboard
       navigate("/dashboard");

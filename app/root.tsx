@@ -10,9 +10,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Route } from "./+types/root";
 import "./app.css";
-import { SupabaseProvider } from "./features/supabase/provider/SupabaseProvider";
-import { AuthenticationProvider } from "./features/authentication /provider/AuthenticationProvider";
+
 import { ThemeProvider } from "./features/theme/provider/ThemeProvider";
+import { getServerClient } from "./lib/supabase/server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,6 +26,13 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export async function loader({ request }: Route.LoaderArgs) {
+  // We don't need to block the root, just pass env vars or session status
+  const headers = new Headers();
+  const supabase = getServerClient(request, headers);
+  await supabase.auth.getSession();
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -50,11 +57,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <SupabaseProvider>
-          <AuthenticationProvider>
-            <Outlet />
-          </AuthenticationProvider>
-        </SupabaseProvider>
+        <Outlet />
       </ThemeProvider>
     </QueryClientProvider>
   );
