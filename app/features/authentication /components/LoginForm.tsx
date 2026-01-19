@@ -56,7 +56,7 @@ export function LoginForm({
                 />
               </Field>
 
-              <Field>
+              {/* <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
@@ -72,7 +72,7 @@ export function LoginForm({
                   type="password"
                   required
                 />
-              </Field>
+              </Field> */}
 
               {/* ✅ 4. Display server errors here */}
               {actionData?.error && (
@@ -81,14 +81,14 @@ export function LoginForm({
                 </div>
               )}
 
-              <Field>
+              {/* <Field>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Logging in..." : "Login"}
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
                 </FieldDescription>
-              </Field>
+              </Field> */}
             </FieldGroup>
           </Form>
         </CardContent>

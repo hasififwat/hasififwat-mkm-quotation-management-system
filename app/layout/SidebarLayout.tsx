@@ -89,7 +89,7 @@ export function SidebarLayout({ children, title, user }: SidebarLayoutProps) {
               </div>
 
               {/* ✅ NEW: Logout via Server Action */}
-              <Form action="/logout" method="post" className="w-full">
+              <Form action="/" method="post" className="w-full">
                 <Button
                   variant="outline"
                   size="sm"
