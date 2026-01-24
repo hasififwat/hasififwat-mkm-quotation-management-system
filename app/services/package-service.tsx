@@ -1,14 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { PackageDetailsForm } from "@/schema";
-
-import type {
-  PackageDetails,
-  SupabasePackageDetails,
-} from "@/features/quotation/types";
-
-// ✅ 1. Accept 'client' as the first argument for every function.
-// This allows you to pass 'serverClient' (Loader) or 'browserClient' (Component).
+import type { SupabasePackageDetails } from "@/features/quotation/types";
 
 export const UmrahPackageService = {
   // Fetch all packages
@@ -54,7 +46,7 @@ export const UmrahPackageService = {
 
   // Save package (The complex logic remains the same, just using 'client')
   async savePackage(client: SupabaseClient, formPayload: any) {
-    const { data, error } = await client.rpc("save_package_details_flat", {
+    const { data, error } = await client.rpc("create_package", {
       payload: formPayload,
     });
 
@@ -66,8 +58,24 @@ export const UmrahPackageService = {
     return data;
   },
 
+  async updatePackage(client: SupabaseClient, updatePayload: any) {
+    // Implementation for updating a package
+    const { data, error } = await client.rpc("edit_package", {
+      payload: updatePayload,
+    });
+
+    if (error) {
+      console.error("Error saving package:", error);
+      throw new Error(error.message);
+    }
+
+    return data;
+  },
+
   async deletePackage(client: SupabaseClient, id: string) {
-    const { error } = await client.from("packages").delete().eq("id", id);
+    const { error } = await client.rpc("delete_package", {
+      package_id: id,
+    });
 
     if (error) {
       console.error("Error deleting package:", error);

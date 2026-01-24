@@ -16,14 +16,25 @@ export const hotelDetailsSchema = z.object({
 export const roomTypeSchema = z.object({
   id: z.string().optional(),
   room_type: z.string(),
-  price: z.number().min(0), // "coerce" handles strings like "100" from inputs
+  price: z.coerce.number().min(0), // coerce handles strings like "100" from inputs
   enabled: z.boolean().default(false),
+});
+
+export const packageFlightSchema = z.object({
+  id: z.string().optional(),
+  month: z.string().min(1, "Month is required"),
+  departure_date: z.string().min(1, "Departure date is required"),
+  departure_sector: z.string().min(1, "Departure sector is required"),
+  return_date: z.string().min(1, "Return date is required"),
+  return_sector: z.string().min(1, "Return sector is required"),
 });
 
 export const packageDetailsSchema = z.object({
   id: z.string().optional(), // Optional for new packages
   name: z.string().min(1, "Name is required"),
-  duration: z.string(),
+  duration: z.string().min(1, "Duration is required"),
+
+  year: z.string().min(1, "Year is required").default("2026/2027"),
 
   hotels: z.object({
     makkah: hotelDetailsSchema,
@@ -34,6 +45,7 @@ export const packageDetailsSchema = z.object({
   inclusions: z.string(),
   exclusions: z.string(),
   rooms: z.array(roomTypeSchema),
+  flights: z.array(packageFlightSchema).default([]),
 
   status: z.enum(["published", "unpublished"]),
 });
@@ -141,6 +153,7 @@ export const savedQuotationSchema = quotationDataSchema.extend({
 // Domain Types
 export type HotelDetails = z.infer<typeof hotelDetailsSchema>;
 export type RoomType = z.infer<typeof roomTypeSchema>;
+export type PackageFlight = z.infer<typeof packageFlightSchema>;
 export type PackageDetails = z.infer<typeof packageDetailsSchema>;
 export type PackageDetailsForm = z.input<typeof packageDetailsSchema>;
 

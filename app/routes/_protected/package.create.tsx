@@ -3,19 +3,32 @@ import PackageBuilder from "~/features/packages/PackageBuilder";
 import { redirect } from "react-router";
 import { UmrahPackageService } from "~/services/package-service";
 import { createClient } from "~/lib/supabase/client";
+import { getServerClient } from "~/lib/supabase/server";
+import type { Route } from "./+types/package.create";
 
-export async function clientLoader() {
-  const supabase = createClient();
+export async function loader({ request }: Route.LoaderArgs) {
+  const headers = new Headers();
+  const supabase = getServerClient(request, headers);
+  const allPackages = UmrahPackageService.getAllPackages(supabase);
 
-  // 1. Fetch Server Data
   const pkg = await UmrahPackageService.getNewPackageTemplate(supabase);
   if (!pkg) {
     return redirect("/packages");
   }
 
-  return {
-    initialData: pkg,
-  };
+  return { allPackages, initialData: pkg };
+}
+
+export async function clientAction({ request }: Route.ClientActionArgs) {
+  const supabase = createClient();
+
+  const data = await request.json();
+
+  console.log("package.create clientAction called", data);
+
+  await UmrahPackageService.savePackage(supabase, data);
+
+  return redirect("/packages");
 }
 
 export function HydrateFallback() {

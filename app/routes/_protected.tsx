@@ -30,7 +30,6 @@ export default function ProtectedLayout() {
   return (
     // Pass the user to your sidebar if needed
     <SidebarLayout user={user}>
-      {/* <Outlet /> renders the child route (e.g., Dashboard, Profile) */}
       <Outlet />
     </SidebarLayout>
   );

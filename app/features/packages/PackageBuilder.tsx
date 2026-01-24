@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-import { Form, Link } from "react-router";
+import { Link, useSubmit } from "react-router";
 
 import {
   Card,
@@ -14,78 +13,83 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
 import { Separator } from "@/components/ui/separator";
-import { TreeSelect } from "@/components/ui/tree-select";
-import { Textarea } from "@/components/ui/textarea";
-import { Save, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { useForm, FormProvider, useFieldArray } from "react-hook-form";
+import { Save, ChevronLeft, Import } from "lucide-react";
+
+import BasicDetails from "./components/Form/BasicDetails";
+import FlightDetails from "./components/Form/FlightDetails";
+
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  packageDetailsSchema,
-  type HotelDetails,
-  type PackageDetailsForm,
-} from "@/schema";
+import { packageDetailsSchema, type PackageDetailsForm } from "@/schema";
 
-import { useLoaderData, useParams } from "react-router";
+import { useLoaderData, useParams, Await } from "react-router";
+import { ImportSettingModal } from "./components/ImportSettingModal";
+import { ImportPreview } from "./components/ImportPreview";
+import HotelDetailsSection from "./components/Form/HotelDetails";
+import ExclusionInclusionDetails from "./components/Form/InclusionExclusionDetails";
+import RoomDetails from "./components/Form/RoomDetails";
 
-type Step = "basic" | "hotels" | "inclusions" | "pricing" | "preview";
+type Step =
+  | "basic"
+  | "hotels"
+  | "inclusions"
+  | "pricing"
+  | "flights"
+  | "preview";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "basic", label: "Basic Details" },
   { id: "hotels", label: "Hotels & Meals" },
   { id: "inclusions", label: "Inclusions & Exclusions" },
   { id: "pricing", label: "Pricing" },
+  { id: "flights", label: "Flights" },
   { id: "preview", label: "Preview" },
 ];
 
 const HOTEL_LIST = ["makkah", "madinah", "taif"] as const;
 
-const MEAL_OPTIONS = [
-  {
-    label: "FULLBOARD",
-    value: "FULLBOARD",
-    nodes: [
-      { label: "BREAKFAST", value: "BREAKFAST" },
-      { label: "LUNCH", value: "LUNCH" },
-      { label: "DINNER", value: "DINNER" },
-    ],
-  },
-] as const;
-
 const PackageBuilder: React.FC = () => {
-  const { initialData } = useLoaderData();
+  const { initialData, allPackages } = useLoaderData();
   const { pid } = useParams();
+  const submit = useSubmit();
 
-  // 1. Initialize Hook Form
   const methods = useForm<PackageDetailsForm>({
     resolver: zodResolver(packageDetailsSchema),
     defaultValues: initialData,
     mode: "onChange",
   });
 
-  const { control, watch, setValue, getValues } = methods;
-
-  const hotelsState = watch("hotels") as {
-    makkah: HotelDetails;
-    madinah: HotelDetails;
-    taif: HotelDetails;
-  };
-
-  const { fields } = useFieldArray({
-    control,
-    name: "rooms", // Matches your schema key
-  });
+  const { setValue, getValues, handleSubmit } = methods;
 
   const [currentStep, setCurrentStep] = useState<Step>("basic");
+
+  const handleImport = (
+    importedData: PackageDetailsForm,
+    setting: keyof PackageDetailsForm,
+  ) => {
+    if (setting === "hotels") {
+      //filter out the id, use existing id if it exist in the form
+      const existingHotels = getValues("hotels");
+
+      const hotelsWithoutId = {
+        makkah: { ...importedData.hotels.makkah, id: existingHotels.makkah.id },
+        madinah: {
+          ...importedData.hotels.madinah,
+          id: existingHotels.madinah.id,
+        },
+        taif: { ...importedData.hotels.taif, id: existingHotels.taif.id },
+      };
+      setValue("hotels", hotelsWithoutId);
+    } else if (setting === "rooms") {
+      setValue("rooms", importedData.rooms);
+    } else if (setting === "inclusions") {
+      setValue("inclusions", importedData.inclusions);
+    } else if (setting === "exclusions") {
+      setValue("exclusions", importedData.exclusions);
+    }
+  };
 
   const goToNextStep = () => {
     const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
@@ -101,6 +105,73 @@ const PackageBuilder: React.FC = () => {
     }
   };
 
+  const onSubmit = (data: PackageDetailsForm) => {
+    console.log("Submitting package data:", data);
+    submit(data, {
+      method: "POST",
+      encType: "application/json",
+    });
+  };
+
+  const renderSuspenseImportButton = (settingKey: keyof PackageDetailsForm) => {
+    return (
+      <div className="col-start-2  row-start-1 row-span-full items-center justify-end flex">
+        <Suspense
+          fallback={
+            <Button variant="ghost" disabled>
+              <Import className="w-4 h-4 " />
+              Import
+            </Button>
+          }
+        >
+          <Await
+            resolve={allPackages}
+            // biome-ignore lint/correctness/noChildrenProp: <Await needs children prop>
+            children={(resolvedReviews) => (
+              <ImportSettingModal
+                title="Import Hotel Settings"
+                description="Import hotel settings from an existing package."
+                allPackages={resolvedReviews}
+                handleImport={(importedData) =>
+                  handleImport(importedData, settingKey)
+                }
+                renderPreview={(selectedPackage) => (
+                  <ImportPreview
+                    key={selectedPackage ? selectedPackage.id : "none"}
+                    selectedPackage={selectedPackage}
+                    settingType={settingKey}
+                  />
+                )}
+              >
+                <Button variant="ghost" className="w-full">
+                  <Import className="w-4 h-4 " />
+                  Import
+                </Button>
+              </ImportSettingModal>
+            )}
+          />
+        </Suspense>
+      </div>
+    );
+  };
+
+  const renderCardHeader = (
+    title: string,
+    description: string,
+    settingKey: keyof PackageDetailsForm,
+  ) => (
+    <CardHeader>
+      <CardTitle>
+        <div className="flex justify-between items-end">
+          <span>{title}</span>
+        </div>
+      </CardTitle>
+      <CardDescription>{description}</CardDescription>
+
+      {renderSuspenseImportButton(settingKey)}
+    </CardHeader>
+  );
+
   return (
     <div className="max-w-4xl mx-auto py-6 space-y-6 animate-slideIn">
       <div className="flex items-center gap-4">
@@ -108,7 +179,7 @@ const PackageBuilder: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => goToPreviousStep("exit")}
+            onClick={() => goToPreviousStep()}
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
@@ -157,365 +228,47 @@ const PackageBuilder: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Form method="post" className="space-y-6">
+      <form
+        className="space-y-6"
+        onSubmit={handleSubmit((e) => {
+          console.log("handleSubmit called with:", e);
+          onSubmit(e);
+        })}
+      >
         <FormProvider {...methods}>
-          <Card hidden={currentStep !== "basic"}>
-            <CardHeader>
-              <CardTitle>Basic Details</CardTitle>
-              <CardDescription>
-                Package name, duration, and transportation information.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 gap-4">
-              <FormField
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Package Name</FormLabel>
-                    <FormControl>
-                      <div>
-                        <input type="hidden" name="id" value={pid} />
-                        <Input
-                          placeholder="e.g. UMJ STANDARD 2026"
-                          {...field}
-                          name="name"
-                        />
-                      </div>
-                    </FormControl>
-                    {/* This automatically shows Zod error messages */}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Duration String</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. 12 HARI 10 MALAM" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Link to="/packages" className="text-sm text-muted-foreground">
-                <Button variant="ghost">Cancel</Button>
-              </Link>
+          <BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
 
-              <Button onClick={goToNextStep}>
-                Next <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardFooter>
-          </Card>
+          <HotelDetailsSection
+            currentStep={currentStep}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+            renderCardHeader={() =>
+              renderCardHeader(
+                "Hotels & Meals",
+                "Select hotels for each city and specify included meals.",
+                "hotels",
+              )
+            }
+          />
+          <ExclusionInclusionDetails
+            currentStep={currentStep}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+            renderCardHeader={renderCardHeader}
+          />
 
-          <div hidden={currentStep !== "hotels"} className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Hotels Details</CardTitle>
-                <CardDescription>
-                  Click on a hotel name to enable or disable it from the
-                  package.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 gap-4">
-                {HOTEL_LIST.map((hotelKey) => {
-                  // 2. Get the specific hotel data from the watched state
-                  const hotelData = hotelsState[hotelKey];
-                  const hotelLabel =
-                    hotelKey.charAt(0).toUpperCase() + hotelKey.slice(1);
+          <RoomDetails
+            currentStep={currentStep}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+            renderCardHeader={renderCardHeader}
+          />
 
-                  return (
-                    // <div key={hotelKey}> {JSON.stringify(hotelData)}</div>
-                    <Card
-                      key={hotelKey}
-                      className={`transition-all duration-200  ${
-                        hotelData.enabled
-                          ? "py-4" // Active styles
-                          : "py-2 opacity-60 " // Inactive styles
-                      }`}
-                    >
-                      {/* --- TOGGLE HEADER --- */}
-                      <CardHeader
-                        className="cursor-pointer select-none py-0 gap-0"
-                        onClick={() => {
-                          // 3. Update the boolean value in RHF
-                          setValue(
-                            `hotels.${hotelKey}.enabled`,
-                            !hotelData.enabled,
-                            {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            },
-                          );
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-base font-semibold">
-                            Hotel {hotelLabel}
-                          </CardTitle>
-                          <span
-                            className={`text-xs px-2.5 py-0.5 rounded-full font-medium transition-colors ${
-                              hotelData.enabled
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {hotelData.enabled ? "Enabled" : "Disabled"}
-                          </span>
-                        </div>
-                      </CardHeader>
-
-                      {/* --- FORM CONTENT (Only show if enabled) --- */}
-                      {hotelData.enabled && (
-                        <CardContent className="space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ">
-                          {/* 4. HOTEL NAME INPUT */}
-                          <FormField
-                            control={control}
-                            // Dynamic path: hotels.makkah.name
-                            name={`hotels.${hotelKey}.name`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Hotel Name</FormLabel>
-                                <FormControl>
-                                  <div>
-                                    <input
-                                      type="hidden"
-                                      name={`hotels.${hotelKey}.id`}
-                                      value={hotelData?.id}
-                                    />
-                                    <Input
-                                      placeholder={
-                                        hotelData.placeholder ||
-                                        `Enter ${hotelLabel} hotel name...`
-                                      }
-                                      {...field}
-                                    />
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* 5. MEALS SELECTOR */}
-                          <FormField
-                            control={control}
-                            // Dynamic path: hotels.makkah.meals
-                            name={`hotels.${hotelKey}.meals`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Meals</FormLabel>
-                                <FormControl>
-                                  {/** biome-ignore lint/complexity/noUselessFragments: <need this for hidden input> */}
-                                  <div>
-                                    <input type="hidden" {...field} />
-                                    <TreeSelect
-                                      options={MEAL_OPTIONS}
-                                      value={field.value as string[]} // Pass RHF value (string[])
-                                      onChange={field.onChange}
-                                      placeholder="Select meals included..."
-                                    />
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </CardContent>
-                      )}
-                    </Card>
-                  );
-                })}
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="ghost" onClick={goToPreviousStep}>
-                  Previous
-                </Button>
-                <Button onClick={goToNextStep}>
-                  Next <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-
-          <div hidden={currentStep !== "inclusions"} className="space-y-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
-                <CardTitle className="text-sm font-bold uppercase tracking-wider">
-                  Inclusions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <FormField
-                  control={control}
-                  // Dynamic path: hotels.makkah.name
-                  name={`inclusions`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="inclusion">
-                        Enter each inclusion on a new line
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          id="inclusion"
-                          name="inclusions"
-                          value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          placeholder="Enter inclusions, one per line..."
-                          rows={12}
-                          className="font-mono text-sm"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
-                <CardTitle className="text-sm font-bold uppercase tracking-wider">
-                  Exclusions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <FormField
-                  control={control}
-                  // Dynamic path: hotels.makkah.name
-                  name={`exclusions`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="exclusion">
-                        Enter each exclusion on a new line
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          id="exclusion"
-                          name="exclusions"
-                          value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          placeholder="Enter exclusions, one per line..."
-                          rows={12}
-                          className="font-mono text-sm"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={goToPreviousStep}>
-                <ChevronLeft className="w-4 h-4 mr-2" /> Previous
-              </Button>
-              <Button onClick={goToNextStep}>
-                Next <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-
-          <Card hidden={currentStep !== "pricing"}>
-            <CardHeader>
-              <CardTitle>Pricing (RM)</CardTitle>
-              <CardDescription>
-                Enable room types and set per-person rates.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {fields.map((field, index) => {
-                return (
-                  <div key={field.id}>
-                    {/* We wrap the whole row in the "Enabled" controller logic */}
-                    <FormField
-                      control={control}
-                      name={`rooms.${index}.enabled`}
-                      render={({ field: enabledField }) => (
-                        <FormItem>
-                          <FormControl>
-                            <div
-                              className={`flex items-center gap-4 p-3 rounded-lg border transition-all ${
-                                enabledField.value
-                                  ? "bg-background"
-                                  : "bg-muted/30 opacity-60"
-                              }`}
-                            >
-                              <input
-                                type="hidden"
-                                name={`rooms.${index}.enabled`}
-                                value={enabledField.value ? "true" : "false"}
-                              />
-                              <input
-                                type="hidden"
-                                name={`rooms.${index}.id`}
-                                value={field.id}
-                              />
-                              {/* TOGGLE BUTTON */}
-                              <button
-                                type="button"
-                                // 2. Simply toggle the boolean value
-                                onClick={() =>
-                                  enabledField.onChange(!enabledField.value)
-                                }
-                                className="flex items-center gap-3 cursor-pointer flex-1 text-left"
-                              >
-                                <span
-                                  className={`w-2 h-2 rounded-full transition-colors ${
-                                    enabledField.value
-                                      ? "bg-green-500 animate-pulse"
-                                      : "bg-muted-foreground/30"
-                                  }`}
-                                />
-                                <span className="font-medium capitalize">
-                                  {field.room_type}
-                                </span>
-                              </button>
-
-                              {/* PRICE INPUT */}
-                              {/* Only render if enabled. Note: We use a nested FormField for the price */}
-                              {enabledField.value && (
-                                <FormField
-                                  control={control}
-                                  // 3. Bind specifically to the 'price' (price) property
-                                  name={`rooms.${index}.price`}
-                                  render={({ field: priceField }) => (
-                                    <div className="w-full max-w-[140px]">
-                                      <Input
-                                        {...priceField}
-                                        type="number"
-                                        placeholder="0.00"
-                                        className="h-9 text-right"
-                                        // Prevent closing the toggle when clicking input
-                                        onClick={(e) => e.stopPropagation()}
-                                      />
-                                    </div>
-                                  )}
-                                />
-                              )}
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                );
-              })}
-            </CardContent>
-
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={goToPreviousStep}>
-                <ChevronLeft className="w-4 h-4 mr-2" /> Previous
-              </Button>
-              <Button onClick={goToNextStep}>
-                Next <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardFooter>
-          </Card>
+          <FlightDetails
+            currentStep={currentStep}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+          />
 
           {currentStep === "preview" && (
             <Card>
@@ -525,6 +278,7 @@ const PackageBuilder: React.FC = () => {
                   Review your package details before saving.
                 </CardDescription>
               </CardHeader>
+
               <CardContent className="space-y-6">
                 <div>
                   <h3 className="font-semibold mb-2">Basic Information</h3>
@@ -641,6 +395,69 @@ const PackageBuilder: React.FC = () => {
                     </p>
                   )}
                 </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Flight Schedule</h3>
+                  {(getValues("flights") ?? []).length > 0 ? (
+                    <div className="space-y-2 text-sm">
+                      {(getValues("flights") ?? []).map((flight, index) => (
+                        <div
+                          key={flight.id || index}
+                          className="p-3 bg-muted/30 rounded-lg"
+                        >
+                          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                            <div>
+                              <p className="text-muted-foreground text-xs">
+                                Month
+                              </p>
+                              <p className="font-medium">
+                                {flight.month || "—"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">
+                                Departure
+                              </p>
+                              <p className="font-medium">
+                                {flight.departure_date || "—"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">
+                                Depart Sector
+                              </p>
+                              <p className="font-medium">
+                                {flight.departure_sector || "—"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">
+                                Return
+                              </p>
+                              <p className="font-medium">
+                                {flight.return_date || "—"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">
+                                Return Sector
+                              </p>
+                              <p className="font-medium">
+                                {flight.return_sector || "—"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No flight schedules added
+                    </p>
+                  )}
+                </div>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <Button variant="outline" onClick={goToPreviousStep}>
@@ -653,7 +470,7 @@ const PackageBuilder: React.FC = () => {
             </Card>
           )}
         </FormProvider>
-      </Form>
+      </form>
     </div>
   );
 };

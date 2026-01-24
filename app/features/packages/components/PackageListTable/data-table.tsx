@@ -28,6 +28,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Copy, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
 import { Link } from "react-router";
+import { UmrahPackageService } from "~/services/package-service";
+import { createClient } from "~/lib/supabase/client";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -77,30 +79,39 @@ export function DataTable<TData, TValue>({
     return `${day}/${month}/${year}`;
   }, []);
 
-  const renderDropdownMenu = useCallback((pkg: TData & { id: string }) => {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <Link to={`/packages/edit/${pkg.id}`}>
-            <DropdownMenuItem>
-              <PencilIcon />
-              Edit
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem>
-            <Trash />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+  const handleDelete = useCallback((pkgId: string) => {
+    const supabase = createClient();
+
+    UmrahPackageService.deletePackage(supabase, pkgId);
   }, []);
+
+  const renderDropdownMenu = useCallback(
+    (pkg: TData & { id: string }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <Link to={`/packages/edit/${pkg.id}`}>
+              <DropdownMenuItem>
+                <PencilIcon />
+                Edit
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem onClick={() => handleDelete(pkg.id)}>
+              <Trash />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    [handleDelete],
+  );
 
   const renderCell = useCallback(
     (cell: Cell<TData, unknown>) => {
@@ -142,7 +153,7 @@ export function DataTable<TData, TValue>({
     [renderFormattedDate, renderPackageCell, renderDropdownMenu],
   );
   return (
-    <div className="overflow-hidde">
+    <div className="overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

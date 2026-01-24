@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import type { SupabasePackageDetails } from "~/features/quotation/types";
 import PackagePreviewModal from "./PackagePreviewModal";
-import { DataTable } from "../packages/PackageListTable/data-table";
-import { columns } from "../packages/PackageListTable/columns";
+import { DataTable } from "./components/PackageListTable/data-table";
+import { columns } from "./components/PackageListTable/columns";
 
 interface Props {
   data: SupabasePackageDetails[]; // Receives data from parent
@@ -21,7 +21,7 @@ const PackageList: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <>
+    <div>
       <DataTable
         columns={columns}
         data={data}
@@ -36,7 +36,7 @@ const PackageList: React.FC<Props> = ({ data }) => {
           onOpenChange={setIsPreviewOpen}
         />
       )}
-    </>
+    </div>
   );
 };
 
