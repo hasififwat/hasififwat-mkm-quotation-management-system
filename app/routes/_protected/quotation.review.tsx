@@ -6,6 +6,7 @@ import { UmrahQuotationService } from "~/services/quotation-service";
 import { redirect } from "react-router";
 import QuotationPDF from "~/components/QuotationPDF";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { Button } from "~/components/ui/button";
 import { Printer } from "lucide-react";
@@ -41,7 +42,10 @@ export default function QuotationReviewPage({
     window.print();
   };
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
@@ -72,48 +76,44 @@ export default function QuotationReviewPage({
     >
       <style>{`
         @media print {
-          /* COMPLETELY HIDE UI ELEMENTS */
-          header, aside, nav, button, .print\\:hidden { 
+          /* HIDE EVERYTHING INITIALLY */
+          body > * { 
             display: none !important; 
           }
-          
-          /* VISIBILITY TRICK FOR EVERYTHING ELSE */
-          body * {
-            visibility: hidden;
-          }
-          
-          /* RESTORE CONTENT */
-          #print-area, #print-area * {
-            visibility: visible;
+
+          /* SHOW ONLY OUR PRINT PORTAL */
+          body > #print-portal-root {
+            display: block !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            z-index: 9999;
+            background-color: white;
           }
 
-          /* FORCE POSITIONING TO TOP OF PAGE */
-          #print-area {
-            position: fixed; /* Fixed relative to viewport/paper */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+          /* RESET PAGE SETTINGS */
+          @page {
+            size: A4;
             margin: 0;
-            padding: 0;
-            z-index: 9999; /* Ensure it's on top */
-            background-color: white; /* Cover anything below */
           }
           
-           /* Force background graphics */
+          /* FORCE COLORS */
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          /* Override QuotationPDF styles for print */
-          #print-area > div {
-            box-shadow: none !important;
-            border: none !important;
+
+          /* OVERRIDE COMPONENT STYLES FOR FULL WIDTH */
+          #print-portal-root > div {
+            width: 100% !important;
+            max-width: none !important;
+            min-height: 0 !important; /* Allow height to fit content */
             margin: 0 !important;
-          }
-          @page {
-            size: A4;
-            margin: 0;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 20px !important; /* Add safe print padding */
           }
         }
       `}</style>
@@ -140,10 +140,14 @@ export default function QuotationReviewPage({
         </div>
       </div>
 
-      {/* Print View - Hidden on screen, visible on print */}
-      <div id="print-area" className="hidden print:block">
-        <QuotationPDF details={loaderData.initialData} />
-      </div>
+      {/* Print View Portal - Rendered directly to body to escape layout constraints */}
+      {mounted &&
+        createPortal(
+          <div id="print-portal-root" className="hidden print:block">
+            <QuotationPDF details={loaderData.initialData} />
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
