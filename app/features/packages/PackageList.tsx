@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { SupabasePackageDetails } from "~/features/quotation/types";
+import type { SupabasePackageDetails } from "~/features/quotation/legacy/types";
 import PackagePreviewModal from "./PackagePreviewModal";
 import { DataTable } from "./components/PackageListTable/data-table";
 import { columns } from "./components/PackageListTable/columns";
@@ -19,6 +19,8 @@ const PackageList: React.FC<Props> = ({ data }) => {
     setPreviewPackage(pkg);
     setIsPreviewOpen(true);
   };
+
+  console.log("PackageList data:", data);
 
   return (
     <div>

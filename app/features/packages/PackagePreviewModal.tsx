@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { SupabasePackageDetails } from "../quotation/types";
+import type { SupabasePackageDetails } from "../quotation/legacy/types";
 import {
   Dialog,
   DialogContent,

@@ -1,4 +1,4 @@
-import { Home, LogOut, Menu, Package } from "lucide-react";
+import { Home, LogOut, Menu, Package, FileText } from "lucide-react";
 import { Link, Form } from "react-router"; // ✅ Import Form
 import type { ReactNode } from "react";
 import type { User } from "@supabase/supabase-js"; // ✅ Import User type
@@ -21,15 +21,20 @@ import {
 import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
 
 const menuItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    url: "/dashboard",
-  },
+  // {
+  //   title: "Dashboard",
+  //   icon: Home,
+  //   url: "/dashboard",
+  // },
   {
     title: "Packages",
     icon: Package,
     url: "/packages",
+  },
+  {
+    title: "Quotations",
+    icon: FileText,
+    url: "/quotations",
   },
 ];
 
@@ -112,9 +117,7 @@ export function SidebarLayout({ children, title, user }: SidebarLayoutProps) {
           </div>
           <ThemeToggle />
         </header>
-        <main className="flex-1 flex flex-col mx-auto p-6 w-full">
-          {children}
-        </main>
+        <main className="grid grid-cols-12  w-full">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

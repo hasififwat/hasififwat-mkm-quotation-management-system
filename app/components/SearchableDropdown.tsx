@@ -22,8 +22,10 @@ export function SearchableDropdown({
   placeholder = "Select options...",
   optionValueKey = "value",
   optionsLabelKey = "name",
+  value: propValue,
   handleSelect,
 }: {
+  value: string | number;
   optionValueKey?: string;
   optionsLabelKey?: string;
   placeholder?: string;
@@ -34,8 +36,9 @@ export function SearchableDropdown({
   }[];
   handleSelect?: (value: string | number) => void;
 }) {
+  console.log("SearchableDropdown propValue:", propValue);
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(propValue);
 
   const onSelect = (selectedValue: string | number) => {
     setValue(selectedValue as string);
@@ -55,7 +58,9 @@ export function SearchableDropdown({
           className="justify-between"
         >
           {value
-            ? options.find((option) => option.value === value)[optionsLabelKey]
+            ? options.find((option) => option.value === value)?.[
+                optionsLabelKey as keyof (typeof options)[0]
+              ]
             : placeholder}
           <ChevronsUpDown className="opacity-50" />
         </Button>
@@ -71,17 +76,19 @@ export function SearchableDropdown({
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
-                  key={option[optionValueKey]}
-                  value={option[optionValueKey] as string}
+                  key={option[optionValueKey as keyof typeof option]}
+                  value={
+                    option[optionValueKey as keyof typeof option] as string
+                  }
                   onSelect={(currentValue) => {
                     onSelect(currentValue === value ? "" : currentValue);
                   }}
                 >
-                  {option[optionsLabelKey]}
+                  {option[optionsLabelKey as keyof typeof option]}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === option[optionValueKey]
+                      value === option[optionValueKey as keyof typeof option]
                         ? "opacity-100"
                         : "opacity-0",
                     )}

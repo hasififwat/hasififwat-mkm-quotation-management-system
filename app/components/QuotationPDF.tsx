@@ -1,32 +1,42 @@
 import type React from "react";
-import type {
-  PackageDetails,
-  QuotationData,
-} from "../features/quotation/types";
-import { TERMS_AND_CONDITIONS } from "../features/quotation/constants";
+import type { QuotationFullDetails } from "../features/quotation/schema";
+import { TERMS_AND_CONDITIONS } from "../features/quotation/legacy/constants";
 import {
   formatCurrency as fmt,
   formatDateRange,
-} from "../features/quotation/utils";
+} from "../features/quotation/legacy/utils";
 
 interface Props {
-  data: QuotationData;
-  pkg: PackageDetails;
+  details: QuotationFullDetails;
 }
 
-const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
-  const getPriceByRoom = (type: string) => {
-    if (type === "double") return pkg.priceDouble;
-    if (type === "triple") return pkg.priceTriple;
-    return pkg.priceQuad;
-  };
+const QuotationPDF: React.FC<Props> = ({ details }) => {
+  const pkg = details.package;
+  const activeHotels = pkg.hotels.filter((h) => h.enabled);
+  const flights = details.selected_flight;
+  const rooms = details.items.selected_rooms;
+  const paxCount = rooms.reduce((acc, r) => acc + r.pax, 0);
+  const addons = details.items.adds_ons;
+  const discounts = details.items.discounts;
 
-  const paxCount = typeof data.pax === "number" ? data.pax : 0;
-  const unitPrice = getPriceByRoom(data.roomType);
-  const total = unitPrice * paxCount;
+  const packageTotal = rooms.reduce((acc, r) => acc + r.subtotal, 0);
+
+  // We rely on details.total_amount for the grand total if it's already calculated correctly on backend.
+  // Otherwise, if we need to show breakdown logic:
+  // Grand Total = Package Total + Addons - Discounts
+  // For display purposes, let's trust details.total_amount, but we'll show the sub-items for clarity.
+
+  const total = details.total_amount;
+
+  // Format date
+  const createDate = new Date(details.created_at).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 
   return (
-    <div className="bg-white mx-auto p-12 shadow-2xl min-h-[1123px] w-[794px] border border-gray-200 text-[10px] leading-tight">
+    <div className="bg-white text-black mx-auto p-12 shadow-2xl min-h-[1123px] w-[794px] border border-gray-200 text-[10px] leading-tight">
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div className="text-gray-600 text-[8px] max-w-[200px]">
@@ -51,7 +61,7 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
         </div>
       </div>
 
-      <div className="text-center mb-6">
+      <div className="flex justify-end   mb-6">
         <div className="inline-block border border-gray-800 px-8 py-1 font-bold text-xs">
           SEBUT HARGA
         </div>
@@ -59,24 +69,24 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
 
       {/* Info Grid */}
       <div className="flex justify-between mb-6">
-        <div className="w-1/2">
+        <div className="w-1/3">
           <div className="flex mb-1">
             <span className="font-bold w-20">KEPADA :</span>
             <span className="uppercase">
-              {data.clientName || "CUSTOMER NAME"}
+              {details.client_name || "CUSTOMER NAME"}
             </span>
           </div>
         </div>
-        <div className="w-1/2 flex flex-col items-end">
-          <div className="grid grid-cols-2 gap-x-2 w-full max-w-[200px]">
+        <div className="w-2/3 flex flex-col items-end">
+          <div className="grid grid-cols-2 gap-x-2 w-full max-w-[230px]">
             <span className="font-bold">NO. RUJUKAN</span>
-            <span>: {data.referenceNumber}</span>
+            <span>: {details.reference_number}</span>
             <span className="font-bold">TARIKH</span>
-            <span>: {data.date}</span>
+            <span>: {createDate}</span>
             <span className="font-bold">PIC</span>
-            <span>: {data.salesperson}</span>
+            <span>: {details.pic_name}</span>
             <span className="font-bold">PEJABAT</span>
-            <span>: {data.office}</span>
+            <span>: {details.branch}</span>
           </div>
         </div>
       </div>
@@ -85,19 +95,18 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
       <table className="w-full border-collapse mb-1 text-[9px]">
         <thead>
           <tr className="bg-[#1a365d] text-white">
-            <th className="border border-gray-400 p-1 text-center font-bold">
+            <th className="border border-gray-400 p-1 text-center font-bold w-[120px] max-w-[120px]">
               PAKEJ / BILIK
             </th>
-            <th className="border border-gray-400 p-1 text-center font-bold">
-              DOUBLE ROOM/PAX
-            </th>
-            <th className="border border-gray-400 p-1 text-center font-bold">
-              TRIPLE ROOM/PAX
-            </th>
-            <th className="border border-gray-400 p-1 text-center font-bold">
-              QUAD ROOM/PAX
-            </th>
-            <th className="border border-gray-400 p-1 text-center font-bold uppercase bg-[#d9e2f3] text-black">
+            {rooms.map((room) => (
+              <th
+                key={room.room_type}
+                className="border border-gray-400 p-1 text-center font-bold"
+              >
+                {room.room_type.toUpperCase()} / PAX
+              </th>
+            ))}
+            <th className="w-[120px] max-w-[120px] border border-gray-400 p-1 text-center font-bold uppercase bg-[#d9e2f3] text-black">
               JUMLAH {paxCount} PAX
             </th>
           </tr>
@@ -107,23 +116,80 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             <td className="border border-gray-400 p-1 text-center font-bold">
               {pkg.name} (RM)
             </td>
-            <td className="border border-gray-400 p-1 text-center">
-              {fmt(pkg.priceDouble)}
-            </td>
-            <td className="border border-gray-400 p-1 text-center">
-              {fmt(pkg.priceTriple)}
-            </td>
-            <td className="border border-gray-400 p-1 text-center">
-              {fmt(pkg.priceQuad)}
-            </td>
+            {rooms.map((room) => (
+              <td
+                key={room.room_type}
+                className="border border-gray-400 p-1 text-center "
+              >
+                {fmt(
+                  pkg.available_rooms.find(
+                    (r) => r.room_type === room.room_type,
+                  )?.price || 0,
+                )}
+                {room.pax > 0 && (
+                  <span className="font-bold ml-1 text-gray-700">
+                    ({room.pax} PAX)
+                  </span>
+                )}
+              </td>
+            ))}
             <td className="border border-gray-400 p-1 text-center font-bold bg-[#d9e2f3]">
-              {fmt(total)}
+              {fmt(packageTotal)}
             </td>
           </tr>
+          {/* Add-ons */}
+          {addons.map((addon, i) => (
+            <tr key={`addon-${i}`}>
+              <td
+                className="border border-gray-400 p-1 text-center font-bold"
+                colSpan={1}
+              >
+                {addon.name}
+              </td>
+              <td
+                className="border border-gray-400 p-1 text-center"
+                colSpan={rooms.length}
+              >
+                {fmt(addon.price)}
+                <span className="font-bold ml-1 text-gray-700">
+                  ({addon.pax} PAX)
+                </span>
+              </td>
+              <td className="border border-gray-400 p-1 text-center font-bold bg-[#d9e2f3]">
+                {fmt(addon.subtotal)}
+              </td>
+            </tr>
+          ))}
+
+          {/* Discounts */}
+          {discounts.map((discount, i) => (
+            <tr key={`discount-${i}`}>
+              <td
+                className="border border-gray-400 p-1 text-center font-bold "
+                colSpan={1}
+              >
+                {discount.name}
+              </td>
+              <td
+                className="border border-gray-400 p-1 text-center"
+                colSpan={rooms.length}
+              >
+                {fmt(discount.price)}
+                <span className="font-bold ml-1 text-gray-700">
+                  ({discount.pax} PAX)
+                </span>
+              </td>
+              <td className="border border-gray-400 p-1 text-center font-bold  bg-[#d9e2f3]">
+                {fmt(discount.subtotal)}
+              </td>
+            </tr>
+          ))}
+
           <tr>
+            <td className="border border-r-0 border-gray-400 p-1 text-center font-bold"></td>
             <td
-              className="border border-gray-400 p-1 text-center font-bold h-6"
-              colSpan={4}
+              className="border border-l-0 border-gray-400 p-1 text-center font-bold h-6"
+              colSpan={rooms.length}
             >
               JUMLAH KESELURUHAN (RM)
             </td>
@@ -133,7 +199,7 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
           </tr>
         </tbody>
       </table>
-      <div className="text-right text-[7px] text-red-600 font-bold mb-4 italic">
+      <div className="text-right  text-red-600 font-bold mb-4 italic">
         *TERTAKLUK KEKOSONGAN & HARGA SEMASA
       </div>
 
@@ -147,14 +213,19 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             <td className="border border-gray-400 p-1 font-bold w-1/4 bg-gray-100 uppercase">
               JENIS PENERBANGAN
             </td>
-            <td className="border border-gray-400 p-1">{pkg.flightType}</td>
+            <td className="border border-gray-400 p-1">
+              {pkg.transport || "N/A"}
+            </td>
           </tr>
           <tr>
             <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
               TARIKH CADANGAN
             </td>
             <td className="border border-gray-400 p-1">
-              {formatDateRange(data.startDate, data.endDate)}
+              {formatDateRange(
+                flights?.departure_date || "",
+                flights?.return_date || "",
+              )}
             </td>
           </tr>
           <tr>
@@ -163,35 +234,31 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             </td>
             <td className="border border-gray-400 p-1">{pkg.duration}</td>
           </tr>
-          <tr>
-            <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
-              HOTEL MAKKAH
-            </td>
-            <td className="border border-gray-400 p-1">{pkg.hotelMakkah}</td>
-          </tr>
-          <tr>
-            <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
-              HOTEL MADINAH
-            </td>
-            <td className="border border-gray-400 p-1">{pkg.hotelMadinah}</td>
-          </tr>
-          <tr>
-            <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
-              HOTEL TAIF
-            </td>
-            <td className="border border-gray-400 p-1">{pkg.hotelTaif}</td>
-          </tr>
+          {activeHotels.map((hotel, i) => (
+            <tr key={`hotel-${i}`}>
+              <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
+                HOTEL {hotel.hotel_type}
+              </td>
+              <td className="border border-gray-400 p-1">{hotel.name}</td>
+            </tr>
+          ))}
           <tr>
             <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
               JENIS MAKANAN
             </td>
-            <td className="border border-gray-400 p-1">{pkg.meals}</td>
+            <td className="border border-gray-400 p-1">
+              {Array.from(new Set(activeHotels.flatMap((h) => h.meals))).join(
+                ", ",
+              )}
+            </td>
           </tr>
           <tr>
             <td className="border border-gray-400 p-1 font-bold bg-gray-100 uppercase">
               PENGANGKUTAN
             </td>
-            <td className="border border-gray-400 p-1">{pkg.transport}</td>
+            <td className="border border-gray-400 p-1">
+              {pkg.transport || "N/A"}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -203,8 +270,8 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             PAKEJ TERMASUK
           </div>
           <div className="p-2 min-h-[100px]">
-            {pkg.inclusions.map((item, i) => (
-              <p key={i} className="mb-1 text-[7px] uppercase">
+            {(pkg.inclusions?.split("\n") || []).map((item, i) => (
+              <p key={i} className="mb-1  uppercase">
                 * {item}
               </p>
             ))}
@@ -215,8 +282,8 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             PAKEJ TIDAK TERMASUK
           </div>
           <div className="p-2 min-h-[100px]">
-            {pkg.exclusions.map((item, i) => (
-              <p key={i} className="mb-1 text-[7px] uppercase">
+            {(pkg.exclusions?.split("\n") || []).map((item, i) => (
+              <p key={i} className="mb-1  uppercase">
                 * {item}
               </p>
             ))}
@@ -234,13 +301,13 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             <div className="w-8 border-r border-gray-400 p-1 text-center font-bold bg-gray-100">
               {i + 1}
             </div>
-            <div className="flex-1 p-1 text-[7px] uppercase">{term}</div>
+            <div className="flex-1 p-1  uppercase">{term}</div>
           </div>
         ))}
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-100 p-4 flex justify-between items-center text-[7px] border-t border-gray-300">
+      <div className="bg-gray-100 p-4 flex justify-between items-center  border-t border-gray-300">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
           <span className="font-bold uppercase">Laman Web</span>
           <span>www.mkm.my</span>

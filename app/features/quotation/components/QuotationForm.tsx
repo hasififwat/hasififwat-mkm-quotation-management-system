@@ -1,6 +1,6 @@
 import type React from "react";
 import { useRef, useEffect, useState } from "react";
-import type { QuotationData, PackageDetails } from "../types";
+import type { QuotationData, PackageDetails } from "../legacy/types";
 import { packageStore } from "@/features/packages/packageStore";
 import { clientStore } from "@/features/clients/clientStore";
 import type { Client } from "@/features/clients/types";

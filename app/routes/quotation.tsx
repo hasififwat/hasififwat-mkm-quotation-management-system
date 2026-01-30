@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { Route } from "./+types/quotation";
+
 import { ProtectedRoute } from "~/features/authentication /components/ProtectedRoute";
-import QuotationManager from "~/features/quotation/QuotationManager";
+import QuotationManager from "~/features/quotation/legacy/QuotationManager";
 
 export function meta() {
   return [

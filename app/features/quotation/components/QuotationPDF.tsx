@@ -1,7 +1,7 @@
 import React from "react";
-import type { PackageDetails, QuotationData } from "../types";
-import { TERMS_AND_CONDITIONS } from "../constants";
-import { formatCurrency as fmt, formatDateRange } from "../utils";
+import type { PackageDetails, QuotationData } from "../legacy/types";
+import { TERMS_AND_CONDITIONS } from "../legacy/constants";
+import { formatCurrency as fmt, formatDateRange } from "../legacy/utils";
 
 interface Props {
   data: QuotationData;
@@ -56,7 +56,7 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
 
       {/* Info Grid */}
       <div className="flex justify-between mb-6">
-        <div className="w-1/2">
+        <div className="w-1/3">
           <div className="flex mb-1">
             <span className="font-bold w-20">KEPADA :</span>
             <span className="uppercase">
@@ -64,8 +64,8 @@ const QuotationPDF: React.FC<Props> = ({ data, pkg }) => {
             </span>
           </div>
         </div>
-        <div className="w-1/2 flex flex-col items-end">
-          <div className="grid grid-cols-2 gap-x-2 w-full max-w-[200px]">
+        <div className="w-2/3 flex flex-col items-end">
+          <div className="grid grid-cols-2 w-full max-w-[200px]">
             <span className="font-bold">NO. RUJUKAN</span>
             <span>: {data.referenceNumber}</span>
             <span className="font-bold">TARIKH</span>

@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/quotation-history";
 import { ProtectedRoute } from "~/features/authentication /components/ProtectedRoute";
-import ManageQuotation from "~/features/quotation/ManageQuotation";
-import type { SavedQuotation } from "~/features/quotation/types";
+import ManageQuotation from "~/features/quotation/legacy/ManageQuotation";
+import type { SavedQuotation } from "~/features/quotation/legacy/types";
 
 export function meta() {
   return [

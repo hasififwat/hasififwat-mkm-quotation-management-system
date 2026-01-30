@@ -107,6 +107,7 @@ const PackageBuilder: React.FC = () => {
 
   const onSubmit = (data: PackageDetailsForm) => {
     console.log("Submitting package data:", data);
+
     submit(data, {
       method: "POST",
       encType: "application/json",
@@ -173,7 +174,7 @@ const PackageBuilder: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto py-6 space-y-6 animate-slideIn">
+    <div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 animate-slideIn">
       <div className="flex items-center gap-4">
         <Link to="/packages" className="text-sm text-muted-foreground">
           <Button

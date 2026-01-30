@@ -22,5 +22,15 @@ export default [
     route("/packages/edit/:pid", "routes/_protected/package.edit.tsx", {
       id: "package-edit",
     }),
+    route("/clients", "routes/_protected/client.index.tsx"),
+    route("/clients/create", "routes/_protected/client.create.tsx"),
+    route("/quotations", "routes/_protected/quotation.index.tsx"),
+    route("/quotations/create", "routes/_protected/quotation.create.tsx"),
+    route("/quotations/edit/:qid", "routes/_protected/quotation.edit.tsx", {
+      id: "quotation-edit",
+    }),
+    route("/quotations/review/:qid", "routes/_protected/quotation.review.tsx", {
+      id: "quotation-review",
+    }),
   ]),
 ] satisfies RouteConfig;
