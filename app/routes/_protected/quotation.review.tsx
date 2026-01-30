@@ -38,84 +38,7 @@ export default function QuotationReviewPage({
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
-    if (!contentRef.current) return;
-
-    // Create a hidden iframe
-    const iframe = document.createElement("iframe");
-    iframe.style.position = "absolute";
-    iframe.style.width = "0px";
-    iframe.style.height = "0px";
-    iframe.style.border = "none";
-    document.body.appendChild(iframe);
-
-    // Write content to the iframe
-    const doc = iframe.contentWindow?.document;
-    if (doc) {
-      doc.open();
-      doc.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Print Quotation</title>
-            <style>
-              /* Copy Tailwind styles or critical styles here */
-              @media print {
-                @page { margin: 0; size: A4; }
-                body { margin: 0; padding: 0; background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                
-                /* Reset content styles for print */
-                #print-content > div {
-                    box-shadow: none !important;
-                    border: none !important;
-                    margin: 0 !important;
-                    width: 100% !important; 
-                    height: 100% !important;
-                    max-width: none !important;
-                }
-              }
-              /* Add minimal grid/flex support */
-              .flex { display: flex; }
-              .justify-between { justify-content: space-between; }
-              .items-center { align-items: center; }
-              .text-center { text-align: center; }
-              .font-bold { font-weight: bold; }
-              .uppercase { text-transform: uppercase; }
-              .border { border-width: 1px; }
-              .border-collapse { border-collapse: collapse; }
-              
-              /* We need to ensure all the styles from the app affecting QuotationPDF are present. 
-                 Ideally, we'd link the stylesheets. */
-            </style>
-            <!-- Link to your app's compiled CSS if possible, otherwise rely on inline styles -->
-             ${Array.from(
-               document.querySelectorAll("style, link[rel='stylesheet']"),
-             )
-               .map((node) => node.outerHTML)
-               .join("")}
-          </head>
-          <body>
-            <div id="print-content">
-              ${contentRef.current.innerHTML}
-            </div>
-            <script>
-               // Wait for images/fonts if needed, then print
-               window.onload = () => {
-                 setTimeout(() => {
-                   window.print();
-                   // Cleanup handled by parent via timeout usually, or we can leave it
-                 }, 500);
-               };
-            </script>
-          </body>
-        </html>
-      `);
-      doc.close();
-
-      // Cleanup iframe after printing (roughly)
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 2000); // Give enough time for the print dialog to open
-    }
+    window.print();
   };
 
   useEffect(() => {
@@ -147,6 +70,53 @@ export default function QuotationReviewPage({
       ref={containerRef}
       className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative"
     >
+      <style>{`
+        @media print {
+          /* COMPLETELY HIDE UI ELEMENTS */
+          header, aside, nav, button, .print\\:hidden { 
+            display: none !important; 
+          }
+          
+          /* VISIBILITY TRICK FOR EVERYTHING ELSE */
+          body * {
+            visibility: hidden;
+          }
+          
+          /* RESTORE CONTENT */
+          #print-area, #print-area * {
+            visibility: visible;
+          }
+
+          /* FORCE POSITIONING TO TOP OF PAGE */
+          #print-area {
+            position: fixed; /* Fixed relative to viewport/paper */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            z-index: 9999; /* Ensure it's on top */
+            background-color: white; /* Cover anything below */
+          }
+          
+           /* Force background graphics */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          /* Override QuotationPDF styles for print */
+          #print-area > div {
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+          }
+          @page {
+            size: A4;
+            margin: 0;
+          }
+        }
+      `}</style>
       <div className="fixed bottom-8 right-8 z-50 print:hidden">
         <Button onClick={() => handlePrint()} size="lg" className="shadow-xl">
           <Printer className="mr-2 h-4 w-4" />
@@ -154,7 +124,9 @@ export default function QuotationReviewPage({
         </Button>
       </div>
 
+      {/* Screen View */}
       <div
+        className="print:hidden"
         style={{
           width: pdfWidth,
           height: pdfHeight, // Reserve original space to allow transform to work contextually
@@ -166,6 +138,11 @@ export default function QuotationReviewPage({
         <div ref={contentRef}>
           <QuotationPDF details={loaderData.initialData} />
         </div>
+      </div>
+
+      {/* Print View - Hidden on screen, visible on print */}
+      <div id="print-area" className="hidden print:block">
+        <QuotationPDF details={loaderData.initialData} />
       </div>
     </div>
   );
