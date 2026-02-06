@@ -81,7 +81,12 @@ export default function QuotationReviewPage({
 	const documentTitle = `${toFileSafe(loaderData.initialData.client_name || "customer")}_${issuedDate}`;
 
     
-    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle});
+    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle, pageStyle: `
+    @page { 
+        size: A4;
+        margin: 0; 
+        }
+    `});    
 
     
 	return (
