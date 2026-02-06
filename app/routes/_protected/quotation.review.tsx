@@ -85,7 +85,7 @@ export default function QuotationReviewPage({
 
     
 	return (
-             <div  className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative">
+             <div  className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
                	<div 
             className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
            
@@ -97,8 +97,21 @@ export default function QuotationReviewPage({
 					<Printer className="mr-2 h-4 w-4" />
 					Export PDF
 				</Button>
-			</div>
-                    <QuotationPDF details={loaderData.initialData} ref={pdfRef} />
+			</div >
+                   
+                   
+                   <div style={{ 
+                    position: "absolute", 
+                    top: "-9999px", 
+                    left: "-9999px",
+                    width: "794px" // Fixed A4 width
+                }}>
+
+ <QuotationPDF details={loaderData.initialData} ref={pdfRef} />     
+
+
+                   </div>
+                   
              </div>
         
 		// <div
