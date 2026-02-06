@@ -1,0 +1,16 @@
+{
+	"window.title": "${activeEditorLong}${separator}${rootName}",
+	// Enable by language
+	"[php]": {
+		"editor.formatOnSave": true
+	},
+	"[javascript][javascriptreact][vue][tsx]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.fixAll": "explicit",
+			"source.organizeImports.biome": "explicit",
+			"source.fixAll.biome": "explicit"
+		},
+		"editor.formatOnSave": true
+	}
+}

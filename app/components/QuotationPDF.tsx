@@ -37,7 +37,6 @@ const QuotationPDF: React.FC<Props> = ({ details, ref = null }) => {
 	});
 
 	return (
-		<div>
 			<div
 				ref={ref}
 				className="quotation-print bg-white text-black mx-auto p-12 shadow-2xl min-h-280.75 w-198.5 border border-gray-200 text-[10px] leading-tight print:shadow-none print:min-h-0 print:w-auto print:border-0"
@@ -344,7 +343,7 @@ const QuotationPDF: React.FC<Props> = ({ details, ref = null }) => {
 					</div>
 				</div>
 			</div>
-		</div>
+		
 	);
 };
 
