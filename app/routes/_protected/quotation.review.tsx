@@ -100,17 +100,21 @@ export default function QuotationReviewPage({
 			</div >
                    
                    
-                   <div style={{ 
+                   {/* <div style={{ 
                     position: "absolute", 
                     top: "-9999px", 
                     left: "-9999px",
                     width: "794px" // Fixed A4 width
                 }}>
 
- <QuotationPDF details={loaderData.initialData} ref={pdfRef} />     
 
 
-                   </div>
+
+
+                
+                   </div> */}
+
+                    <QuotationPDF details={loaderData.initialData} ref={pdfRef} />     
                    
              </div>
         
