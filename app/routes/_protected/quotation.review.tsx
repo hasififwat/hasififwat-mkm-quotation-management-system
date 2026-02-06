@@ -112,9 +112,11 @@ export default function QuotationReviewPage({
 
 
                 
-                   </div> */}
+                   </div> */} 
 
-                    <QuotationPDF details={loaderData.initialData} ref={pdfRef} />     
+                   <div ref={pdfRef}> This should not have spave on top</div>
+
+                    {/* <QuotationPDF details={loaderData.initialData} ref={pdfRef} />      */}
                    
              </div>
         
