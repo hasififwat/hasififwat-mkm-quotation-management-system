@@ -109,13 +109,13 @@ export default function QuotationReviewPage({
 			{/* Screen View */}
 			<div
 				className="print:hidden"
-				// style={{
-				// 	width: pdfWidth,
-				// 	height: pdfHeight, // Reserve original space to allow transform to work contextually
-				// 	transform: `scale(${scale})`,
-				// 	transformOrigin: "top center",
-				// 	marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
-				// }}
+				style={{
+					width: pdfWidth,
+					height: pdfHeight, // Reserve original space to allow transform to work contextually
+					transform: `scale(${scale})`,
+					transformOrigin: "top center",
+					marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
+				}}
 			>
 				<div ref={contentRef}>
 					<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
