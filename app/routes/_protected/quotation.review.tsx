@@ -27,7 +27,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 		return redirect("/quotations");
 	}
 
-	console.log("Initial Quotation Data:", initialData);
+
 
 	return { initialData: initialData };
 }
@@ -39,6 +39,7 @@ export default function QuotationReviewPage({
 	const pdfRef = useRef<HTMLDivElement>(null);
 	const [scale, setScale] = useState(1);
 	const contentRef = useRef<HTMLDivElement>(null);
+    const [isPrinting, setIsPrinting] = useState(false);
 
 	const [mounted, setMounted] = useState(false);
 
@@ -79,15 +80,23 @@ export default function QuotationReviewPage({
 		.slice(0, 10);
 	const documentTitle = `${toFileSafe(loaderData.initialData.client_name || "customer")}_${issuedDate}`;
 
-	const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle });
+    console.log("loaderData in review page:", loaderData);
+    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle  });
 
+    
 	return (
+        
+        
 		<div
 			ref={containerRef}
 			className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative"
 		>
-			<div className="fixed bottom-8 right-8 z-50 print:hidden">
-				<Button
+         
+            {/* Print Button */}
+			<div 
+            className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
+           
+			    <Button
 					onClick={() => reactToPrintFn()}
 					size="lg"
 					className="shadow-xl"
@@ -100,13 +109,13 @@ export default function QuotationReviewPage({
 			{/* Screen View */}
 			<div
 				className="print:hidden"
-				style={{
-					width: pdfWidth,
-					height: pdfHeight, // Reserve original space to allow transform to work contextually
-					transform: `scale(${scale})`,
-					transformOrigin: "top center",
-					marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
-				}}
+				// style={{
+				// 	width: pdfWidth,
+				// 	height: pdfHeight, // Reserve original space to allow transform to work contextually
+				// 	transform: `scale(${scale})`,
+				// 	transformOrigin: "top center",
+				// 	marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
+				// }}
 			>
 				<div ref={contentRef}>
 					<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
@@ -114,13 +123,15 @@ export default function QuotationReviewPage({
 			</div>
 
 			{/* Print View Portal - Rendered directly to body to escape layout constraints */}
-			{mounted &&
+			{/* {mounted &&
 				createPortal(
 					<div id="print-portal-root" className="hidden print:block">
 						<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
 					</div>,
 					document.body,
-				)}
+				)} */}
 		</div>
 	);
 }
+
+
