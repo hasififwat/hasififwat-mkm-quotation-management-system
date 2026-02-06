@@ -85,24 +85,14 @@ export default function QuotationReviewPage({
     @page { 
         size: A4; 
         margin: 0; 
-    }
-    @media print {
-        html, body {
-            height: 100%;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden; /* Prevents accidental second page */
-        }
-        /* This targets the container you are printing */
-        /* A4 height is ~11.23in. We subtract 0.5in (top+bottom) to be safe */
-        div[ref="pdfRef"], .printable-area { 
-            height: 10.7in !important; 
+         height: 10.7in !important; 
             max-height: 10.7in !important;
             overflow: hidden !important;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-        }
+    }
+   
     }
     `});    
 
