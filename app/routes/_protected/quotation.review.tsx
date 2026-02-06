@@ -118,9 +118,13 @@ export default function QuotationReviewPage({
 				}}
 			>
 				<div ref={contentRef} className="print:hidden">
-					<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
+					<QuotationPDF details={loaderData.initialData}  />
 				</div>
 			</div>
+
+            <div ref={pdfRef}>
+                    <QuotationPDF details={loaderData.initialData} />
+             </div>
 
 			{/* Print View Portal - Rendered directly to body to escape layout constraints */}
 			{/* {mounted &&
