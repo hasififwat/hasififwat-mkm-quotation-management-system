@@ -80,8 +80,8 @@ export default function QuotationReviewPage({
 		.slice(0, 10);
 	const documentTitle = `${toFileSafe(loaderData.initialData.client_name || "customer")}_${issuedDate}`;
 
-    console.log("loaderData in review page:", loaderData);
-    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle  });
+    
+    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle});
 
     
 	return (
@@ -89,7 +89,7 @@ export default function QuotationReviewPage({
         
 		<div
 			ref={containerRef}
-			className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative"
+			className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:hidden"
 		>
          
             {/* Print Button */}
@@ -117,7 +117,7 @@ export default function QuotationReviewPage({
 					marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
 				}}
 			>
-				<div ref={contentRef}>
+				<div ref={contentRef} className="print:hidden">
 					<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
 				</div>
 			</div>
