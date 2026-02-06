@@ -1,90 +1,89 @@
-import { Link, Form, redirect } from "react-router";
+import { Plus, Search } from "lucide-react";
+import { Form, Link, redirect } from "react-router";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { getServerClient } from "~/lib/supabase/server";
-import type { Route } from "./+types/quotation.index";
-import { UmrahQuotationService } from "~/services/quotation-service";
-import { useDebouncedSearch } from "~/hooks/useDebounce";
 import QuotationListing from "~/features/quotation/QuotationListing";
+import { useDebouncedSearch } from "~/hooks/useDebounce";
+import { getServerClient } from "~/lib/supabase/server";
+import { UmrahQuotationService } from "~/services/quotation-service";
+import type { Route } from "./+types/quotation.index";
 
 export function meta() {
-  return [
-    { title: "Quotations" },
-    { name: "description", content: "Manage Umrah Quotations" },
-  ];
+	return [
+		{ title: "Quotations" },
+		{ name: "description", content: "Manage Umrah Quotations" },
+	];
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const headers = new Headers();
-  const supabase = getServerClient(request, headers);
+	const headers = new Headers();
+	const supabase = getServerClient(request, headers);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    throw redirect("/login", { headers });
-  }
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (!user) {
+		throw redirect("/login", { headers });
+	}
 
-  const url = new URL(request.url);
-  const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
+	const url = new URL(request.url);
+	const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
 
-  const allQuotations = await UmrahQuotationService.getQuotations(supabase);
+	const allQuotations = await UmrahQuotationService.getQuotations(supabase);
 
-  console.log("All Quotations:", allQuotations);
+	console.log("All Quotations:", allQuotations);
 
-  const quotations = searchTerm
-    ? allQuotations.filter((q) =>
-        q.package.name.toLowerCase().includes(searchTerm),
-      )
-    : allQuotations;
-  return { quotations, searchTerm };
+	const quotations = searchTerm
+		? allQuotations.filter((q) =>
+				q.package.name.toLowerCase().includes(searchTerm),
+			)
+		: allQuotations;
+	return { quotations, searchTerm };
 }
 
 export default function QuotationListingPage({
-  loaderData,
+	loaderData,
 }: Route.ComponentProps) {
-  const { quotations, searchTerm } = loaderData;
+	const { quotations, searchTerm } = loaderData;
 
-  const searchProps = useDebouncedSearch(searchTerm);
-  return (
-    <div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">
-            Travel Quotations
-          </h2>
-          <p className="text-slate-500 text-xs md:text-sm">
-            Manage your Umrah quotations and custom travel bundles.
-          </p>
-        </div>
+	const searchProps = useDebouncedSearch(searchTerm);
+	return (
+		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+				<div>
+					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+						Travel Quotations
+					</h2>
+					<p className="text-slate-500 text-xs md:text-sm">
+						Manage your Umrah quotations and custom travel bundles.
+					</p>
+				</div>
 
-        <Button asChild className="w-full md:w-auto gap-2">
-          <Link to="/quotations/create">
-            <Plus className="w-4 h-4" /> Create Quotation
-          </Link>
-        </Button>
-      </div>
+				<Button asChild className="w-full md:w-auto gap-2">
+					<Link to="/quotations/create">
+						<Plus className="w-4 h-4" /> Create Quotation
+					</Link>
+				</Button>
+			</div>
 
-      <Card className="overflow-hidden">
-        <CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100">
-          <Form method="get" className="relative" role="search">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+			<Card className="overflow-hidden">
+				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100">
+					<Form method="get" className="relative" role="search">
+						<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
 
-            <Input
-              name="q"
-              placeholder="Search by package name..."
-              className="pl-9 h-9"
-              {...searchProps}
-            />
-          </Form>
-        </CardHeader>
-        <CardContent className="p-0">
-          <QuotationListing data={quotations} />
-        </CardContent>
-      </Card>
-    </div>
-  );
+						<Input
+							name="q"
+							placeholder="Search by package name..."
+							className="pl-9 h-9"
+							{...searchProps}
+						/>
+					</Form>
+				</CardHeader>
+				<CardContent className="p-0">
+					<QuotationListing data={quotations} />
+				</CardContent>
+			</Card>
+		</div>
+	);
 }

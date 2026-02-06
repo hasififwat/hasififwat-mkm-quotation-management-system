@@ -1,45 +1,45 @@
 import { useState } from "react";
 
 import type { SupabasePackageDetails } from "~/features/quotation/legacy/types";
-import PackagePreviewModal from "./PackagePreviewModal";
-import { DataTable } from "./components/PackageListTable/data-table";
 import { columns } from "./components/PackageListTable/columns";
+import { DataTable } from "./components/PackageListTable/data-table";
+import PackagePreviewModal from "./PackagePreviewModal";
 
 interface Props {
-  data: SupabasePackageDetails[]; // Receives data from parent
+	data: SupabasePackageDetails[]; // Receives data from parent
 }
 
 const PackageList: React.FC<Props> = ({ data }) => {
-  // ✅ Only UI State remains (Modal)
-  const [previewPackage, setPreviewPackage] =
-    useState<SupabasePackageDetails | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+	// ✅ Only UI State remains (Modal)
+	const [previewPackage, setPreviewPackage] =
+		useState<SupabasePackageDetails | null>(null);
+	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const handlePreviewPckg = (pkg: SupabasePackageDetails) => {
-    setPreviewPackage(pkg);
-    setIsPreviewOpen(true);
-  };
+	const handlePreviewPckg = (pkg: SupabasePackageDetails) => {
+		setPreviewPackage(pkg);
+		setIsPreviewOpen(true);
+	};
 
-  console.log("PackageList data:", data);
+	console.log("PackageList data:", data);
 
-  return (
-    <div>
-      <DataTable
-        columns={columns}
-        data={data}
-        handlePreview={handlePreviewPckg}
-      />
+	return (
+		<div>
+			<DataTable
+				columns={columns}
+				data={data}
+				handlePreview={handlePreviewPckg}
+			/>
 
-      {/* Preview Modal Logic */}
-      {previewPackage && (
-        <PackagePreviewModal
-          pkg={previewPackage}
-          open={isPreviewOpen}
-          onOpenChange={setIsPreviewOpen}
-        />
-      )}
-    </div>
-  );
+			{/* Preview Modal Logic */}
+			{previewPackage && (
+				<PackagePreviewModal
+					pkg={previewPackage}
+					open={isPreviewOpen}
+					onOpenChange={setIsPreviewOpen}
+				/>
+			)}
+		</div>
+	);
 };
 
 export default PackageList;

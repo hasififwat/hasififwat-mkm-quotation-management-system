@@ -1,7 +1,7 @@
 export function meta() {
-  return [{ title: "Clients" }];
+	return [{ title: "Clients" }];
 }
 
 export default function ClientCreatePage() {
-  return <div>Client Create Page</div>;
+	return <div>Client Create Page</div>;
 }

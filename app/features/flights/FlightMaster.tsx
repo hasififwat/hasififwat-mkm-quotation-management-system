@@ -313,7 +313,7 @@
 //
 
 function FlightMaster() {
-  return <div>Flight Master Component</div>;
+	return <div>Flight Master Component</div>;
 }
 
 export default FlightMaster;

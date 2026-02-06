@@ -1,3 +1,3 @@
 export async function loader() {
-  return new Response(null, { status: 204 });
+	return new Response(null, { status: 204 });
 }

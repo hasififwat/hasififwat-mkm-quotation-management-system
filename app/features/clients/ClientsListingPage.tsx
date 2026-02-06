@@ -1,3 +1,3 @@
 export default function ClientsListingPage() {
-  return <div></div>;
+	return <div></div>;
 }
