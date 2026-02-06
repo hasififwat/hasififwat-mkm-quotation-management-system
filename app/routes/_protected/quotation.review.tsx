@@ -85,15 +85,8 @@ export default function QuotationReviewPage({
 
     
 	return (
-        
-        
-		<div
-			ref={containerRef}
-			className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:hidden"
-		>
-         
-            {/* Print Button */}
-			<div 
+             <div >
+               	<div 
             className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
            
 			    <Button
@@ -105,36 +98,47 @@ export default function QuotationReviewPage({
 					Export PDF
 				</Button>
 			</div>
-
-			{/* Screen View */}
-			<div
-				className="print:hidden"
-				style={{
-					width: pdfWidth,
-					height: pdfHeight, // Reserve original space to allow transform to work contextually
-					transform: `scale(${scale})`,
-					transformOrigin: "top center",
-					marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
-				}}
-			>
-				<div ref={contentRef} className="print:hidden">
-					<QuotationPDF details={loaderData.initialData}  />
-				</div>
-			</div>
-
-            <div ref={pdfRef}>
-                    <QuotationPDF details={loaderData.initialData} />
+                    <QuotationPDF details={loaderData.initialData} ref={pdfRef} />
              </div>
+        
+		// <div
+		// 	ref={containerRef}
+		// 	className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:hidden"
+		// >
+         
+        //     {/* Print Button */}
+	
 
-			{/* Print View Portal - Rendered directly to body to escape layout constraints */}
-			{/* {mounted &&
-				createPortal(
-					<div id="print-portal-root" className="hidden print:block">
-						<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
-					</div>,
-					document.body,
-				)} */}
-		</div>
+		// 	{/* Screen View */}
+		// 	<div
+		// 		className="print:hidden"
+		// 		style={{
+		// 			width: pdfWidth,
+		// 			height: pdfHeight, // Reserve original space to allow transform to work contextually
+		// 			transform: `scale(${scale})`,
+		// 			transformOrigin: "top center",
+		// 			marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
+		// 		}}
+		// 	>
+		// 		<div ref={contentRef} className="print:hidden">
+		// 			<QuotationPDF details={loaderData.initialData}  />
+		// 		</div>
+		// 	</div>
+        //     <div style={{ display: "none" }}>
+           
+
+        //     </div>
+           
+
+		// 	{/* Print View Portal - Rendered directly to body to escape layout constraints */}
+		// 	{/* {mounted &&
+		// 		createPortal(
+		// 			<div id="print-portal-root" className="hidden print:block">
+		// 				<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
+		// 			</div>,
+		// 			document.body,
+		// 		)} */}
+		// </div>
 	);
 }
 
