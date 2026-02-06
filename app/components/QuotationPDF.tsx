@@ -39,7 +39,7 @@ const QuotationPDF: React.FC<Props> = ({ details, ref = null }) => {
 	return (
 			<div
 				ref={ref}
-				className="quotation-print bg-white text-black mx-auto p-12 shadow-2xl min-h-280.75 w-198.5 border border-gray-200 text-[10px] leading-tight print:shadow-none print:min-h-auto print:w-198.5 print:border-0"
+				className="quotation-print bg-white text-black mx-auto p-12 shadow-2xl min-h-280.75 w-198.5 border border-gray-200 text-[10px] leading-tight print:shadow-none print:min-h-auto print:w-auto print:border-0"
 			>
 				{/* Header */}
 				<div className="flex justify-between items-start mb-6">

@@ -85,7 +85,7 @@ export default function QuotationReviewPage({
 
     
 	return (
-             <div  className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
+             <div  className="col-span-full flex flex-col items-center py-0 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
                	<div 
             className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
            
