@@ -85,7 +85,7 @@ export default function QuotationReviewPage({
 
     
 	return (
-             <div  className="col-span-full flex flex-col items-center py-0 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
+             <div  className="col-span-full flex flex-col items-center py-7 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
                	<div 
             className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
            
@@ -114,7 +114,10 @@ export default function QuotationReviewPage({
                 
                    </div> */} 
 
-                   <div ref={pdfRef}> This should not have spave on top</div>
+                   <div ref={pdfRef} > 
+
+                    <QuotationPDF details={loaderData.initialData} />  
+                   </div>
 
                     {/* <QuotationPDF details={loaderData.initialData} ref={pdfRef} />      */}
                    
