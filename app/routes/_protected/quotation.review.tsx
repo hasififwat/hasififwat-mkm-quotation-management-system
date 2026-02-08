@@ -1,17 +1,16 @@
+import { BlobProvider, PDFViewer, usePDF } from "@react-pdf/renderer";
+import * as pkg from "file-saver";
 import { Printer } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-
+import { useEffect, useMemo, useRef, useState } from "react";
 import { redirect } from "react-router";
-import * as pkg from "react-to-print";
 import QuotationPDF from "~/components/QuotationPDF";
 import { Button } from "~/components/ui/button";
+import PDFPreview from "~/features/quotation/components/PDFPreview";
 import { getServerClient } from "~/lib/supabase/server";
 import { UmrahQuotationService } from "~/services/quotation-service";
 import type { Route } from "./+types/quotation.review";
 
-const useReactToPrint =
-	pkg.useReactToPrint || (pkg as any).default?.useReactToPrint;
+const saveAs = pkg.saveAs || (pkg as any).default?.saveAs;
 
 export async function loader({ params, request }: Route.LoaderArgs) {
 	const headers = new Headers();
@@ -27,8 +26,6 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 		return redirect("/quotations");
 	}
 
-
-
 	return { initialData: initialData };
 }
 
@@ -36,11 +33,8 @@ export default function QuotationReviewPage({
 	loaderData,
 }: Route.ComponentProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const pdfRef = useRef<HTMLDivElement>(null);
-	const [scale, setScale] = useState(1);
-	const contentRef = useRef<HTMLDivElement>(null);
-    const [isPrinting, setIsPrinting] = useState(false);
 
+	const [scale, setScale] = useState(1);
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -64,10 +58,6 @@ export default function QuotationReviewPage({
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	// PDF original dimensions
-	const pdfWidth = 794;
-	const pdfHeight = 1123; // From min-h-[1123px]
-
 	const toFileSafe = (value: string) =>
 		value
 			.trim()
@@ -80,101 +70,47 @@ export default function QuotationReviewPage({
 		.slice(0, 10);
 	const documentTitle = `${toFileSafe(loaderData.initialData.client_name || "customer")}_${issuedDate}`;
 
-    
-    const reactToPrintFn = useReactToPrint({ contentRef: pdfRef, documentTitle, pageStyle: `
-    @page { 
-        size: A4; 
-        margin: 0; 
-         height: 10.7in !important; 
-            max-height: 10.7in !important;
-            overflow: hidden !important;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-    }
-   
-    }
-    `});    
-
-    
 	return (
-             <div  className="col-span-full flex flex-col items-center py-7 bg-gray-100/50 overflow-hidden min-h-screen relative print:py-0">
-               	<div 
-            className="print-btn fixed bottom-8 right-8 z-50 print:hidden">
-           
-			    <Button
-					onClick={() => reactToPrintFn()}
-					size="lg"
-					className="shadow-xl"
-				>
-					<Printer className="mr-2 h-4 w-4" />
-					Export PDF
-				</Button>
-			</div >
-                   
-                   
-                   {/* <div style={{ 
-                    position: "absolute", 
-                    top: "-9999px", 
-                    left: "-9999px",
-                    width: "794px" // Fixed A4 width
-                }}>
-
-
-
-
-
-                
-                   </div> */} 
-
-                   <div ref={pdfRef} > 
-
-                    <QuotationPDF details={loaderData.initialData} />  
-                   </div>
-
-                    {/* <QuotationPDF details={loaderData.initialData} ref={pdfRef} />      */}
-                   
-             </div>
-        
-		// <div
-		// 	ref={containerRef}
-		// 	className="col-span-full flex flex-col items-center py-8 bg-gray-100/50 overflow-hidden min-h-screen relative print:hidden"
-		// >
-         
-        //     {/* Print Button */}
-	
-
-		// 	{/* Screen View */}
-		// 	<div
-		// 		className="print:hidden"
-		// 		style={{
-		// 			width: pdfWidth,
-		// 			height: pdfHeight, // Reserve original space to allow transform to work contextually
-		// 			transform: `scale(${scale})`,
-		// 			transformOrigin: "top center",
-		// 			marginBottom: -1 * (pdfHeight * (1 - scale)), // Compensate for vertical space lost by scaling
-		// 		}}
-		// 	>
-		// 		<div ref={contentRef} className="print:hidden">
-		// 			<QuotationPDF details={loaderData.initialData}  />
-		// 		</div>
-		// 	</div>
-        //     <div style={{ display: "none" }}>
-           
-
-        //     </div>
-           
-
-		// 	{/* Print View Portal - Rendered directly to body to escape layout constraints */}
-		// 	{/* {mounted &&
-		// 		createPortal(
-		// 			<div id="print-portal-root" className="hidden print:block">
-		// 				<QuotationPDF details={loaderData.initialData} ref={pdfRef} />
-		// 			</div>,
-		// 			document.body,
-		// 		)} */}
-		// </div>
+		<div
+			ref={containerRef}
+			className="col-span-full flex flex-col items-center bg-gray-100/50 overflow-hidden min-h-screen relative"
+		>
+			<PDFViewer className="w-full h-full hidden md:block">
+				<PDFPreview details={loaderData.initialData} />
+			</PDFViewer>
+			<div
+				className="bg-white shadow-lg my-8 md:hidden"
+				style={{
+					width: 794 * scale,
+					height: 1123 * scale,
+					transform: `scale(${scale})`,
+					transformOrigin: "top left",
+				}}
+			>
+				<QuotationPDF details={loaderData.initialData} />
+			</div>
+			<BlobProvider document={<PDFPreview details={loaderData.initialData} />}>
+				{({ blob, url, loading, error }) => {
+					// You can use the blob, url, loading, and error here
+					// For example, you might want to provide a download link or handle loading state
+					return (
+						<div className="fixed bottom-8 right-8 z-50  md:hidden">
+							<Button
+								size="lg"
+								className="shadow-xl"
+								onClick={() => {
+									if (blob) {
+										saveAs(blob, `${documentTitle}.pdf`);
+									}
+								}}
+							>
+								<Printer className="mr-2 h-4 w-4" />
+								Download PDF
+							</Button>
+						</div>
+					); // Replace with your desired UI
+				}}
+			</BlobProvider>
+		</div>
 	);
 }
-
-
