@@ -1,9 +1,9 @@
 import { BlobProvider, PDFViewer } from "@react-pdf/renderer";
 import * as pkg from "file-saver";
 import { Printer } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { redirect } from "react-router";
-import QuotationPDF from "~/components/QuotationPDF";
+
 import { Button } from "~/components/ui/button";
 import PDFPreview from "~/features/quotation/components/PDFPreview";
 import { getServerClient } from "~/lib/supabase/server";
