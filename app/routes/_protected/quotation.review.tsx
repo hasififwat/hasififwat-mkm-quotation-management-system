@@ -1,4 +1,4 @@
-import { BlobProvider, PDFViewer, usePDF } from "@react-pdf/renderer";
+import { BlobProvider, PDFViewer } from "@react-pdf/renderer";
 import * as pkg from "file-saver";
 import { Printer } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
