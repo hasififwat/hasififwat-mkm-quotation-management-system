@@ -9,6 +9,7 @@ import PDFPreview from "~/features/quotation/components/PDFPreview";
 import { getServerClient } from "~/lib/supabase/server";
 import { UmrahQuotationService } from "~/services/quotation-service";
 import type { Route } from "./+types/quotation.review";
+import PDFPreviewMobile from "~/features/quotation/components/PDFPreviewMobile";
 
 const saveAs = pkg.saveAs || (pkg as any).default?.saveAs;
 
@@ -87,7 +88,7 @@ export default function QuotationReviewPage({
 					transformOrigin: "top left",
 				}}
 			>
-				<QuotationPDF details={loaderData.initialData} />
+				<PDFPreviewMobile details={loaderData.initialData} />
 			</div>
 			<BlobProvider document={<PDFPreview details={loaderData.initialData} />}>
 				{({ blob, url, loading, error }) => {
