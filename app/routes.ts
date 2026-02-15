@@ -38,4 +38,5 @@ export default [
 			id: "quotation-review",
 		}),
 	]),
+	route("/resources/create-client", "routes/resources.create-client.tsx"),
 ] satisfies RouteConfig;

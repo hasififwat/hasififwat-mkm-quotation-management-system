@@ -15,9 +15,7 @@ export const quotationFormSchema = z.object({
 	pic_name: z.string("PIC Name is required").optional(),
 	branch: z.string("Branch is required").optional(),
 
-	client_name: z
-		.string("Client name is required")
-		.min(1, "Client name is required"),
+	client_id: z.string("Client is required").min(1, "Client is required"),
 
 	notes: z.string().optional().default(""),
 	package_id: z.string("Package id required").min(1, "Package id required"),

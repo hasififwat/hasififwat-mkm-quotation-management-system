@@ -92,12 +92,12 @@ export function SidebarLayout({
 								</span>
 							</div>
 							<div className="flex-1 overflow-hidden">
-								<p className="text-sm font-medium truncate">
+								<div className="text-sm font-medium truncate">
 									{profile.full_name || "User"}
 									<p className="text-xs text-muted-foreground">
 										{profile.email || "user@example.com"}
 									</p>
-								</p>
+								</div>
 							</div>
 						</div>
 

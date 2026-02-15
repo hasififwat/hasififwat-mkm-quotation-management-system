@@ -33,7 +33,7 @@ export const UmrahQuotationService = {
 	},
 
 	async getQuotationForEdit(client: SupabaseClient, quotationId: string) {
-		const { data, error } = await client.rpc("get_quotation_details", {
+		const { data, error } = await client.rpc("get_quotation_for_edit", {
 			target_quotation_id: quotationId,
 		});
 

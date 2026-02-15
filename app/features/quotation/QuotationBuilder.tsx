@@ -45,6 +45,7 @@ import {
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import type { PackageDetails, RoomType } from "~/schema";
+import { CreateClientModal } from "./components/CreateClientModal";
 import type { QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 
@@ -528,7 +529,7 @@ function FlightSelection({
 }
 
 export default function QuotationBuilder() {
-	const { initialData, allPackages } = useLoaderData();
+	const { initialData, allPackages, allClients } = useLoaderData();
 	const { profile } = useRouteLoaderData("routes/_protected");
 	const { qid } = useParams();
 	const submit = useSubmit();
@@ -558,10 +559,16 @@ export default function QuotationBuilder() {
 		value: pkg.id,
 	}));
 
+	const clientOptions = allClients.map((client: any) => ({
+		id: client.id,
+		name: client.name || client.full_name || client.email,
+		value: client.id,
+	}));
+
 	const goNext = async () => {
 		let isValid = false;
 		if (currentStep === "basic") {
-			isValid = await trigger(["pic_name", "branch", "client_name"]);
+			isValid = await trigger(["pic_name", "branch", "client_id"]);
 			if (isValid) setCurrentStep("package");
 		} else if (currentStep === "package") {
 			isValid = await trigger(["package_id", "selected_rooms"]);
@@ -586,7 +593,7 @@ export default function QuotationBuilder() {
 		}
 
 		if (targetIndex > 0) {
-			const isBasicValid = await trigger(["pic_name", "branch", "client_name"]);
+			const isBasicValid = await trigger(["pic_name", "branch", "client_id"]);
 			if (!isBasicValid) return;
 		}
 
@@ -729,20 +736,31 @@ export default function QuotationBuilder() {
 
 								{/* Client Name */}
 								<Controller
-									name="client_name"
+									name="client_id"
 									control={methods.control}
 									render={({ field, fieldState }) => (
 										<Field
 											data-invalid={fieldState.invalid}
 											className="col-span-full"
 										>
-											<FieldLabel htmlFor="client_name">Client Name</FieldLabel>
-											<Input
-												{...field}
-												id="client_name"
-												aria-invalid={fieldState.invalid}
-												placeholder="Enter Client Name"
-												autoComplete="off"
+											<div className="flex items-center justify-between">
+												<FieldLabel htmlFor="client_id">Client Name</FieldLabel>
+												<CreateClientModal
+													onSuccess={(clientId) => {
+														field.onChange(clientId);
+													}}
+												/>
+											</div>
+											<SearchableDropdown
+												options={clientOptions}
+												placeholder="Select a client"
+												optionValueKey="id"
+												optionsLabelKey="name"
+												value={field.value}
+												disabled={qid != null} // Disable client change when editing existing quotation
+												handleSelect={(selectedId) => {
+													field.onChange(selectedId);
+												}}
 											/>
 											{fieldState.invalid && (
 												<FieldError errors={[fieldState.error]} />

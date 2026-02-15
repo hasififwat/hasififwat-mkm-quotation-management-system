@@ -21,12 +21,14 @@ export function SearchableDropdown({
 	placeholder = "Select options...",
 	optionValueKey = "value",
 	optionsLabelKey = "name",
+	disabled = false,
 	value: propValue,
 	handleSelect,
 }: {
 	value: string | number;
 	optionValueKey?: string;
 	optionsLabelKey?: string;
+	disabled?: boolean;
 	placeholder?: string;
 	options: {
 		id: string;
@@ -55,6 +57,7 @@ export function SearchableDropdown({
 					role="combobox"
 					aria-expanded={open}
 					className="justify-between"
+					disabled={disabled}
 				>
 					{value
 						? options.find((option) => option.value === value)?.[
@@ -69,6 +72,7 @@ export function SearchableDropdown({
 					<CommandInput
 						placeholder={`Search ${placeholder.toLowerCase()}`}
 						className="h-9"
+						disabled={disabled}
 					/>
 					<CommandList>
 						<CommandEmpty>No options found.</CommandEmpty>
