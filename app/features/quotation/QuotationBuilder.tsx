@@ -8,7 +8,12 @@ import {
 	useForm,
 	useFormContext,
 } from "react-hook-form";
-import { useLoaderData, useParams, useSubmit } from "react-router";
+import {
+	useLoaderData,
+	useParams,
+	useRouteLoaderData,
+	useSubmit,
+} from "react-router";
 import { SearchableDropdown } from "~/components/SearchableDropdown";
 import { Button } from "~/components/ui/button";
 import {
@@ -524,6 +529,7 @@ function FlightSelection({
 
 export default function QuotationBuilder() {
 	const { initialData, allPackages } = useLoaderData();
+	const { profile } = useRouteLoaderData("routes/_protected");
 	const { qid } = useParams();
 	const submit = useSubmit();
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
@@ -537,7 +543,10 @@ export default function QuotationBuilder() {
 
 	const methods = useForm<any>({
 		resolver: zodResolver(quotationFormSchema),
-		defaultValues: initialData,
+		defaultValues: initialData ?? {
+			pic_name: profile.full_name || "",
+			branch: profile.branch || "",
+		},
 		mode: "onChange",
 	});
 

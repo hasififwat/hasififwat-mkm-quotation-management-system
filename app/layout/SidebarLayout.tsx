@@ -1,4 +1,3 @@
-import type { User } from "@supabase/supabase-js"; // ✅ Import User type
 import { FileText, Home, LogOut, Menu, Package } from "lucide-react";
 import type { ReactNode } from "react";
 import { Form, Link } from "react-router"; // ✅ Import Form
@@ -41,10 +40,15 @@ const menuItems = [
 interface SidebarLayoutProps {
 	children: ReactNode;
 	title?: string;
-	user: User | null;
+	profile?: any; // ✅ Add profile prop (you can replace 'any' with your actual profile type)
 }
 
-export function SidebarLayout({ children, title, user }: SidebarLayoutProps) {
+export function SidebarLayout({
+	children,
+	title,
+
+	profile,
+}: SidebarLayoutProps) {
 	return (
 		<SidebarProvider>
 			<Sidebar>
@@ -82,12 +86,17 @@ export function SidebarLayout({ children, title, user }: SidebarLayoutProps) {
 						<div className="flex items-center gap-2 px-2 py-1.5">
 							<div className="flex size-8 items-center justify-center rounded-full bg-muted">
 								<span className="text-sm font-medium">
-									{user?.email?.charAt(0).toUpperCase() || "U"}
+									{profile?.full_name
+										? profile.full_name.charAt(0).toUpperCase()
+										: "U"}
 								</span>
 							</div>
 							<div className="flex-1 overflow-hidden">
 								<p className="text-sm font-medium truncate">
-									{user?.email || "User"}
+									{profile.full_name || "User"}
+									<p className="text-xs text-muted-foreground">
+										{profile.email || "user@example.com"}
+									</p>
 								</p>
 							</div>
 						</div>
