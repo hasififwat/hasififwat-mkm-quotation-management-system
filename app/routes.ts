@@ -17,8 +17,13 @@ export default [
 
 	layout("routes/_protected.tsx", [
 		route("dashboard", "routes/_protected/dashboard.tsx"),
+		route("/flights", "routes/_protected/flight.index.tsx"),
 		route("/packages", "routes/_protected/package.index.tsx"),
 		route("/packages/create", "routes/_protected/package.create.tsx"),
+		route(
+			"/packages/create-from-schedule",
+			"routes/_protected/package.create-from-schedule.tsx",
+		),
 		route("/packages/edit/:pid", "routes/_protected/package.edit.tsx", {
 			id: "package-edit",
 		}),

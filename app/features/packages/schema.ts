@@ -1,6 +1,6 @@
 import { z } from "zod";
+import { FlightImportSchema } from "../flights/schema";
 
-// 1. Hotel Sub-Schema
 const hotelSchema = z.object({
 	name: z.string().default(""),
 	enabled: z.boolean().default(false),
@@ -8,7 +8,6 @@ const hotelSchema = z.object({
 	placeholder: z.string().default(""),
 });
 
-// 2. Room Sub-Schema
 const roomSchema = z.object({
 	label: z.string(),
 	// z.coerce.number() handles "1250.00" -> 1250 automatically
@@ -16,9 +15,7 @@ const roomSchema = z.object({
 	enabled: z.boolean().default(false),
 });
 
-// 3. Main Package Schema
 export const packageSchema = z.object({
-	// Optional ID (New packages won't have one yet)
 	id: z.string().optional(),
 
 	name: z.string().min(3, "Package name must be at least 3 characters"),
@@ -42,5 +39,23 @@ export const packageSchema = z.object({
 	rooms: z.array(roomSchema),
 });
 
-// 4. Export the Type to use in your components
+export const selectedPackageSchema = z.array(
+	z.object({
+		name: z.string().min(3, "Package name must be at least 3 characters"),
+		flights: z
+			.array(FlightImportSchema)
+			.min(1, "At least one flight is required"),
+		selected: z.boolean(),
+	}),
+);
+
+export const selectedPackageFormSchema = z.object({
+	season: z.string().min(1, "Season is required"),
+	packages: selectedPackageSchema,
+});
+
 export type PackageFormValues = z.infer<typeof packageSchema>;
+export type ISelectedPackageSchema = z.infer<typeof selectedPackageSchema>;
+export type ISelectedPackageFormSchema = z.infer<
+	typeof selectedPackageFormSchema
+>;

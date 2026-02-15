@@ -24,15 +24,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 		data: { user },
 	} = await supabase.auth.getUser();
 	if (!user) {
-		throw redirect("/login", { headers });
+		throw redirect("/", { headers });
 	}
 
 	const url = new URL(request.url);
 	const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
 
 	const allQuotations = await UmrahQuotationService.getQuotations(supabase);
-
-	console.log("All Quotations:", allQuotations);
 
 	const quotations = searchTerm
 		? allQuotations.filter((q) =>

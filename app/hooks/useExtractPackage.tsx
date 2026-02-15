@@ -1,25 +1,98 @@
 import Papa from "papaparse";
-import type React from "react";
-import { useRef, useState } from "react";
-import { Button } from "~/components/ui/button";
-import FlightListings from "./FlightListings";
-import type { FlightData } from "./schema";
+import { useState } from "react";
+import type { FlightData } from "@/features/flights/schema";
 
-export default function FlightMaster() {
-	const SEASON_KEY = "2026/2027";
+const SEASON_KEY = "2026/2027";
 
-	const [_flights, setFlights] = useState<FlightData[]>([]);
-	const [_searchTerm, _setSearchTerm] = useState("");
-	// Fix: Added useRef to handle hidden file input trigger as Button does not support asChild
-	const _fileInputRef = useRef<HTMLInputElement>(null);
+export interface IPackageData {
+	name: string;
+	flights: FlightData[];
+}
 
-	const _handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
+interface IuseExtractPackage {
+	handleFileUpload: (e: React.ChangeEvent<HTMLInputElement> | File) => void;
+	flight: FlightData[];
+	fileName: string | null;
+	packageData: IPackageData[] | null;
+}
+
+export const useExtractPackage = (): IuseExtractPackage => {
+	const [flight, setFlights] = useState<FlightData[]>([]);
+	const [fileName, setFileName] = useState<string | null>(null);
+	const [_packageData, _setPackageData] = useState<IPackageData[] | null>(null);
+
+	const handleFormatFlightsToPackage = (flights: FlightData[]) => {
+		const grouped = flights.reduce(
+			(acc, current) => {
+				const { package_name } = current;
+				if (!acc[package_name]) {
+					acc[package_name] = [];
+				}
+				acc[package_name].push(current);
+				return acc;
+			},
+			{} as Record<string, FlightData[]>,
+		);
+
+		const packages = Object.entries(grouped).map(([name, flights]) => {
+			const sortedFlights = flights.sort((a, b) => {
+				const monthOrder: { [key: string]: number } = {
+					JANUARY: 1,
+					FEBRUARY: 2,
+					MARCH: 3,
+					APRIL: 4,
+					MAY: 5,
+					JUNE: 6,
+					JULY: 7,
+					AUGUST: 8,
+					SEPTEMBER: 9,
+					OCTOBER: 10,
+					NOVEMBER: 11,
+					DECEMBER: 12,
+					JAN: 1,
+					FEB: 2,
+					MAR: 3,
+					APR: 4,
+					JUN: 6,
+					JUL: 7,
+					AUG: 8,
+					SEP: 9,
+					OCT: 10,
+					NOV: 11,
+					DEC: 12,
+				};
+
+				const monthA = a.month.toUpperCase().trim();
+				const monthB = b.month.toUpperCase().trim();
+
+				const orderA = monthOrder[monthA] || 99;
+				const orderB = monthOrder[monthB] || 99;
+
+				return orderA - orderB;
+			});
+
+			return {
+				name,
+				flights: sortedFlights,
+			};
+		});
+
+		_setPackageData(packages);
+	};
+
+	const _handleFileUpload = (e: React.ChangeEvent<HTMLInputElement> | File) => {
+		let file: File | undefined;
+		if (e instanceof File) {
+			file = e;
+		} else {
+			file = e.target.files?.[0];
+		}
 		if (!file) return;
 
-		Papa.parse(file, {
-			// This function runs on every header name found
+		setFileName(file.name);
+		const _tableData: FlightData[] = [];
 
+		Papa.parse(file, {
 			complete: (results) => {
 				const columns = results.data[5] as string[];
 				console.log("Columns:", columns);
@@ -28,9 +101,9 @@ export default function FlightMaster() {
 						col === "MONTH" ||
 						col === "CODE" ||
 						col === "DEPARTURE" ||
-						(col === "SECTOR" && index === 7) ||
+						(col === "SECTOR" && index === 6) ||
 						col === "RETURN" ||
-						(col === "SECTOR" && index === 13) ||
+						(col === "SECTOR" && index === 12) ||
 						col === "PAKEJ",
 				);
 				console.log("Filtered Columns:", filteredColumns);
@@ -40,23 +113,23 @@ export default function FlightMaster() {
 						if (col === "MONTH") return index;
 						if (col === "CODE") return index;
 						if (col === "DEPARTURE") return index;
-						if (col === "SECTOR" && index === 7) return index;
+						if (col === "SECTOR" && index === 6) return index;
 						if (col === "RETURN") return index;
-						if (col === "SECTOR" && index === 13) return index;
+						if (col === "SECTOR" && index === 12) return index;
 						if (col === "PAKEJ") return index;
 						return -1;
 					})
 					.filter((index) => index !== -1);
 
 				const formattedColumns = filteredColumns.map((col, index) => {
-					if (col === "SECTOR" && filteredColumnsIndx[index] === 7) {
+					if (col === "SECTOR" && filteredColumnsIndx[index] === 6) {
 						return {
 							header: "SECTOR",
 							key: "sector_departure",
 							cvs_index: filteredColumnsIndx[index],
 						};
 					}
-					if (col === "SECTOR" && filteredColumnsIndx[index] === 13) {
+					if (col === "SECTOR" && filteredColumnsIndx[index] === 12) {
 						return {
 							header: "SECTOR",
 							key: "sector_return",
@@ -98,6 +171,7 @@ export default function FlightMaster() {
 							data = {
 								...data,
 								season_key: SEASON_KEY,
+
 								[key]: colData,
 							};
 						}
@@ -107,7 +181,6 @@ export default function FlightMaster() {
 							data = {};
 						}
 					}
-
 					//convert row to array
 				}
 
@@ -159,56 +232,23 @@ export default function FlightMaster() {
 					return { ...row, package_name };
 				});
 
-				const filteredFinalTableData = finalTableData.filter(
-					(row) =>
-						row.month &&
-						row.code &&
-						row.departure &&
-						row.sector_departure &&
-						row.return &&
-						row.sector_return &&
-						row.pakej,
-				);
+				//filter row undefined values
 
-				console.log(
-					"Final Table Data with Package Names:",
-					filteredFinalTableData,
+				finalTableData = finalTableData.filter(
+					(row) => row.departure && row.return,
 				);
 
 				//add incremental no. to each row
-
-				console.log("Final Table Data:", finalTableData);
-
-				// setFlights(tableData as FlightRecord[]);
-				// uploadFlightSchedule(tableData);
-				// tableData = tableData.filter((row) => Object.keys(row).length > 0);
-				// setFlights(tableData as FlightRecord[]);
-				setFlights(filteredFinalTableData);
+				setFlights(finalTableData as FlightData[]);
+				handleFormatFlightsToPackage(finalTableData);
 			},
 		});
 	};
 
-	const _handleClear = () => {
-		if (confirm("Clear all master flight records?")) {
-			setFlights([]);
-		}
+	return {
+		handleFileUpload: _handleFileUpload,
+		flight,
+		fileName,
+		packageData: _packageData,
 	};
-
-	return (
-		<div>
-			<input
-				ref={_fileInputRef}
-				onChange={_handleFileUpload}
-				type="file"
-				accept=".csv"
-				hidden
-			/>
-			<Button onClick={() => _fileInputRef.current?.click()}>
-				Import Schedule
-			</Button>
-			<div>
-				<FlightListings data={_flights} />
-			</div>
-		</div>
-	);
-}
+};

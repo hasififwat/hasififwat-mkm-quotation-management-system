@@ -85,16 +85,27 @@ export const UmrahPackageService = {
 		return { success: true };
 	},
 
-	async uploadFlightSchedule(client: SupabaseClient, payload: any) {
-		const { data, error } = await client.rpc("create_package_with_schedule", {
+	async createPackagesWithFlights(client: SupabaseClient, payload: any) {
+		const { data, error } = await client.rpc("import_packages_with_flights", {
 			payload: payload,
 		});
 
 		if (error) {
-			console.error("Error uploading schedule:", error);
+			console.error("Error creating packages with flights:", error);
 			throw new Error(error.message);
 		}
 
 		return data;
+	},
+
+	async clearAllData(client: SupabaseClient) {
+		const { error } = await client.rpc("clear_transactional_data");
+
+		if (error) {
+			console.error("Error clearing package data:", error);
+			throw new Error(error.message);
+		}
+
+		return { success: true };
 	},
 };

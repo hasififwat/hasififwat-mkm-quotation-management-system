@@ -1,5 +1,11 @@
 import { Plus, Search } from "lucide-react";
 import { Form, Link, redirect } from "react-router"; // Removed unused useSubmit
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getServerClient } from "@/lib/supabase/server";
 import { UmrahPackageService } from "@/services/package-service";
 import { Button } from "~/components/ui/button";
@@ -24,7 +30,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		data: { user },
 	} = await supabase.auth.getUser();
 	if (!user) {
-		throw redirect("/login", { headers });
+		throw redirect("/", { headers });
 	}
 
 	const url = new URL(request.url);
@@ -45,7 +51,7 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 	const searchProps = useDebouncedSearch(searchTerm);
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-auto lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
 					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
@@ -55,12 +61,23 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 						Manage your Umrah offerings and custom travel bundles.
 					</p>
 				</div>
-
-				<Button asChild className="w-full md:w-auto gap-2">
-					<Link to="/packages/create">
-						<Plus className="w-4 h-4" /> Add New Package
-					</Link>
-				</Button>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button asChild className="w-full md:w-auto gap-2">
+							<div>
+								<Plus className="w-4 h-4" /> Create Package
+							</div>
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<Link to={`/packages/create`}>
+							<DropdownMenuItem>Create New Package</DropdownMenuItem>
+						</Link>
+						<Link to={`/packages/create-from-schedule`}>
+							<DropdownMenuItem>Import from flight schedule</DropdownMenuItem>
+						</Link>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 
 			<Card className="overflow-hidden">

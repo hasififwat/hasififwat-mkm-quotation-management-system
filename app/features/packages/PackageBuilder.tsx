@@ -14,6 +14,12 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { type PackageDetailsForm, packageDetailsSchema } from "@/schema";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "~/components/ui/accordion";
 import BasicDetails from "./components/Form/BasicDetails";
 import FlightDetails from "./components/Form/FlightDetails";
 import HotelDetailsSection from "./components/Form/HotelDetails";
@@ -96,7 +102,7 @@ const PackageBuilder: React.FC = () => {
 		}
 	};
 
-	const onSubmit = (data: PackageDetailsForm) => {
+	const _onSubmit = (data: PackageDetailsForm) => {
 		console.log("Submitting package data:", data);
 
 		submit(data, {
@@ -222,10 +228,10 @@ const PackageBuilder: React.FC = () => {
 
 			<form
 				className="space-y-6"
-				onSubmit={handleSubmit((e) => {
-					console.log("handleSubmit called with:", e);
-					onSubmit(e);
-				})}
+				onSubmit={(e) => {
+					e.preventDefault();
+					console.log("Submitting form");
+				}}
 			>
 				<FormProvider {...methods}>
 					<BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
@@ -350,7 +356,7 @@ const PackageBuilder: React.FC = () => {
 										<ul className="list-disc list-inside text-sm space-y-1 ">
 											{getValues("exclusions")
 												.split("\n")
-												.map((line, i) => (
+												.map((line, _i) => (
 													<li key={line}>{line}</li>
 												))}
 										</ul>
@@ -390,66 +396,72 @@ const PackageBuilder: React.FC = () => {
 
 								<Separator />
 
-								<div>
-									<h3 className="font-semibold mb-2">Flight Schedule</h3>
-									{(getValues("flights") ?? []).length > 0 ? (
-										<div className="space-y-2 text-sm">
-											{(getValues("flights") ?? []).map((flight, index) => (
-												<div
-													key={flight.id || index}
-													className="p-3 bg-muted/30 rounded-lg"
-												>
-													<div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-														<div>
-															<p className="text-muted-foreground text-xs">
-																Month
-															</p>
-															<p className="font-medium">
-																{flight.month || "—"}
-															</p>
+								<Accordion type="single" collapsible>
+									<AccordionItem value="flight-schedule">
+										<AccordionTrigger className="hover:no-underline">
+											Flight Schedule
+										</AccordionTrigger>
+										<AccordionContent>
+											{(getValues("flights") ?? []).length > 0 ? (
+												<div className="space-y-2 text-sm">
+													{(getValues("flights") ?? []).map((flight, index) => (
+														<div
+															key={flight.id || index}
+															className="p-3 bg-muted/30 rounded-lg"
+														>
+															<div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+																<div>
+																	<p className="text-muted-foreground text-xs">
+																		Month
+																	</p>
+																	<p className="font-medium">
+																		{flight.month || "—"}
+																	</p>
+																</div>
+																<div>
+																	<p className="text-muted-foreground text-xs">
+																		Departure
+																	</p>
+																	<p className="font-medium">
+																		{flight.departure_date || "—"}
+																	</p>
+																</div>
+																<div>
+																	<p className="text-muted-foreground text-xs">
+																		Depart Sector
+																	</p>
+																	<p className="font-medium">
+																		{flight.departure_sector || "—"}
+																	</p>
+																</div>
+																<div>
+																	<p className="text-muted-foreground text-xs">
+																		Return
+																	</p>
+																	<p className="font-medium">
+																		{flight.return_date || "—"}
+																	</p>
+																</div>
+																<div>
+																	<p className="text-muted-foreground text-xs">
+																		Return Sector
+																	</p>
+																	<p className="font-medium">
+																		{flight.return_sector || "—"}
+																	</p>
+																</div>
+															</div>
 														</div>
-														<div>
-															<p className="text-muted-foreground text-xs">
-																Departure
-															</p>
-															<p className="font-medium">
-																{flight.departure_date || "—"}
-															</p>
-														</div>
-														<div>
-															<p className="text-muted-foreground text-xs">
-																Depart Sector
-															</p>
-															<p className="font-medium">
-																{flight.departure_sector || "—"}
-															</p>
-														</div>
-														<div>
-															<p className="text-muted-foreground text-xs">
-																Return
-															</p>
-															<p className="font-medium">
-																{flight.return_date || "—"}
-															</p>
-														</div>
-														<div>
-															<p className="text-muted-foreground text-xs">
-																Return Sector
-															</p>
-															<p className="font-medium">
-																{flight.return_sector || "—"}
-															</p>
-														</div>
-													</div>
+													))}
 												</div>
-											))}
-										</div>
-									) : (
-										<p className="text-sm text-muted-foreground">
-											No flight schedules added
-										</p>
-									)}
-								</div>
+											) : (
+												<p className="text-sm text-muted-foreground">
+													No flight schedules added
+												</p>
+											)}
+										</AccordionContent>
+									</AccordionItem>
+								</Accordion>
 							</CardContent>
 							<CardFooter className="flex justify-between">
 								<Button variant="outline" onClick={goToPreviousStep}>

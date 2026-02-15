@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	// If not, redirect to login
 	if (!user) {
-		throw redirect("/login", { headers });
+		throw redirect("/", { headers });
 	}
 
 	// Return the user data to the component
