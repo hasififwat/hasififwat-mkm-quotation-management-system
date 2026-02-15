@@ -1,8 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { SupabasePackageDetails } from "~/features/quotation/legacy/types";
 
-export const columns: ColumnDef<SupabasePackageDetails>[] = [
+export const columns: ColumnDef<any>[] = [
 	{ accessorKey: "name", header: "Package Name" },
+
+	{ accessorKey: "year", header: "Season" },
 
 	{ accessorKey: "action", header: "" },
 ];

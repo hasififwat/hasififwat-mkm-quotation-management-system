@@ -72,7 +72,7 @@ export default function PDFPreview({ details }: Props) {
 	const activeHotels = pkg.hotels.filter((h) => h.enabled);
 	const flights = details.selected_flight;
 	const rooms = details.items.selected_rooms;
-	const paxCount = rooms.reduce((acc, r) => acc + r.pax, 0);
+	const _paxCount = rooms.reduce((acc, r) => acc + r.pax, 0);
 	const addons = details.items.adds_ons;
 	const discounts = details.items.discounts;
 
@@ -165,6 +165,8 @@ export default function PDFPreview({ details }: Props) {
 							<View
 								style={{
 									flexBasis: 140,
+									textOverflow: "ellipsis",
+									overflow: "hidden",
 								}}
 							>
 								{/* Header Row */}
@@ -174,7 +176,7 @@ export default function PDFPreview({ details }: Props) {
 								{/* Data Rows */}
 								<View>
 									<Text style={{ ...styles.baseTableData }}>
-										{pkg.name.toLocaleUpperCase()} - {paxCount} PAX
+										{pkg.name.toLocaleUpperCase()}
 									</Text>
 								</View>
 							</View>

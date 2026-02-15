@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
 	});
 
 	const renderPackageCell = useCallback(
-		(package_name?: string, duration?: string, year?: string, pkg?: TData) => {
+		(package_name?: string, duration?: string, _year?: string, pkg?: TData) => {
 			return (
 				<div>
 					<div className="font-medium">
@@ -58,8 +58,6 @@ export function DataTable<TData, TValue>({
 					</div>
 					<div className="flex gap-1 text-xs text-muted-foreground">
 						<span>{duration ?? "-"}</span>
-						<span>|</span>
-						<span>{year ?? "-"}</span>
 					</div>
 				</div>
 			);
@@ -179,7 +177,12 @@ export function DataTable<TData, TValue>({
 							>
 								{row.getVisibleCells().map((cell) => {
 									return (
-										<TableCell key={cell.id}>{renderCell(cell)}</TableCell>
+										<TableCell
+											key={cell.id}
+											className={cell.column.id === "action" ? "w-16" : ""}
+										>
+											{renderCell(cell)}
+										</TableCell>
 									);
 								})}
 							</TableRow>

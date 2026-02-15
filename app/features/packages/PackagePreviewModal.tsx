@@ -1,4 +1,6 @@
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -17,13 +19,20 @@ import {
 	DrawerTitle,
 } from "@/components/ui/drawer";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from "~/components/ui/command";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "~/components/ui/popover";
 import { useIsMobile } from "~/hooks/use-mobile";
+import { cn } from "~/lib/utils";
 import type { SupabasePackageDetails } from "../quotation/legacy/types";
 
 interface Props {
@@ -33,7 +42,8 @@ interface Props {
 }
 
 const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
-	const [selectedFlightId, setSelectedFlightId] = useState<string>("");
+	const [selectedFlightIds, setSelectedFlightIds] = useState<string[]>([]);
+	const [openCombobox, setOpenCombobox] = useState(false);
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
@@ -43,7 +53,22 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		}
 	}, [copied]);
 
-	const selectedFlight = pkg.flights.find((f) => f.id === selectedFlightId);
+	const selectedFlights = pkg.flights.filter((f) =>
+		selectedFlightIds.includes(f.id),
+	);
+
+	// Group flights by month
+	const flightsByMonth = pkg.flights.reduce(
+		(acc, flight) => {
+			const month = flight.month || "Other";
+			if (!acc[month]) {
+				acc[month] = [];
+			}
+			acc[month].push(flight);
+			return acc;
+		},
+		{} as Record<string, typeof pkg.flights>,
+	);
 
 	const formatDate = (dateStr: string) => {
 		const date = new Date(dateStr);
@@ -72,52 +97,70 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		return `${depCodes} - ${retCodes}`;
 	};
 
+	const formatDateRange = (departure: string, returnDate: string) => {
+		const depDate = new Date(departure);
+		const retDate = new Date(returnDate);
+
+		const depDay = depDate.getDate().toString().padStart(2, "0");
+		const retDay = retDate.getDate().toString().padStart(2, "0");
+		const month = depDate
+			.toLocaleDateString("en-GB", { month: "short" })
+			.toUpperCase();
+
+		return `${depDay} - ${retDay} ${month}`;
+	};
+
 	const generatePreviewText = () => {
-		if (!selectedFlight) return "";
+		if (selectedFlights.length === 0) return "";
 
 		const lines: string[] = [];
 
 		// Package name (bold in WhatsApp with *)
 		lines.push(`*${pkg.name}*`);
 
-		// Dates
-		lines.push(
-			`${formatDate(selectedFlight.departure_date)} - ${formatDate(
-				selectedFlight.return_date,
-			)}`,
-		);
+		// Iterate over each selected flight
+		selectedFlights.forEach((flight) => {
+			lines.push(""); // Add spacing between flights
+			// Dates
+			lines.push(
+				`${formatDate(flight.departure_date)} - ${formatDate(
+					flight.return_date,
+				)}`,
+			);
 
-		// Duration
-		lines.push(pkg.duration);
+			// Duration
+			lines.push(pkg.duration);
 
-		// Flight route
-		lines.push(
-			`✈ ${getFlightRoute(
-				selectedFlight.departure_sector,
-				selectedFlight.return_sector,
-			)}`,
-		);
+			// Flight route
+			lines.push(
+				`✈ ${getFlightRoute(flight.departure_sector, flight.return_sector)}`,
+			);
+
+			// Room prices
+			const sortedRooms = pkg.rooms
+				.filter((room) => room.enabled)
+				.sort((a, b) => {
+					const order: Record<string, number> = {
+						Quad: 1,
+						Triple: 2,
+						Double: 3,
+					};
+					return (order[a.room_type] || 99) - (order[b.room_type] || 99);
+				});
+
+			sortedRooms.forEach((room) => {
+				const roomNum =
+					room.room_type === "Quad"
+						? "4"
+						: room.room_type === "Triple"
+							? "3"
+							: "2";
+				lines.push(`Bilik ${roomNum} : ${formatPrice(room.price)}`);
+			});
+		});
 
 		// Empty line
 		lines.push("");
-
-		// Room prices
-		const sortedRooms = pkg.rooms
-			.filter((room) => room.enabled)
-			.sort((a, b) => {
-				const order: Record<string, number> = { Quad: 1, Triple: 2, Double: 3 };
-				return (order[a.room_type] || 99) - (order[b.room_type] || 99);
-			});
-
-		sortedRooms.forEach((room) => {
-			const roomNum =
-				room.room_type === "Quad"
-					? "4"
-					: room.room_type === "Triple"
-						? "3"
-						: "2";
-			lines.push(`Bilik ${roomNum} : ${formatPrice(room.price)}`);
-		});
 
 		// Hotels
 		if (pkg.hotels?.makkah?.enabled) {
@@ -160,104 +203,216 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		<div className="space-y-4 px-4 md:px-0">
 			{/* Flight Selection */}
 			<div className="space-y-2">
-				<Select value={selectedFlightId} onValueChange={setSelectedFlightId}>
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder="Choose departure and return dates" />
-					</SelectTrigger>
-					<SelectContent>
-						{pkg.flights.map((flight) => (
-							<SelectItem key={flight.id} value={flight.id}>
-								{formatDate(flight.departure_date)} -{" "}
-								{formatDate(flight.return_date)} ({flight.month})
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
+				<Popover open={openCombobox} onOpenChange={setOpenCombobox}>
+					<PopoverTrigger asChild>
+						<Button
+							variant="outline"
+							role="combobox"
+							aria-expanded={openCombobox}
+							className="w-full justify-between h-auto min-h-10"
+						>
+							<div className="flex flex-wrap gap-1 items-center text-left overflow-hidden">
+								{selectedFlightIds.length > 0 ? (
+									<div className="flex flex-wrap gap-1">
+										{selectedFlights
+											.slice(0, isMobile ? 2 : 3)
+											.map((flight) => (
+												<Badge
+													key={flight.id}
+													variant="secondary"
+													className="mr-1 whitespace-nowrap"
+												>
+													{formatDateRange(
+														flight.departure_date,
+														flight.return_date,
+													)}
+												</Badge>
+											))}
+										{selectedFlights.length > (isMobile ? 2 : 3) && (
+											<Badge variant="secondary" className="whitespace-nowrap">
+												+{selectedFlights.length - (isMobile ? 2 : 3)} more
+											</Badge>
+										)}
+									</div>
+								) : (
+									<span className="truncate">
+										Choose departure and return dates...
+									</span>
+								)}
+							</div>
+							<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+						<Command>
+							<CommandInput placeholder="Search flight..." />
+							<CommandList>
+								<CommandEmpty>No flight found.</CommandEmpty>
+								{Object.entries(flightsByMonth).map(([month, flights]) => (
+									<CommandGroup key={month} heading={month}>
+										<CommandItem
+											value={`select-all-${month}`}
+											onSelect={() => {
+												const flightIdsInMonth = flights.map((f) => f.id);
+												const allSelected = flightIdsInMonth.every((id) =>
+													selectedFlightIds.includes(id),
+												);
+
+												if (allSelected) {
+													setSelectedFlightIds((prev) =>
+														prev.filter((id) => !flightIdsInMonth.includes(id)),
+													);
+												} else {
+													setSelectedFlightIds((prev) => {
+														const newIds = new Set([
+															...prev,
+															...flightIdsInMonth,
+														]);
+														return Array.from(newIds);
+													});
+												}
+											}}
+											className="font-semibold text-primary"
+										>
+											<Check
+												className={cn(
+													"mr-2 h-4 w-4",
+													flights.every((f) => selectedFlightIds.includes(f.id))
+														? "opacity-100"
+														: "opacity-0",
+												)}
+											/>
+											Select All in {month}
+										</CommandItem>
+										{flights.map((flight) => (
+											<CommandItem
+												key={flight.id}
+												value={`${formatDate(flight.departure_date)} - ${formatDate(
+													flight.return_date,
+												)} (${flight.month})`}
+												onSelect={() => {
+													setSelectedFlightIds((prev) =>
+														prev.includes(flight.id)
+															? prev.filter((id) => id !== flight.id)
+															: [...prev, flight.id],
+													);
+												}}
+											>
+												<Check
+													className={cn(
+														"mr-2 h-4 w-4",
+														selectedFlightIds.includes(flight.id)
+															? "opacity-100"
+															: "opacity-0",
+													)}
+												/>
+												{formatDate(flight.departure_date)} -{" "}
+												{formatDate(flight.return_date)}
+											</CommandItem>
+										))}
+									</CommandGroup>
+								))}
+							</CommandList>
+						</Command>
+					</PopoverContent>
+				</Popover>
 			</div>
 
 			{/* Preview */}
-			{selectedFlight && (
-				<Card className="bg-muted/30">
-					<CardContent className="pt-6">
-						<div className="space-y-3 font-mono text-sm whitespace-pre-line">
-							<div className="font-bold text-lg">{pkg.name}</div>
-							<div>
-								{formatDate(selectedFlight.departure_date)} -{" "}
-								{formatDate(selectedFlight.return_date)}
-							</div>
-							<div>{pkg.duration}</div>
-							<div>
-								✈{" "}
-								{getFlightRoute(
-									selectedFlight.departure_sector,
-									selectedFlight.return_sector,
-								)}
-							</div>
+			<div className="h-[500px] overflow-y-auto border rounded-md bg-muted/10 relative">
+				{!selectedFlights.length ? (
+					<div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
+						Select one or more flight dates to see the package preview.
+					</div>
+				) : (
+					<Card className="bg-muted/30 border-0 shadow-none min-h-full">
+						<CardContent className="pt-6">
+							<div className="space-y-6 font-mono text-sm whitespace-pre-line">
+								<div className="font-bold text-lg">{pkg.name}</div>
 
-							<div className="pt-2 space-y-1">
-								{pkg.rooms
-									.filter((room) => room.enabled)
-									.sort((a, b) => {
-										const order: Record<string, number> = {
-											Quad: 1,
-											Triple: 2,
-											Double: 3,
-										};
-										return (
-											(order[a.room_type] || 99) - (order[b.room_type] || 99)
-										);
-									})
-									.map((room) => (
-										<div key={room.id}>
-											Bilik{" "}
-											{room.room_type === "Quad"
-												? "4"
-												: room.room_type === "Triple"
-													? "3"
-													: "2"}{" "}
-											: {formatPrice(room.price)}
+								{selectedFlights.map((flight) => (
+									<div key={flight.id} className="space-y-3 border-b pb-4">
+										<div>
+											{formatDate(flight.departure_date)} -{" "}
+											{formatDate(flight.return_date)}
 										</div>
-									))}
+										<div>{pkg.duration}</div>
+										<div>
+											✈{" "}
+											{getFlightRoute(
+												flight.departure_sector,
+												flight.return_sector,
+											)}
+										</div>
+
+										<div className="pt-2 space-y-1">
+											{pkg.rooms
+												.filter((room) => room.enabled)
+												.sort((a, b) => {
+													const order: Record<string, number> = {
+														Quad: 1,
+														Triple: 2,
+														Double: 3,
+													};
+													return (
+														(order[a.room_type] || 99) -
+														(order[b.room_type] || 99)
+													);
+												})
+												.map((room) => (
+													<div key={room.id}>
+														Bilik{" "}
+														{room.room_type === "Quad"
+															? "4"
+															: room.room_type === "Triple"
+																? "3"
+																: "2"}{" "}
+														: {formatPrice(room.price)}
+													</div>
+												))}
+										</div>
+									</div>
+								))}
+
+								{pkg.hotels?.makkah?.enabled && (
+									<div>
+										Makkah : {pkg.hotels.makkah.name} (
+										{pkg.hotels.makkah.meals.length === 0
+											? "Breakfast Only"
+											: pkg.hotels.makkah.meals.join(", ")}
+										)
+									</div>
+								)}
+
+								{pkg.hotels?.madinah?.enabled && (
+									<div>
+										Madinah : {pkg.hotels.madinah.name} (
+										{pkg.hotels.madinah.meals.length === 0
+											? "Breakfast Only"
+											: pkg.hotels.madinah.meals.join(", ")}
+										)
+									</div>
+								)}
+
+								{pkg.hotels?.taif?.enabled && (
+									<div>
+										Taif : {pkg.hotels.taif.name} (
+										{pkg.hotels.taif.meals.length === 0
+											? "Breakfast Only"
+											: pkg.hotels.taif.meals.join(", ")}
+										)
+									</div>
+								)}
+
+								<div className="text-xs text-muted-foreground pt-2">
+									(setaraf bermaksud memiliki kualiti yang setanding dengan
+									hotel yang diberi)
+								</div>
 							</div>
-
-							{pkg.hotels?.makkah?.enabled && (
-								<div>
-									Makkah : {pkg.hotels.makkah.name} (
-									{pkg.hotels.makkah.meals.length === 0
-										? "Breakfast Only"
-										: pkg.hotels.makkah.meals.join(", ")}
-									)
-								</div>
-							)}
-
-							{pkg.hotels?.madinah?.enabled && (
-								<div>
-									Madinah : {pkg.hotels.madinah.name} (
-									{pkg.hotels.madinah.meals.length === 0
-										? "Breakfast Only"
-										: pkg.hotels.madinah.meals.join(", ")}
-									)
-								</div>
-							)}
-
-							{pkg.hotels?.taif?.enabled && (
-								<div>
-									Taif : {pkg.hotels.taif.name} (
-									{pkg.hotels.taif.meals.length === 0
-										? "Breakfast Only"
-										: pkg.hotels.taif.meals.join(", ")}
-									)
-								</div>
-							)}
-
-							<div className="text-xs text-muted-foreground pt-2">
-								(setaraf bermaksud memiliki kualiti yang setanding dengan hotel
-								yang diberi)
-							</div>
-						</div>
-					</CardContent>
-				</Card>
-			)}
+						</CardContent>
+					</Card>
+				)}
+			</div>
 		</div>
 	);
 
@@ -267,7 +422,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 			<Button variant="outline" onClick={() => onOpenChange(false)}>
 				Close
 			</Button>
-			{selectedFlight && (
+			{selectedFlights.length > 0 && (
 				<Button
 					onClick={() => {
 						const previewText = generatePreviewText();
@@ -291,7 +446,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 					<DrawerHeader className="text-left">
 						<DrawerTitle>Package Preview</DrawerTitle>
 						<DrawerDescription>
-							Select flight dates to generate package preview
+							Select one or more flight dates to generate package preview
 						</DrawerDescription>
 					</DrawerHeader>
 					<div className="overflow-y-auto max-h-[60vh] pb-4">
@@ -309,7 +464,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 				<DialogHeader>
 					<DialogTitle>Package Preview</DialogTitle>
 					<DialogDescription>
-						Select flight dates to generate package preview
+						Select one or more flight dates to generate package preview
 					</DialogDescription>
 				</DialogHeader>
 				{previewContent}
