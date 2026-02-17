@@ -20,8 +20,6 @@ const PackageList: React.FC<Props> = ({ data }) => {
 		setIsPreviewOpen(true);
 	};
 
-	console.log("PackageList data:", data);
-
 	return (
 		<div>
 			<DataTable

@@ -1,8 +1,22 @@
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+	Combobox,
+	ComboboxChip,
+	ComboboxChips,
+	ComboboxChipsInput,
+	ComboboxCollection,
+	ComboboxContent,
+	ComboboxEmpty,
+	ComboboxGroup,
+	ComboboxItem,
+	ComboboxLabel,
+	ComboboxList,
+	ComboboxSeparator,
+	ComboboxValue,
+	useComboboxAnchor,
+} from "@/components/ui/combobox";
 import {
 	Dialog,
 	DialogContent,
@@ -18,32 +32,18 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 } from "@/components/ui/drawer";
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "~/components/ui/command";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "~/components/ui/popover";
 import { useIsMobile } from "~/hooks/use-mobile";
-import { cn } from "~/lib/utils";
-import type { SupabasePackageDetails } from "../quotation/legacy/types";
 
 interface Props {
-	pkg: SupabasePackageDetails;
+	pkg: any;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
 
 const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
-	const [selectedFlightIds, setSelectedFlightIds] = useState<string[]>([]);
-	const [openCombobox, setOpenCombobox] = useState(false);
+	const [_selectedFlightIds, _setSelectedFlightIds] = useState<string[]>([]);
+
+	const [_openCombobox, _setOpenComboboxx] = useState(false);
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
@@ -54,7 +54,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	}, [copied]);
 
 	const selectedFlights = pkg.flights.filter((f) =>
-		selectedFlightIds.includes(f.id),
+		_selectedFlightIds.includes(f.id),
 	);
 
 	// Group flights by month
@@ -97,7 +97,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		return `${depCodes} - ${retCodes}`;
 	};
 
-	const formatDateRange = (departure: string, returnDate: string) => {
+	const _formatDateRange = (departure: string, returnDate: string) => {
 		const depDate = new Date(departure);
 		const retDate = new Date(returnDate);
 
@@ -198,125 +198,88 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	const isMobile = useIsMobile();
 
+	const anchor = useComboboxAnchor();
+
+	//connvert flightsByMonth to array of {month, flights}
+	const _flightsByMonthArray = Object.entries(flightsByMonth).map(
+		([month, flights]) => ({
+			month,
+			flights,
+		}),
+	);
+
+	// ] as const
+
+	const _handleValueChange = (val: any[]) => {
+		_setSelectedFlightIds(val);
+	};
+
 	// Shared content between Dialog and Drawer
-	const previewContent = (
+	const renderContent = () => (
 		<div className="space-y-4 px-4 md:px-0">
 			{/* Flight Selection */}
-			<div className="space-y-2">
-				<Popover open={openCombobox} onOpenChange={setOpenCombobox}>
-					<PopoverTrigger asChild>
-						<Button
-							variant="outline"
-							role="combobox"
-							aria-expanded={openCombobox}
-							className="w-full justify-between h-auto min-h-10"
-						>
-							<div className="flex flex-wrap gap-1 items-center text-left overflow-hidden">
-								{selectedFlightIds.length > 0 ? (
-									<div className="flex flex-wrap gap-1">
-										{selectedFlights
-											.slice(0, isMobile ? 2 : 3)
-											.map((flight) => (
-												<Badge
-													key={flight.id}
-													variant="secondary"
-													className="mr-1 whitespace-nowrap"
-												>
-													{formatDateRange(
-														flight.departure_date,
-														flight.return_date,
-													)}
-												</Badge>
-											))}
-										{selectedFlights.length > (isMobile ? 2 : 3) && (
-											<Badge variant="secondary" className="whitespace-nowrap">
-												+{selectedFlights.length - (isMobile ? 2 : 3)} more
-											</Badge>
-										)}
-									</div>
-								) : (
-									<span className="truncate">
-										Choose departure and return dates...
-									</span>
-								)}
-							</div>
-							<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-						<Command>
-							<CommandInput placeholder="Search flight..." />
-							<CommandList>
-								<CommandEmpty>No flight found.</CommandEmpty>
-								{Object.entries(flightsByMonth).map(([month, flights]) => (
-									<CommandGroup key={month} heading={month}>
-										<CommandItem
-											value={`select-all-${month}`}
-											onSelect={() => {
-												const flightIdsInMonth = flights.map((f) => f.id);
-												const allSelected = flightIdsInMonth.every((id) =>
-													selectedFlightIds.includes(id),
-												);
 
-												if (allSelected) {
-													setSelectedFlightIds((prev) =>
-														prev.filter((id) => !flightIdsInMonth.includes(id)),
-													);
-												} else {
-													setSelectedFlightIds((prev) => {
-														const newIds = new Set([
-															...prev,
-															...flightIdsInMonth,
-														]);
-														return Array.from(newIds);
-													});
-												}
-											}}
-											className="font-semibold text-primary"
-										>
-											<Check
-												className={cn(
-													"mr-2 h-4 w-4",
-													flights.every((f) => selectedFlightIds.includes(f.id))
-														? "opacity-100"
-														: "opacity-0",
-												)}
-											/>
-											Select All in {month}
-										</CommandItem>
-										{flights.map((flight) => (
-											<CommandItem
-												key={flight.id}
-												value={`${formatDate(flight.departure_date)} - ${formatDate(
-													flight.return_date,
-												)} (${flight.month})`}
-												onSelect={() => {
-													setSelectedFlightIds((prev) =>
-														prev.includes(flight.id)
-															? prev.filter((id) => id !== flight.id)
-															: [...prev, flight.id],
-													);
-												}}
-											>
-												<Check
-													className={cn(
-														"mr-2 h-4 w-4",
-														selectedFlightIds.includes(flight.id)
-															? "opacity-100"
-															: "opacity-0",
-													)}
-												/>
-												{formatDate(flight.departure_date)} -{" "}
-												{formatDate(flight.return_date)}
-											</CommandItem>
-										))}
-									</CommandGroup>
-								))}
-							</CommandList>
-						</Command>
-					</PopoverContent>
-				</Popover>
-			</div>
+			<Combobox
+				multiple
+				autoHighlight
+				items={_flightsByMonthArray}
+				// value={selectedFlights}
+				modal={true}
+				onValueChange={_handleValueChange}
+			>
+				{/* <ComboboxChips ref={anchor} className="w-full">
+					<ComboboxValue>
+						{selectedFlights.map((flight) => (
+							<ComboboxChip key={flight.id}>{flight.label}</ComboboxChip>
+						))}
+					</ComboboxValue>
+					<ComboboxChipsInput placeholder="Select flight date" />
+				</ComboboxChips> */}
+				<ComboboxChips ref={anchor}>
+					<ComboboxValue>
+						{(values) => (
+							<React.Fragment>
+								{pkg.flights
+									.filter((f) => values.includes(f.id))
+									.map((flight) => (
+										<ComboboxChip key={flight.id}>
+											{_formatDateRange(
+												flight.departure_date,
+												flight.return_date,
+											)}
+										</ComboboxChip>
+									))}
+
+								{values.length === 0 && (
+									<ComboboxChipsInput placeholder="Select a flight date" />
+								)}
+							</React.Fragment>
+						)}
+					</ComboboxValue>
+				</ComboboxChips>
+				<ComboboxContent anchor={anchor}>
+					<ComboboxEmpty>No items found.</ComboboxEmpty>
+					<ComboboxList>
+						{(group, index) => (
+							<ComboboxGroup key={group.month} items={group.flights}>
+								<ComboboxLabel>{group.month}</ComboboxLabel>
+								<ComboboxCollection>
+									{(item) => (
+										<ComboboxItem key={`${item.id}`} value={item.id}>
+											{formatDate(item.departure_date)} -{" "}
+											{formatDate(item.return_date)}
+										</ComboboxItem>
+									)}
+								</ComboboxCollection>
+
+								{index < _flightsByMonthArray.length - 1 && (
+									<ComboboxSeparator />
+								)}
+							</ComboboxGroup>
+						)}
+					</ComboboxList>
+				</ComboboxContent>
+			</Combobox>
 
 			{/* Preview */}
 			<div className="h-[500px] overflow-y-auto border rounded-md bg-muted/10 relative">
@@ -419,29 +382,34 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	// Action buttons shared between Dialog and Drawer
 	const actionButtons = (
 		<div className="flex justify-end gap-2">
-			<Button variant="outline" onClick={() => onOpenChange(false)}>
+			<Button
+				variant="outline"
+				onClick={() => {
+					onOpenChange(false);
+					_setSelectedFlightIds([]);
+				}}
+			>
 				Close
 			</Button>
-			{selectedFlights.length > 0 && (
-				<Button
-					onClick={() => {
-						const previewText = generatePreviewText();
-						if (previewText) {
-							navigator.clipboard.writeText(previewText);
-							setCopied(true);
-						}
-					}}
-					className={copied ? "bg-green-600 hover:bg-green-700" : ""}
-				>
-					{copied ? "Copied" : "Copy Preview"}
-				</Button>
-			)}
+			<Button
+				disabled={selectedFlights.length === 0}
+				onClick={() => {
+					const previewText = generatePreviewText();
+					if (previewText) {
+						navigator.clipboard.writeText(previewText);
+						setCopied(true);
+					}
+				}}
+				className={copied ? "bg-green-600 hover:bg-green-700" : ""}
+			>
+				{copied ? "Copied" : "Copy Preview"}
+			</Button>
 		</div>
 	);
 
 	if (isMobile) {
 		return (
-			<Drawer open={open} onOpenChange={onOpenChange}>
+			<Drawer open={open} onOpenChange={onOpenChange} modal={false}>
 				<DrawerContent>
 					<DrawerHeader className="text-left">
 						<DrawerTitle>Package Preview</DrawerTitle>
@@ -450,7 +418,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 						</DrawerDescription>
 					</DrawerHeader>
 					<div className="overflow-y-auto max-h-[60vh] pb-4">
-						{previewContent}
+						{renderContent()}
 					</div>
 					<DrawerFooter>{actionButtons}</DrawerFooter>
 				</DrawerContent>
@@ -459,15 +427,15 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
+		<Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+			<DialogContent className="max-w-2xl max-h-[90vh]  rounded-lg">
 				<DialogHeader>
 					<DialogTitle>Package Preview</DialogTitle>
 					<DialogDescription>
 						Select one or more flight dates to generate package preview
 					</DialogDescription>
 				</DialogHeader>
-				{previewContent}
+				{renderContent()}
 				{actionButtons}
 			</DialogContent>
 		</Dialog>
