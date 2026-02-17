@@ -32,6 +32,7 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 } from "@/components/ui/drawer";
+import { FieldLabel } from "~/components/ui/field";
 import { useIsMobile } from "~/hooks/use-mobile";
 
 interface Props {
@@ -218,10 +219,12 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	const renderContent = () => (
 		<div className="space-y-4 px-4 md:px-0">
 			{/* Flight Selection */}
+			<FieldLabel className="text-sm font-medium mb-1">
+				Select Flight Dates
+			</FieldLabel>
 
 			<Combobox
 				multiple
-				autoHighlight
 				items={_flightsByMonthArray}
 				// value={selectedFlights}
 				modal={true}
@@ -249,13 +252,10 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 											)}
 										</ComboboxChip>
 									))}
-
-								{values.length === 0 && (
-									<ComboboxChipsInput placeholder="Select a flight date" />
-								)}
 							</React.Fragment>
 						)}
 					</ComboboxValue>
+					<ComboboxChipsInput className="text-base sm:text-sm" />
 				</ComboboxChips>
 				<ComboboxContent anchor={anchor}>
 					<ComboboxEmpty>No items found.</ComboboxEmpty>
@@ -282,7 +282,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 			</Combobox>
 
 			{/* Preview */}
-			<div className="h-[500px] overflow-y-auto border rounded-md bg-muted/10 relative">
+			<div className="h-75 overflow-y-auto border rounded-md bg-muted/10 relative">
 				{!selectedFlights.length ? (
 					<div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
 						Select one or more flight dates to see the package preview.
@@ -427,8 +427,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange} modal={false}>
-			<DialogContent className="max-w-2xl max-h-[90vh]  rounded-lg">
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Package Preview</DialogTitle>
 					<DialogDescription>
