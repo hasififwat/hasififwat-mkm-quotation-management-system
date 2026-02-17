@@ -409,7 +409,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	if (isMobile) {
 		return (
-			<Drawer open={open} onOpenChange={onOpenChange} modal={false}>
+			<Drawer open={open} onOpenChange={onOpenChange}>
 				<DrawerContent>
 					<DrawerHeader className="text-left">
 						<DrawerTitle>Package Preview</DrawerTitle>
