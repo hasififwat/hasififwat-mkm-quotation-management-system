@@ -50,7 +50,10 @@ const SidebarNavLink = ({
 	const { setOpenMobile, isMobile } = useSidebar();
 	return (
 		<SidebarMenuItem key={item.title}>
-			<SidebarMenuButton asChild onClick={() => isMobile && setOpenMobile(false)}>
+			<SidebarMenuButton
+				asChild
+				onClick={() => isMobile && setOpenMobile(false)}
+			>
 				<Link to={item.url}>
 					<item.icon className="size-4" />
 					<span>{item.title}</span>
