@@ -16,6 +16,7 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 	SidebarTrigger,
+	useSidebar,
 } from "~/components/ui/sidebar";
 import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
 
@@ -36,6 +37,28 @@ const menuItems = [
 		url: "/quotations",
 	},
 ];
+
+const SidebarNavLink = ({
+	item,
+}: {
+	item: {
+		title: string;
+		url: string;
+		icon: React.ComponentType<{ className?: string }>;
+	};
+}) => {
+	const { setOpenMobile, isMobile } = useSidebar();
+	return (
+		<SidebarMenuItem key={item.title}>
+			<SidebarMenuButton asChild onClick={() => isMobile && setOpenMobile(false)}>
+				<Link to={item.url}>
+					<item.icon className="size-4" />
+					<span>{item.title}</span>
+				</Link>
+			</SidebarMenuButton>
+		</SidebarMenuItem>
+	);
+};
 
 interface SidebarLayoutProps {
 	children: ReactNode;
@@ -67,14 +90,7 @@ export function SidebarLayout({
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{menuItems.map((item) => (
-									<SidebarMenuItem key={item.title}>
-										<SidebarMenuButton asChild>
-											<Link to={item.url}>
-												<item.icon className="size-4" />
-												<span>{item.title}</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
+									<SidebarNavLink key={item.title} item={item} />
 								))}
 							</SidebarMenu>
 						</SidebarGroupContent>
