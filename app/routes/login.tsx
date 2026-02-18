@@ -23,7 +23,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 	// If valid session found, kick them to dashboard
 	if (session) {
-		throw redirect("/dashboard", { headers });
+		throw redirect("/packages", { headers });
 	}
 
 	return null;
@@ -48,7 +48,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 
 	// Success! Redirect and pass the cookies (headers)
-	return redirect("/dashboard", { headers });
+	return redirect("/packages", { headers });
 }
 export default function Login() {
 	return (

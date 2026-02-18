@@ -55,7 +55,7 @@ export function RegistrationForm({
 			// Automatically sign in the user after successful registration
 
 			// Navigate to dashboard
-			navigate("/dashboard");
+			navigate("/packages");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to create account");
 		} finally {

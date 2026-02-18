@@ -80,7 +80,7 @@ export function CreateClientModal({
 							/>
 						</div>
 					</div>
-					<DialogFooter>
+					<DialogFooter className="bg-background">
 						<Button type="submit" disabled={isSubmitting}>
 							{isSubmitting ? "Saving..." : "Create Client"}
 						</Button>
