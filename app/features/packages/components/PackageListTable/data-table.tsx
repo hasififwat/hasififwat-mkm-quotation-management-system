@@ -46,7 +46,12 @@ export function DataTable<TData, TValue>({
 	});
 
 	const renderPackageCell = useCallback(
-		(package_name?: string, duration?: string, _year?: string, pkg?: TData) => {
+		(
+			package_name?: string,
+			duration?: string,
+			_year?: string,
+			pkg?: TData & { id: string },
+		) => {
 			return (
 				<div>
 					<div className="font-medium">
@@ -54,7 +59,9 @@ export function DataTable<TData, TValue>({
 							<Copy />
 						</Button>
 
-						{package_name ?? "N/A"}
+						<Link to={`/packages/edit/${pkg?.id}`} className="hover:underline">
+							{package_name ?? "N/A"}
+						</Link>
 					</div>
 					<div className="flex gap-1 text-xs text-muted-foreground">
 						<span>{duration ?? "-"}</span>
