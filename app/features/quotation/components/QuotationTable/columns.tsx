@@ -11,5 +11,4 @@ export const columns: ColumnDef<Quotation>[] = [
 	{ accessorKey: "status", header: "Status" },
 	{ accessorKey: "total_amount", header: "Amount" },
 	{ accessorKey: "created_at", header: "Date" },
-	{ accessorKey: "action", header: "" },
 ];

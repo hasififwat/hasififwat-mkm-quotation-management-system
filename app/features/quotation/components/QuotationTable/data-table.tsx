@@ -15,6 +15,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import {
 	Table,
 	TableBody,
@@ -114,8 +115,32 @@ export function DataTable<TData, TValue>({
 
 			if (columnId === "quotation_number") {
 				return (
-					<div className="font-mono text-sm">
-						{row.quotation_number || "N/A"}
+					<div className="flex flex-col gap-1">
+						<Link
+							to={`/quotations/review/${row.id}`}
+							className="font-mono text-sm hover:underline font-bold text-primary"
+						>
+							{row.quotation_number || "N/A"}
+						</Link>
+						<div className="flex items-center gap-2 h-3">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
+								asChild
+							>
+								<Link to={`/quotations/review/${row.id}`}>Preview</Link>
+							</Button>
+							<Separator orientation="vertical" />
+							<Button
+								variant="ghost"
+								size="sm"
+								className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
+								asChild
+							>
+								<Link to={`/quotations/edit/${row.id}`}>Edit</Link>
+							</Button>
+						</div>
 					</div>
 				);
 			}
