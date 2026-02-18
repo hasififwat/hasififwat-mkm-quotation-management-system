@@ -9,6 +9,7 @@ import {
 	useFormContext,
 } from "react-hook-form";
 import {
+	Link,
 	useLoaderData,
 	useParams,
 	useRouteLoaderData,
@@ -613,13 +614,15 @@ export default function QuotationBuilder() {
 
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 lg:mx-auto space-y-6 animate-slideIn">
-			<div>
+			<div className="flex items-center gap-4">
+				<Link to="/quotations" className="text-sm text-muted-foreground">
+					<Button variant="ghost" size="icon">
+						<ChevronLeft className="w-5 h-5" />
+					</Button>
+				</Link>
 				<h2 className="text-xl md:text-2xl font-bold tracking-tight">
 					{qid ? "Edit Quotation" : "Create Quotation"}
 				</h2>
-				<p className="text-slate-500 text-xs md:text-sm">
-					Follow the steps to generate a quotation.
-				</p>
 			</div>
 
 			{/* Step Navigation Header */}

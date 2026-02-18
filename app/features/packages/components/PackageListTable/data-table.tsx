@@ -48,23 +48,35 @@ export function DataTable<TData, TValue>({
 	const renderPackageCell = useCallback(
 		(
 			package_name?: string,
-			duration?: string,
+			_duration?: string,
 			_year?: string,
 			pkg?: TData & { id: string },
 		) => {
 			return (
-				<div>
-					<div className="font-medium">
-						<Button onClick={() => handlePreview(pkg as TData)} variant="ghost">
-							<Copy />
+				<div className="flex items-start gap-2">
+					<div className="w-[30px] shrink-0">
+						<Button
+							onClick={() => handlePreview(pkg as TData)}
+							size="icon"
+							variant="ghost"
+							className="h-8 w-8"
+						>
+							<Copy className="h-4 w-4" />
 						</Button>
+					</div>
 
+					<div className="font-medium flex-1 flex flex-col gap-1">
 						<Link to={`/packages/edit/${pkg?.id}`} className="hover:underline">
 							{package_name ?? "N/A"}
 						</Link>
-					</div>
-					<div className="flex gap-1 text-xs text-muted-foreground">
-						<span>{duration ?? "-"}</span>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
+							asChild
+						>
+							<Link to={`/packages/edit/${pkg?.id}`}>Edit</Link>
+						</Button>
 					</div>
 				</div>
 			);
