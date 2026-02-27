@@ -6,7 +6,7 @@ export type FlightColumn = {
 };
 
 export const columns: FlightColumn[] = [
-	{ accessorKey: "season_key", header: "Season" },
+	{ accessorKey: "year_key", header: "Season" },
 	{ accessorKey: "pakej", header: "Ref No." },
 	{ accessorKey: "code", header: "Client" },
 	{ accessorKey: "month", header: "Package" },

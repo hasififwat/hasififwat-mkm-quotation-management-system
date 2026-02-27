@@ -6,7 +6,7 @@ import FlightListings from "./FlightListings";
 import type { FlightData } from "./schema";
 
 export default function FlightMaster() {
-	const SEASON_KEY = "2026/2027";
+	const YEAR_KEY = "2026/2027";
 
 	const [_flights, setFlights] = useState<FlightData[]>([]);
 	const [_searchTerm, _setSearchTerm] = useState("");
@@ -83,21 +83,19 @@ export default function FlightMaster() {
 				// console.log("Formatted Columns:", formattedColumns);
 				// console.log("Result:", results.data);
 
-				let tableData: any[] = [];
+				let tableData: Record<string, string>[] = [];
 
 				for (let rowIndex = 6; rowIndex < results.data.length; rowIndex++) {
 					let data = {};
 					for (let colIndex = 0; colIndex < columns.length; colIndex++) {
 						const colData = results.data[rowIndex][colIndex];
 
-						if (
-							map.has(colIndex) &&
-							colIndex === map.get(colIndex)?.cvs_index
-						) {
-							const { key } = map.get(colIndex)!;
+						const mappedCol = map.get(colIndex);
+						if (mappedCol && colIndex === mappedCol.cvs_index) {
+							const { key } = mappedCol;
 							data = {
 								...data,
-								season_key: SEASON_KEY,
+								year_key: YEAR_KEY,
 								[key]: colData,
 							};
 						}

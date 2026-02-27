@@ -1,3 +1,5 @@
+import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Plus, Search } from "lucide-react";
 import { Form, Link, redirect } from "react-router"; // Removed unused useSubmit
 import {
@@ -7,7 +9,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getServerClient } from "@/lib/supabase/server";
-import { UmrahPackageService } from "@/services/package-service";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -34,19 +35,16 @@ export async function loader({ request }: Route.LoaderArgs) {
 	}
 
 	const url = new URL(request.url);
-	const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
+	const searchTerm = url.searchParams.get("q") || "";
 
-	const allPackages = await UmrahPackageService.getAllPackages(supabase);
-
-	const packages = searchTerm
-		? allPackages.filter((p) => p.name.toLowerCase().includes(searchTerm))
-		: allPackages;
-
-	return { packages, searchTerm };
+	return { searchTerm };
 }
 
 export default function PackageListPage({ loaderData }: Route.ComponentProps) {
-	const { packages, searchTerm } = loaderData;
+	const { searchTerm } = loaderData;
+	const data = useQuery(api.packages.listWithRooms, {
+		searchTerm: searchTerm || undefined,
+	});
 
 	const searchProps = useDebouncedSearch(searchTerm);
 
@@ -85,8 +83,6 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 					<Form method="get" className="relative" role="search">
 						<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
 
-						{/* ✅ 2. Apply the hook props here */}
-						{/* This replaces defaultValue, onChange, and the manual submit logic */}
 						<Input
 							name="q"
 							placeholder="Search by package name..."
@@ -96,7 +92,7 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 					</Form>
 				</CardHeader>
 				<CardContent className="p-0">
-					<PackageList data={packages} />
+					{data && <PackageList data={data} />}
 				</CardContent>
 			</Card>
 		</div>

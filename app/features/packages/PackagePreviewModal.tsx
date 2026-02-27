@@ -1,3 +1,5 @@
+import type { api } from "convex/_generated/api";
+import type { FunctionReturnType } from "convex/server";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,8 +37,14 @@ import {
 import { FieldLabel } from "~/components/ui/field";
 import { useIsMobile } from "~/hooks/use-mobile";
 
+type PackageWithRooms = FunctionReturnType<
+	typeof api.packages.listWithRooms
+>[number];
+type Flight = PackageWithRooms["flights"][number];
+type Room = PackageWithRooms["rooms"][number];
+
 interface Props {
-	pkg: any;
+	pkg: PackageWithRooms;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
@@ -54,13 +62,13 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		}
 	}, [copied]);
 
-	const selectedFlights = pkg.flights.filter((f) =>
-		_selectedFlightIds.includes(f.id),
+	const selectedFlights = pkg.flights.filter((f: Flight) =>
+		_selectedFlightIds.includes(f._id),
 	);
 
 	// Group flights by month
 	const flightsByMonth = pkg.flights.reduce(
-		(acc, flight) => {
+		(acc: Record<string, Flight[]>, flight: Flight) => {
 			const month = flight.month || "Other";
 			if (!acc[month]) {
 				acc[month] = [];
@@ -68,7 +76,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 			acc[month].push(flight);
 			return acc;
 		},
-		{} as Record<string, typeof pkg.flights>,
+		{} as Record<string, Flight[]>,
 	);
 
 	const formatDate = (dateStr: string) => {
@@ -120,7 +128,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		lines.push(`*${pkg.name}*`);
 
 		// Iterate over each selected flight
-		selectedFlights.forEach((flight) => {
+		selectedFlights.forEach((flight: Flight) => {
 			lines.push(""); // Add spacing between flights
 			// Dates
 			lines.push(
@@ -139,8 +147,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 			// Room prices
 			const sortedRooms = pkg.rooms
-				.filter((room) => room.enabled)
-				.sort((a, b) => {
+				.filter((room: Room) => room.enabled)
+				.sort((a: Room, b: Room) => {
 					const order: Record<string, number> = {
 						Quad: 1,
 						Triple: 2,
@@ -149,7 +157,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 					return (order[a.room_type] || 99) - (order[b.room_type] || 99);
 				});
 
-			sortedRooms.forEach((room) => {
+			sortedRooms.forEach((room: Room) => {
 				const roomNum =
 					room.room_type === "Quad"
 						? "4"
@@ -164,28 +172,19 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		lines.push("");
 
 		// Hotels
-		if (pkg.hotels?.makkah?.enabled) {
-			const meals =
-				pkg.hotels.makkah.meals.length === 0
-					? "Breakfast Only"
-					: pkg.hotels.makkah.meals.join(", ");
-			lines.push(`Makkah : ${pkg.hotels.makkah.name} (${meals})`);
+		const makkahHotel = pkg.hotels?.find((h) => h.hotel_type === "makkah");
+		if (makkahHotel?.enabled) {
+			lines.push(`Makkah : ${makkahHotel.name || makkahHotel.placeholder}`);
 		}
 
-		if (pkg.hotels?.madinah?.enabled) {
-			const meals =
-				pkg.hotels.madinah.meals.length === 0
-					? "Breakfast Only"
-					: pkg.hotels.madinah.meals.join(", ");
-			lines.push(`Madinah : ${pkg.hotels.madinah.name} (${meals})`);
+		const madinahHotel = pkg.hotels?.find((h) => h.hotel_type === "madinah");
+		if (madinahHotel?.enabled) {
+			lines.push(`Madinah : ${madinahHotel.name || madinahHotel.placeholder}`);
 		}
 
-		if (pkg.hotels?.taif?.enabled) {
-			const meals =
-				pkg.hotels.taif.meals.length === 0
-					? "Breakfast Only"
-					: pkg.hotels.taif.meals.join(", ");
-			lines.push(`Taif : ${pkg.hotels.taif.name} (${meals})`);
+		const taifHotel = pkg.hotels?.find((h) => h.hotel_type === "taif");
+		if (taifHotel?.enabled) {
+			lines.push(`Taif : ${taifHotel.name || taifHotel.placeholder}`);
 		}
 
 		// Footer note
@@ -211,7 +210,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	// ] as const
 
-	const _handleValueChange = (val: any[]) => {
+	const _handleValueChange = (val: string[]) => {
 		_setSelectedFlightIds(val);
 	};
 
@@ -243,9 +242,9 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 						{(values) => (
 							<React.Fragment>
 								{pkg.flights
-									.filter((f) => values.includes(f.id))
-									.map((flight) => (
-										<ComboboxChip key={flight.id}>
+									.filter((f: Flight) => values.includes(f._id))
+									.map((flight: Flight) => (
+										<ComboboxChip key={flight._id}>
 											{_formatDateRange(
 												flight.departure_date,
 												flight.return_date,
@@ -265,7 +264,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 								<ComboboxLabel>{group.month}</ComboboxLabel>
 								<ComboboxCollection>
 									{(item) => (
-										<ComboboxItem key={`${item.id}`} value={item.id}>
+										<ComboboxItem key={`${item._id}`} value={item._id}>
 											{formatDate(item.departure_date)} -{" "}
 											{formatDate(item.return_date)}
 										</ComboboxItem>
@@ -292,9 +291,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 						<CardContent className="pt-6">
 							<div className="space-y-6 font-mono text-sm whitespace-pre-line">
 								<div className="font-bold text-lg">{pkg.name}</div>
-
-								{selectedFlights.map((flight) => (
-									<div key={flight.id} className="space-y-3 border-b pb-4">
+								{selectedFlights.map((flight: Flight) => (
+									<div key={flight._id} className="space-y-3 border-b pb-4">
 										<div>
 											{formatDate(flight.departure_date)} -{" "}
 											{formatDate(flight.return_date)}
@@ -310,8 +308,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 										<div className="pt-2 space-y-1">
 											{pkg.rooms
-												.filter((room) => room.enabled)
-												.sort((a, b) => {
+												.filter((room: Room) => room.enabled)
+												.sort((a: Room, b: Room) => {
 													const order: Record<string, number> = {
 														Quad: 1,
 														Triple: 2,
@@ -322,8 +320,8 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 														(order[b.room_type] || 99)
 													);
 												})
-												.map((room) => (
-													<div key={room.id}>
+												.map((room: Room) => (
+													<div key={room._id}>
 														Bilik{" "}
 														{room.room_type === "Quad"
 															? "4"
@@ -337,33 +335,32 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 									</div>
 								))}
 
-								{pkg.hotels?.makkah?.enabled && (
+								{pkg.hotels?.find((h) => h.hotel_type === "makkah")
+									?.enabled && (
 									<div>
-										Makkah : {pkg.hotels.makkah.name} (
-										{pkg.hotels.makkah.meals.length === 0
-											? "Breakfast Only"
-											: pkg.hotels.makkah.meals.join(", ")}
-										)
+										Makkah :{" "}
+										{pkg.hotels.find((h) => h.hotel_type === "makkah")?.name ||
+											pkg.hotels.find((h) => h.hotel_type === "makkah")
+												?.placeholder}
 									</div>
 								)}
 
-								{pkg.hotels?.madinah?.enabled && (
+								{pkg.hotels?.find((h) => h.hotel_type === "madinah")
+									?.enabled && (
 									<div>
-										Madinah : {pkg.hotels.madinah.name} (
-										{pkg.hotels.madinah.meals.length === 0
-											? "Breakfast Only"
-											: pkg.hotels.madinah.meals.join(", ")}
-										)
+										Madinah :{" "}
+										{pkg.hotels.find((h) => h.hotel_type === "madinah")?.name ||
+											pkg.hotels.find((h) => h.hotel_type === "madinah")
+												?.placeholder}
 									</div>
 								)}
 
-								{pkg.hotels?.taif?.enabled && (
+								{pkg.hotels?.find((h) => h.hotel_type === "taif")?.enabled && (
 									<div>
-										Taif : {pkg.hotels.taif.name} (
-										{pkg.hotels.taif.meals.length === 0
-											? "Breakfast Only"
-											: pkg.hotels.taif.meals.join(", ")}
-										)
+										Taif :{" "}
+										{pkg.hotels.find((h) => h.hotel_type === "taif")?.name ||
+											pkg.hotels.find((h) => h.hotel_type === "taif")
+												?.placeholder}
 									</div>
 								)}
 

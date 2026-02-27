@@ -1,36 +1,79 @@
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
+import { ConvexHttpClient } from "convex/browser";
 import { redirect } from "react-router";
-import { getServerClient } from "@/lib/supabase/server";
 import PackageBuilder from "~/features/packages/PackageBuilder";
-import { createClient } from "~/lib/supabase/client";
-import { UmrahPackageService } from "~/services/package-service";
+import type { IPackageDetailsForm } from "~/features/packages/schema";
+import {
+	normalizePackageMutationPayload,
+	transformConvexPackage,
+} from "~/features/packages/utils";
 import type { Route } from "./+types/package.edit";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-	const allPackages = UmrahPackageService.getAllPackages(supabase);
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+	const packageId = params.pid as Id<"packages">;
+	const convexUrl = import.meta.env.VITE_CONVEX_URL;
 
-	const pkg = await UmrahPackageService.getPackageById(supabase, params.pid);
-	if (!pkg) {
-		return redirect("/packages");
+	if (!convexUrl) {
+		throw new Error("VITE_CONVEX_URL is not set");
 	}
 
-	return { allPackages, initialData: pkg };
+	const client = new ConvexHttpClient(convexUrl);
+
+	const [packageData, allPackagesData] = await Promise.all([
+		client.query(api.packages.getById, { id: packageId }),
+		client.query(api.packages.listWithRooms, {}),
+	]);
+
+	if (!packageData) {
+		throw redirect("/packages");
+	}
+
+	// Transform both current package and all packages
+	const initialData = transformConvexPackage(packageData);
+	const allPackages = allPackagesData.map(transformConvexPackage);
+
+	return {
+		initialData,
+		allPackages,
+	};
 }
 
+clientLoader.hydrate = false;
+
 export async function clientAction({ request }: Route.ClientActionArgs) {
-	console.log("package.edit clientAction called", request);
-	const supabase = createClient();
+	const convexUrl = import.meta.env.VITE_CONVEX_URL;
 
-	const data = await request.json();
+	if (!convexUrl) {
+		throw new Error("VITE_CONVEX_URL is not set");
+	}
 
-	await UmrahPackageService.updatePackage(supabase, data);
+	const client = new ConvexHttpClient(convexUrl);
+	const data = (await request.json()) as IPackageDetailsForm;
+
+	if (!data._id) {
+		throw new Error("Package id is required for update");
+	}
+
+	const payload = normalizePackageMutationPayload(data);
+
+	await client.mutation(api.packages.updatePackage, {
+		id: data._id as Id<"packages">,
+		payload,
+	});
 
 	return redirect("/packages");
 }
 
 export function HydrateFallback() {
-	return <div>Loading...</div>;
+	return (
+		<div className="col-span-12 flex items-center justify-center min-h-screen bg-background">
+			<div className="text-center">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+				<p className="text-muted-foreground">Loading package...</p>
+			</div>
+		</div>
+	);
 }
 
 export function meta() {

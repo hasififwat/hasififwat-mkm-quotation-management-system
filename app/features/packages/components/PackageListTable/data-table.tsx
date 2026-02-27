@@ -5,8 +5,9 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Copy, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
-import { useCallback } from "react";
+import { ConvexHttpClient } from "convex/browser";
+import { Copy, Loader2, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { createClient } from "~/lib/supabase/client";
 import { UmrahPackageService } from "~/services/package-service";
 
@@ -34,11 +41,40 @@ interface DataTableProps<TData, TValue> {
 	handlePreview: (pkg: TData) => void;
 }
 
+const SEASON_BADGE_CLASSES = [
+	"bg-sky-500/15 text-sky-700 border-sky-400/40 dark:text-sky-300",
+	"bg-violet-500/15 text-violet-700 border-violet-400/40 dark:text-violet-300",
+	"bg-fuchsia-500/15 text-fuchsia-700 border-fuchsia-400/40 dark:text-fuchsia-300",
+	"bg-cyan-500/15 text-cyan-700 border-cyan-400/40 dark:text-cyan-300",
+	"bg-emerald-500/15 text-emerald-700 border-emerald-400/40 dark:text-emerald-300",
+];
+
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	handlePreview,
 }: DataTableProps<TData, TValue>) {
+	const [statusLoadingById, setStatusLoadingById] = useState<
+		Record<string, boolean>
+	>({});
+	const [statusOverridesById, setStatusOverridesById] = useState<
+		Record<string, "published" | "unpublished">
+	>({});
+
+	const getSeasonBadgeClass = useCallback((season?: string) => {
+		if (!season) {
+			return SEASON_BADGE_CLASSES[0];
+		}
+
+		const normalized = season.trim().toUpperCase();
+		let hash = 0;
+		for (const char of normalized) {
+			hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+		}
+
+		return SEASON_BADGE_CLASSES[hash % SEASON_BADGE_CLASSES.length];
+	}, []);
+
 	const table = useReactTable({
 		data,
 		columns,
@@ -50,11 +86,11 @@ export function DataTable<TData, TValue>({
 			package_name?: string,
 			_duration?: string,
 			_year?: string,
-			pkg?: TData & { id: string },
+			pkg?: TData & { _id: string },
 		) => {
 			return (
 				<div className="flex items-start gap-2">
-					<div className="w-[30px] shrink-0">
+					<div className="w-7.5 shrink-0">
 						<Button
 							onClick={() => handlePreview(pkg as TData)}
 							size="icon"
@@ -66,17 +102,21 @@ export function DataTable<TData, TValue>({
 					</div>
 
 					<div className="font-medium flex-1 flex flex-col gap-1">
-						<Link to={`/packages/edit/${pkg?.id}`} className="hover:underline">
+						<Link to={`/packages/edit/${pkg?._id}`} className="hover:underline">
 							{package_name ?? "N/A"}
 						</Link>
-						<Button
+						<span className="text-xs text-muted-foreground">
+							{_duration ?? "N/A"} . {_year}
+						</span>
+
+						{/* <Button
 							variant="ghost"
 							size="sm"
 							className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
 							asChild
 						>
-							<Link to={`/packages/edit/${pkg?.id}`}>Edit</Link>
-						</Button>
+							<Link to={`/packages/edit/${pkg?._id}`}>Edit</Link>
+						</Button> */}
 					</div>
 				</div>
 			);
@@ -99,8 +139,47 @@ export function DataTable<TData, TValue>({
 		UmrahPackageService.deletePackage(supabase, pkgId);
 	}, []);
 
+	const handleStatusChange = useCallback(
+		async (pkgId: string, nextStatus: "published" | "unpublished") => {
+			const convexUrl = import.meta.env.VITE_CONVEX_URL;
+			if (!convexUrl) {
+				console.error("VITE_CONVEX_URL is not set");
+				return;
+			}
+
+			setStatusLoadingById((prev) => ({
+				...prev,
+				[pkgId]: true,
+			}));
+
+			try {
+				const client = new ConvexHttpClient(convexUrl);
+				await client.mutation(
+					"packages:updatePackageStatus" as never,
+					{
+						id: pkgId,
+						status: nextStatus,
+					} as never,
+				);
+
+				setStatusOverridesById((prev) => ({
+					...prev,
+					[pkgId]: nextStatus,
+				}));
+			} catch (error) {
+				console.error("Failed to update package status", error);
+			} finally {
+				setStatusLoadingById((prev) => ({
+					...prev,
+					[pkgId]: false,
+				}));
+			}
+		},
+		[],
+	);
+
 	const renderDropdownMenu = useCallback(
-		(pkg: TData & { id: string }) => {
+		(pkg: TData & { _id: string }) => {
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -110,13 +189,13 @@ export function DataTable<TData, TValue>({
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<Link to={`/packages/edit/${pkg.id}`}>
+						<Link to={`/packages/edit/${pkg._id}`}>
 							<DropdownMenuItem>
 								<PencilIcon />
 								Edit
 							</DropdownMenuItem>
 						</Link>
-						<DropdownMenuItem onClick={() => handleDelete(pkg.id)}>
+						<DropdownMenuItem onClick={() => handleDelete(pkg._id)}>
 							<Trash />
 							Delete
 						</DropdownMenuItem>
@@ -132,8 +211,30 @@ export function DataTable<TData, TValue>({
 			const columnId = cell.column.id;
 			const cellValue = cell.getValue();
 
+			const renderSectionItem = (label: string, filled: boolean) => (
+				<Tooltip key={label}>
+					<TooltipTrigger>
+						<Badge
+							variant="outline"
+							className="h-5 px-2 text-[10px] leading-none font-medium"
+						>
+							<span
+								className={`h-1.5 w-1.5 rounded-full ${
+									filled ? "bg-emerald-500" : "bg-red-500"
+								}`}
+							/>
+							{label}
+						</Badge>
+					</TooltipTrigger>
+					<TooltipContent>
+						{filled ? `${label} completed` : `${label} is missing`}
+					</TooltipContent>
+				</Tooltip>
+			);
+
 			if (columnId === "name") {
 				const row = cell.row.original as TData & {
+					_id: string;
 					name: string;
 					duration: string;
 					year: string;
@@ -142,7 +243,29 @@ export function DataTable<TData, TValue>({
 					row.name,
 					row.duration,
 					row.year,
-					cell.row.original,
+					cell.row.original as TData & { _id: string },
+				);
+			}
+
+			if (columnId === "season") {
+				const season = (cellValue as string | undefined) ?? "";
+				if (!season) {
+					return (
+						<div className="flex justify-center">
+							<span className="text-muted-foreground text-xs">N/A</span>
+						</div>
+					);
+				}
+
+				return (
+					<div className="flex justify-center">
+						<Badge
+							variant="outline"
+							className={`h-4 px-1.5 text-[10px] leading-none ${getSeasonBadgeClass(season)}`}
+						>
+							{season}
+						</Badge>
+					</div>
 				);
 			}
 
@@ -151,70 +274,188 @@ export function DataTable<TData, TValue>({
 			}
 
 			if (columnId === "status") {
-				const status = cellValue as "published" | "unpublished";
-				const variant = status === "published" ? "default" : "secondary";
-				const capStatus = status.charAt(0).toUpperCase() + status.slice(1);
+				const row = cell.row.original as TData & {
+					_id: string;
+					status: "published" | "unpublished";
+				};
 
-				return <Badge variant={variant}>{capStatus}</Badge>;
+				const packageId = row._id;
+				const status = statusOverridesById[packageId] ?? row.status;
+				const isUpdating = Boolean(statusLoadingById[packageId]);
+				const capStatus = status.charAt(0).toUpperCase() + status.slice(1);
+				const statusDotClass =
+					status === "published" ? "bg-emerald-500" : "bg-red-500";
+
+				return (
+					<div className="flex justify-center">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant="ghost"
+									className="h-auto p-0 hover:bg-transparent"
+									disabled={isUpdating}
+								>
+									<Badge
+										variant="outline"
+										className="h-5 px-2 text-[10px] leading-none font-medium cursor-pointer"
+									>
+										{isUpdating ? (
+											<>
+												<Loader2 className="h-3 w-3 animate-spin" />
+												Updating...
+											</>
+										) : (
+											<>
+												<span
+													className={`h-1.5 w-1.5 rounded-full ${statusDotClass}`}
+												/>
+												{capStatus}
+											</>
+										)}
+									</Badge>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="start">
+								<DropdownMenuItem
+									disabled={isUpdating || status === "published"}
+									onClick={() => handleStatusChange(packageId, "published")}
+								>
+									Publish
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									disabled={isUpdating || status === "unpublished"}
+									onClick={() => handleStatusChange(packageId, "unpublished")}
+								>
+									Unpublish
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				);
+			}
+
+			if (columnId === "sections") {
+				const row = cell.row.original as TData & {
+					hotels?: Array<{
+						enabled?: boolean;
+						name?: string;
+						meals?: string[];
+					}>;
+					rooms?: Array<{
+						enabled?: boolean;
+						price?: number;
+					}>;
+					inclusions?: string;
+					exclusions?: string;
+					flights?: unknown[];
+				};
+
+				const hasHotelDetails = (row.hotels ?? []).some(
+					(hotel) =>
+						hotel.enabled ||
+						Boolean(hotel.name?.trim()) ||
+						(hotel.meals?.length ?? 0) > 0,
+				);
+
+				const hasRoomDetails = (row.rooms ?? []).some(
+					(room) => room.enabled || (room.price ?? 0) > 0,
+				);
+
+				const hasInclusionExclusion = Boolean(
+					row.inclusions?.trim() || row.exclusions?.trim(),
+				);
+
+				const hasFlightsDetails = (row.flights?.length ?? 0) > 0;
+
+				return (
+					<div className="flex flex-wrap gap-1">
+						{renderSectionItem("Hotel Details", hasHotelDetails)}
+						{renderSectionItem("Room Details", hasRoomDetails)}
+						{renderSectionItem("Inclusion/ Exclusion", hasInclusionExclusion)}
+						{renderSectionItem("Flights Details", hasFlightsDetails)}
+					</div>
+				);
 			}
 
 			if (columnId === "action") {
-				return renderDropdownMenu(cell.row.original as TData & { id: string });
+				return renderDropdownMenu(cell.row.original as TData & { _id: string });
 			}
 
 			return flexRender(cell.column.columnDef.cell, cell.getContext());
 		},
-		[renderFormattedDate, renderPackageCell, renderDropdownMenu],
+		[
+			renderFormattedDate,
+			renderPackageCell,
+			renderDropdownMenu,
+			getSeasonBadgeClass,
+			handleStatusChange,
+			statusLoadingById,
+			statusOverridesById,
+		],
 	);
 	return (
 		<div className="overflow-hidden">
-			<Table>
-				<TableHeader>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return (
-									<TableHead key={header.id}>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-												)}
-									</TableHead>
-								);
-							})}
-						</TableRow>
-					))}
-				</TableHeader>
-				<TableBody>
-					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
-							<TableRow
-								key={row.id}
-								data-state={row.getIsSelected() && "selected"}
-							>
-								{row.getVisibleCells().map((cell) => {
+			<TooltipProvider>
+				<Table>
+					<TableHeader>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+									const columnId = header.column.id;
+									const isCenteredColumn =
+										columnId === "season" || columnId === "status";
 									return (
-										<TableCell
-											key={cell.id}
-											className={cell.column.id === "action" ? "w-16" : ""}
+										<TableHead
+											key={header.id}
+											className={isCenteredColumn ? "text-center" : ""}
 										>
-											{renderCell(cell)}
-										</TableCell>
+											{header.isPlaceholder
+												? null
+												: flexRender(
+														header.column.columnDef.header,
+														header.getContext(),
+													)}
+										</TableHead>
 									);
 								})}
 							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
-								No results.
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
+						))}
+					</TableHeader>
+					<TableBody>
+						{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+									key={row.id}
+									data-state={row.getIsSelected() && "selected"}
+								>
+									{row.getVisibleCells().map((cell) => {
+										const isCenteredColumn =
+											cell.column.id === "season" ||
+											cell.column.id === "status";
+										return (
+											<TableCell
+												key={cell.id}
+												className={`${cell.column.id === "action" ? "w-16" : ""} ${isCenteredColumn ? "text-center" : ""}`}
+											>
+												{renderCell(cell)}
+											</TableCell>
+										);
+									})}
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									No results.
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</TooltipProvider>
 		</div>
 	);
 }

@@ -110,8 +110,8 @@ export function DataTable<TData, TValue>({
 		// const cellValue = cell.getValue();
 		const row = cell.row.original as FlightData;
 
-		if (columnId === "season_key") {
-			return <div className="font-mono text-sm">{row.season_key || "N/A"}</div>;
+		if (columnId === "year_key") {
+			return <div className="font-mono text-sm">{row.year_key || "N/A"}</div>;
 		}
 
 		// if (columnId === "package") {

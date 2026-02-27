@@ -1,12 +1,183 @@
+import { ConvexHttpClient } from "convex/browser";
 import Papa from "papaparse";
 import { useState } from "react";
 import type { FlightData } from "@/features/flights/schema";
 
 const SEASON_KEY = "2026/2027";
 
+const MONTH_TO_CODE: Record<string, string> = {
+	JANUARY: "JAN",
+	JAN: "JAN",
+	FEBRUARY: "FEB",
+	FEB: "FEB",
+	MARCH: "MAR",
+	MAR: "MAR",
+	MAC: "MAR",
+	APRIL: "APR",
+	APR: "APR",
+	MAY: "MAY",
+	JUNE: "JUN",
+	JUN: "JUN",
+	JULY: "JUL",
+	JUL: "JUL",
+	AUGUST: "AUG",
+	AUG: "AUG",
+	OGOS: "AUG",
+	SEPTEMBER: "SEP",
+	SEPT: "SEP",
+	SEP: "SEP",
+	OCTOBER: "OCT",
+	OCT: "OCT",
+	NOVEMBER: "NOV",
+	NOV: "NOV",
+	DECEMBER: "DEC",
+	DEC: "DEC",
+};
+
+const PACKAGE_NAME_ALIASES: Record<string, string> = {
+	"MANASIK HAJI": "MANASIK HAJI",
+	"MENARA JAM": "MENARA JAM",
+	UMJ: "MENARA JAM",
+	"UMJ PREMIUM": "UMJ PREMIUM",
+	"UMJ P": "UMJ PREMIUM",
+	"UMJ PLUS": "UMJ PLUS",
+	MAWADDAH: "MAWADDAH",
+	"MAWADDAH LITE": "MAWADDAH LITE",
+	MT: "MAKKAH TOWER",
+	"MT P": "MAKKAH TOWER - PREMIUM",
+};
+
+const MONTHS_SHORT = [
+	"JAN",
+	"FEB",
+	"MAR",
+	"APR",
+	"MAY",
+	"JUN",
+	"JUL",
+	"AUG",
+	"SEP",
+	"OCT",
+	"NOV",
+	"DEC",
+] as const;
+
+const HEADER_ALIASES = {
+	month: ["month"],
+	season: ["season"],
+	pakej: ["pakej", "package"],
+	departure: ["departure", "depature", "depart", "departdate"],
+	return: ["return", "returndate"],
+	sector_departure: ["departuresector", "sectordeparture", "departsector"],
+	sector_return: ["returnsector", "sectorreturn", "returnsector2"],
+	code: ["code", "flight", "airline"],
+} as const;
+
+function normalizeHeader(header: string): string {
+	return header.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function normalizeText(value: unknown): string {
+	if (typeof value !== "string") {
+		return "";
+	}
+	return value.trim();
+}
+
+function normalizeMonth(rawMonth: string): string {
+	if (!rawMonth) {
+		return "";
+	}
+	return (
+		MONTH_TO_CODE[rawMonth.toUpperCase().trim()] ??
+		rawMonth.toUpperCase().trim()
+	);
+}
+
+function normalizePackageName(rawPackage: string): string {
+	const cleaned = rawPackage.trim().replace(/\s+/g, " ");
+	const normalizedKey = cleaned.toUpperCase();
+	return PACKAGE_NAME_ALIASES[normalizedKey] ?? cleaned;
+}
+
+function parseDate(rawValue: string): string {
+	const value = rawValue.trim();
+	if (!value) {
+		return "";
+	}
+
+	// dd-MMM-yy or d-MMM-yy
+	const dashMatch = value.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/);
+	if (dashMatch) {
+		const [, dayRaw, monthRaw, yearRaw] = dashMatch;
+		const monthCode = normalizeMonth(monthRaw);
+		const monthIndex = MONTHS_SHORT.indexOf(
+			monthCode as (typeof MONTHS_SHORT)[number],
+		);
+		if (monthIndex >= 0) {
+			const year = yearRaw.length === 2 ? `20${yearRaw}` : yearRaw;
+			const day = dayRaw.padStart(2, "0");
+			const month = String(monthIndex + 1).padStart(2, "0");
+			return `${year}-${month}-${day}`;
+		}
+	}
+
+	// dd/mm/yyyy OR mm/dd/yyyy
+	const slashMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+	if (slashMatch) {
+		let [, first, second, year] = slashMatch;
+		if (year.length === 2) {
+			year = `20${year}`;
+		}
+
+		const a = Number(first);
+		const b = Number(second);
+
+		let day = a;
+		let month = b;
+
+		if (a <= 12 && b > 12) {
+			month = a;
+			day = b;
+		} else if (a > 12 && b <= 12) {
+			day = a;
+			month = b;
+		}
+
+		return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+	}
+
+	return value;
+}
+
+function getByAlias(
+	row: Record<string, string>,
+	aliases: readonly string[],
+): string {
+	for (const alias of aliases) {
+		const value = row[alias];
+		if (typeof value === "string" && value.trim().length > 0) {
+			return value.trim();
+		}
+	}
+	return "";
+}
+
+function extractYearFromFileName(fileName: string): string {
+	const match = fileName.match(/(20\d{2})[/_-](20\d{2})/);
+	if (!match) {
+		return SEASON_KEY;
+	}
+
+	const [, startYear, endYear] = match;
+	return `${startYear}/${endYear}`;
+}
+
 export interface IPackageData {
+	season: string;
 	name: string;
 	flights: FlightData[];
+	already_exists?: boolean;
 }
 
 interface IuseExtractPackage {
@@ -21,63 +192,111 @@ export const useExtractPackage = (): IuseExtractPackage => {
 	const [fileName, setFileName] = useState<string | null>(null);
 	const [_packageData, _setPackageData] = useState<IPackageData[] | null>(null);
 
-	const handleFormatFlightsToPackage = (flights: FlightData[]) => {
+	const getFlightKey = (flight: FlightData): string => {
+		return [
+			flight.pakej,
+			flight.code,
+			flight.month,
+			flight.departure,
+			flight.return,
+			flight.sector_departure,
+			flight.sector_return,
+		].join("|");
+	};
+
+	const handleFormatFlightsToPackage = (
+		flights: FlightData[],
+		seasonByFlightKey: Map<string, string>,
+	): IPackageData[] => {
+		const monthOrder: Record<string, number> = {
+			JAN: 1,
+			FEB: 2,
+			MAR: 3,
+			APR: 4,
+			MAY: 5,
+			JUN: 6,
+			JUL: 7,
+			AUG: 8,
+			SEP: 9,
+			OCT: 10,
+			NOV: 11,
+			DEC: 12,
+		};
+
 		const grouped = flights.reduce(
 			(acc, current) => {
-				const { package_name } = current;
-				if (!acc[package_name]) {
-					acc[package_name] = [];
+				const season =
+					seasonByFlightKey.get(getFlightKey(current)) || "UNSPECIFIED";
+				const groupKey = `${season}::${current.package_name}`;
+				if (!acc[groupKey]) {
+					acc[groupKey] = [];
 				}
-				acc[package_name].push(current);
+				acc[groupKey].push(current);
 				return acc;
 			},
 			{} as Record<string, FlightData[]>,
 		);
 
-		const packages = Object.entries(grouped).map(([name, flights]) => {
+		const packages = Object.entries(grouped).map(([groupKey, flights]) => {
+			const [season, name] = groupKey.split("::");
 			const sortedFlights = flights.sort((a, b) => {
-				const monthOrder: { [key: string]: number } = {
-					JANUARY: 1,
-					FEBRUARY: 2,
-					MARCH: 3,
-					APRIL: 4,
-					MAY: 5,
-					JUNE: 6,
-					JULY: 7,
-					AUGUST: 8,
-					SEPTEMBER: 9,
-					OCTOBER: 10,
-					NOVEMBER: 11,
-					DECEMBER: 12,
-					JAN: 1,
-					FEB: 2,
-					MAR: 3,
-					APR: 4,
-					JUN: 6,
-					JUL: 7,
-					AUG: 8,
-					SEP: 9,
-					OCT: 10,
-					NOV: 11,
-					DEC: 12,
-				};
-
-				const monthA = a.month.toUpperCase().trim();
-				const monthB = b.month.toUpperCase().trim();
+				const monthA = normalizeMonth(a.month);
+				const monthB = normalizeMonth(b.month);
 
 				const orderA = monthOrder[monthA] || 99;
 				const orderB = monthOrder[monthB] || 99;
 
-				return orderA - orderB;
+				if (orderA !== orderB) {
+					return orderA - orderB;
+				}
+
+				return a.departure.localeCompare(b.departure);
 			});
 
 			return {
+				season,
 				name,
 				flights: sortedFlights,
 			};
 		});
 
-		_setPackageData(packages);
+		return packages;
+	};
+
+	const markExistingPackages = async (
+		packages: IPackageData[],
+		year: string,
+	): Promise<IPackageData[]> => {
+		const convexUrl = import.meta.env.VITE_CONVEX_URL;
+		if (!convexUrl || packages.length === 0) {
+			return packages;
+		}
+
+		try {
+			const client = new ConvexHttpClient(convexUrl);
+			const existing = (await client.query(
+				"packages:checkExistingPackagesForYear" as never,
+				{
+					year,
+					packages: packages.map((pkg) => ({
+						name: pkg.name,
+						season: pkg.season,
+					})),
+				} as never,
+			)) as Array<{ name: string; season?: string | null }>;
+
+			const existingKeys = new Set(
+				existing.map((pkg) => `${pkg.name}::${pkg.season || ""}`),
+			);
+
+			return packages.map((pkg) => ({
+				...pkg,
+				already_exists: existingKeys.has(`${pkg.name}::${pkg.season || ""}`),
+			}));
+		} catch (error) {
+			console.error("Failed to validate existing packages", error);
+			return packages;
+		}
 	};
 
 	const _handleFileUpload = (e: React.ChangeEvent<HTMLInputElement> | File) => {
@@ -90,157 +309,93 @@ export const useExtractPackage = (): IuseExtractPackage => {
 		if (!file) return;
 
 		setFileName(file.name);
-		const _tableData: FlightData[] = [];
+		const yearKey = extractYearFromFileName(file.name);
 
-		Papa.parse(file, {
-			complete: (results) => {
-				const columns = results.data[5] as string[];
-				console.log("Columns:", columns);
-				const filteredColumns = columns.filter(
-					(col, index) =>
-						col === "MONTH" ||
-						col === "CODE" ||
-						col === "DEPARTURE" ||
-						(col === "SECTOR" && index === 6) ||
-						col === "RETURN" ||
-						(col === "SECTOR" && index === 12) ||
-						col === "PAKEJ",
-				);
-				console.log("Filtered Columns:", filteredColumns);
-
-				const filteredColumnsIndx = columns
-					.map((col, index) => {
-						if (col === "MONTH") return index;
-						if (col === "CODE") return index;
-						if (col === "DEPARTURE") return index;
-						if (col === "SECTOR" && index === 6) return index;
-						if (col === "RETURN") return index;
-						if (col === "SECTOR" && index === 12) return index;
-						if (col === "PAKEJ") return index;
-						return -1;
-					})
-					.filter((index) => index !== -1);
-
-				const formattedColumns = filteredColumns.map((col, index) => {
-					if (col === "SECTOR" && filteredColumnsIndx[index] === 6) {
-						return {
-							header: "SECTOR",
-							key: "sector_departure",
-							cvs_index: filteredColumnsIndx[index],
-						};
+		Papa.parse<Record<string, string>>(file, {
+			header: true,
+			skipEmptyLines: "greedy",
+			transformHeader: (header) => normalizeHeader(header),
+			complete: async (results) => {
+				const rows = (results.data ?? []).map((row) => {
+					const normalizedRow: Record<string, string> = {};
+					for (const [key, value] of Object.entries(row ?? {})) {
+						normalizedRow[normalizeHeader(key)] = normalizeText(value);
 					}
-					if (col === "SECTOR" && filteredColumnsIndx[index] === 12) {
-						return {
-							header: "SECTOR",
-							key: "sector_return",
-							cvs_index: filteredColumnsIndx[index],
-						};
-					}
-
-					return {
-						header: col,
-						key: col.toLowerCase(),
-						cvs_index: filteredColumnsIndx[index],
-					};
+					return normalizedRow;
 				});
 
-				const map = new Map<number, { key: string; cvs_index: number }>();
-				formattedColumns.forEach((col) => {
-					map.set(col.cvs_index, { key: col.key, cvs_index: col.cvs_index });
-				});
+				const parsedFlights: FlightData[] = [];
+				const seasonByFlightKey = new Map<string, string>();
 
-				console.log("Columns Map:", map);
+				for (const row of rows) {
+					const rawMonth = getByAlias(row, HEADER_ALIASES.month);
+					const rawSeason = getByAlias(row, HEADER_ALIASES.season);
+					const rawPakej = getByAlias(row, HEADER_ALIASES.pakej);
+					const rawDeparture = getByAlias(row, HEADER_ALIASES.departure);
+					const rawReturn = getByAlias(row, HEADER_ALIASES.return);
+					const rawSectorDeparture = getByAlias(
+						row,
+						HEADER_ALIASES.sector_departure,
+					);
+					const rawSectorReturn = getByAlias(row, HEADER_ALIASES.sector_return);
+					const rawCode = getByAlias(row, HEADER_ALIASES.code);
 
-				// console.log("Filtered Columns:", filteredColumns);
-				// console.log("Filtered Columns Indexes:", filteredColumnsIndx);
-				// console.log("Formatted Columns:", formattedColumns);
-				// console.log("Result:", results.data);
-
-				let tableData: any[] = [];
-
-				for (let rowIndex = 6; rowIndex < results.data.length; rowIndex++) {
-					let data = {};
-					for (let colIndex = 0; colIndex < columns.length; colIndex++) {
-						const colData = results.data[rowIndex][colIndex];
-
-						if (
-							map.has(colIndex) &&
-							colIndex === map.get(colIndex)?.cvs_index
-						) {
-							const { key } = map.get(colIndex)!;
-							data = {
-								...data,
-								season_key: SEASON_KEY,
-
-								[key]: colData,
-							};
-						}
-
-						if (colIndex === columns.length - 1) {
-							tableData.push(data);
-							data = {};
-						}
+					if (
+						!rawPakej ||
+						!rawMonth ||
+						!rawSeason ||
+						(!rawDeparture && !rawReturn)
+					) {
+						continue;
 					}
-					//convert row to array
+
+					const month = normalizeMonth(rawMonth);
+					const departure = parseDate(rawDeparture);
+					const returnDate = parseDate(rawReturn);
+
+					if (!departure || !returnDate) {
+						continue;
+					}
+
+					if (rawPakej.toUpperCase() === "JUALAN AGENT") {
+						continue;
+					}
+
+					const splitPackages = rawPakej.includes("/")
+						? rawPakej
+								.split("/")
+								.map((value) => value.trim())
+								.filter(Boolean)
+						: [rawPakej];
+
+					for (const pakej of splitPackages) {
+						const flight: FlightData = {
+							year_key: yearKey,
+							pakej,
+							code: rawCode,
+							month,
+							departure,
+							return: returnDate,
+							package_name: normalizePackageName(pakej),
+							sector_departure: rawSectorDeparture,
+							sector_return: rawSectorReturn,
+						};
+
+						parsedFlights.push(flight);
+						seasonByFlightKey.set(getFlightKey(flight), rawSeason.trim());
+					}
 				}
 
-				console.log("Table Data:", tableData);
-				//filter out pakej === "JUALAN AGENT"
-				tableData = tableData.filter((row) => row.pakej !== "JUALAN AGENT");
-
-				//if pakej is MT / UMJ P means it has two pakej, so split it into two rows
-				let finalTableData: FlightData[] = [];
-				tableData.forEach((row) => {
-					if (row?.pakej?.includes("/")) {
-						const pakejs = row.pakej.split("/");
-						pakejs.forEach((pakej: string) => {
-							finalTableData.push({ ...row, pakej: pakej.trim() });
-						});
-					} else {
-						finalTableData.push(row);
-					}
-				});
-
-				//format pakej to package_name
-				//         UMJ - UMRAH MENARA JAM
-				// MANASIK HAJI
-				// MT - MAKKAH TOWER
-				// MT P - MAKKAH TOWER - PREMIUM
-				// UMJ P - UMRAH MENARA JAM - PREMIUM
-
-				finalTableData = finalTableData.map((row) => {
-					let package_name = "";
-					switch (row.pakej) {
-						case "UMJ":
-							package_name = "UMRAH MENARA JAM";
-							break;
-						case "MANASIK HAJI":
-							package_name = "MANASIK HAJI";
-							break;
-						case "MT":
-							package_name = "MAKKAH TOWER";
-							break;
-						case "MT P":
-							package_name = "MAKKAH TOWER - PREMIUM";
-							break;
-						case "UMJ P":
-							package_name = "UMRAH MENARA JAM - PREMIUM";
-							break;
-						default:
-							package_name = row.pakej;
-					}
-					return { ...row, package_name };
-				});
-
-				//filter row undefined values
-
-				finalTableData = finalTableData.filter(
-					(row) => row.departure && row.return,
+				setFlights(parsedFlights);
+				const parsedPackages = handleFormatFlightsToPackage(
+					parsedFlights,
+					seasonByFlightKey,
 				);
-
-				//add incremental no. to each row
-				setFlights(finalTableData as FlightData[]);
-				handleFormatFlightsToPackage(finalTableData);
+				const packagesWithExistenceStatus = await markExistingPackages(
+					parsedPackages,
+					yearKey,
+				);
+				_setPackageData(packagesWithExistenceStatus);
 			},
 		});
 	};

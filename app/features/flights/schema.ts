@@ -1,7 +1,8 @@
 import z from "zod";
 
 export const FlightImportSchema = z.object({
-	season_key: z.string(),
+	_id: z.string().optional(),
+	year_key: z.string(),
 	pakej: z.string(),
 	code: z.string(),
 	month: z.string(),

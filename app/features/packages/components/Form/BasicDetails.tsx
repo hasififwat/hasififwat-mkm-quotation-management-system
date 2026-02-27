@@ -12,7 +12,8 @@ import {
 } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import type { PackageDetailsForm } from "~/schema";
+import type { IPackageDetailsForm } from "../../schema";
+import { UmrahYearSelect } from "../YearSelect";
 
 export default function BasicDetails({
 	currentStep,
@@ -23,7 +24,7 @@ export default function BasicDetails({
 
 	goToNextStep: () => void;
 }) {
-	const { control } = useFormContext<PackageDetailsForm>();
+	const { control } = useFormContext<IPackageDetailsForm>();
 	return (
 		<Card hidden={currentStep !== "basic"}>
 			<CardHeader>
@@ -73,13 +74,30 @@ export default function BasicDetails({
 					name="year"
 					control={control}
 					render={({ field, fieldState }) => (
+						<Field>
+							<UmrahYearSelect
+								name={field.name}
+								value={field.value}
+								onChange={field.onChange}
+								id="year"
+								invalid={fieldState.invalid}
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
+					)}
+				/>
+
+				<Controller
+					name="transport"
+					control={control}
+					render={({ field, fieldState }) => (
 						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="year">Year </FieldLabel>
+							<FieldLabel htmlFor="transport">Transportation</FieldLabel>
 							<Input
 								{...field}
-								id="year"
+								id="transport"
 								aria-invalid={fieldState.invalid}
-								placeholder="eg: 2026/2027"
+								placeholder="e.g. Flight + Bus"
 								autoComplete="off"
 							/>
 							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -89,10 +107,12 @@ export default function BasicDetails({
 			</CardContent>
 			<CardFooter className="flex justify-between">
 				<Link to="/packages" className="text-sm text-muted-foreground">
-					<Button variant="ghost">Cancel</Button>
+					<Button variant="ghost" type="button">
+						Cancel
+					</Button>
 				</Link>
 
-				<Button onClick={goToNextStep}>
+				<Button type="button" onClick={goToNextStep}>
 					Next <ChevronRight className="w-4 h-4 ml-2" />
 				</Button>
 			</CardFooter>

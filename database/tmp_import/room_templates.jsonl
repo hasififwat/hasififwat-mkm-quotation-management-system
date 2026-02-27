@@ -1,0 +1,5 @@
+{"supabase_id":"5ebbffb5-e53d-4903-bceb-f9281c6d9ee0","name":"Double","default_price":0,"default_enabled":true,"sort_order":0,"created_at":"2026-01-18 10:46:24.763384+00"}
+{"supabase_id":"6d4b48e8-b721-476f-b7f9-1f87f19def69","name":"Triple","default_price":0,"default_enabled":true,"sort_order":1,"created_at":"2026-01-18 10:46:24.763384+00"}
+{"supabase_id":"4653f6ce-f5b7-4ede-8e90-126c915c85fa","name":"Quad","default_price":0,"default_enabled":true,"sort_order":2,"created_at":"2026-01-18 10:46:24.763384+00"}
+{"supabase_id":"226bc790-582d-4f13-aded-18c2eaa5071e","name":"Quint","default_price":0,"default_enabled":false,"sort_order":3,"created_at":"2026-01-18 10:46:24.763384+00"}
+{"supabase_id":"0b6df09a-e3ea-47e0-846f-db002e7eb5cf","name":"Suite","default_price":0,"default_enabled":false,"sort_order":4,"created_at":"2026-01-18 10:46:24.763384+00"}

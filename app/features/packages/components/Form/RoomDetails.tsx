@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { Field } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import type { PackageDetailsForm } from "~/schema";
+import type { IPackageDetailsForm } from "../../schema";
 
 export default function RoomDetails({
 	currentStep,
@@ -21,8 +21,8 @@ export default function RoomDetails({
 		settingKey: "rooms",
 	) => React.ReactNode;
 }) {
-	const { control } = useFormContext<PackageDetailsForm>();
-	const { fields } = useFieldArray<PackageDetailsForm>({
+	const { control } = useFormContext<IPackageDetailsForm>();
+	const { fields } = useFieldArray<IPackageDetailsForm, "rooms">({
 		control,
 		name: "rooms", // Matches your schema key
 	});
@@ -78,7 +78,7 @@ export default function RoomDetails({
 													}`}
 												/>
 												<span className="font-medium capitalize">
-													{field.room_type}
+													{field.name}
 												</span>
 											</button>
 
@@ -88,7 +88,7 @@ export default function RoomDetails({
 													name={`rooms.${index}.price`}
 													control={control}
 													render={({ field: priceField }) => (
-														<div className="w-full max-w-[140px]">
+														<div className="w-full max-w-35">
 															<Input
 																{...priceField}
 																value={priceField.value as number}
@@ -113,7 +113,7 @@ export default function RoomDetails({
 				<Button variant="outline" onClick={goToPreviousStep}>
 					<ChevronLeft className="w-4 h-4 mr-2" /> Previous
 				</Button>
-				<Button onClick={goToNextStep}>
+				<Button type="button" onClick={goToNextStep}>
 					Next <ChevronRight className="w-4 h-4 ml-2" />
 				</Button>
 			</CardFooter>

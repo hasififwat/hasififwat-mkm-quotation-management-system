@@ -1,25 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, Import, Save } from "lucide-react";
-import React, { Suspense, useState } from "react";
+import { ChevronLeft } from "lucide-react";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Await, Link, useLoaderData, useParams, useSubmit } from "react-router";
+import { Link, useLoaderData, useParams, useSubmit } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { type PackageDetailsForm, packageDetailsSchema } from "@/schema";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "~/components/ui/accordion";
 import BasicDetails from "./components/Form/BasicDetails";
 import FlightDetails from "./components/Form/FlightDetails";
 import HotelDetailsSection from "./components/Form/HotelDetails";
@@ -27,6 +19,12 @@ import ExclusionInclusionDetails from "./components/Form/InclusionExclusionDetai
 import RoomDetails from "./components/Form/RoomDetails";
 import { ImportPreview } from "./components/ImportPreview";
 import { ImportSettingModal } from "./components/ImportSettingModal";
+import { PackagePreviewCard } from "./components/PackagePreviewCard/PackagePreviewCard";
+import {
+	type IPackageDetails,
+	type IPackageDetailsForm,
+	packageSchema,
+} from "./schema";
 
 type Step =
 	| "basic"
@@ -45,40 +43,118 @@ const STEPS: { id: Step; label: string }[] = [
 	{ id: "preview", label: "Preview" },
 ];
 
-const HOTEL_LIST = ["makkah", "madinah", "taif"] as const;
+const PackageBuilderHeader = ({
+	pid,
+	onBack,
+}: {
+	pid?: string;
+	onBack: () => void;
+}) => (
+	<div className="flex items-center gap-4">
+		<Link to="/packages" className="text-sm text-muted-foreground">
+			<Button variant="ghost" size="icon" onClick={onBack}>
+				<ChevronLeft className="w-5 h-5" />
+			</Button>
+		</Link>
+		<h2 className="text-2xl font-bold tracking-tight">
+			{pid ? "Edit Package" : "Create Package"}
+		</h2>
+	</div>
+);
 
+const PackageStepNavigation = ({
+	currentStep,
+	onStepChange,
+}: {
+	currentStep: Step;
+	onStepChange: (step: Step) => void;
+}) => (
+	<Card>
+		<CardContent>
+			<div className="flex items-center justify-between">
+				{STEPS.map((step, index) => (
+					<React.Fragment key={step.id}>
+						<button
+							type="button"
+							onClick={() => onStepChange(step.id)}
+							className={`flex items-center gap-2 transition-colors ${
+								currentStep === step.id && "text-primary font-semibold"
+							}`}
+						>
+							<div
+								className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors ${
+									currentStep === step.id &&
+									"border-primary bg-primary text-primary-foreground"
+								}`}
+							>
+								<span className="text-sm">{index + 1}</span>
+							</div>
+							<span className="hidden md:inline text-sm">{step.label}</span>
+						</button>
+						{index < STEPS.length - 1 && <Separator className="flex-1 mx-2" />}
+					</React.Fragment>
+				))}
+			</div>
+		</CardContent>
+	</Card>
+);
 const PackageBuilder: React.FC = () => {
-	const { initialData, allPackages } = useLoaderData();
+	const { initialData, allPackages } = useLoaderData<{
+		initialData: IPackageDetails;
+		allPackages: IPackageDetails[];
+	}>();
 	const { pid } = useParams();
-	const submit = useSubmit();
+	const _submit = useSubmit();
 
-	const methods = useForm<PackageDetailsForm>({
-		resolver: zodResolver(packageDetailsSchema),
+	const methods = useForm<IPackageDetailsForm>({
+		resolver: zodResolver(packageSchema),
 		defaultValues: initialData,
 		mode: "onChange",
 	});
 
-	const { setValue, getValues, handleSubmit } = methods;
+	const { setValue, getValues, trigger, setFocus } = methods;
 
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
 
+	const validateCurrentStep = async () => {
+		if (currentStep === "basic") {
+			const isBasicValid = await trigger(["name", "duration", "year"]);
+			if (!isBasicValid) {
+				const nameValue = getValues("name");
+				if (!nameValue || nameValue.trim().length === 0) {
+					setFocus("name");
+					return false;
+				}
+
+				const durationValue = getValues("duration");
+				if (!durationValue || durationValue.trim().length === 0) {
+					setFocus("duration");
+					return false;
+				}
+
+				const yearValue = getValues("year");
+				if (!yearValue || yearValue.trim().length === 0) {
+					setFocus("year");
+					return false;
+				}
+			}
+		}
+
+		return true;
+	};
+
 	const handleImport = (
-		importedData: PackageDetailsForm,
-		setting: keyof PackageDetailsForm,
+		importedData: IPackageDetailsForm,
+		setting: keyof IPackageDetailsForm,
 	) => {
 		if (setting === "hotels") {
-			//filter out the id, use existing id if it exist in the form
 			const existingHotels = getValues("hotels");
 
-			const hotelsWithoutId = {
-				makkah: { ...importedData.hotels.makkah, id: existingHotels.makkah.id },
-				madinah: {
-					...importedData.hotels.madinah,
-					id: existingHotels.madinah.id,
-				},
-				taif: { ...importedData.hotels.taif, id: existingHotels.taif.id },
-			};
-			setValue("hotels", hotelsWithoutId);
+			const hotelsWithExistingIds = importedData.hotels.map((hotel, index) => ({
+				...hotel,
+				_id: existingHotels?.[index]?._id ?? hotel._id,
+			}));
+			setValue("hotels", hotelsWithExistingIds);
 		} else if (setting === "rooms") {
 			setValue("rooms", importedData.rooms);
 		} else if (setting === "inclusions") {
@@ -88,7 +164,12 @@ const PackageBuilder: React.FC = () => {
 		}
 	};
 
-	const goToNextStep = () => {
+	const goToNextStep = async () => {
+		const isCurrentStepValid = await validateCurrentStep();
+		if (!isCurrentStepValid) {
+			return;
+		}
+
 		const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
 		if (currentIndex < STEPS.length - 1) {
 			setCurrentStep(STEPS[currentIndex + 1].id);
@@ -102,53 +183,49 @@ const PackageBuilder: React.FC = () => {
 		}
 	};
 
-	const _onSubmit = (data: PackageDetailsForm) => {
+	const handleStepChange = async (nextStep: Step) => {
+		const currentIndex = STEPS.findIndex((step) => step.id === currentStep);
+		const nextIndex = STEPS.findIndex((step) => step.id === nextStep);
+
+		if (nextIndex > currentIndex) {
+			const isCurrentStepValid = await validateCurrentStep();
+			if (!isCurrentStepValid) {
+				return;
+			}
+		}
+
+		setCurrentStep(nextStep);
+	};
+
+	const _onSubmit = (data: IPackageDetailsForm) => {
 		console.log("Submitting package data:", data);
 
-		submit(data, {
+		_submit(JSON.stringify(data), {
 			method: "POST",
 			encType: "application/json",
 		});
 	};
 
-	const renderSuspenseImportButton = (settingKey: keyof PackageDetailsForm) => {
+	const renderSuspenseImportButton = (
+		settingKey: keyof IPackageDetailsForm,
+	) => {
 		return (
 			<div className="col-start-2  row-start-1 row-span-full items-center justify-end flex">
-				<Suspense
-					fallback={
-						<Button variant="ghost" disabled>
-							<Import className="w-4 h-4 " />
-							Import
-						</Button>
+				<ImportSettingModal
+					title="Import Hotel Settings"
+					description="Import hotel settings from an existing package."
+					allPackages={allPackages}
+					handleImport={(importedData) =>
+						handleImport(importedData, settingKey)
 					}
-				>
-					<Await
-						resolve={allPackages}
-						// biome-ignore lint/correctness/noChildrenProp: <Await needs children prop>
-						children={(resolvedReviews) => (
-							<ImportSettingModal
-								title="Import Hotel Settings"
-								description="Import hotel settings from an existing package."
-								allPackages={resolvedReviews}
-								handleImport={(importedData) =>
-									handleImport(importedData, settingKey)
-								}
-								renderPreview={(selectedPackage) => (
-									<ImportPreview
-										key={selectedPackage ? selectedPackage.id : "none"}
-										selectedPackage={selectedPackage}
-										settingType={settingKey}
-									/>
-								)}
-							>
-								<Button variant="ghost" className="w-full">
-									<Import className="w-4 h-4 " />
-									Import
-								</Button>
-							</ImportSettingModal>
-						)}
-					/>
-				</Suspense>
+					renderPreview={(selectedPackage) => (
+						<ImportPreview
+							key={selectedPackage ? selectedPackage.id : "none"}
+							selectedPackage={selectedPackage}
+							settingType={settingKey}
+						/>
+					)}
+				/>
 			</div>
 		);
 	};
@@ -156,7 +233,7 @@ const PackageBuilder: React.FC = () => {
 	const renderCardHeader = (
 		title: string,
 		description: string,
-		settingKey: keyof PackageDetailsForm,
+		settingKey: keyof IPackageDetailsForm,
 	) => (
 		<CardHeader>
 			<CardTitle>
@@ -172,64 +249,20 @@ const PackageBuilder: React.FC = () => {
 
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 animate-slideIn">
-			<div className="flex items-center gap-4">
-				<Link to="/packages" className="text-sm text-muted-foreground">
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => goToPreviousStep()}
-					>
-						<ChevronLeft className="w-5 h-5" />
-					</Button>
-				</Link>
-				<h2 className="text-2xl font-bold tracking-tight">
-					{pid ? "Edit Package" : "Create Package"}
-				</h2>
-			</div>
+			<PackageBuilderHeader pid={pid} onBack={goToPreviousStep} />
 
 			{/* Step Navigation Header */}
-			<Card>
-				<CardContent>
-					<div className="flex items-center justify-between">
-						{STEPS.map((step, index) => (
-							<React.Fragment key={step.id}>
-								<button
-									type="button"
-									onClick={() => setCurrentStep(step.id)}
-									className={`flex items-center gap-2 transition-colors ${
-										currentStep === step.id && "text-primary font-semibold"
-										// : index < currentStepIndex
-										//   ? "text-primary hover:text-primary/80"
-										//   : "text-muted-foreground hover:text-foreground"
-									}`}
-								>
-									<div
-										className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors ${
-											currentStep === step.id &&
-											"border-primary bg-primary text-primary-foreground"
-											// ? ""
-											// : index < currentStepIndex
-											//   ? "border-primary bg-primary text-primary-foreground"
-											//   : "border-muted-foreground"
-										}`}
-									>
-										<span className="text-sm">{index + 1}</span>
-									</div>
-									<span className="hidden md:inline text-sm">{step.label}</span>
-								</button>
-								{index < STEPS.length - 1 && (
-									<Separator className="flex-1 mx-2" />
-								)}
-							</React.Fragment>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+			<PackageStepNavigation
+				currentStep={currentStep}
+				onStepChange={handleStepChange}
+			/>
 
 			<form
 				className="space-y-6"
 				onSubmit={(e) => {
 					e.preventDefault();
+
+					_onSubmit(getValues());
 					console.log("Submitting form");
 				}}
 			>
@@ -252,14 +285,26 @@ const PackageBuilder: React.FC = () => {
 						currentStep={currentStep}
 						goToNextStep={goToNextStep}
 						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={renderCardHeader}
+						renderCardHeader={() =>
+							renderCardHeader(
+								"Inclusions & Exclusions",
+								"Specify the inclusions and exclusions for the package.",
+								"inclusions",
+							)
+						}
 					/>
 
 					<RoomDetails
 						currentStep={currentStep}
 						goToNextStep={goToNextStep}
 						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={renderCardHeader}
+						renderCardHeader={() =>
+							renderCardHeader(
+								"Rooms",
+								"Specify the room details for the package.",
+								"rooms",
+							)
+						}
 					/>
 
 					<FlightDetails
@@ -269,209 +314,10 @@ const PackageBuilder: React.FC = () => {
 					/>
 
 					{currentStep === "preview" && (
-						<Card>
-							<CardHeader>
-								<CardTitle>Package Preview</CardTitle>
-								<CardDescription>
-									Review your package details before saving.
-								</CardDescription>
-							</CardHeader>
-
-							<CardContent className="space-y-6">
-								<div>
-									<h3 className="font-semibold mb-2">Basic Information</h3>
-									<div className="space-y-1 text-sm">
-										<p>
-											<span className="text-muted-foreground">Name:</span>{" "}
-											{getValues("name") || "—"}
-										</p>
-										<p>
-											<span className="text-muted-foreground">Duration:</span>{" "}
-											{getValues("duration") || "—"}
-										</p>
-									</div>
-								</div>
-
-								<Separator />
-
-								<div>
-									<h3 className="font-semibold mb-2">Hotels & Meals</h3>
-									<div className="space-y-2 text-sm">
-										{HOTEL_LIST.map((hotelKey) => {
-											const pkg = getValues();
-
-											return (
-												pkg.hotels[hotelKey].enabled && (
-													<div key={hotelKey}>
-														<p className="font-medium">
-															{hotelKey.charAt(0).toUpperCase() +
-																hotelKey.slice(1)}
-														</p>
-														<p className="text-muted-foreground">
-															{pkg.hotels[hotelKey].name || "—"}
-														</p>
-														<p className="text-xs text-muted-foreground">
-															Meals:{" "}
-															{pkg.hotels[hotelKey]?.meals?.length === 0
-																? "NOT INCLUDED"
-																: pkg.hotels[hotelKey]?.meals?.length === 2
-																	? "HALFBOARD"
-																	: pkg.hotels[hotelKey]?.meals?.length === 3
-																		? "FULLBOARD"
-																		: pkg.hotels[hotelKey]?.meals
-																				?.map((meal) => meal)
-																				.join(", ")}
-														</p>
-													</div>
-												)
-											);
-										})}
-									</div>
-								</div>
-
-								<Separator />
-
-								<div>
-									<h3 className="font-semibold mb-2">Inclusions</h3>
-									{getValues("inclusions").length > 0 ? (
-										<ul className="list-disc list-inside text-sm space-y-1 ">
-											{getValues("inclusions")
-												.split("\n")
-												.map((line) => (
-													<li key={line}>{line}</li>
-												))}
-										</ul>
-									) : (
-										<p className="text-sm text-muted-foreground">
-											No inclusions added
-										</p>
-									)}
-								</div>
-
-								<Separator />
-
-								<div>
-									<h3 className="font-semibold mb-2">Exclusions</h3>
-									{getValues("exclusions").length > 0 ? (
-										<ul className="list-disc list-inside text-sm space-y-1 ">
-											{getValues("exclusions")
-												.split("\n")
-												.map((line, _i) => (
-													<li key={line}>{line}</li>
-												))}
-										</ul>
-									) : (
-										<p className="text-sm text-muted-foreground">
-											No exclusions added
-										</p>
-									)}
-								</div>
-
-								<Separator />
-
-								<div>
-									<h3 className="font-semibold mb-2">Pricing (RM)</h3>
-									{getValues("rooms").filter((room) => room.enabled).length >
-									0 ? (
-										<div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-											{getValues("rooms")
-												.filter((room) => room.enabled)
-												.map((room) => (
-													<div key={room.room_type} className="space-y-1">
-														<p className="text-muted-foreground">
-															{room.room_type}
-														</p>
-														<p className="text-lg font-semibold">
-															RM {room.price.toLocaleString("en-US")}
-														</p>
-													</div>
-												))}
-										</div>
-									) : (
-										<p className="text-sm text-muted-foreground">
-											No room types enabled
-										</p>
-									)}
-								</div>
-
-								<Separator />
-
-								<Accordion type="single" collapsible>
-									<AccordionItem value="flight-schedule">
-										<AccordionTrigger className="hover:no-underline">
-											Flight Schedule
-										</AccordionTrigger>
-										<AccordionContent>
-											{(getValues("flights") ?? []).length > 0 ? (
-												<div className="space-y-2 text-sm">
-													{(getValues("flights") ?? []).map((flight, index) => (
-														<div
-															key={flight.id || index}
-															className="p-3 bg-muted/30 rounded-lg"
-														>
-															<div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-																<div>
-																	<p className="text-muted-foreground text-xs">
-																		Month
-																	</p>
-																	<p className="font-medium">
-																		{flight.month || "—"}
-																	</p>
-																</div>
-																<div>
-																	<p className="text-muted-foreground text-xs">
-																		Departure
-																	</p>
-																	<p className="font-medium">
-																		{flight.departure_date || "—"}
-																	</p>
-																</div>
-																<div>
-																	<p className="text-muted-foreground text-xs">
-																		Depart Sector
-																	</p>
-																	<p className="font-medium">
-																		{flight.departure_sector || "—"}
-																	</p>
-																</div>
-																<div>
-																	<p className="text-muted-foreground text-xs">
-																		Return
-																	</p>
-																	<p className="font-medium">
-																		{flight.return_date || "—"}
-																	</p>
-																</div>
-																<div>
-																	<p className="text-muted-foreground text-xs">
-																		Return Sector
-																	</p>
-																	<p className="font-medium">
-																		{flight.return_sector || "—"}
-																	</p>
-																</div>
-															</div>
-														</div>
-													))}
-												</div>
-											) : (
-												<p className="text-sm text-muted-foreground">
-													No flight schedules added
-												</p>
-											)}
-										</AccordionContent>
-									</AccordionItem>
-								</Accordion>
-							</CardContent>
-							<CardFooter className="flex justify-between">
-								<Button variant="outline" onClick={goToPreviousStep}>
-									<ChevronLeft className="w-4 h-4 mr-2" /> Previous
-								</Button>
-								<Button className="gap-2 " type="submit">
-									<Save className="w-4 h-4" /> Save Package
-								</Button>
-							</CardFooter>
-						</Card>
+						<PackagePreviewCard
+							getValues={getValues}
+							onPrevious={goToPreviousStep}
+						/>
 					)}
 				</FormProvider>
 			</form>
