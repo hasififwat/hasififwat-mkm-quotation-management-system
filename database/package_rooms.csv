@@ -1,4 +1,4 @@
-supabase_id,package_id,room_type,price,enabled,created_at
+package_id,room_type,price,enabled,created_at
 "8e986fb6-8a29-43fa-a67e-ae05e5247648","98272c77-760f-4981-bac4-acecbba0d6fe","Double","0.00","true","2026-02-15 06:00:13.784506+00"
 "cbb123a6-f39a-4379-9447-cfcb4db85a3b","98272c77-760f-4981-bac4-acecbba0d6fe","Triple","0.00","true","2026-02-15 06:00:13.784506+00"
 "8f7ba0ff-d249-4026-9ca2-8973295a4fce","98272c77-760f-4981-bac4-acecbba0d6fe","Quad","0.00","true","2026-02-15 06:00:13.784506+00"

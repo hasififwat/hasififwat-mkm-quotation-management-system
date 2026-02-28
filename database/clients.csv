@@ -1,4 +1,4 @@
-supabase_id,name,phone_number,created_at,updated_at
+name,phone_number,created_at,updated_at
 "b496325f-3c5c-4f3a-b59d-f15a11ca2cc7","ZUBAIDAH",,"2026-02-15 20:59:27.063476+00","2026-02-15 20:59:27.063476+00"
 "01df1946-c5db-479c-b27f-7f0336ab7a43","BASTITA",,"2026-02-15 20:59:27.063476+00","2026-02-15 20:59:27.063476+00"
 "a67ace57-11b3-492d-9eb9-cf28f2388207","HASIF","","2026-02-15 22:20:27.87946+00","2026-02-15 22:20:27.87946+00"

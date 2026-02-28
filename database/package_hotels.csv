@@ -1,4 +1,4 @@
-supabase_id,package_id,hotel_type,name,enabled,placeholder,created_at
+package_id,hotel_type,name,enabled,placeholder,created_at
 "31ff86c8-45ff-4d4f-a21e-51503eb2f3b9","98272c77-760f-4981-bac4-acecbba0d6fe","makkah","","false","Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star","2026-02-15 06:00:13.784506+00"
 "69cb70a4-6e1d-4365-b173-37d9f0d3daf2","98272c77-760f-4981-bac4-acecbba0d6fe","madinah","","false","Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star","2026-02-15 06:00:13.784506+00"
 "d0b2b36b-df39-40c4-98a3-1acb536407fc","98272c77-760f-4981-bac4-acecbba0d6fe","taif","","false","Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star","2026-02-15 06:00:13.784506+00"

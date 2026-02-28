@@ -9,6 +9,7 @@
  */
 
 import type * as packages from "../packages.js";
+import type * as quotations from "../quotations.js";
 
 import type {
   ApiFromModules,
@@ -18,6 +19,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   packages: typeof packages;
+  quotations: typeof quotations;
 }>;
 
 /**

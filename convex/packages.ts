@@ -1,11 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-function getLegacySupabaseId(doc: unknown): string | undefined {
-  const value = (doc as { supabase_id?: unknown }).supabase_id;
-  return typeof value === "string" ? value : undefined;
-}
-
 function dedupeById<T extends { _id: string }>(items: T[]): T[] {
   return Array.from(new Map(items.map((item) => [item._id, item])).values());
 }
@@ -83,27 +78,11 @@ export const listWithRooms = query({
 
     return packages.map((pkg) => ({
       ...pkg,
-      rooms: dedupeById(
-        [pkg._id, getLegacySupabaseId(pkg)]
-          .filter((id): id is (typeof packageRooms)[number]["package_id"] => Boolean(id))
-          .flatMap((id) => roomsByPackageId.get(id) ?? []),
-      ),
-      flights: dedupeById(
-        [pkg._id, getLegacySupabaseId(pkg)]
-          .filter((id): id is (typeof packageFlights)[number]["package_id"] => Boolean(id))
-          .flatMap((id) => flightsByPackageId.get(id) ?? []),
-      ),
-      hotels: dedupeById(
-        [pkg._id, getLegacySupabaseId(pkg)]
-          .filter((id): id is (typeof packageHotels)[number]["package_id"] => Boolean(id))
-          .flatMap((id) => hotelsByPackageId.get(id) ?? []),
-      ).map((hotel) => ({
+      rooms: dedupeById(roomsByPackageId.get(pkg._id) ?? []),
+      flights: dedupeById(flightsByPackageId.get(pkg._id) ?? []),
+      hotels: dedupeById(hotelsByPackageId.get(pkg._id) ?? []).map((hotel) => ({
         ...hotel,
-        meals: dedupeById(
-          [hotel._id, getLegacySupabaseId(hotel)]
-            .filter((id): id is (typeof packageMeals)[number]["package_hotel_id"] => Boolean(id))
-            .flatMap((id) => mealsByPackageHotelId.get(id) ?? []),
-        ).map(
+        meals: dedupeById(mealsByPackageHotelId.get(hotel._id) ?? []).map(
           (meal) => meal.meal_type,
         ),
       })),
@@ -124,35 +103,16 @@ export const getById = query({
       .query("package_rooms")
       .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
       .collect();
-    const legacyPackageId = getLegacySupabaseId(pkg);
-    const legacyPackageRooms = legacyPackageId
-      ? await ctx.db
-          .query("package_rooms")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
 
     const packageFlights = await ctx.db
       .query("package_flights")
       .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
       .collect();
-    const legacyPackageFlights = legacyPackageId
-      ? await ctx.db
-          .query("package_flights")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
 
     const packageHotels = await ctx.db
       .query("package_hotels")
       .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
       .collect();
-    const legacyPackageHotels = legacyPackageId
-      ? await ctx.db
-          .query("package_hotels")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
 
     const packageMeals = await ctx.db.query("package_meals").collect();
     const mealsByPackageHotelId = new Map<(typeof packageMeals)[number]["package_hotel_id"], (typeof packageMeals)[number][]>();
@@ -169,15 +129,11 @@ export const getById = query({
 
     return {
       ...pkg,
-      rooms: dedupeById([...packageRooms, ...legacyPackageRooms]),
-      flights: dedupeById([...packageFlights, ...legacyPackageFlights]),
-      hotels: dedupeById([...packageHotels, ...legacyPackageHotels]).map((hotel) => ({
+      rooms: dedupeById(packageRooms),
+      flights: dedupeById(packageFlights),
+      hotels: dedupeById(packageHotels).map((hotel) => ({
         ...hotel,
-        meals: dedupeById(
-          [hotel._id, getLegacySupabaseId(hotel)]
-            .filter((id): id is (typeof packageMeals)[number]["package_hotel_id"] => Boolean(id))
-            .flatMap((id) => mealsByPackageHotelId.get(id) ?? []),
-        ).map(
+        meals: dedupeById(mealsByPackageHotelId.get(hotel._id) ?? []).map(
           (meal) => meal.meal_type,
         ),
       })),
@@ -405,29 +361,15 @@ export const updatePackage = mutation({
       .query("package_hotels")
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
       .collect();
-    const legacyPackageId = getLegacySupabaseId(existingPackage);
-    const legacyExistingHotels = legacyPackageId
-      ? await ctx.db
-          .query("package_hotels")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
-    const allExistingHotels = dedupeById([...existingHotels, ...legacyExistingHotels]);
+    const allExistingHotels = dedupeById(existingHotels);
 
     for (const hotel of allExistingHotels) {
       const existingMeals = await ctx.db
         .query("package_meals")
         .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", hotel._id))
         .collect();
-      const legacyHotelId = getLegacySupabaseId(hotel);
-      const legacyExistingMeals = legacyHotelId
-        ? await ctx.db
-            .query("package_meals")
-            .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", legacyHotelId))
-            .collect()
-        : [];
 
-      for (const meal of dedupeById([...existingMeals, ...legacyExistingMeals])) {
+      for (const meal of dedupeById(existingMeals)) {
         await ctx.db.delete(meal._id);
       }
 
@@ -438,13 +380,7 @@ export const updatePackage = mutation({
       .query("package_rooms")
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
       .collect();
-    const legacyExistingRooms = legacyPackageId
-      ? await ctx.db
-          .query("package_rooms")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
-    for (const room of dedupeById([...existingRooms, ...legacyExistingRooms])) {
+    for (const room of dedupeById(existingRooms)) {
       await ctx.db.delete(room._id);
     }
 
@@ -452,13 +388,7 @@ export const updatePackage = mutation({
       .query("package_flights")
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
       .collect();
-    const legacyExistingFlights = legacyPackageId
-      ? await ctx.db
-          .query("package_flights")
-          .withIndex("by_package_id", (q) => q.eq("package_id", legacyPackageId))
-          .collect()
-      : [];
-    for (const flight of dedupeById([...existingFlights, ...legacyExistingFlights])) {
+    for (const flight of dedupeById(existingFlights)) {
       await ctx.db.delete(flight._id);
     }
 
@@ -528,86 +458,6 @@ export const updatePackageStatus = mutation({
     return {
       packageId: args.id,
       status: args.status,
-    };
-  },
-});
-
-export const migrateLegacyPackageRelations = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const packages = await ctx.db.query("packages").collect();
-    const packageIdByLegacyId = new Map<string, (typeof packages)[number]["_id"]>();
-
-    for (const pkg of packages) {
-      const legacyId = getLegacySupabaseId(pkg);
-      if (legacyId) {
-        packageIdByLegacyId.set(legacyId, pkg._id);
-      }
-    }
-
-    const packageHotels = await ctx.db.query("package_hotels").collect();
-    const hotelIdByLegacyId = new Map<string, (typeof packageHotels)[number]["_id"]>();
-
-    for (const hotel of packageHotels) {
-      const legacyId = getLegacySupabaseId(hotel);
-      if (legacyId) {
-        hotelIdByLegacyId.set(legacyId, hotel._id);
-      }
-    }
-
-    let updatedFlights = 0;
-    let updatedRooms = 0;
-    let updatedHotels = 0;
-    let updatedMeals = 0;
-
-    const packageFlights = await ctx.db.query("package_flights").collect();
-    for (const flight of packageFlights) {
-      if (typeof flight.package_id === "string") {
-        const packageId = packageIdByLegacyId.get(flight.package_id);
-        if (packageId) {
-          await ctx.db.patch(flight._id, { package_id: packageId });
-          updatedFlights += 1;
-        }
-      }
-    }
-
-    const packageRooms = await ctx.db.query("package_rooms").collect();
-    for (const room of packageRooms) {
-      if (typeof room.package_id === "string") {
-        const packageId = packageIdByLegacyId.get(room.package_id);
-        if (packageId) {
-          await ctx.db.patch(room._id, { package_id: packageId });
-          updatedRooms += 1;
-        }
-      }
-    }
-
-    for (const hotel of packageHotels) {
-      if (typeof hotel.package_id === "string") {
-        const packageId = packageIdByLegacyId.get(hotel.package_id);
-        if (packageId) {
-          await ctx.db.patch(hotel._id, { package_id: packageId });
-          updatedHotels += 1;
-        }
-      }
-    }
-
-    const packageMeals = await ctx.db.query("package_meals").collect();
-    for (const meal of packageMeals) {
-      if (typeof meal.package_hotel_id === "string") {
-        const packageHotelId = hotelIdByLegacyId.get(meal.package_hotel_id);
-        if (packageHotelId) {
-          await ctx.db.patch(meal._id, { package_hotel_id: packageHotelId });
-          updatedMeals += 1;
-        }
-      }
-    }
-
-    return {
-      updatedFlights,
-      updatedRooms,
-      updatedHotels,
-      updatedMeals,
     };
   },
 });

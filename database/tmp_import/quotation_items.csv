@@ -1,4 +1,4 @@
-supabase_id,quotation_id,item_type,description,package_room_id,quantity,unit_price,created_at
+quotation_id,item_type,description,package_room_id,quantity,unit_price,created_at
 b2cbfefc-b88e-4247-9549-b0ddd3a12d0a,68a88ded-207b-45d2-9327-0fa0f64599f5,package_room,Double Room,45109cf6-7085-437a-bd97-2be2edd557b0,1,0,2026-02-15 07:03:42.717705+00
 1f79ff5d-fc35-498b-b2f2-794d078577f9,0f94d31b-462a-40f5-9d5a-eef1400fee14,package_room,Double Room,7a71c65a-c63b-4430-9d28-932e7ed7b2d4,1,0,2026-02-15 07:14:33.364488+00
 ac5e1f21-ec30-4aad-b8db-420fb98e0e66,0f94d31b-462a-40f5-9d5a-eef1400fee14,package_room,Triple Room,a867c839-5e9e-4f05-8d79-28723f154645,1,0,2026-02-15 07:14:33.364488+00

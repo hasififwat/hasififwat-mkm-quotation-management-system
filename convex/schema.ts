@@ -1,15 +1,13 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { en } from "zod/v4/locales";
 
 export default defineSchema({
   clients: defineTable({
-    supabase_id: v.string(),
     name: v.string(),
     phone_number: v.optional(v.string()),
     created_at: v.string(),
     updated_at: v.string(),
-  }).index("by_supabase_id", ["supabase_id"]),
+  }),
 
   hotel_templates: defineTable({
     hotel_type: v.string(),
@@ -67,15 +65,14 @@ export default defineSchema({
   }).index("by_package_id", ["package_id"]),
 
   profiles: defineTable({
-    supabase_id: v.string(),
     full_name: v.string(),
     branch: v.string(),
     updated_at: v.string(),
     unit: v.optional(v.string()),
-  }).index("by_supabase_id", ["supabase_id"]),
+  }),
 
   quotations: defineTable({
-    supabase_id: v.string(),
+
     hijri_year: v.string(),
     sequence_num: v.number(),
     revision: v.number(),
@@ -96,7 +93,6 @@ export default defineSchema({
     .index("by_package_id", ["package_id"]),
 
   quotation_items: defineTable({
-    supabase_id: v.string(),
     quotation_id: v.string(),
     item_type: v.string(),
     description: v.string(),
@@ -108,7 +104,6 @@ export default defineSchema({
   }).index("by_quotation_id", ["quotation_id"]),
 
   quotation_logs: defineTable({
-    supabase_id: v.string(),
     quotation_id: v.string(),
     action: v.string(),
     description: v.string(),
@@ -118,7 +113,6 @@ export default defineSchema({
   }).index("by_quotation_id", ["quotation_id"]),
 
   room_templates: defineTable({
-    supabase_id: v.string(),
     name: v.string(),
     price:v.number(),
     enabled: v.boolean(),

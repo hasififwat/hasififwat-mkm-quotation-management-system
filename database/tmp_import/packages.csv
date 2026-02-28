@@ -1,4 +1,4 @@
-supabase_id,name,duration,transport,status,created_at,updated_at,year,package_code,inclusions,exclusions
+name,duration,transport,status,created_at,updated_at,year,package_code,inclusions,exclusions
 98272c77-760f-4981-bac4-acecbba0d6fe,MANASIK HAJI,6H5M (MEKAH) 6H5M (MADINAH) / 12 HARI 10 MALAM,,unpublished,2026-02-15 06:00:13.784506+00,2026-02-15 06:00:13.784506+00,2026/2027,,,
 97a27ec0-0140-4520-9bfe-cd866c1e5550,MAKKAH TOWER,6H5M (MEKAH) 6H5M (MADINAH) / 12 HARI 10 MALAM,,unpublished,2026-02-15 06:00:13.784506+00,2026-02-15 06:00:13.784506+00,2026/2027,,,
 43aa3595-580a-40cf-99a1-e1f2046cc3e2,UMRAH MENARA JAM,6H5M (MEKAH) 6H5M (MADINAH) / 12 HARI 10 MALAM,,unpublished,2026-02-15 06:00:13.784506+00,2026-02-15 06:00:13.784506+00,2026/2027,,,

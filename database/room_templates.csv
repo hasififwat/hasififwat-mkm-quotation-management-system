@@ -1,4 +1,4 @@
-supabase_id,name,default_price,default_enabled,sort_order,created_at
+name,default_price,default_enabled,sort_order,created_at
 "5ebbffb5-e53d-4903-bceb-f9281c6d9ee0","Double","0","true","0","2026-01-18 10:46:24.763384+00"
 "6d4b48e8-b721-476f-b7f9-1f87f19def69","Triple","0","true","1","2026-01-18 10:46:24.763384+00"
 "4653f6ce-f5b7-4ede-8e90-126c915c85fa","Quad","0","true","2","2026-01-18 10:46:24.763384+00"

@@ -1,4 +1,4 @@
-supabase_id,package_id,month,departure_date,departure_sector,return_date,return_sector,created_at
+package_id,month,departure_date,departure_sector,return_date,return_sector,created_at
 6e29104c-e7cf-43a8-a6f4-7802eba91edf,98272c77-760f-4981-bac4-acecbba0d6fe,JAN,2027-01-04,KULMED,2027-01-15,JEDKUL,2026-02-15 06:00:13.784506+00
 fa1c62a0-b8be-435c-8534-4b1cfe1dee79,98272c77-760f-4981-bac4-acecbba0d6fe,JAN,2027-01-10,KULMED,2027-01-21,JEDKUL,2026-02-15 06:00:13.784506+00
 4b1f2ba8-3e94-40f7-984e-cb843f75c0e9,98272c77-760f-4981-bac4-acecbba0d6fe,JAN,2027-01-17,KULMED,2027-01-28,JEDKUL,2026-02-15 06:00:13.784506+00
