@@ -36,11 +36,11 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 	return { initialData: initialData, allPackages, allClients };
 }
 
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+export async function action({ request }: Route.ActionArgs) {
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
@@ -52,7 +52,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 		});
 		return redirect("/quotations");
 	} catch (error) {
-		console.error("Error in quotation.update clientAction:", error);
+		console.error("Error in quotation.update action:", error);
 		throw error;
 	}
 }

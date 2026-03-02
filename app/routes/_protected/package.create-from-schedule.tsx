@@ -40,28 +40,38 @@ import SetSeasonalPriceButton from "~/features/packages/components/SetSeasonalPr
 import type { IRoomDetailsApi } from "~/features/packages/schema";
 import type { Route } from "./+types/package.create-from-schedule";
 
-export async function clientLoader() {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+function normalizeRoomTemplates(templateData: unknown): IRoomDetailsApi[] {
+	if (!templateData || typeof templateData !== "object") {
+		return [];
+	}
+
+	const data = templateData as { roomTemplates?: unknown };
+	return Array.isArray(data.roomTemplates)
+		? (data.roomTemplates as IRoomDetailsApi[])
+		: [];
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+	void request;
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
 	const templateData = await client.query(api.packages.getPackageTemplate, {});
 
 	return {
-		roomTemplates: templateData.roomTemplates as IRoomDetailsApi[],
+		roomTemplates: normalizeRoomTemplates(templateData),
 	};
 }
 
-clientLoader.hydrate = false;
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+export async function action({ request }: Route.ActionArgs) {
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
@@ -76,7 +86,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function PackageCreateFromSchedule() {
-	const { roomTemplates } = useLoaderData<typeof clientLoader>();
+	const { roomTemplates } = useLoaderData<typeof loader>();
 
 	return (
 		<PackageUploadProvider roomTemplates={roomTemplates}>

@@ -11,6 +11,20 @@ type ConvexHotel = ConvexPackage["hotels"][number];
 type ClientsListResult = FunctionReturnType<typeof api.clients.list>;
 type LegacyPackage = ReturnType<typeof toLegacyPackage>;
 
+function normalizeSeason(value: unknown) {
+	if (typeof value === "string") {
+		const trimmed = value.trim();
+		return trimmed.length > 0 ? trimmed : "No Season";
+	}
+
+	if (value == null) {
+		return "No Season";
+	}
+
+	const stringified = String(value).trim();
+	return stringified.length > 0 ? stringified : "No Season";
+}
+
 function toLegacyPackage(pkg: ConvexPackage) {
 	const hotels = Array.isArray(pkg.hotels) ? pkg.hotels : [];
 
@@ -33,7 +47,7 @@ function toLegacyPackage(pkg: ConvexPackage) {
 		name: pkg.name,
 		duration: pkg.duration,
 		year: pkg.year,
-		season: pkg.season ?? "",
+		season: normalizeSeason(pkg.season),
 		status: pkg.status,
 		hotels: {
 			makkah: findHotel("makkah"),
@@ -72,10 +86,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 		client.query(api.clients.list, {}),
 	]);
 
-	const allPackages = packagesData.map((pkg) => toLegacyPackage(pkg));
+	const allPackages = (Array.isArray(packagesData) ? packagesData : []).map(
+		(pkg) => toLegacyPackage(pkg),
+	);
 	const allPackagesBySeason = allPackages.reduce(
 		(acc, pkg) => {
-			const seasonKey = (pkg.season || "No Season").trim();
+			const seasonKey = normalizeSeason(pkg.season);
 			if (!acc[seasonKey]) {
 				acc[seasonKey] = [];
 			}
@@ -85,7 +101,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 		{} as Record<string, LegacyPackage[]>,
 	);
 
-	const typedClients: ClientsListResult = allClients;
+	const typedClients: ClientsListResult = Array.isArray(allClients)
+		? allClients
+		: [];
 
 	// const pkg = await UmrahPackageService.getNewPackageTemplate(supabase);
 	// if (!pkg) {
@@ -100,10 +118,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 	};
 }
 
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+export async function action({ request }: Route.ActionArgs) {
+	const convexUrl = process.env.CONVEX_URL;
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
@@ -113,7 +131,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 		});
 		return redirect("/quotations");
 	} catch (error) {
-		console.error("Error in quotation.create clientAction:", error);
+		console.error("Error in quotation.create action:", error);
 		throw error;
 	}
 }

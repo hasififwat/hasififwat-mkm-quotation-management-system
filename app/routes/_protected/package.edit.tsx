@@ -10,12 +10,12 @@ import {
 } from "~/features/packages/utils";
 import type { Route } from "./+types/package.edit";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
 	const packageId = params.pid as Id<"packages">;
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
@@ -31,7 +31,9 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 	// Transform both current package and all packages
 	const initialData = transformConvexPackage(packageData);
-	const allPackages = allPackagesData.map(transformConvexPackage);
+	const allPackages = (
+		Array.isArray(allPackagesData) ? allPackagesData : []
+	).map(transformConvexPackage);
 
 	return {
 		initialData,
@@ -39,13 +41,11 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 	};
 }
 
-clientLoader.hydrate = false;
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+export async function action({ request }: Route.ActionArgs) {
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
