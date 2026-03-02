@@ -40,12 +40,14 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	handlePreview: (pkg: TData) => void;
+	isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	handlePreview,
+	isLoading = false,
 }: DataTableProps<TData, TValue>) {
 	const [statusLoadingById, setStatusLoadingById] = useState<
 		Record<string, boolean>
@@ -387,7 +389,19 @@ export function DataTable<TData, TValue>({
 						))}
 					</TableHeader>
 					<TableBody>
-						{table.getRowModel().rows?.length ? (
+						{isLoading ? (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									<div className="inline-flex items-center gap-2 text-muted-foreground">
+										<Loader2 className="h-4 w-4 animate-spin" />
+										Loading data...
+									</div>
+								</TableCell>
+							</TableRow>
+						) : table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}

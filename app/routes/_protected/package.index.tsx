@@ -45,6 +45,7 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 	const data = useQuery(api.packages.listWithRooms, {
 		searchTerm: searchTerm || undefined,
 	});
+	const isLoading = data === undefined;
 
 	const searchProps = useDebouncedSearch(searchTerm);
 
@@ -92,7 +93,7 @@ export default function PackageListPage({ loaderData }: Route.ComponentProps) {
 					</Form>
 				</CardHeader>
 				<CardContent className="p-0">
-					{data && <PackageList data={data} />}
+					<PackageList data={data ?? []} isLoading={isLoading} />
 				</CardContent>
 			</Card>
 		</div>

@@ -5,7 +5,7 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Copy, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
+import { Copy, Loader2, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
 import { useCallback } from "react";
 import { Link } from "react-router";
 
@@ -32,12 +32,14 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	handlePreview: (pkg: TData) => void;
+	isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	handlePreview,
+	isLoading = false,
 }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
@@ -171,7 +173,16 @@ export function DataTable<TData, TValue>({
 					))}
 				</TableHeader>
 				<TableBody>
-					{table.getRowModel().rows?.length ? (
+					{isLoading ? (
+						<TableRow>
+							<TableCell colSpan={columns.length} className="h-24 text-center">
+								<div className="inline-flex items-center gap-2 text-muted-foreground">
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Loading data...
+								</div>
+							</TableCell>
+						</TableRow>
+					) : table.getRowModel().rows?.length ? (
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}

@@ -7,13 +7,14 @@ import PackagePreviewModal from "./PackagePreviewModal";
 
 interface Props {
 	data: FunctionReturnType<typeof api.packages.listWithRooms>; // Receives data from parent
+	isLoading?: boolean;
 }
 
 type PackageWithRooms = FunctionReturnType<
 	typeof api.packages.listWithRooms
 >[number];
 
-const PackageList: React.FC<Props> = ({ data }) => {
+const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 	// ✅ Only UI State remains (Modal)
 	const [previewPackage, setPreviewPackage] = useState<PackageWithRooms | null>(
 		null,
@@ -32,6 +33,7 @@ const PackageList: React.FC<Props> = ({ data }) => {
 				columns={columns}
 				data={data}
 				handlePreview={handlePreviewPckg}
+				isLoading={isLoading}
 			/>
 
 			{/* Preview Modal Logic */}
