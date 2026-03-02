@@ -1,3 +1,5 @@
+import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Plus, Search } from "lucide-react";
 import { Form, Link, redirect } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -6,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import QuotationListing from "~/features/quotation/QuotationListing";
 import { useDebouncedSearch } from "~/hooks/useDebounce";
 import { getServerClient } from "~/lib/supabase/server";
-import { UmrahQuotationService } from "~/services/quotation-service";
 import type { Route } from "./+types/quotation.index";
 
 export function meta() {
@@ -30,20 +31,20 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const url = new URL(request.url);
 	const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
 
-	const allQuotations = await UmrahQuotationService.getQuotations(supabase);
-
-	const quotations = searchTerm
-		? allQuotations.filter((q) =>
-				q.package.name.toLowerCase().includes(searchTerm),
-			)
-		: allQuotations;
-	return { quotations, searchTerm };
+	return { searchTerm };
 }
 
 export default function QuotationListingPage({
 	loaderData,
 }: Route.ComponentProps) {
-	const { quotations, searchTerm } = loaderData;
+	const { searchTerm } = loaderData;
+	const allQuotations = useQuery(api.quotations.list, {});
+
+	const quotations = searchTerm
+		? (allQuotations ?? []).filter((q) =>
+				q.package.name.toLowerCase().includes(searchTerm),
+			)
+		: (allQuotations ?? []);
 
 	const searchProps = useDebouncedSearch(searchTerm);
 	return (

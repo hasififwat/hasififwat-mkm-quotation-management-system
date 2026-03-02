@@ -16,6 +16,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 	const paxCount = rooms.reduce((acc, r) => acc + r.pax, 0);
 	const addons = details.items.adds_ons;
 	const discounts = details.items.discounts;
+	const flightType = flights?.flight?.trim() || "MALAYSIA AIRLINES";
 
 	const packageTotal = rooms.reduce((acc, r) => acc + r.subtotal, 0);
 
@@ -29,10 +30,8 @@ export default function PDFPreviewMobile({ details }: Props) {
 	});
 
 	return (
-        // Page
-		<div 
-		    className="quotation-print relative bg-white text-black mx-auto p-[10px] shadow-2xl w-[210mm] aspect-[210/280] border border-gray-200 text-[10px] leading-tight"
-        >
+		// Page
+		<div className="quotation-print relative bg-white text-black mx-auto p-[10px] shadow-2xl w-[210mm] aspect-[210/280] border border-gray-200 text-[10px] leading-tight">
 			<img
 				src={header}
 				alt="Header"
@@ -118,10 +117,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 					{/* Add-ons */}
 
 					{addons.map((addon) => (
-						<div
-							key={addon.id}
-							className="flex flex-row"
-						>
+						<div key={addon.id} className="flex flex-row">
 							<div className="w-[140px] shrink-0 p-1 border-l border-b border-black text-center">
 								{addon.name.toUpperCase()}
 							</div>
@@ -137,10 +133,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 					{/* Discount */}
 					{discounts.length > 0 &&
 						discounts.map((discount) => (
-							<div
-								key={discount.id}
-								className="flex flex-row"
-							>
+							<div key={discount.id} className="flex flex-row">
 								<div className="w-[140px] shrink-0 p-1 border-l border-b border-black text-center">
 									{discount.name.toUpperCase()}
 								</div>
@@ -172,7 +165,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 						BUTIRAN PAKEJ
 					</div>
 					{/* Data */}
-					<DetailRow label="JENIS PENERBANGAN" value="MALAYSIA AIRLINES" />
+					<DetailRow label="JENIS PENERBANGAN" value={flightType} />
 					<DetailRow
 						label="TARIKH CADANGAN"
 						value={formatDateRange(
@@ -221,25 +214,16 @@ export default function PDFPreviewMobile({ details }: Props) {
 						</div>
 					</div>
 					{/* Data */}
-					<div className="flex flex-row"
-              
-                    >
-						<div className="flex-1 p-1 border-l border-b border-black text-left " >
-					
-                                {pkg.inclusions?.split("\n").map((inc) => (
-                            		<div className="mb-2 leading-relaxed"> 
-                                        - {inc}
-                                    </div>)
-                                 )}     
-                     
-                           
+					<div className="flex flex-row">
+						<div className="flex-1 p-1 border-l border-b border-black text-left ">
+							{pkg.inclusions?.split("\n").map((inc) => (
+								<div className="mb-2 leading-relaxed">- {inc}</div>
+							))}
 						</div>
-						<div className="flex-1 p-1 border-l border-r border-b border-black text-left"  >
-							 {pkg.exclusions?.split("\n").map((inc) => (
-                            		<div className="mb-2 leading-relaxed" >
-                                        - {inc}
-                                    </div>)
-                              )}   
+						<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
+							{pkg.exclusions?.split("\n").map((inc) => (
+								<div className="mb-2 leading-relaxed">- {inc}</div>
+							))}
 						</div>
 					</div>
 
@@ -254,10 +238,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 					{/* Data */}
 
 					{TERMS_AND_CONDITIONS.map((term, index) => (
-						<div
-							key={`${term}`}
-							className="flex flex-row"
-						>
+						<div key={`${term}`} className="flex flex-row">
 							<div className="w-[20px] shrink-0 p-1 border-l border-b border-black text-left">
 								{index + 1}.
 							</div>
@@ -269,7 +250,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 				</div>
 			</div>
 
-
 			<div className="absolute bottom-[10px] left-[10px] right-[10px]">
 				<img
 					src={footer}
@@ -278,11 +258,16 @@ export default function PDFPreviewMobile({ details }: Props) {
 				/>
 			</div>
 		</div>
-        
 	);
 }
 
-function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
+function DetailRow({
+	label,
+	value,
+}: {
+	label: string;
+	value: React.ReactNode;
+}) {
 	return (
 		<div className="flex flex-row">
 			<div className="w-[140px] shrink-0 p-1 border-l border-b border-black text-left">

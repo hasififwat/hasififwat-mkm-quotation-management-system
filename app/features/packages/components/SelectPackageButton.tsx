@@ -24,6 +24,7 @@ import {
 	FieldTitle,
 } from "@/components/ui/field";
 import { Checkbox } from "~/components/ui/checkbox";
+import { SeasonBadge } from "~/components/ui/season-badge";
 import {
 	Select,
 	SelectContent,
@@ -168,8 +169,12 @@ export default function SelectPackageButton() {
 														<FieldContent>
 															<FieldTitle>{pkg.name}</FieldTitle>
 															<FieldDescription>
-																{pkg.season} • {pkg.flights.length} flights
-																included
+																<span className="inline-flex items-center gap-1">
+																	<SeasonBadge season={pkg.season} />
+																	<span>
+																		• {pkg.flights.length} flights included
+																	</span>
+																</span>
 															</FieldDescription>
 														</FieldContent>
 													</Field>

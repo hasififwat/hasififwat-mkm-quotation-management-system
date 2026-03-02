@@ -1,37 +1,54 @@
-import { getServerClient } from "~/lib/supabase/server";
-import { ClientsService } from "~/services/clients-serice";
+import { api } from "convex/_generated/api";
+import { ConvexHttpClient } from "convex/browser";
 import type { Route } from "./+types/resources.create-client";
 
 export async function action({ request }: Route.ActionArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
+	const convexUrl = process.env.CONVEX_URL;
+
+	if (!convexUrl) {
+		throw new Error("CONVEX_URL is not set");
+	}
+
+	const client = new ConvexHttpClient(convexUrl);
 
 	const formData = await request.formData();
-	const name = formData.get("name") as string;
-	const phone_number = formData.get("phone_number") as string;
+	const name = String(formData.get("name") || "").trim();
+	const phone_number = String(formData.get("phone_number") || "").trim();
+
+	if (!name) {
+		return new Response(
+			JSON.stringify({
+				success: false,
+				error: "Client name is required",
+			}),
+			{
+				status: 400,
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+	}
 
 	try {
-		const newClient = await ClientsService.createClient(supabase, {
+		const newClient = await client.mutation(api.clients.create, {
 			name,
 			phone_number,
 		});
 
-		const createdId = Array.isArray(newClient)
-			? newClient[0]?.id
-			: newClient?.id;
-
 		return new Response(
-			JSON.stringify({ success: true, clientId: createdId }),
+			JSON.stringify({ success: true, clientId: newClient.id }),
 			{
 				status: 200,
 				headers: { "Content-Type": "application/json" },
 			},
 		);
-	} catch (error: any) {
+	} catch (error) {
+		const message =
+			error instanceof Error ? error.message : "Failed to create client";
+
 		return new Response(
 			JSON.stringify({
 				success: false,
-				error: error.message || "Failed to create client",
+				error: message,
 			}),
 			{
 				status: 500,

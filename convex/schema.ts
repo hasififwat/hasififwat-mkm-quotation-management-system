@@ -34,6 +34,7 @@ export default defineSchema({
   package_flights: defineTable({
     package_id: v.union(v.id("packages"), v.string()),
     month: v.string(),
+    flight: v.optional(v.string()),
     departure_date: v.string(),
     departure_sector: v.string(),
     return_date: v.string(),

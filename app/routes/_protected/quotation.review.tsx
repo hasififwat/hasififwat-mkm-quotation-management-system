@@ -1,25 +1,33 @@
 import { BlobProvider, PDFViewer } from "@react-pdf/renderer";
-import * as pkg from "file-saver";
+import { api } from "convex/_generated/api";
+import { ConvexHttpClient } from "convex/browser";
+import fileSaver from "file-saver";
 import { Printer } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { redirect } from "react-router";
 
 import { Button } from "~/components/ui/button";
 import PDFPreview from "~/features/quotation/components/PDFPreview";
-import { getServerClient } from "~/lib/supabase/server";
-import { UmrahQuotationService } from "~/services/quotation-service";
-import type { Route } from "./+types/quotation.review";
 import PDFPreviewMobile from "~/features/quotation/components/PDFPreviewMobile";
+import type { Route } from "./+types/quotation.review";
 
-const saveAs = pkg.saveAs || (pkg as any).default?.saveAs;
+const { saveAs } = fileSaver;
 
 export async function loader({ params, request }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
+	void request;
+	const convexUrl = process.env.CONVEX_URL;
 
-	const initialData = await UmrahQuotationService.getQuotationFullDetails(
-		supabase,
-		params.qid,
+	if (!convexUrl) {
+		throw new Error("CONVEX_URL is not set");
+	}
+
+	const client = new ConvexHttpClient(convexUrl);
+
+	const initialData = await client.query(
+		api.quotations.getQuotationFullDetails,
+		{
+			target_quotation_id: params.qid,
+		},
 	);
 
 	// const pkg = await UmrahPackageService.getNewPackageTemplate(supabase);
@@ -36,10 +44,8 @@ export default function QuotationReviewPage({
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const [scale, setScale] = useState(1);
-	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		setMounted(true);
 		const handleResize = () => {
 			if (containerRef.current) {
 				const containerWidth = containerRef.current.offsetWidth;
@@ -66,10 +72,16 @@ export default function QuotationReviewPage({
 			.replace(/^-+|-+$/g, "")
 			.toLowerCase();
 
-	const issuedDate = new Date(loaderData.initialData.created_at)
-		.toISOString()
-		.slice(0, 10);
-	const documentTitle = `${toFileSafe(loaderData.initialData.client_name || "customer")}_${issuedDate}`;
+	const clientFileName = toFileSafe(
+		loaderData.initialData.client_name || "customer",
+	);
+	const quotationFileName = toFileSafe(
+		loaderData.initialData.reference_number || "quotation",
+	);
+	const documentTitle = `${clientFileName}_${quotationFileName}`;
+	const pdfDocument = (
+		<PDFPreview details={loaderData.initialData} fileName={documentTitle} />
+	);
 
 	return (
 		<div
@@ -77,7 +89,7 @@ export default function QuotationReviewPage({
 			className="col-span-full flex flex-col items-center bg-gray-100/50 overflow-hidden min-h-screen relative"
 		>
 			<PDFViewer className="w-full h-full hidden md:block">
-				<PDFPreview details={loaderData.initialData} />
+				{pdfDocument}
 			</PDFViewer>
 			<div
 				className="bg-white shadow-lg my-8 md:hidden"
@@ -90,12 +102,12 @@ export default function QuotationReviewPage({
 			>
 				<PDFPreviewMobile details={loaderData.initialData} />
 			</div>
-			<BlobProvider document={<PDFPreview details={loaderData.initialData} />}>
-				{({ blob, url, loading, error }) => {
+			<BlobProvider document={pdfDocument}>
+				{({ blob }) => {
 					// You can use the blob, url, loading, and error here
 					// For example, you might want to provide a download link or handle loading state
 					return (
-						<div className="fixed bottom-8 right-8 z-50  md:hidden">
+						<div className="fixed bottom-8 right-8 z-50">
 							<Button
 								size="lg"
 								className="shadow-xl"

@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+type DropdownOption = {
+	id: string;
+	name: string;
+	value: string | number;
+	[key: string]: string | number | boolean | string[] | undefined;
+};
+
 export function SearchableDropdown({
 	options,
 	placeholder = "Select options...",
@@ -24,22 +31,28 @@ export function SearchableDropdown({
 	disabled = false,
 	value: propValue,
 	handleSelect,
+	renderOption,
+	renderSelected,
 }: {
 	value: string | number;
 	optionValueKey?: string;
 	optionsLabelKey?: string;
 	disabled?: boolean;
 	placeholder?: string;
-	options: {
-		id: string;
-		name: string;
-		value: string | number;
-	}[];
+	options: DropdownOption[];
 	handleSelect?: (value: string | number) => void;
+	renderOption?: (option: DropdownOption) => React.ReactNode;
+	renderSelected?: (option: DropdownOption | undefined) => React.ReactNode;
 }) {
 	console.log("SearchableDropdown propValue:", propValue);
 	const [open, setOpen] = React.useState(false);
 	const [value, setValue] = React.useState(propValue);
+
+	React.useEffect(() => {
+		setValue(propValue);
+	}, [propValue]);
+
+	const selectedOption = options.find((option) => option.value === value);
 
 	const onSelect = (selectedValue: string | number) => {
 		setValue(selectedValue as string);
@@ -60,9 +73,9 @@ export function SearchableDropdown({
 					disabled={disabled}
 				>
 					{value
-						? options.find((option) => option.value === value)?.[
-								optionsLabelKey as keyof (typeof options)[0]
-							]
+						? renderSelected
+							? renderSelected(selectedOption)
+							: selectedOption?.[optionsLabelKey as keyof DropdownOption]
 						: placeholder}
 					<ChevronsUpDown className="opacity-50" />
 				</Button>
@@ -87,7 +100,9 @@ export function SearchableDropdown({
 										onSelect(currentValue === value ? "" : currentValue);
 									}}
 								>
-									{option[optionsLabelKey as keyof typeof option]}
+									{renderOption
+										? renderOption(option)
+										: option[optionsLabelKey as keyof typeof option]}
 									<Check
 										className={cn(
 											"ml-auto",

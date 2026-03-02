@@ -32,6 +32,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SeasonBadge } from "~/components/ui/season-badge";
 import { createClient } from "~/lib/supabase/client";
 import { UmrahPackageService } from "~/services/package-service";
 
@@ -40,14 +41,6 @@ interface DataTableProps<TData, TValue> {
 	data: TData[];
 	handlePreview: (pkg: TData) => void;
 }
-
-const SEASON_BADGE_CLASSES = [
-	"bg-sky-500/15 text-sky-700 border-sky-400/40 dark:text-sky-300",
-	"bg-violet-500/15 text-violet-700 border-violet-400/40 dark:text-violet-300",
-	"bg-fuchsia-500/15 text-fuchsia-700 border-fuchsia-400/40 dark:text-fuchsia-300",
-	"bg-cyan-500/15 text-cyan-700 border-cyan-400/40 dark:text-cyan-300",
-	"bg-emerald-500/15 text-emerald-700 border-emerald-400/40 dark:text-emerald-300",
-];
 
 export function DataTable<TData, TValue>({
 	columns,
@@ -60,20 +53,6 @@ export function DataTable<TData, TValue>({
 	const [statusOverridesById, setStatusOverridesById] = useState<
 		Record<string, "published" | "unpublished">
 	>({});
-
-	const getSeasonBadgeClass = useCallback((season?: string) => {
-		if (!season) {
-			return SEASON_BADGE_CLASSES[0];
-		}
-
-		const normalized = season.trim().toUpperCase();
-		let hash = 0;
-		for (const char of normalized) {
-			hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-		}
-
-		return SEASON_BADGE_CLASSES[hash % SEASON_BADGE_CLASSES.length];
-	}, []);
 
 	const table = useReactTable({
 		data,
@@ -249,22 +228,9 @@ export function DataTable<TData, TValue>({
 
 			if (columnId === "season") {
 				const season = (cellValue as string | undefined) ?? "";
-				if (!season) {
-					return (
-						<div className="flex justify-center">
-							<span className="text-muted-foreground text-xs">N/A</span>
-						</div>
-					);
-				}
-
 				return (
 					<div className="flex justify-center">
-						<Badge
-							variant="outline"
-							className={`h-4 px-1.5 text-[10px] leading-none ${getSeasonBadgeClass(season)}`}
-						>
-							{season}
-						</Badge>
+						<SeasonBadge season={season} />
 					</div>
 				);
 			}
@@ -387,7 +353,6 @@ export function DataTable<TData, TValue>({
 			renderFormattedDate,
 			renderPackageCell,
 			renderDropdownMenu,
-			getSeasonBadgeClass,
 			handleStatusChange,
 			statusLoadingById,
 			statusOverridesById,

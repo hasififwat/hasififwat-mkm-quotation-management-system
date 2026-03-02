@@ -1,10 +1,10 @@
+import { api } from "convex/_generated/api";
+import { ConvexHttpClient } from "convex/browser";
 import { redirect } from "react-router";
 import QuotationBuilder from "~/features/quotation/QuotationBuilder";
-import { createClient } from "~/lib/supabase/client";
 import { getServerClient } from "~/lib/supabase/server";
 import { ClientsService } from "~/services/clients-serice";
 import { UmrahPackageService } from "~/services/package-service";
-import { UmrahQuotationService } from "~/services/quotation-service";
 import type { Route } from "./+types/quotation.edit";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
@@ -12,11 +12,17 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 	const supabase = getServerClient(request, headers);
 	const allPackages = await UmrahPackageService.getAllPackages(supabase);
 	const allClients = await ClientsService.getClients(supabase);
+	const convexUrl = process.env.CONVEX_URL;
 
-	const initialData = await UmrahQuotationService.getQuotationForEdit(
-		supabase,
-		params.qid,
-	);
+	if (!convexUrl) {
+		throw new Error("CONVEX_URL is not set");
+	}
+
+	const client = new ConvexHttpClient(convexUrl);
+
+	const initialData = await client.query(api.quotations.getQuotationForEdit, {
+		target_quotation_id: params.qid,
+	});
 
 	console.log("Loader fetched initial data:", initialData);
 
@@ -31,9 +37,19 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
-	const supabase = createClient();
+	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+
+	if (!convexUrl) {
+		throw new Error("VITE_CONVEX_URL is not set");
+	}
+
+	const client = new ConvexHttpClient(convexUrl);
+	const payload = await request.json();
+
 	try {
-		await UmrahQuotationService.update(supabase, await request.json());
+		await client.mutation(api.quotations.update, {
+			payload,
+		});
 		return redirect("/quotations");
 	} catch (error) {
 		console.error("Error in quotation.update clientAction:", error);

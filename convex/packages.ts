@@ -344,11 +344,13 @@ export const updatePackage = mutation({
     }
 
     const now = new Date().toISOString();
+    const nextSeason =
+      args.payload.season?.trim() || existingPackage.season || args.payload.year;
 
     await ctx.db.patch(args.id, {
       name: args.payload.name,
       duration: args.payload.duration,
-      season: args.payload.season || args.payload.year,
+      season: nextSeason,
       transport: args.payload.transport || "",
       year: args.payload.year,
       status: args.payload.status,
@@ -582,6 +584,7 @@ export const createPackageWithFlight = mutation({
         if (matchedFlight) {
           await ctx.db.patch(matchedFlight._id, {
             month: flight.month,
+            flight: flight.code,
             departure_date: flight.departure,
             departure_sector: flight.sector_departure,
             return_date: flight.return,
@@ -592,6 +595,7 @@ export const createPackageWithFlight = mutation({
           await ctx.db.insert("package_flights", {
             package_id: packageDocId,
             month: flight.month,
+            flight: flight.code,
             departure_date: flight.departure,
             departure_sector: flight.sector_departure,
             return_date: flight.return,

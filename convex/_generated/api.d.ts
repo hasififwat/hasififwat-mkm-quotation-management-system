@@ -8,7 +8,9 @@
  * @module
  */
 
+import type * as clients from "../clients.js";
 import type * as packages from "../packages.js";
+import type * as profiles from "../profiles.js";
 import type * as quotations from "../quotations.js";
 
 import type {
@@ -18,7 +20,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  clients: typeof clients;
   packages: typeof packages;
+  profiles: typeof profiles;
   quotations: typeof quotations;
 }>;
 
