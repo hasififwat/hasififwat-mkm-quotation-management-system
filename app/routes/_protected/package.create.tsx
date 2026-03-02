@@ -42,11 +42,35 @@ const createEmptyTemplate = (templateData: {
 	};
 };
 
-export async function clientLoader() {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+function normalizeTemplateData(templateData: unknown): {
+	hotelTemplates: Array<IHotelDetailsApi>;
+	roomTemplates: Array<IRoomDetailsApi>;
+} {
+	if (!templateData || typeof templateData !== "object") {
+		return { hotelTemplates: [], roomTemplates: [] };
+	}
+
+	const data = templateData as {
+		hotelTemplates?: unknown;
+		roomTemplates?: unknown;
+	};
+
+	return {
+		hotelTemplates: Array.isArray(data.hotelTemplates)
+			? (data.hotelTemplates as Array<IHotelDetailsApi>)
+			: [],
+		roomTemplates: Array.isArray(data.roomTemplates)
+			? (data.roomTemplates as Array<IRoomDetailsApi>)
+			: [],
+	};
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+	void request;
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
@@ -57,13 +81,10 @@ export async function clientLoader() {
 	]);
 
 	// Transform all packages
-	const allPackages = allPackagesData.map(transformConvexPackage);
-	const initialData = createEmptyTemplate(
-		templateData as {
-			hotelTemplates: Array<IHotelDetailsApi>;
-			roomTemplates: Array<IRoomDetailsApi>;
-		},
-	);
+	const allPackages = (
+		Array.isArray(allPackagesData) ? allPackagesData : []
+	).map(transformConvexPackage);
+	const initialData = createEmptyTemplate(normalizeTemplateData(templateData));
 
 	return {
 		allPackages,
@@ -71,13 +92,11 @@ export async function clientLoader() {
 	};
 }
 
-clientLoader.hydrate = false;
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL;
+export async function action({ request }: Route.ActionArgs) {
+	const convexUrl = process.env.CONVEX_URL;
 
 	if (!convexUrl) {
-		throw new Error("VITE_CONVEX_URL is not set");
+		throw new Error("CONVEX_URL is not set");
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
