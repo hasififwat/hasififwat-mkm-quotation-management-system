@@ -3,6 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
+import type { IPackageDetailsForm } from "~/features/packages/schema";
 
 import { Textarea } from "~/components/ui/textarea";
 
@@ -18,15 +19,7 @@ export default function ExclusionInclusionDetails({
 	renderCardHeader: (
 		title: string,
 		description: string,
-		settingKey:
-			| "inclusions"
-			| "exclusions"
-			| "name"
-			| "id"
-			| "status"
-			| "duration"
-			| "hotels"
-			| "rooms",
+		settingKey: keyof IPackageDetailsForm,
 	) => React.ReactNode;
 }) {
 	const { control } = useFormContext();

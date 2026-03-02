@@ -13,40 +13,42 @@ import {
 } from "@/components/ui/dialog";
 
 import { Label } from "@/components/ui/label";
-import type { PackageDetailsForm } from "@/schema";
+import type { IPackageDetails } from "~/features/packages/schema";
 
 export function ImportSettingModal({
 	renderPreview,
 	title,
 	description,
+	triggerLabel,
 	allPackages,
 	handleImport,
 }: {
-	renderPreview: (
-		selectedPackage: PackageDetailsForm | null,
-	) => React.ReactNode;
+	renderPreview: (selectedPackage: IPackageDetails | null) => React.ReactNode;
 	title: string;
 	description: string;
-	allPackages: PackageDetailsForm[];
-	handleImport: (importedData: PackageDetailsForm) => void;
+	triggerLabel?: string;
+	allPackages: IPackageDetails[];
+	handleImport: (importedData: IPackageDetails) => void;
 }) {
 	const option = allPackages
-		.filter((pkg): pkg is PackageDetailsForm & { id: string } =>
-			Boolean(pkg.id),
+		.filter((pkg): pkg is IPackageDetails & { _id: string } =>
+			Boolean(pkg._id),
 		)
 		.map((pkg) => ({
-			id: pkg.id,
+			id: pkg._id,
 			name: pkg.name,
-			value: pkg.id,
+			value: pkg._id,
 		}));
 
 	const [selectedPackage, setSelectedPackage] =
-		useState<PackageDetailsForm | null>(null);
+		useState<IPackageDetails | null>(null);
 
 	return (
 		<Dialog>
 			<div>
-				<DialogTrigger render={<Button variant="outline">Import</Button>} />
+				<DialogTrigger
+					render={<Button variant="outline">{triggerLabel ?? "Import"}</Button>}
+				/>
 				<DialogContent className="sm:max-w-106.25">
 					<DialogHeader>
 						<DialogTitle>{title}</DialogTitle>
@@ -54,14 +56,14 @@ export function ImportSettingModal({
 					</DialogHeader>
 					<Label htmlFor="name-1">Package Name</Label>
 					<SearchableDropdown
-						value={selectedPackage?.id ?? ""}
+						value={selectedPackage?._id ?? ""}
 						options={option}
 						placeholder="Select a package to import"
 						optionValueKey="id"
 						optionsLabelKey="name"
 						handleSelect={(selectedId) => {
 							const selectedPackage = allPackages.find(
-								(pkg) => pkg.id === selectedId,
+								(pkg) => pkg._id === selectedId,
 							);
 							if (selectedPackage) {
 								setSelectedPackage(selectedPackage);

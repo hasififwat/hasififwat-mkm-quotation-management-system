@@ -1,10 +1,10 @@
 import type React from "react";
 import { Badge } from "@/components/ui/badge";
-import type { PackageDetailsForm } from "@/schema";
+import type { IPackageDetails } from "~/features/packages/schema";
 
 interface ImportPreviewProps {
-	selectedPackage: PackageDetailsForm | null;
-	settingType: keyof PackageDetailsForm;
+	selectedPackage: IPackageDetails | null;
+	settingType: keyof IPackageDetails;
 }
 
 const HOTEL_LIST = ["makkah", "madinah", "taif"] as const;
@@ -29,7 +29,11 @@ export const ImportPreview: React.FC<ImportPreviewProps> = ({
 				</p>
 				<div className="space-y-3">
 					{HOTEL_LIST.map((hotelKey) => {
-						const hotel = selectedPackage.hotels[hotelKey];
+						const hotel = selectedPackage.hotels.find(
+							(item) => item.hotel_type.toLowerCase() === hotelKey,
+						);
+
+						if (!hotel) return null;
 						if (!hotel.enabled) return null;
 
 						return (

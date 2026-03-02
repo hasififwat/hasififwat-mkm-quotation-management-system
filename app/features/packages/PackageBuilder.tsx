@@ -149,14 +149,23 @@ const PackageBuilder: React.FC = () => {
 	) => {
 		if (setting === "hotels") {
 			const existingHotels = getValues("hotels");
+			const existingHotelIdByType = new Map(
+				existingHotels.map((hotel) => [hotel.hotel_type ?? "", hotel._id]),
+			);
 
-			const hotelsWithExistingIds = importedData.hotels.map((hotel, index) => ({
+			const hotelsWithExistingIds = importedData.hotels.map((hotel) => ({
 				...hotel,
-				_id: existingHotels?.[index]?._id ?? hotel._id,
+				_id: existingHotelIdByType.get(hotel.hotel_type ?? "") ?? "",
 			}));
 			setValue("hotels", hotelsWithExistingIds);
 		} else if (setting === "rooms") {
-			setValue("rooms", importedData.rooms);
+			setValue(
+				"rooms",
+				(importedData.rooms ?? []).map((room) => ({
+					...room,
+					_id: "",
+				})),
+			);
 		} else if (setting === "inclusions") {
 			setValue("inclusions", importedData.inclusions);
 		} else if (setting === "exclusions") {
@@ -209,18 +218,47 @@ const PackageBuilder: React.FC = () => {
 	const renderSuspenseImportButton = (
 		settingKey: keyof IPackageDetailsForm,
 	) => {
+		const importMeta: Record<
+			"hotels" | "rooms" | "inclusions" | "exclusions",
+			{ title: string; description: string; triggerLabel: string }
+		> = {
+			hotels: {
+				title: "Import Hotel Settings",
+				description: "Import hotel settings from an existing package.",
+				triggerLabel: "Import",
+			},
+			rooms: {
+				title: "Import Room Settings",
+				description: "Import room pricing from an existing package.",
+				triggerLabel: "Import",
+			},
+			inclusions: {
+				title: "Import Inclusions",
+				description: "Import inclusions from an existing package.",
+				triggerLabel: "Import Inclusions",
+			},
+			exclusions: {
+				title: "Import Exclusions",
+				description: "Import exclusions from an existing package.",
+				triggerLabel: "Import Exclusions",
+			},
+		};
+
+		const key = settingKey as "hotels" | "rooms" | "inclusions" | "exclusions";
+
 		return (
-			<div className="col-start-2  row-start-1 row-span-full items-center justify-end flex">
+			<div className="col-start-2 row-start-1 row-span-full items-center justify-end flex">
 				<ImportSettingModal
-					title="Import Hotel Settings"
-					description="Import hotel settings from an existing package."
+					title={importMeta[key].title}
+					description={importMeta[key].description}
+					triggerLabel={importMeta[key].triggerLabel}
 					allPackages={allPackages}
 					handleImport={(importedData) =>
 						handleImport(importedData, settingKey)
 					}
 					renderPreview={(selectedPackage) => (
 						<ImportPreview
-							key={selectedPackage ? selectedPackage.id : "none"}
+							key={selectedPackage ? selectedPackage._id : "none"}
 							selectedPackage={selectedPackage}
 							settingType={settingKey}
 						/>
@@ -285,12 +323,8 @@ const PackageBuilder: React.FC = () => {
 						currentStep={currentStep}
 						goToNextStep={goToNextStep}
 						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={() =>
-							renderCardHeader(
-								"Inclusions & Exclusions",
-								"Specify the inclusions and exclusions for the package.",
-								"inclusions",
-							)
+						renderCardHeader={(title, description, settingKey) =>
+							renderCardHeader(title, description, settingKey)
 						}
 					/>
 
