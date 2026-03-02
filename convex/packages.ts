@@ -621,3 +621,226 @@ export const createPackageWithFlight = mutation({
     };
   },
 });
+
+export const backfillMissingHotelsFromTemplates = mutation({
+  args: {
+    dryRun: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const dryRun = args.dryRun ?? false;
+    const now = new Date().toISOString();
+
+    const [packages, packageHotels, hotelTemplates] = await Promise.all([
+      ctx.db.query("packages").collect(),
+      ctx.db.query("package_hotels").collect(),
+      ctx.db.query("hotel_templates").collect(),
+    ]);
+
+    const existingTypesByPackageId = new Map<
+      (typeof packages)[number]["_id"],
+      Set<string>
+    >();
+
+    for (const hotel of packageHotels) {
+      const packageId = hotel.package_id;
+      if (typeof packageId === "string") {
+        continue;
+      }
+
+      const normalizedType = hotel.hotel_type.trim().toLowerCase();
+      const existing = existingTypesByPackageId.get(packageId);
+      if (existing) {
+        existing.add(normalizedType);
+      } else {
+        existingTypesByPackageId.set(packageId, new Set([normalizedType]));
+      }
+    }
+
+    let insertedCount = 0;
+    const insertedByTemplateType: Record<string, number> = {};
+
+    for (const pkg of packages) {
+      const existingTypes =
+        existingTypesByPackageId.get(pkg._id) ?? new Set<string>();
+
+      for (const template of hotelTemplates) {
+        const normalizedTemplateType = template.hotel_type.trim().toLowerCase();
+        if (existingTypes.has(normalizedTemplateType)) {
+          continue;
+        }
+
+        if (!dryRun) {
+          await ctx.db.insert("package_hotels", {
+            package_id: pkg._id,
+            hotel_type: template.hotel_type,
+            name: template.name || "",
+            enabled: template.enabled,
+            placeholder: template.placeholder,
+            created_at: now,
+          });
+        }
+
+        existingTypes.add(normalizedTemplateType);
+        insertedCount += 1;
+        insertedByTemplateType[template.hotel_type] =
+          (insertedByTemplateType[template.hotel_type] ?? 0) + 1;
+      }
+
+      existingTypesByPackageId.set(pkg._id, existingTypes);
+    }
+
+    return {
+      dryRun,
+      packageCount: packages.length,
+      templateCount: hotelTemplates.length,
+      insertedCount,
+      insertedByTemplateType,
+    };
+  },
+});
+
+export const reconcilePackageHotelsFromTemplates = mutation({
+  args: {
+    dryRun: v.optional(v.boolean()),
+    keepBeforeIso: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const dryRun = args.dryRun ?? false;
+    const now = new Date().toISOString();
+    const keepBeforeIso = args.keepBeforeIso;
+
+    const [packages, packageHotels, hotelTemplates, packageMeals] =
+      await Promise.all([
+        ctx.db.query("packages").collect(),
+        ctx.db.query("package_hotels").collect(),
+        ctx.db.query("hotel_templates").collect(),
+        ctx.db.query("package_meals").collect(),
+      ]);
+
+    const packageIdByKey = new Map(
+      packages.map((pkg) => [String(pkg._id), pkg._id]),
+    );
+
+    const templateByType = new Map(
+      hotelTemplates.map((template) => [
+        template.hotel_type.trim().toLowerCase(),
+        template,
+      ]),
+    );
+
+    const mealCountByHotelId = new Map<string, number>();
+    for (const meal of packageMeals) {
+      const key = String(meal.package_hotel_id);
+      mealCountByHotelId.set(key, (mealCountByHotelId.get(key) ?? 0) + 1);
+    }
+
+    const hotelsByPackageAndType = new Map<string, (typeof packageHotels)[number][]>();
+    for (const hotel of packageHotels) {
+      const packageKey = String(hotel.package_id);
+      if (!packageIdByKey.has(packageKey)) {
+        continue;
+      }
+
+      const normalizedType = hotel.hotel_type.trim().toLowerCase();
+      if (!templateByType.has(normalizedType)) {
+        continue;
+      }
+
+      const groupKey = `${packageKey}::${normalizedType}`;
+      const existing = hotelsByPackageAndType.get(groupKey);
+      if (existing) {
+        existing.push(hotel);
+      } else {
+        hotelsByPackageAndType.set(groupKey, [hotel]);
+      }
+    }
+
+    let insertedCount = 0;
+    let deletedHotelCount = 0;
+    let deletedMealCount = 0;
+    const insertedByTemplateType: Record<string, number> = {};
+
+    for (const pkg of packages) {
+      const packageKey = String(pkg._id);
+
+      for (const [normalizedType, template] of templateByType) {
+        const groupKey = `${packageKey}::${normalizedType}`;
+        const hotels = hotelsByPackageAndType.get(groupKey) ?? [];
+
+        if (hotels.length === 0) {
+          if (!dryRun) {
+            await ctx.db.insert("package_hotels", {
+              package_id: pkg._id,
+              hotel_type: template.hotel_type,
+              name: template.name || "",
+              enabled: template.enabled,
+              placeholder: template.placeholder,
+              created_at: now,
+            });
+          }
+
+          insertedCount += 1;
+          insertedByTemplateType[template.hotel_type] =
+            (insertedByTemplateType[template.hotel_type] ?? 0) + 1;
+          continue;
+        }
+
+        if (hotels.length === 1) {
+          continue;
+        }
+
+        const sortedHotels = [...hotels].sort((a, b) => {
+          const aCreated = a.created_at || "";
+          const bCreated = b.created_at || "";
+
+          const aBeforeCutoff =
+            keepBeforeIso && aCreated ? (aCreated < keepBeforeIso ? 1 : 0) : 0;
+          const bBeforeCutoff =
+            keepBeforeIso && bCreated ? (bCreated < keepBeforeIso ? 1 : 0) : 0;
+          if (aBeforeCutoff !== bBeforeCutoff) {
+            return bBeforeCutoff - aBeforeCutoff;
+          }
+
+          const aMealCount = mealCountByHotelId.get(String(a._id)) ?? 0;
+          const bMealCount = mealCountByHotelId.get(String(b._id)) ?? 0;
+          if (aMealCount !== bMealCount) {
+            return bMealCount - aMealCount;
+          }
+
+          if (aCreated !== bCreated) {
+            return aCreated.localeCompare(bCreated);
+          }
+
+          return String(a._id).localeCompare(String(b._id));
+        });
+
+        const duplicateHotels = sortedHotels.slice(1);
+        for (const duplicate of duplicateHotels) {
+          const duplicateMealRows = packageMeals.filter(
+            (meal) => String(meal.package_hotel_id) === String(duplicate._id),
+          );
+
+          if (!dryRun) {
+            for (const meal of duplicateMealRows) {
+              await ctx.db.delete(meal._id);
+            }
+            await ctx.db.delete(duplicate._id);
+          }
+
+          deletedMealCount += duplicateMealRows.length;
+          deletedHotelCount += 1;
+        }
+      }
+    }
+
+    return {
+      dryRun,
+      packageCount: packages.length,
+      templateCount: hotelTemplates.length,
+      insertedCount,
+      deletedHotelCount,
+      deletedMealCount,
+      insertedByTemplateType,
+    };
+  },
+});

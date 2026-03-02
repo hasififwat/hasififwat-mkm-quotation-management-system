@@ -5,7 +5,9 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ConvexHttpClient } from "convex/browser";
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
+import { useMutation } from "convex/react";
 import { Copy, Loader2, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
 	handlePreview,
 	isLoading = false,
 }: DataTableProps<TData, TValue>) {
+	const updatePackageStatus = useMutation(api.packages.updatePackageStatus);
 	const [statusLoadingById, setStatusLoadingById] = useState<
 		Record<string, boolean>
 	>({});
@@ -122,26 +125,16 @@ export function DataTable<TData, TValue>({
 
 	const handleStatusChange = useCallback(
 		async (pkgId: string, nextStatus: "published" | "unpublished") => {
-			const convexUrl = import.meta.env.VITE_CONVEX_URL;
-			if (!convexUrl) {
-				console.error("VITE_CONVEX_URL is not set");
-				return;
-			}
-
 			setStatusLoadingById((prev) => ({
 				...prev,
 				[pkgId]: true,
 			}));
 
 			try {
-				const client = new ConvexHttpClient(convexUrl);
-				await client.mutation(
-					"packages:updatePackageStatus" as never,
-					{
-						id: pkgId,
-						status: nextStatus,
-					} as never,
-				);
+				await updatePackageStatus({
+					id: pkgId as Id<"packages">,
+					status: nextStatus,
+				});
 
 				setStatusOverridesById((prev) => ({
 					...prev,
@@ -156,7 +149,7 @@ export function DataTable<TData, TValue>({
 				}));
 			}
 		},
-		[],
+		[updatePackageStatus],
 	);
 
 	const renderDropdownMenu = useCallback(
