@@ -50,6 +50,7 @@ const packageInQuotationDetailsSchema = z.object({
 const flightDetailsSchema = z.object({
 	id: z.string(),
 	month: z.string(),
+	flight: z.string().optional(),
 	return_date: z.string(),
 	return_sector: z.string(),
 	departure_date: z.string(),
@@ -103,6 +104,7 @@ export type QuotationFormValues = z.infer<typeof quotationFormSchema>;
 const flightSchema = z.object({
 	id: z.string(),
 	month: z.string(),
+	flight: z.string().optional(),
 	departure_date: z.string(), // ISO Date String
 	return_date: z.string(),
 	departure_sector: z.string(),

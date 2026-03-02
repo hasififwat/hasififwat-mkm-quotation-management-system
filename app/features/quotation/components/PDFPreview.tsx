@@ -15,6 +15,7 @@ import type { QuotationFullDetails } from "../schema";
 
 interface Props {
 	details: QuotationFullDetails;
+	fileName?: string;
 }
 
 const styles = StyleSheet.create({
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default function PDFPreview({ details }: Props) {
+export default function PDFPreview({ details, fileName }: Props) {
 	const pkg = details.package;
 	const activeHotels = pkg.hotels.filter((h) => h.enabled);
 	const flights = details.selected_flight;
@@ -75,6 +76,7 @@ export default function PDFPreview({ details }: Props) {
 	const _paxCount = rooms.reduce((acc, r) => acc + r.pax, 0);
 	const addons = details.items.adds_ons;
 	const discounts = details.items.discounts;
+	const flightType = flights?.flight?.trim() || "MALAYSIA AIRLINES";
 
 	const packageTotal = rooms.reduce((acc, r) => acc + r.subtotal, 0);
 
@@ -87,7 +89,7 @@ export default function PDFPreview({ details }: Props) {
 		year: "numeric",
 	});
 	return (
-		<Document>
+		<Document title={fileName}>
 			<Page size="A4" style={styles.page}>
 				<Image src={header} style={styles.headerImage} />
 				{/* Body */}
@@ -336,7 +338,7 @@ export default function PDFPreview({ details }: Props) {
 									borderRight: "1px solid black inset",
 								}}
 							>
-								<Text>MALAYSIA AIRLINES</Text>
+								<Text>{flightType}</Text>
 							</View>
 						</View>
 						<View style={{ display: "flex", flexDirection: "row" }}>

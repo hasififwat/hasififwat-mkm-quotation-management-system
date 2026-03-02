@@ -8,12 +8,26 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-export function UmrahYearSelect() {
+type UmrahYearSelectProps = {
+	name?: string;
+	value?: string;
+	onChange?: (value: string) => void;
+	id?: string;
+	invalid?: boolean;
+};
+
+export function UmrahYearSelect({
+	name,
+	value,
+	onChange,
+	id = "year",
+	invalid = false,
+}: UmrahYearSelectProps) {
 	return (
-		<Field className="w-full ">
-			<FieldLabel>Umrah Year</FieldLabel>
-			<Select>
-				<SelectTrigger>
+		<Field className="w-full" data-invalid={invalid}>
+			<FieldLabel htmlFor={id}>Umrah Year</FieldLabel>
+			<Select name={name} value={value} onValueChange={onChange}>
+				<SelectTrigger id={id} aria-invalid={invalid}>
 					<SelectValue placeholder="Choose Umrah year" />
 				</SelectTrigger>
 				<SelectContent>

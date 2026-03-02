@@ -34,18 +34,20 @@ export function CreateClientModal({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button
-					type="button"
-					variant="ghost"
-					size="sm"
-					className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
-					title="Create new client"
-				>
-					<Plus className="h-4 w-4 mr-1" />
-					Create New Client
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={
+					<Button
+						type="button"
+						variant="ghost"
+						size="sm"
+						className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+						title="Create new client"
+					>
+						<Plus className="h-4 w-4 mr-1" />
+						Create New Client
+					</Button>
+				}
+			/>
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form method="post" action="/resources/create-client">
 					<DialogHeader>

@@ -1,3 +1,4 @@
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -5,11 +6,12 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useLoaderData,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import { useState } from "react";
 import { ThemeProvider } from "./features/theme/provider/ThemeProvider";
 import { getServerClient } from "./lib/supabase/server";
 
@@ -31,9 +33,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const headers = new Headers();
 	const supabase = getServerClient(request, headers);
 	await supabase.auth.getSession();
+
+	const CONVEX_URL = process.env.CONVEX_URL!;
+	return { ENV: { CONVEX_URL } };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+	const { ENV } = useLoaderData<typeof loader>();
+	const [_convex] = useState(() => new ConvexReactClient(ENV.CONVEX_URL));
 	return (
 		<html lang="en">
 			<head>
@@ -43,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				{children}
+				<ConvexProvider client={_convex}>{children}</ConvexProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</body>

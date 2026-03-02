@@ -21,7 +21,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import type { PackageDetailsForm } from "~/schema";
+import type { IPackageDetailsForm } from "../../schema";
 
 const MONTHS = [
 	{ value: "JAN", label: "January" },
@@ -47,19 +47,23 @@ export default function FlightDetails({
 	goToNextStep: () => void;
 	goToPreviousStep: () => void;
 }) {
-	const { control } = useFormContext<PackageDetailsForm>();
-	const { fields, append, remove } = useFieldArray<PackageDetailsForm>({
+	const { control } = useFormContext<IPackageDetailsForm>();
+	const { fields, append, remove } = useFieldArray<IPackageDetailsForm>({
 		control,
 		name: "flights",
 	});
 
 	const handleAddFlight = () => {
 		append({
+			year_key: "",
+			pakej: "",
+			code: "",
 			month: "",
-			departure_date: "",
-			departure_sector: "",
-			return_date: "",
-			return_sector: "",
+			departure: "",
+			return: "",
+			package_name: "",
+			sector_departure: "",
+			sector_return: "",
 		});
 	};
 
@@ -127,7 +131,7 @@ export default function FlightDetails({
 
 							{/* Hidden ID field for existing entries */}
 							<Controller
-								name={`flights.${index}.id`}
+								name={`flights.${index}._id`}
 								control={control}
 								render={({ field: idField }) => (
 									<input type="hidden" {...idField} />
@@ -168,7 +172,7 @@ export default function FlightDetails({
 
 								{/* Departure Date */}
 								<Controller
-									name={`flights.${index}.departure_date`}
+									name={`flights.${index}.departure`}
 									control={control}
 									render={({ field: dateField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
@@ -189,7 +193,7 @@ export default function FlightDetails({
 
 								{/* Departure Sector */}
 								<Controller
-									name={`flights.${index}.departure_sector`}
+									name={`flights.${index}.sector_departure`}
 									control={control}
 									render={({ field: sectorField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
@@ -211,7 +215,7 @@ export default function FlightDetails({
 
 								{/* Return Date */}
 								<Controller
-									name={`flights.${index}.return_date`}
+									name={`flights.${index}.return`}
 									control={control}
 									render={({ field: dateField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
@@ -232,7 +236,7 @@ export default function FlightDetails({
 
 								{/* Return Sector */}
 								<Controller
-									name={`flights.${index}.return_sector`}
+									name={`flights.${index}.sector_return`}
 									control={control}
 									render={({ field: sectorField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
@@ -258,10 +262,10 @@ export default function FlightDetails({
 			</CardContent>
 
 			<CardFooter className="flex justify-between">
-				<Button variant="outline" onClick={goToPreviousStep} type="button">
+				<Button variant="outline" type="button" onClick={goToPreviousStep}>
 					<ChevronLeft className="w-4 h-4 mr-2" /> Previous
 				</Button>
-				<Button onClick={goToNextStep} type="button">
+				<Button type="button" onClick={goToNextStep}>
 					Next <ChevronRight className="w-4 h-4 ml-2" />
 				</Button>
 			</CardFooter>

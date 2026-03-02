@@ -91,10 +91,10 @@ export default function ExclusionInclusionDetails({
 				</CardContent>
 			</Card>
 			<div className="flex justify-between">
-				<Button variant="outline" onClick={goToPreviousStep}>
+				<Button variant="outline" type="button" onClick={goToPreviousStep}>
 					<ChevronLeft className="w-4 h-4 mr-2" /> Previous
 				</Button>
-				<Button onClick={goToNextStep}>
+				<Button type="button" onClick={goToNextStep}>
 					Next <ChevronRight className="w-4 h-4 ml-2" />
 				</Button>
 			</div>

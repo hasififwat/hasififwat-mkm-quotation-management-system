@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import {
 	Card,
@@ -11,12 +11,8 @@ import {
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { TreeSelect } from "~/components/ui/tree-select";
-import type {
-	HotelDetails as HotelDetailsType,
-	PackageDetailsForm,
-} from "~/schema";
+import type { IPackageDetails } from "../../schema";
 
-const HOTEL_LIST = ["makkah", "madinah", "taif"] as const;
 const MEAL_OPTIONS = [
 	{
 		label: "FULLBOARD",
@@ -44,12 +40,12 @@ export default function HotelDetails({
 		stepKey: string,
 	) => React.ReactNode;
 }) {
-	const { control, setValue, watch } = useFormContext<PackageDetailsForm>();
-	const hotelsState = watch("hotels") as {
-		makkah: HotelDetailsType;
-		madinah: HotelDetailsType;
-		taif: HotelDetailsType;
-	};
+	const { control, setValue, watch } = useFormContext<IPackageDetails>();
+	const { fields } = useFieldArray({
+		control,
+		name: "hotels",
+	});
+	const hotelsState = watch("hotels");
 
 	return (
 		<div hidden={currentStep !== "hotels"} className="space-y-4">
@@ -60,14 +56,15 @@ export default function HotelDetails({
 					"hotels",
 				)}
 				<CardContent className="grid grid-cols-1 gap-4">
-					{HOTEL_LIST.map((hotelKey) => {
-						const hotelData = hotelsState[hotelKey];
+					{fields.map((hotel, index) => {
+						const hotelData = hotelsState?.[index] ?? hotel;
 						const hotelLabel =
-							hotelKey.charAt(0).toUpperCase() + hotelKey.slice(1);
+							hotelData.hotel_type?.charAt(0).toUpperCase() +
+							hotelData.hotel_type?.slice(1);
 
 						return (
 							<Card
-								key={hotelKey}
+								key={hotel.id}
 								className={`transition-all duration-200  ${
 									hotelData.enabled
 										? "py-4" // Active styles
@@ -78,7 +75,7 @@ export default function HotelDetails({
 								<CardHeader
 									className="cursor-pointer select-none py-0 gap-0"
 									onClick={() => {
-										setValue(`hotels.${hotelKey}.enabled`, !hotelData.enabled, {
+										setValue(`hotels.${index}.enabled`, !hotelData.enabled, {
 											shouldDirty: true,
 											shouldValidate: true,
 										});
@@ -104,16 +101,16 @@ export default function HotelDetails({
 								{hotelData.enabled && (
 									<CardContent className="space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ">
 										<Controller
-											name={`hotels.${hotelKey}.name`}
+											name={`hotels.${index}.name`}
 											control={control}
 											render={({ field, fieldState }) => (
 												<Field data-invalid={fieldState.invalid}>
-													<FieldLabel htmlFor={`hotels.${hotelKey}.name`}>
+													<FieldLabel htmlFor={`hotels.${index}.name`}>
 														Hotel Name
 													</FieldLabel>
 													<Input
 														{...field}
-														id={`hotels.${hotelKey}.name`}
+														id={`hotels.${index}.name`}
 														aria-invalid={fieldState.invalid}
 														placeholder={
 															hotelData.placeholder ||
@@ -129,18 +126,17 @@ export default function HotelDetails({
 										/>
 
 										<Controller
-											name={`hotels.${hotelKey}.meals`}
+											name={`hotels.${index}.meals`}
 											control={control}
 											render={({ field, fieldState }) => (
 												<Field data-invalid={fieldState.invalid}>
-													<FieldLabel htmlFor={`hotels.${hotelKey}.meals`}>
+													<FieldLabel htmlFor={`hotels.${index}.meals`}>
 														Meals (comma separated)
 													</FieldLabel>
 													<div>
-														<input type="hidden" {...field} />
 														<TreeSelect
 															options={MEAL_OPTIONS}
-															value={field.value as string[]} // Pass RHF value (string[])
+															value={(field.value ?? []) as string[]}
 															onChange={field.onChange}
 															placeholder="Select meals included..."
 														/>
@@ -158,10 +154,10 @@ export default function HotelDetails({
 					})}
 				</CardContent>
 				<CardFooter className="flex justify-between">
-					<Button variant="ghost" onClick={goToPreviousStep}>
+					<Button variant="ghost" type="button" onClick={goToPreviousStep}>
 						Previous
 					</Button>
-					<Button onClick={goToNextStep}>
+					<Button type="button" onClick={goToNextStep}>
 						Next <ChevronRight className="w-4 h-4 ml-2" />
 					</Button>
 				</CardFooter>

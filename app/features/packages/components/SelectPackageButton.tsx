@@ -24,6 +24,7 @@ import {
 	FieldTitle,
 } from "@/components/ui/field";
 import { Checkbox } from "~/components/ui/checkbox";
+import { SeasonBadge } from "~/components/ui/season-badge";
 import {
 	Select,
 	SelectContent,
@@ -31,44 +32,51 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import type { IPackageData } from "~/hooks/useExtractPackage";
+import { usePackageUploadContext } from "../Context/PackageUploadContext";
 import {
 	type ISelectedPackageFormSchema,
 	selectedPackageFormSchema,
 } from "../schema";
 
-export default function SelectPackageButton({
-	packageList,
-}: {
-	packageList: IPackageData[];
-}) {
+export default function SelectPackageButton() {
+	const { packageData, seasonalPrices } = usePackageUploadContext();
+	const packageList = packageData ?? [];
+
 	const _form = useForm<ISelectedPackageFormSchema>({
 		resolver: zodResolver(selectedPackageFormSchema),
 		defaultValues: {
-			season: "",
+			year: "",
 			packages: packageList.map((pkg) => ({
 				name: pkg.name,
+				season: pkg.season,
 				flights: pkg.flights,
 				selected: false,
 			})),
 		},
 	});
 
-	const submit = useSubmit();
+	const _submit = useSubmit();
 
 	const { handleSubmit } = _form;
 
 	const _onSubmit = (data: ISelectedPackageFormSchema) => {
 		const filteredPackages = data.packages.filter((pkg) => pkg.selected);
-		const _postData = {
-			...data,
-			season: data.season,
-			packages: filteredPackages,
+		const seasonalPriceMap = new Map(
+			seasonalPrices.map((item) => [item.season, item.rooms]),
+		);
+		const postData = {
+			year: data.year,
+			packages: filteredPackages.map((pkg) => ({
+				name: pkg.name,
+				season: pkg.season,
+				flights: pkg.flights,
+				rooms: seasonalPriceMap.get(pkg.season) ?? [],
+			})),
 		};
 
-		console.log("Submitting package data:", _postData);
+		console.log("Submitting package data:", postData);
 
-		submit(data, {
+		_submit(postData, {
 			method: "POST",
 			encType: "application/json",
 		});
@@ -76,9 +84,10 @@ export default function SelectPackageButton({
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<Button variant="outline">Select Package </Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={<Button variant="outline">Select Package </Button>}
+			/>
+
 			<DialogContent className="sm:max-w-sm md:max-w-lg lg:max-w-xl ">
 				<form
 					onSubmit={handleSubmit(_onSubmit)}
@@ -97,12 +106,12 @@ export default function SelectPackageButton({
 						}}
 					>
 						<Controller
-							name="season"
+							name="year"
 							control={_form.control}
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel htmlFor="package-season-select">
-										Package Season
+									<FieldLabel htmlFor="package-year-select">
+										Package Year
 									</FieldLabel>
 									<Select
 										name={field.name}
@@ -110,7 +119,7 @@ export default function SelectPackageButton({
 										onValueChange={field.onChange}
 									>
 										<SelectTrigger
-											id="package-season-select"
+											id="package-year-select"
 											aria-invalid={fieldState.invalid}
 										>
 											<SelectValue placeholder="Select" />
@@ -120,7 +129,7 @@ export default function SelectPackageButton({
 										</SelectContent>
 									</Select>
 									<FieldDescription>
-										Choose the season for the new package. This will help in
+										Choose the year for the new package. This will help in
 										organizing and categorizing your packages effectively.
 									</FieldDescription>
 									{fieldState.invalid && (
@@ -141,7 +150,7 @@ export default function SelectPackageButton({
 							<FieldGroup data-slot="checkbox-group">
 								{packageList.map((pkg, index) => (
 									<Controller
-										key={pkg.name}
+										key={`${pkg.name}-${pkg.season}-${index}`}
 										name={`packages.${index}.selected`}
 										control={_form.control}
 										render={({ field }) => {
@@ -160,7 +169,12 @@ export default function SelectPackageButton({
 														<FieldContent>
 															<FieldTitle>{pkg.name}</FieldTitle>
 															<FieldDescription>
-																{pkg.flights.length} flights included
+																<span className="inline-flex items-center gap-1">
+																	<SeasonBadge season={pkg.season} />
+																	<span>
+																		• {pkg.flights.length} flights included
+																	</span>
+																</span>
 															</FieldDescription>
 														</FieldContent>
 													</Field>
@@ -174,9 +188,7 @@ export default function SelectPackageButton({
 					</div>
 
 					<DialogFooter className="pt-4">
-						<DialogClose asChild>
-							<Button variant="outline">Cancel</Button>
-						</DialogClose>
+						<DialogClose render={<Button variant="outline">Cancel</Button>} />
 						<Button type="submit">Create Packages</Button>
 					</DialogFooter>
 				</form>

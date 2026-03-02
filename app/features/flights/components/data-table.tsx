@@ -4,6 +4,7 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import { Loader2 } from "lucide-react";
 import { useCallback } from "react";
 // import { Link } from "react-router";
 // import { Button } from "@/components/ui/button";
@@ -28,11 +29,13 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	handlePreview?: (quotation: TData) => void;
+	isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	isLoading = false,
 }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
@@ -110,8 +113,8 @@ export function DataTable<TData, TValue>({
 		// const cellValue = cell.getValue();
 		const row = cell.row.original as FlightData;
 
-		if (columnId === "season_key") {
-			return <div className="font-mono text-sm">{row.season_key || "N/A"}</div>;
+		if (columnId === "year_key") {
+			return <div className="font-mono text-sm">{row.year_key || "N/A"}</div>;
 		}
 
 		// if (columnId === "package") {
@@ -185,7 +188,16 @@ export function DataTable<TData, TValue>({
 					))}
 				</TableHeader>
 				<TableBody>
-					{table.getRowModel().rows?.length ? (
+					{isLoading ? (
+						<TableRow>
+							<TableCell colSpan={columns.length} className="h-24 text-center">
+								<div className="inline-flex items-center gap-2 text-muted-foreground">
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Loading data...
+								</div>
+							</TableCell>
+						</TableRow>
+					) : table.getRowModel().rows?.length ? (
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}

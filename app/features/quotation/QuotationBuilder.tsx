@@ -35,8 +35,8 @@ import {
 	FieldLegend,
 	FieldSet,
 } from "~/components/ui/field";
-
 import { Input } from "~/components/ui/input";
+import { SeasonBadge } from "~/components/ui/season-badge";
 import {
 	Select,
 	SelectContent,
@@ -554,11 +554,14 @@ export default function QuotationBuilder() {
 
 	const { setValue, getValues, handleSubmit, trigger } = methods;
 
-	const option = allPackages.map((pkg: PackageDetails) => ({
-		id: pkg.id,
-		name: pkg.name,
-		value: pkg.id,
-	}));
+	const option = allPackages.map(
+		(pkg: PackageDetails & { season?: string }) => ({
+			id: pkg.id,
+			name: pkg.name,
+			value: pkg.id,
+			season: pkg.season,
+		}),
+	);
 
 	const clientOptions = allClients.map((client: any) => ({
 		id: client.id,
@@ -815,6 +818,24 @@ export default function QuotationBuilder() {
 												optionValueKey="id"
 												optionsLabelKey="name"
 												value={field.value}
+												renderOption={(pkgOption) => (
+													<div className="flex items-center justify-between w-full gap-2">
+														<span className="truncate">{pkgOption.name}</span>
+														<SeasonBadge
+															season={String(pkgOption.season ?? "")}
+														/>
+													</div>
+												)}
+												renderSelected={(pkgOption) => (
+													<div className="flex items-center justify-between w-full gap-2">
+														<span className="truncate">
+															{pkgOption?.name ?? "Select a package"}
+														</span>
+														<SeasonBadge
+															season={String(pkgOption?.season ?? "")}
+														/>
+													</div>
+												)}
 												handleSelect={(selectedId) => {
 													const selectedPkg = allPackages.find(
 														(pkg: PackageDetails) => pkg.id === selectedId,
