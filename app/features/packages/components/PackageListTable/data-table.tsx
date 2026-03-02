@@ -8,7 +8,14 @@ import {
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation } from "convex/react";
-import { Copy, Loader2, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
+import {
+	ChevronDown,
+	Copy,
+	Loader2,
+	MoreHorizontal,
+	PencilIcon,
+	Trash,
+} from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
 
@@ -271,6 +278,7 @@ export function DataTable<TData, TValue>({
 													className={`h-1.5 w-1.5 rounded-full ${statusDotClass}`}
 												/>
 												{capStatus}
+												<ChevronDown className="h-3 w-3" />
 											</>
 										)}
 									</Badge>
