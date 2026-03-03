@@ -65,6 +65,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	const selectedFlights = pkg.flights.filter((f: Flight) =>
 		_selectedFlightIds.includes(f._id),
 	);
+	const enabledHotels = (pkg.hotels ?? []).filter((hotel) => hotel.enabled);
 
 	// Group flights by month
 	const flightsByMonth = pkg.flights.reduce(
@@ -119,13 +120,49 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		return `${depDay} - ${retDay} ${month}`;
 	};
 
+	const formatHotelTypeLabel = (hotelType: string) => {
+		if (!hotelType) {
+			return "Hotel";
+		}
+
+		return hotelType.charAt(0).toUpperCase() + hotelType.slice(1).toLowerCase();
+	};
+
+	const toTitleCase = (value: string) =>
+		value
+			.toLowerCase()
+			.split(" ")
+			.filter(Boolean)
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(" ");
+
+	const formatHotelMeals = (meals?: string[]) => {
+		const normalizedMeals = (meals ?? [])
+			.map((meal) => meal?.trim())
+			.filter((meal): meal is string => Boolean(meal));
+
+		if (normalizedMeals.length === 0) {
+			return "";
+		}
+
+		if (normalizedMeals.length === 3) {
+			return " (Fullboard)";
+		}
+
+		if (normalizedMeals.length === 2) {
+			return " (Halfboard)";
+		}
+
+		return ` (${toTitleCase(normalizedMeals[0])})`;
+	};
+
 	const generatePreviewText = () => {
 		if (selectedFlights.length === 0) return "";
 
 		const lines: string[] = [];
 
 		// Package name (bold in WhatsApp with *)
-		lines.push(`*${pkg.name}*`);
+		lines.push(`*PAKEJ ${pkg.name} ${pkg.duration}*`);
 
 		// Iterate over each selected flight
 		selectedFlights.forEach((flight: Flight) => {
@@ -172,20 +209,11 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		lines.push("");
 
 		// Hotels
-		const makkahHotel = pkg.hotels?.find((h) => h.hotel_type === "makkah");
-		if (makkahHotel?.enabled) {
-			lines.push(`Makkah : ${makkahHotel.name || makkahHotel.placeholder}`);
-		}
-
-		const madinahHotel = pkg.hotels?.find((h) => h.hotel_type === "madinah");
-		if (madinahHotel?.enabled) {
-			lines.push(`Madinah : ${madinahHotel.name || madinahHotel.placeholder}`);
-		}
-
-		const taifHotel = pkg.hotels?.find((h) => h.hotel_type === "taif");
-		if (taifHotel?.enabled) {
-			lines.push(`Taif : ${taifHotel.name || taifHotel.placeholder}`);
-		}
+		enabledHotels.forEach((hotel) => {
+			lines.push(
+				`${formatHotelTypeLabel(hotel.hotel_type)} : ${hotel.name || hotel.placeholder}${formatHotelMeals(hotel.meals)}`,
+			);
+		});
 
 		// Footer note
 		lines.push("");
@@ -216,7 +244,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	// Shared content between Dialog and Drawer
 	const renderContent = () => (
-		<div className="space-y-4 px-4 md:px-0">
+		<div className="space-y-4 px-4 md:px-0 ">
 			{/* Flight Selection */}
 			<FieldLabel className="text-sm font-medium mb-1">
 				Select Flight Dates
@@ -290,7 +318,9 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 					<Card className="bg-muted/30 border-0 shadow-none min-h-full">
 						<CardContent className="pt-6">
 							<div className="space-y-6 font-mono text-sm whitespace-pre-line">
-								<div className="font-bold text-lg">{pkg.name}</div>
+								<div className="font-bold text-lg">
+									PAKEJ {pkg.name} {pkg.duration}
+								</div>
 								{selectedFlights.map((flight: Flight) => (
 									<div key={flight._id} className="space-y-3 border-b pb-4">
 										<div>
@@ -335,34 +365,13 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 									</div>
 								))}
 
-								{pkg.hotels?.find((h) => h.hotel_type === "makkah")
-									?.enabled && (
-									<div>
-										Makkah :{" "}
-										{pkg.hotels.find((h) => h.hotel_type === "makkah")?.name ||
-											pkg.hotels.find((h) => h.hotel_type === "makkah")
-												?.placeholder}
+								{enabledHotels.map((hotel) => (
+									<div key={hotel._id}>
+										{formatHotelTypeLabel(hotel.hotel_type)} :{" "}
+										{hotel.name || hotel.placeholder}
+										{formatHotelMeals(hotel.meals)}
 									</div>
-								)}
-
-								{pkg.hotels?.find((h) => h.hotel_type === "madinah")
-									?.enabled && (
-									<div>
-										Madinah :{" "}
-										{pkg.hotels.find((h) => h.hotel_type === "madinah")?.name ||
-											pkg.hotels.find((h) => h.hotel_type === "madinah")
-												?.placeholder}
-									</div>
-								)}
-
-								{pkg.hotels?.find((h) => h.hotel_type === "taif")?.enabled && (
-									<div>
-										Taif :{" "}
-										{pkg.hotels.find((h) => h.hotel_type === "taif")?.name ||
-											pkg.hotels.find((h) => h.hotel_type === "taif")
-												?.placeholder}
-									</div>
-								)}
+								))}
 
 								<div className="text-xs text-muted-foreground pt-2">
 									(setaraf bermaksud memiliki kualiti yang setanding dengan
@@ -425,7 +434,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent>
+			<DialogContent className="sm:max-w-2xl ">
 				<DialogHeader>
 					<DialogTitle>Package Preview</DialogTitle>
 					<DialogDescription>
