@@ -21,6 +21,17 @@ function getCurrentHijriYear() {
 	return String(new Date().getFullYear());
 }
 
+function getNextHijriYear() {
+	const currentHijriYear = getCurrentHijriYear();
+	const numericYear = Number.parseInt(currentHijriYear, 10);
+
+	if (Number.isNaN(numericYear)) {
+		return currentHijriYear;
+	}
+
+	return String(numericYear + 1);
+}
+
 function normalizeCurrency(value: number) {
 	if (!Number.isFinite(value)) {
 		return 0;
@@ -150,7 +161,7 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const now = new Date().toISOString();
-		const hijriYear = getCurrentHijriYear();
+		const hijriYear = getNextHijriYear();
 
 		const [allQuotations, allClients, allPackages, allFlights, allPackageRooms] =
 			await Promise.all([
@@ -249,7 +260,7 @@ export const create = mutation({
 
 		const nextSequenceNum = currentHijriYearMaxSeq + 1;
 		const quotationId = await ctx.db.insert("quotations", {
-			hijri_year: hijriYear,
+			hijri_year: `${hijriYear}H`,
 			sequence_num: nextSequenceNum,
 			revision: 0,
 			client_name: client.name,
