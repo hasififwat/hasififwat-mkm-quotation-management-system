@@ -18,6 +18,35 @@ interface Props {
 	fileName?: string;
 }
 
+function getMealLabel(meals: string[], hotelType: string) {
+	const normalizedMeals = meals
+		.map((meal) => meal?.trim())
+		.filter((meal): meal is string => Boolean(meal));
+
+	if (normalizedMeals.length === 0) {
+		return `TIADA MAKANAN (${hotelType.toUpperCase()})`;
+	}
+
+	if (normalizedMeals.length === 3) {
+		return `FULL BOARD(${hotelType.toUpperCase()})`;
+	}
+
+	if (normalizedMeals.length === 2) {
+		return `HALF BOARD(${hotelType.toUpperCase()})`;
+	}
+
+	return `${normalizedMeals[0].toUpperCase()}(${hotelType.toUpperCase()})`;
+}
+
+function getListItems(value: string | null | undefined) {
+	if (!value) return [];
+
+	return value
+		.split("\n")
+		.map((line) => line.replace(/\t/g, "").trim())
+		.filter(Boolean);
+}
+
 const styles = StyleSheet.create({
 	page: {
 		backgroundColor: "#ffffff",
@@ -77,6 +106,8 @@ export default function PDFPreview({ details, fileName }: Props) {
 	const addons = details.items.adds_ons;
 	const discounts = details.items.discounts;
 	const flightType = flights?.flight?.trim() || "MALAYSIA AIRLINES";
+	const inclusionItems = getListItems(pkg.inclusions);
+	const exclusionItems = getListItems(pkg.exclusions);
 
 	const packageTotal = rooms.reduce((acc, r) => acc + r.subtotal, 0);
 
@@ -444,11 +475,7 @@ export default function PDFPreview({ details, fileName }: Props) {
 								{activeHotels.map((hotel, index) => (
 									<Text key={`meal-${hotel.name}`}>
 										{index > 0 ? ", " : ""}
-										{hotel.meals.length === 3
-											? `FULL BOARD(${hotel.hotel_type.toUpperCase()})`
-											: hotel.meals.length === 2
-												? `HALF BOARD(${hotel.hotel_type.toUpperCase()})`
-												: `${hotel.meals[0].toUpperCase()}(${hotel.hotel_type.toUpperCase()})`}
+										{getMealLabel(hotel.meals, hotel.hotel_type)}
 									</Text>
 								))}
 							</View>
@@ -487,7 +514,7 @@ export default function PDFPreview({ details, fileName }: Props) {
 									lineHeight: 1.1,
 								}}
 							>
-								{pkg.inclusions?.split("\n").map((inclusion) => (
+								{inclusionItems.map((inclusion) => (
 									<Text key={`inclusion-${inclusion}`}>- {inclusion}</Text>
 								))}
 							</View>
@@ -500,7 +527,7 @@ export default function PDFPreview({ details, fileName }: Props) {
 									borderRight: "1px solid black inset",
 								}}
 							>
-								{pkg.exclusions?.split("\n").map((exclusion) => (
+								{exclusionItems.map((exclusion) => (
 									<Text key={`exclusion-${exclusion}`}>- {exclusion}</Text>
 								))}
 							</View>

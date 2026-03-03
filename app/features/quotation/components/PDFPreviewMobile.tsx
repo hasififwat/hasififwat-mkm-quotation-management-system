@@ -8,6 +8,35 @@ interface Props {
 	details: QuotationFullDetails;
 }
 
+function getMealLabel(meals: string[], hotelType: string) {
+	const normalizedMeals = meals
+		.map((meal) => meal?.trim())
+		.filter((meal): meal is string => Boolean(meal));
+
+	if (normalizedMeals.length === 0) {
+		return `TIADA MAKANAN (${hotelType.toUpperCase()})`;
+	}
+
+	if (normalizedMeals.length === 3) {
+		return `FULL BOARD(${hotelType.toUpperCase()})`;
+	}
+
+	if (normalizedMeals.length === 2) {
+		return `HALF BOARD(${hotelType.toUpperCase()})`;
+	}
+
+	return `${normalizedMeals[0].toUpperCase()}(${hotelType.toUpperCase()})`;
+}
+
+function getListItems(value: string | null | undefined) {
+	if (!value) return [];
+
+	return value
+		.split("\n")
+		.map((line) => line.replace(/\t/g, "").trim())
+		.filter(Boolean);
+}
+
 export default function PDFPreviewMobile({ details }: Props) {
 	const pkg = details.package;
 	const activeHotels = pkg.hotels.filter((h) => h.enabled);
@@ -17,6 +46,8 @@ export default function PDFPreviewMobile({ details }: Props) {
 	const addons = details.items.adds_ons;
 	const discounts = details.items.discounts;
 	const flightType = flights?.flight?.trim() || "MALAYSIA AIRLINES";
+	const inclusionItems = getListItems(pkg.inclusions);
+	const exclusionItems = getListItems(pkg.exclusions);
 
 	const packageTotal = rooms.reduce((acc, r) => acc + r.subtotal, 0);
 
@@ -190,11 +221,7 @@ export default function PDFPreviewMobile({ details }: Props) {
 								{activeHotels.map((hotel, index) => (
 									<span key={`meal-${hotel.name}`}>
 										{index > 0 ? ", " : ""}
-										{hotel.meals.length === 3
-											? `FULL BOARD(${hotel.hotel_type.toUpperCase()})`
-											: hotel.meals.length === 2
-												? `HALF BOARD(${hotel.hotel_type.toUpperCase()})`
-												: `${hotel.meals[0].toUpperCase()}(${hotel.hotel_type.toUpperCase()})`}
+										{getMealLabel(hotel.meals, hotel.hotel_type)}
 									</span>
 								))}
 							</div>
@@ -216,13 +243,17 @@ export default function PDFPreviewMobile({ details }: Props) {
 					{/* Data */}
 					<div className="flex flex-row">
 						<div className="flex-1 p-1 border-l border-b border-black text-left ">
-							{pkg.inclusions?.split("\n").map((inc) => (
-								<div className="mb-2 leading-relaxed">- {inc}</div>
+							{inclusionItems.map((inc) => (
+								<div key={`inclusion-${inc}`} className="mb-2 leading-relaxed">
+									- {inc}
+								</div>
 							))}
 						</div>
 						<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
-							{pkg.exclusions?.split("\n").map((inc) => (
-								<div className="mb-2 leading-relaxed">- {inc}</div>
+							{exclusionItems.map((inc) => (
+								<div key={`exclusion-${inc}`} className="mb-2 leading-relaxed">
+									- {inc}
+								</div>
 							))}
 						</div>
 					</div>

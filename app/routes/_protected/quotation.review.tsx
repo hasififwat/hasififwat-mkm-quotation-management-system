@@ -30,6 +30,8 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 		},
 	);
 
+	console.log("Loader fetched initialData:", initialData);
+
 	// const pkg = await UmrahPackageService.getNewPackageTemplate(supabase);
 	if (!initialData) {
 		return redirect("/quotations");
@@ -79,17 +81,18 @@ export default function QuotationReviewPage({
 		loaderData.initialData.reference_number || "quotation",
 	);
 	const documentTitle = `${clientFileName}_${quotationFileName}`;
-	const pdfDocument = (
-		<PDFPreview details={loaderData.initialData} fileName={documentTitle} />
-	);
 
+	console.log(
+		"Rendering QuotationReviewPage with initialData:",
+		loaderData.initialData,
+	);
 	return (
 		<div
 			ref={containerRef}
 			className="col-span-full flex flex-col items-center bg-gray-100/50 overflow-hidden min-h-screen relative"
 		>
 			<PDFViewer className="w-full h-full hidden md:block">
-				{pdfDocument}
+				<PDFPreview details={loaderData.initialData} fileName={documentTitle} />
 			</PDFViewer>
 			<div
 				className="bg-white shadow-lg my-8 md:hidden"
@@ -102,8 +105,8 @@ export default function QuotationReviewPage({
 			>
 				<PDFPreviewMobile details={loaderData.initialData} />
 			</div>
-			<BlobProvider document={pdfDocument}>
-				{({ blob }) => {
+			<BlobProvider document={<PDFPreview details={loaderData.initialData} />}>
+				{({ blob, url, loading, error }) => {
 					// You can use the blob, url, loading, and error here
 					// For example, you might want to provide a download link or handle loading state
 					return (

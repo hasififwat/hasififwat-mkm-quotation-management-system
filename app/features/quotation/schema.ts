@@ -151,7 +151,7 @@ const selectedRoomSchema = z.object({
 });
 
 const selectedAddonSchema = z.object({
-	id: z.string().uuid(),
+	id: z.string(),
 	name: z.string(),
 	price: z.number(),
 	pax: z.number(),
