@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { SupabasePackageDetails } from "~/features/quotation/legacy/types";
+import type { SupabasePackageDetails } from "~/schema-legacy";
 
 export const UmrahPackageService = {
 	// Fetch all packages

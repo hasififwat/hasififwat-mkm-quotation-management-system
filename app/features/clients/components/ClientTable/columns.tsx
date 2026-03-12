@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { SupabasePackageDetails } from "~/features/quotation/legacy/types";
+import type { SupabasePackageDetails } from "~/schema-legacy";
 
 export const columns: ColumnDef<SupabasePackageDetails>[] = [
 	{ accessorKey: "name", header: "Package Name" },

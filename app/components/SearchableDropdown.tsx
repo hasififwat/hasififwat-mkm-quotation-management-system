@@ -34,7 +34,7 @@ export function SearchableDropdown({
 	renderOption,
 	renderSelected,
 }: {
-	value: string | number;
+	value?: string | number | null;
 	optionValueKey?: string;
 	optionsLabelKey?: string;
 	disabled?: boolean;
@@ -44,20 +44,41 @@ export function SearchableDropdown({
 	renderOption?: (option: DropdownOption) => React.ReactNode;
 	renderSelected?: (option: DropdownOption | undefined) => React.ReactNode;
 }) {
-	console.log("SearchableDropdown propValue:", propValue);
+	const getOptionValue = React.useCallback(
+		(option: DropdownOption) =>
+			option[optionValueKey as keyof DropdownOption] as
+				| string
+				| number
+				| undefined,
+		[optionValueKey],
+	);
+
+	const normalizeValue = React.useCallback(
+		(value: string | number | null | undefined) =>
+			value == null ? "" : String(value),
+		[],
+	);
+
 	const [open, setOpen] = React.useState(false);
-	const [value, setValue] = React.useState(propValue);
+	const [value, setValue] = React.useState(() => normalizeValue(propValue));
 
 	React.useEffect(() => {
-		setValue(propValue);
-	}, [propValue]);
+		setValue(normalizeValue(propValue));
+	}, [propValue, normalizeValue]);
 
-	const selectedOption = options.find((option) => option.value === value);
+	const selectedOption = options.find(
+		(option) => normalizeValue(getOptionValue(option)) === value,
+	);
 
-	const onSelect = (selectedValue: string | number) => {
-		setValue(selectedValue as string);
+	const onSelect = (selectedValue: string) => {
+		setValue(selectedValue);
 		if (handleSelect) {
-			handleSelect(selectedValue);
+			const matchedOption = options.find(
+				(option) => normalizeValue(getOptionValue(option)) === selectedValue,
+			);
+			handleSelect(
+				(matchedOption ? getOptionValue(matchedOption) : selectedValue) ?? "",
+			);
 		}
 		setOpen(false);
 	};
@@ -72,7 +93,7 @@ export function SearchableDropdown({
 					className="justify-between"
 					disabled={disabled}
 				>
-					{value
+					{value && selectedOption
 						? renderSelected
 							? renderSelected(selectedOption)
 							: selectedOption?.[optionsLabelKey as keyof DropdownOption]
@@ -92,10 +113,8 @@ export function SearchableDropdown({
 						<CommandGroup>
 							{options.map((option) => (
 								<CommandItem
-									key={option[optionValueKey as keyof typeof option]}
-									value={
-										option[optionValueKey as keyof typeof option] as string
-									}
+									key={normalizeValue(getOptionValue(option))}
+									value={normalizeValue(getOptionValue(option))}
 									onSelect={(currentValue) => {
 										onSelect(currentValue === value ? "" : currentValue);
 									}}
@@ -106,7 +125,7 @@ export function SearchableDropdown({
 									<Check
 										className={cn(
 											"ml-auto",
-											value === option[optionValueKey as keyof typeof option]
+											value === normalizeValue(getOptionValue(option))
 												? "opacity-100"
 												: "opacity-0",
 										)}

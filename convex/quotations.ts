@@ -44,6 +44,15 @@ function buildLineTotal(price: number, pax: number) {
 	return normalizeCurrency(price * pax);
 }
 
+function parseCreatedAt(value: string) {
+	const parsed = Date.parse(value);
+	if (Number.isFinite(parsed)) {
+		return parsed;
+	}
+
+	return 0;
+}
+
 async function findQuotationByStringId(ctx: any, quotationId: string) {
 	const quotations = await ctx.db.query("quotations").collect();
 	return quotations.find((item: any) => String(item._id) === quotationId) ?? null;
@@ -161,11 +170,14 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const now = new Date().toISOString();
-		const hijriYear = getNextHijriYear();
+		const hijriYear = `${getNextHijriYear()}H`;
 
-		const [allQuotations, allClients, allPackages, allFlights, allPackageRooms] =
+		const [hijriYearQuotations, allClients, allPackages, allFlights, allPackageRooms] =
 			await Promise.all([
-				ctx.db.query("quotations").collect(),
+				ctx.db
+					.query("quotations")
+					.withIndex("by_hijri_year", (q) => q.eq("hijri_year", hijriYear))
+					.collect(),
 				ctx.db.query("clients").collect(),
 				ctx.db.query("packages").collect(),
 				ctx.db.query("package_flights").collect(),
@@ -254,13 +266,12 @@ export const create = mutation({
 
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
-		const currentHijriYearMaxSeq = allQuotations
-			.filter((quotation) => quotation.hijri_year === hijriYear)
+		const currentHijriYearMaxSeq = hijriYearQuotations
 			.reduce((max, quotation) => Math.max(max, quotation.sequence_num), 0);
 
 		const nextSequenceNum = currentHijriYearMaxSeq + 1;
 		const quotationId = await ctx.db.insert("quotations", {
-			hijri_year: `${hijriYear}H`,
+			hijri_year: hijriYear,
 			sequence_num: nextSequenceNum,
 			revision: 0,
 			client_name: client.name,
@@ -817,6 +828,87 @@ export const update = mutation({
 			quotation_number: quotationNumber,
 			total_amount: totalAmount,
 			status: args.payload.status ?? quotation.status,
+		};
+	},
+});
+
+export const resequenceByCreatedAt = mutation({
+	args: {
+		dryRun: v.optional(v.boolean()),
+	},
+	handler: async (ctx, args) => {
+		const dryRun = args.dryRun ?? false;
+		const quotations = await ctx.db.query("quotations").collect();
+
+		const groupedByHijriYear = new Map<string, (typeof quotations)[number][]>();
+		for (const quotation of quotations) {
+			const group = groupedByHijriYear.get(quotation.hijri_year);
+			if (group) {
+				group.push(quotation);
+			} else {
+				groupedByHijriYear.set(quotation.hijri_year, [quotation]);
+			}
+		}
+
+		const years = Array.from(groupedByHijriYear.keys()).sort((a, b) =>
+			a.localeCompare(b),
+		);
+
+		let updatedCount = 0;
+		const summaryByYear: {
+			hijri_year: string;
+			total: number;
+			updated: number;
+		}[] = [];
+
+		for (const hijriYear of years) {
+			const records = groupedByHijriYear.get(hijriYear) ?? [];
+
+			records.sort((a, b) => {
+				const createdAtComparison =
+					parseCreatedAt(a.created_at) - parseCreatedAt(b.created_at);
+				if (createdAtComparison !== 0) {
+					return createdAtComparison;
+				}
+
+				const creationTimeComparison = a._creationTime - b._creationTime;
+				if (creationTimeComparison !== 0) {
+					return creationTimeComparison;
+				}
+
+				return String(a._id).localeCompare(String(b._id));
+			});
+
+			let yearUpdatedCount = 0;
+
+			for (const [index, quotation] of records.entries()) {
+				const nextSequenceNum = index + 1;
+				if (quotation.sequence_num === nextSequenceNum) {
+					continue;
+				}
+
+				yearUpdatedCount += 1;
+				updatedCount += 1;
+
+				if (!dryRun) {
+					await ctx.db.patch(quotation._id, {
+						sequence_num: nextSequenceNum,
+					});
+				}
+			}
+
+			summaryByYear.push({
+				hijri_year: hijriYear,
+				total: records.length,
+				updated: yearUpdatedCount,
+			});
+		}
+
+		return {
+			dryRun,
+			totalQuotations: quotations.length,
+			updatedCount,
+			summaryByYear,
 		};
 	},
 });

@@ -96,6 +96,7 @@ const quotationRowArraySchema = z.array(quotationRowSchema);
 export type GetAllQuotationsResponseSchema = z.infer<
 	typeof quotationRowArraySchema
 >;
+export type QuotationFormInput = z.input<typeof quotationFormSchema>;
 export type QuotationFormValues = z.infer<typeof quotationFormSchema>;
 
 // Quotation Full Details Schema  Reviewing

@@ -31,9 +31,7 @@ export function ImportSettingModal({
 	handleImport: (importedData: IPackageDetails) => void;
 }) {
 	const option = allPackages
-		.filter((pkg): pkg is IPackageDetails & { _id: string } =>
-			Boolean(pkg._id),
-		)
+		.filter((pkg): pkg is IPackageDetails & { _id: string } => Boolean(pkg._id))
 		.map((pkg) => ({
 			id: pkg._id,
 			name: pkg.name,

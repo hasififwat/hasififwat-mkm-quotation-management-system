@@ -9,9 +9,9 @@ import {
 
 import footer from "../assets/mkm-quotation-footer.png";
 import header from "../assets/mkm-quotation-header.png";
-import { TERMS_AND_CONDITIONS } from "../legacy/constants";
-import { formatCurrency as fmt, formatDateRange } from "../legacy/utils";
+import { TERMS_AND_CONDITIONS } from "../constants";
 import type { QuotationFullDetails } from "../schema";
+import { formatCurrency as fmt, formatDateRange } from "../utils";
 
 interface Props {
 	details: QuotationFullDetails;

@@ -45,9 +45,9 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import type { PackageDetails, RoomType } from "~/schema";
 import { CreateClientModal } from "./components/CreateClientModal";
-import type { QuotationFormValues } from "./schema";
+import type { ClientsListResult, QuotationPackage } from "./loader-utils";
+import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 
 type Step = "basic" | "package" | "extras";
@@ -58,10 +58,34 @@ const STEPS: { id: Step; label: string }[] = [
 	{ id: "extras", label: "Add-ons & Discounts" },
 ];
 
+type PackageOption = QuotationPackage;
+
+type QuotationBuilderLoaderData = {
+	initialData: QuotationFormValues | null;
+	allPackages: PackageOption[];
+	allClients: ClientsListResult;
+};
+
+type QuotationLineItemPayload = {
+	name: string;
+	price: number;
+	pax: number;
+};
+
+const sanitizeLineItems = (
+	items: QuotationFormValues["adds_ons"] | QuotationFormValues["discounts"],
+): QuotationLineItemPayload[] | undefined => {
+	return items?.map(({ name, price, pax }) => ({
+		name,
+		price,
+		pax,
+	}));
+};
+
 function HotelSelection({
 	selectedPackage,
 }: {
-	selectedPackage: PackageDetails | null;
+	selectedPackage: QuotationPackage | null;
 }) {
 	const { control } = useFormContext<QuotationFormValues>();
 	// We use useFieldArray to manage the selected_rooms array
@@ -72,7 +96,10 @@ function HotelSelection({
 
 	const availableRooms = selectedPackage?.rooms?.filter((r) => r.enabled) || [];
 
-	const handleToggleRoom = (roomToCheck: RoomType, isChecked: boolean) => {
+	const handleToggleRoom = (
+		roomToCheck: QuotationPackage["rooms"][number],
+		isChecked: boolean,
+	) => {
 		if (isChecked) {
 			append({
 				room_type: roomToCheck.room_type,
@@ -105,7 +132,8 @@ function HotelSelection({
 				{availableRooms.map((room) => {
 					// Check if this room is already selected
 					const selectedIndex = fields.findIndex(
-						(f: any) => f.room_type === room.room_type,
+						(f: QuotationFormValues["selected_rooms"][number]) =>
+							f.room_type === room.room_type,
 					);
 					const isSelected = selectedIndex !== -1;
 
@@ -115,7 +143,7 @@ function HotelSelection({
 							onKeyDown={(e) => {
 								if (e.key === "Enter" || e.key === " ") {
 									e.preventDefault();
-									// handleToggleRoom(room as RoomType, !isSelected);
+									// handleToggleRoom(room, !isSelected);
 								}
 							}}
 							tabIndex={0}
@@ -134,7 +162,7 @@ function HotelSelection({
 										id={`room-${room.room_type}`}
 										checked={isSelected}
 										onCheckedChange={(checked) =>
-											handleToggleRoom(room as RoomType, checked === true)
+											handleToggleRoom(room, checked === true)
 										}
 										onClick={(e) => e.stopPropagation()}
 									/>
@@ -489,7 +517,7 @@ function DiscountSection() {
 function FlightSelection({
 	selectedPackage,
 }: {
-	selectedPackage: PackageDetails | null;
+	selectedPackage: QuotationPackage | null;
 }) {
 	const { control } = useFormContext<QuotationFormValues>();
 
@@ -514,7 +542,7 @@ function FlightSelection({
 						</SelectTrigger>
 						<SelectContent>
 							{selectedPackage.flights?.map((flight) => (
-								<SelectItem key={flight.id} value={flight.id as string}>
+								<SelectItem key={String(flight._id)} value={String(flight._id)}>
 									{flight.departure_date} ({flight.departure_sector} ) -{" "}
 									{flight.return_date} ({flight.return_sector})
 								</SelectItem>
@@ -530,20 +558,24 @@ function FlightSelection({
 }
 
 export default function QuotationBuilder() {
-	const { initialData, allPackages, allClients } = useLoaderData();
+	const { initialData, allPackages, allClients } =
+		useLoaderData() as QuotationBuilderLoaderData;
 	const { profile } = useRouteLoaderData("routes/_protected");
 	const { qid } = useParams();
 	const submit = useSubmit();
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
 
 	// Track selected package state
-	const [selectedPackage, setSelectedPackage] = useState<PackageDetails | null>(
-		initialData?.package_id
-			? allPackages.find((p: any) => p.id === initialData.package_id) || null
-			: null,
-	);
+	const [selectedPackage, setSelectedPackage] =
+		useState<QuotationPackage | null>(
+			initialData?.package_id
+				? allPackages.find(
+						(pkg) => String(pkg._id) === initialData.package_id,
+					) || null
+				: null,
+		);
 
-	const methods = useForm<any>({
+	const methods = useForm<QuotationFormInput, unknown, QuotationFormValues>({
 		resolver: zodResolver(quotationFormSchema),
 		defaultValues: initialData ?? {
 			pic_name: profile.full_name || "",
@@ -552,20 +584,18 @@ export default function QuotationBuilder() {
 		mode: "onChange",
 	});
 
-	const { setValue, getValues, handleSubmit, trigger } = methods;
+	const { setValue, handleSubmit, trigger } = methods;
 
-	const option = allPackages.map(
-		(pkg: PackageDetails & { season?: string }) => ({
-			id: pkg.id,
-			name: pkg.name,
-			value: pkg.id,
-			season: pkg.season,
-		}),
-	);
+	const option = allPackages.map((pkg) => ({
+		id: String(pkg._id),
+		name: pkg.name,
+		value: String(pkg._id),
+		season: pkg.season,
+	}));
 
-	const clientOptions = allClients.map((client: any) => ({
+	const clientOptions = allClients.map((client) => ({
 		id: client.id,
-		name: client.name || client.full_name || client.email,
+		name: client.name || "Unnamed Client",
 		value: client.id,
 	}));
 
@@ -611,8 +641,22 @@ export default function QuotationBuilder() {
 
 	const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
 
-	const onSubmit = (data: any) => {
-		submit(data, { method: "post", encType: "application/json" });
+	const onSubmit = (data: QuotationFormValues) => {
+		const basePayload = {
+			pic_name: data.pic_name ?? "",
+			branch: data.branch ?? "",
+			client_id: data.client_id,
+			package_id: data.package_id,
+			flight_id: data.flight_id,
+			notes: data.notes ?? "",
+			status: data.status,
+			selected_rooms: data.selected_rooms,
+			adds_ons: sanitizeLineItems(data.adds_ons) ?? [],
+			discounts: sanitizeLineItems(data.discounts) ?? [],
+		};
+		const payload = qid ? { ...basePayload, id: data.id ?? qid } : basePayload;
+
+		submit(payload, { method: "post", encType: "application/json" });
 	};
 
 	return (
@@ -763,7 +807,6 @@ export default function QuotationBuilder() {
 												optionValueKey="id"
 												optionsLabelKey="name"
 												value={field.value}
-												disabled={qid != null} // Disable client change when editing existing quotation
 												handleSelect={(selectedId) => {
 													field.onChange(selectedId);
 												}}
@@ -838,7 +881,7 @@ export default function QuotationBuilder() {
 												)}
 												handleSelect={(selectedId) => {
 													const selectedPkg = allPackages.find(
-														(pkg: PackageDetails) => pkg.id === selectedId,
+														(pkg) => String(pkg._id) === selectedId,
 													);
 
 													if (selectedPkg) {

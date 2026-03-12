@@ -154,8 +154,8 @@ export const savedQuotationSchema = quotationDataSchema.extend({
 export type HotelDetails = z.infer<typeof hotelDetailsSchema>;
 export type RoomType = z.infer<typeof roomTypeSchema>;
 export type PackageFlight = z.infer<typeof packageFlightSchema>;
-export type PackageDetails = z.infer<typeof packageDetailsSchema>;
-export type PackageDetailsForm = z.input<typeof packageDetailsSchema>;
+export type LegacyPackageDetails = z.infer<typeof packageDetailsSchema>;
+export type LegacyPackageDetailsForm = z.input<typeof packageDetailsSchema>;
 
 // Supabase Types
 export type SupabaseHotelDetails = z.infer<typeof supabaseHotelDetailsSchema>;
