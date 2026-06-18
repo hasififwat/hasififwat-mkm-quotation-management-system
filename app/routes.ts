@@ -30,7 +30,10 @@ export default [
 		route("/clients", "routes/_protected/client.index.tsx"),
 		route("/clients/create", "routes/_protected/client.create.tsx"),
 		route("/quotations", "routes/_protected/quotation.index.tsx"),
-		route("/quotations/duplicates", "routes/_protected/quotation.duplicates.tsx"),
+		route(
+			"/quotations/duplicates",
+			"routes/_protected/quotation.duplicates.tsx",
+		),
 		route("/quotations/create", "routes/_protected/quotation.create.tsx"),
 		route("/quotations/edit/:qid", "routes/_protected/quotation.edit.tsx", {
 			id: "quotation-edit",

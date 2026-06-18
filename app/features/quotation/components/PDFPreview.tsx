@@ -1,11 +1,15 @@
 import {
 	Document,
+	Font,
 	Image,
 	Page,
 	StyleSheet,
 	Text,
 	View,
 } from "@react-pdf/renderer";
+
+// Disable automatic word hyphenation globally
+Font.registerHyphenationCallback((word) => [word]);
 
 import footer from "../assets/mkm-quotation-footer.png";
 import header from "../assets/mkm-quotation-header.png";
@@ -188,68 +192,59 @@ export default function PDFPreview({ details, fileName }: Props) {
 					{/* Room and Add-ons */}
 					<View style={{ marginTop: 12 }}>
 						{/* Table */}
+						{/* Header Row */}
+						<View style={{ display: "flex", flexDirection: "row" }}>
+							<View style={{ flexBasis: 140, ...styles.baseTableHeader }}>
+								<Text>PAKEJ/BILIK</Text>
+							</View>
+							{rooms.map((room) => (
+								<View
+									style={{ flex: 1, ...styles.baseTableHeader }}
+									key={room.id}
+								>
+									<Text>{room.room_type.toUpperCase()}/PAX</Text>
+								</View>
+							))}
+							<View
+								style={{
+									flexBasis: 120,
+									...styles.baseTableHeader,
+									borderRight: "1px solid black inset",
+								}}
+							>
+								<Text>JUMLAH</Text>
+							</View>
+						</View>
+						{/* Data Row */}
 						<View
 							style={{
 								display: "flex",
 								flexDirection: "row",
+								alignItems: "stretch",
 							}}
 						>
-							{/* PACKAGE & ROOMS COLUMNS */}
-							<View
-								style={{
-									flexBasis: 140,
-									textOverflow: "ellipsis",
-									overflow: "hidden",
-								}}
-							>
-								{/* Header Row */}
-								<View style={{ ...styles.baseTableHeader }}>
-									<Text>PAKEJ/BILIK</Text>
-								</View>
-								{/* Data Rows */}
-								<View>
-									<Text style={{ ...styles.baseTableData }}>
-										{pkg.name.toLocaleUpperCase()}
+							<View style={{ flexBasis: 140, ...styles.baseTableData }}>
+								<Text>{pkg.name.toLocaleUpperCase()}</Text>
+							</View>
+							{rooms.map((room) => (
+								<View
+									style={{ flex: 1, ...styles.baseTableData }}
+									key={room.id}
+								>
+									<Text>
+										{fmt(room.price)} X ({room.pax} pax)
 									</Text>
 								</View>
-							</View>
-							{/* ROOMS COLUMNS */}
-							{rooms.map((room) => (
-								<View style={{ flex: 1 }} key={room.id}>
-									{/* Header Row */}
-									<View style={{ ...styles.baseTableHeader }}>
-										<Text>{room.room_type.toUpperCase()}/PAX</Text>
-									</View>
-									{/* Data Rows */}
-									<View style={{ ...styles.baseTableData }}>
-										<Text>
-											{fmt(room.price)} X ({room.pax} pax)
-										</Text>
-									</View>
-								</View>
 							))}
-
-							{/* SUBTOTAL COLUMN */}
-							<View style={{ flexBasis: 120 }}>
-								{/* Header Row */}
-								<View
-									style={{
-										...styles.baseTableHeader,
-										borderRight: "1px solid black inset",
-									}}
-								>
-									<Text>JUMLAH</Text>
-								</View>
-								{/* Data Rows */}
-								<View
-									style={{
-										...styles.baseTableData,
-										backgroundColor: "#e2e8f0",
-										borderRight: "1px solid black inset",
-									}}
-								>
-									<Text>{fmt(packageTotal)}</Text>
-								</View>
+							<View
+								style={{
+									flexBasis: 120,
+									...styles.baseTableData,
+									backgroundColor: "#e2e8f0",
+									borderRight: "1px solid black inset",
+								}}
+							>
+								<Text>{fmt(packageTotal)}</Text>
 							</View>
 						</View>
 						{/* Add-ons */}

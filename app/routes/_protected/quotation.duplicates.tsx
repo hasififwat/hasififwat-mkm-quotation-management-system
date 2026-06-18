@@ -1,19 +1,19 @@
 import { api } from "convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
+import { useState } from "react";
 import { redirect } from "react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogClose,
 } from "@/components/ui/dialog";
 import { getServerClient } from "~/lib/supabase/server";
-import { useState } from "react";
 import type { Route } from "./+types/quotation.duplicates";
 
 export function meta() {
@@ -39,9 +39,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 	return { duplicates, convexUrl };
 }
 
-export default function DuplicatesPage({
-	loaderData,
-}: Route.ComponentProps) {
+export default function DuplicatesPage({ loaderData }: Route.ComponentProps) {
 	const { duplicates, convexUrl } = loaderData as {
 		convexUrl: string;
 		duplicates: {
@@ -91,12 +89,19 @@ export default function DuplicatesPage({
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
 			{/* Single confirmation dialog controlled by state */}
-			<Dialog open={confirmId !== null} onOpenChange={(open) => { if (!open) setConfirmId(null); }}>
+			<Dialog
+				open={confirmId !== null}
+				onOpenChange={(open) => {
+					if (!open) setConfirmId(null);
+				}}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Delete Quotation?</DialogTitle>
 						<DialogDescription>
-							This will permanently delete quotation <strong>{confirmId}</strong> and all associated items and logs. This action cannot be undone.
+							This will permanently delete quotation{" "}
+							<strong>{confirmId}</strong> and all associated items and logs.
+							This action cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter className="gap-2">
@@ -119,7 +124,8 @@ export default function DuplicatesPage({
 					Duplicate Quotations
 				</h2>
 				<p className="text-slate-500 text-sm">
-					Found {duplicates.length} duplicate group{duplicates.length !== 1 ? "s" : ""}
+					Found {duplicates.length} duplicate group
+					{duplicates.length !== 1 ? "s" : ""}
 				</p>
 			</div>
 
@@ -134,9 +140,7 @@ export default function DuplicatesPage({
 					<CardContent className="pt-6">
 						<p
 							className={
-								deleteResult.success
-									? "text-green-700"
-									: "text-red-700"
+								deleteResult.success ? "text-green-700" : "text-red-700"
 							}
 						>
 							{deleteResult.message}
@@ -159,51 +163,51 @@ export default function DuplicatesPage({
 						const groupKey = `${dup.clientName}|${dup.packageId}|${dup.flightId}|${dup.totalAmount}`;
 						return (
 							<Card key={groupKey}>
-							<CardHeader>
-								<CardTitle className="text-base">
-									{dup.clientName} × {dup.count} copies
-								</CardTitle>
-								<p className="text-sm text-muted-foreground">
-									Package: {dup.packageId} | Flight: {dup.flightId} |
-									Amount: {dup.totalAmount.toLocaleString("ms-MY", {
-										style: "currency",
-										currency: "MYR",
-									})}
-								</p>
-							</CardHeader>
-							<CardContent>
-								<div className="space-y-2">
-									<div>
-										<p className="text-sm font-medium mb-2">
-											Quotation IDs:
-										</p>
-										<div className="space-y-2">
-											{dup.quotationIds.map((id, i) => (
-												<div key={id} className="flex items-center justify-between bg-muted p-2 rounded">
-													<code className="text-xs font-mono flex-1">
-														{id} ({dup.createdDates[i]})
-													</code>
-													<Button
-														type="button"
-														variant="destructive"
-														size="sm"
-														disabled={isDeleting === id}
-														className="ml-2"
-														onClick={() => setConfirmId(id)}
-													>
-														{isDeleting === id ? "Deleting..." : "Delete"}
-													</Button>
-												</div>
-											))}
-										</div>
-									</div>
-									<p className="text-xs text-amber-600 mt-4">
-										⚠️ Keep the earliest, review and delete
-										the rest
+								<CardHeader>
+									<CardTitle className="text-base">
+										{dup.clientName} × {dup.count} copies
+									</CardTitle>
+									<p className="text-sm text-muted-foreground">
+										Package: {dup.packageId} | Flight: {dup.flightId} | Amount:{" "}
+										{dup.totalAmount.toLocaleString("ms-MY", {
+											style: "currency",
+											currency: "MYR",
+										})}
 									</p>
-								</div>
-							</CardContent>
-						</Card>
+								</CardHeader>
+								<CardContent>
+									<div className="space-y-2">
+										<div>
+											<p className="text-sm font-medium mb-2">Quotation IDs:</p>
+											<div className="space-y-2">
+												{dup.quotationIds.map((id, i) => (
+													<div
+														key={id}
+														className="flex items-center justify-between bg-muted p-2 rounded"
+													>
+														<code className="text-xs font-mono flex-1">
+															{id} ({dup.createdDates[i]})
+														</code>
+														<Button
+															type="button"
+															variant="destructive"
+															size="sm"
+															disabled={isDeleting === id}
+															className="ml-2"
+															onClick={() => setConfirmId(id)}
+														>
+															{isDeleting === id ? "Deleting..." : "Delete"}
+														</Button>
+													</div>
+												))}
+											</div>
+										</div>
+										<p className="text-xs text-amber-600 mt-4">
+											⚠️ Keep the earliest, review and delete the rest
+										</p>
+									</div>
+								</CardContent>
+							</Card>
 						);
 					})}
 				</div>
