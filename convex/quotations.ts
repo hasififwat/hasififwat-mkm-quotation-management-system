@@ -23,6 +23,10 @@ function getCurrentHijriYear() {
 }
 
 function getNextHijriYear() {
+	const hijriYearMap = {
+		'2026/2027': "1448",
+		'2027/2028': "1449",
+	}
 	const currentHijriYear = getCurrentHijriYear();
 	const numericYear = Number.parseInt(currentHijriYear, 10);
 
@@ -31,6 +35,18 @@ function getNextHijriYear() {
 	}
 
 	return String(numericYear + 1);
+}
+
+
+function getMappedHijriYear(year: string) {
+
+	const hijriYearMap: Record<string, string> = {
+		'2026/2027': "1448H",
+		'2027/2028': "1449H",
+	}
+
+	return hijriYearMap[year] ?? year;
+
 }
 
 function normalizeCurrency(value: number) {
@@ -319,7 +335,8 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const now = new Date().toISOString();
-		const hijriYear = `${getNextHijriYear()}H`;
+
+		const hijriYear = getMappedHijriYear("" + new Date().getFullYear() + "/" + (new Date().getFullYear() + 1));	
 
 		const [hijriYearQuotations, allClients, allPackages, allFlights, allPackageRooms] =
 			await Promise.all([
