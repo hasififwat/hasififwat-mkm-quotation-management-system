@@ -1,20 +1,48 @@
-import type { Cell, ColumnDef } from "@tanstack/react-table";
+import type {
+	Cell,
+	ColumnDef,
+	SortingState,
+	VisibilityState,
+} from "@tanstack/react-table";
 import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Eye, Loader2, MoreHorizontal, PencilIcon, Trash } from "lucide-react";
-import { useCallback } from "react";
+import {
+	Check,
+	ChevronLeft,
+	ChevronRight,
+	ChevronsUpDown,
+	Eye,
+	Loader2,
+	MoreHorizontal,
+	PencilIcon,
+	Trash,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from "@/components/ui/command";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import {
 	Table,
@@ -31,17 +59,58 @@ interface DataTableProps<TData, TValue> {
 	data: TData[];
 	handlePreview?: (quotation: TData) => void;
 	isLoading?: boolean;
+	// pagination
+	pageIndex?: number;
+	pageSize?: number;
+	isDone?: boolean;
+	totalKnownPages?: number;
+	onPreviousPage?: () => void;
+	onNextPage?: () => void;
+	onGoToPage?: (page: number) => void;
+	// sorting
+	sorting?: SortingState;
+	onSortChange?: (sorting: SortingState) => void;
+	// column visibility
+	columnVisibility?: VisibilityState;
+	onColumnVisibilityChange?: (visibility: VisibilityState) => void;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
-	data,
+	data = [],
 	isLoading = false,
+	pageIndex = 0,
+	pageSize = 25,
+	isDone = true,
+	totalKnownPages = 1,
+	onPreviousPage,
+	onNextPage,
+	onGoToPage,
+	sorting,
+	onSortChange,
+	columnVisibility = {},
+	onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) {
+	const [pagePickerOpen, setPagePickerOpen] = useState(false);
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		manualSorting: true,
+		state: {
+			sorting: sorting ?? [],
+			columnVisibility,
+		},
+		onSortingChange: (updater) => {
+			const next =
+				typeof updater === "function" ? updater(sorting ?? []) : updater;
+			onSortChange?.(next);
+		},
+		onColumnVisibilityChange: (updater) => {
+			const next =
+				typeof updater === "function" ? updater(columnVisibility) : updater;
+			onColumnVisibilityChange?.(next);
+		},
 	});
 
 	const renderPackageCell = useCallback(
@@ -155,7 +224,7 @@ export function DataTable<TData, TValue>({
 				return renderAmount(row.total_amount);
 			}
 
-			if (columnId === "created_at") {
+			if (columnId === "created_at" || columnId === "updated_at") {
 				return renderFormattedDate(cellValue as string);
 			}
 
@@ -200,59 +269,136 @@ export function DataTable<TData, TValue>({
 
 	return (
 		<div className="overflow-x-auto min-w-full">
-			<Table className="min-w-full">
-				<TableHeader>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return (
-									<TableHead key={header.id} className="whitespace-nowrap">
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-												)}
-									</TableHead>
-								);
-							})}
-						</TableRow>
-					))}
-				</TableHeader>
-				<TableBody>
-					{isLoading ? (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
-								<div className="inline-flex items-center gap-2 text-muted-foreground">
-									<Loader2 className="h-4 w-4 animate-spin" />
-									Loading data...
-								</div>
-							</TableCell>
-						</TableRow>
-					) : table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
-							<TableRow
-								key={row.id}
-								data-state={row.getIsSelected() && "selected"}
-							>
-								{row.getVisibleCells().map((cell) => {
+			<div className="relative">
+				{isLoading && (
+					<div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[1px]">
+						<div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
+							<Loader2 className="h-4 w-4 animate-spin" />
+							Loading...
+						</div>
+					</div>
+				)}
+				<Table className="min-w-full">
+					<TableHeader>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
 									return (
-										<TableCell key={cell.id} className="whitespace-nowrap">
-											{renderCell(cell)}
-										</TableCell>
+										<TableHead key={header.id} className="whitespace-nowrap">
+											{header.isPlaceholder
+												? null
+												: flexRender(
+														header.column.columnDef.header,
+														header.getContext(),
+													)}
+										</TableHead>
 									);
 								})}
 							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
-								No quotations found.
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
+						))}
+					</TableHeader>
+					<TableBody>
+						{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+									key={row.id}
+									data-state={row.getIsSelected() && "selected"}
+								>
+									{row.getVisibleCells().map((cell) => {
+										return (
+											<TableCell key={cell.id} className="whitespace-nowrap">
+												{renderCell(cell)}
+											</TableCell>
+										);
+									})}
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									No quotations found.
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</div>
+			{/* Pagination controls */}
+			{(onPreviousPage || onNextPage) && (
+				<div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
+					<Popover open={pagePickerOpen} onOpenChange={setPagePickerOpen}>
+						<PopoverTrigger asChild>
+							<Button
+								variant="outline"
+								size="sm"
+								role="combobox"
+								aria-expanded={pagePickerOpen}
+								disabled={isLoading}
+								className="gap-1 min-w-[100px] justify-between text-sm"
+							>
+								<span className="text-muted-foreground">Page</span>
+								<span className="font-medium">{pageIndex + 1}</span>
+								<ChevronsUpDown className="h-3 w-3 opacity-50" />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-[140px] p-0" align="start">
+							<Command>
+								<CommandInput placeholder="Jump to page..." />
+								<CommandList>
+									<CommandEmpty>No page found.</CommandEmpty>
+									<CommandGroup>
+										{Array.from(
+											{ length: totalKnownPages },
+											(_, i) => i + 1,
+										).map((p) => (
+											<CommandItem
+												key={p}
+												value={String(p)}
+												onSelect={() => {
+													setPagePickerOpen(false);
+													if (p !== pageIndex + 1) onGoToPage?.(p);
+												}}
+											>
+												<Check
+													className={`h-4 w-4 ${
+														p === pageIndex + 1 ? "opacity-100" : "opacity-0"
+													}`}
+												/>
+												Page {p}
+											</CommandItem>
+										))}
+									</CommandGroup>
+								</CommandList>
+							</Command>
+						</PopoverContent>
+					</Popover>
+					<div className="flex items-center gap-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onPreviousPage}
+							disabled={pageIndex === 0 || isLoading}
+							className="gap-1"
+						>
+							<ChevronLeft className="h-4 w-4" />
+							Previous
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onNextPage}
+							disabled={isDone || isLoading}
+							className="gap-1"
+						>
+							Next
+							<ChevronRight className="h-4 w-4" />
+						</Button>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

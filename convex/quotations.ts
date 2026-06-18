@@ -1,3 +1,4 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
@@ -118,6 +119,154 @@ export const list = query({
 						: null,
 				};
 			});
+	},
+});
+
+export const count = query({
+	args: {
+		searchTerm: v.optional(v.string()),
+	},
+	handler: async (ctx, { searchTerm }) => {
+		const normalizedSearch = searchTerm?.trim().toLowerCase() ?? "";
+		const [allQuotations, allPackages] = await Promise.all([
+			ctx.db.query("quotations").collect(),
+			ctx.db.query("packages").collect(),
+		]);
+
+		if (!normalizedSearch) {
+			return allQuotations.length;
+		}
+
+		const packageNameById = new Map<string, string>();
+		for (const pkg of allPackages) {
+			packageNameById.set(String(pkg._id), (pkg.name ?? "").toLowerCase());
+		}
+
+		return allQuotations.filter((quotation) => {
+			const clientName = quotation.client_name?.toLowerCase() ?? "";
+			const packageName = packageNameById.get(quotation.package_id) ?? "";
+			return (
+				clientName.includes(normalizedSearch) ||
+				packageName.includes(normalizedSearch)
+			);
+		}).length;
+	},
+});
+
+export const findDuplicates = query({
+	args: {},
+	handler: async (ctx) => {
+		const allQuotations = await ctx.db.query("quotations").collect();
+
+		// Group by (client_name, package_id, flight_id, total_amount)
+		const groups = new Map<
+			string,
+			(typeof allQuotations)[number][]
+		>();
+
+		for (const q of allQuotations) {
+			const key = `${q.client_name}|${q.package_id}|${q.flight_id}|${q.total_amount}`;
+			if (!groups.has(key)) {
+				groups.set(key, []);
+			}
+			groups.get(key)!.push(q);
+		}
+
+		// Return only groups with duplicates (2 or more items)
+		const duplicateGroups = Array.from(groups.entries())
+			.filter(([_, items]) => items.length > 1)
+			.map(([key, items]) => {
+				const [clientName, packageId, flightId, totalAmount] =
+					key.split("|");
+				return {
+					clientName,
+					packageId,
+					flightId,
+					totalAmount: Number.parseFloat(totalAmount),
+					count: items.length,
+					quotationIds: items.map((q) => String(q._id)),
+					createdDates: items.map((q) => q.created_at).sort(),
+				};
+			});
+
+		return duplicateGroups;
+	},
+});
+
+export const listPaginated = query({
+	args: {
+		paginationOpts: paginationOptsValidator,
+		sortBy: v.optional(v.union(v.literal("updated_at"), v.literal("created_at"))),
+		sortDir: v.optional(v.union(v.literal("asc"), v.literal("desc"))),
+	},
+	handler: async (ctx, { paginationOpts, sortBy, sortDir }) => {
+		const order = sortDir ?? "desc";
+		const result =
+			(sortBy ?? "updated_at") === "created_at"
+				? await ctx.db.query("quotations").order(order).paginate(paginationOpts)
+				: await ctx.db
+						.query("quotations")
+						.withIndex("by_updated_at")
+						.order(order)
+						.paginate(paginationOpts);
+
+		const [allPackages, allFlights] = await Promise.all([
+			ctx.db.query("packages").collect(),
+			ctx.db.query("package_flights").collect(),
+		]);
+
+		const packagesById = new Map<string, (typeof allPackages)[number]>();
+		for (const pkg of allPackages) {
+			packagesById.set(String(pkg._id), pkg);
+		}
+
+		const flightsById = new Map<string, (typeof allFlights)[number]>();
+		for (const flight of allFlights) {
+			flightsById.set(String(flight._id), flight);
+		}
+
+		return {
+			...result,
+			page: result.page.map((quotation) => {
+				const selectedPackage = packagesById.get(quotation.package_id);
+				const selectedFlight = flightsById.get(quotation.flight_id);
+
+				return {
+					id: String(quotation._id),
+					quotation_number: buildQuotationNumber(
+						quotation.hijri_year,
+						quotation.sequence_num,
+						quotation.revision,
+					),
+					client_name: quotation.client_name,
+					pic_name: quotation.pic_name,
+					branch: quotation.branch,
+					status: quotation.status,
+					total_amount: quotation.total_amount,
+					notes: quotation.notes ?? "",
+					hijri_year: quotation.hijri_year,
+					created_at: quotation.created_at,
+					updated_at: quotation.updated_at,
+					package: {
+						id: selectedPackage ? String(selectedPackage._id) : null,
+						name: selectedPackage?.name ?? "Unknown Package",
+						year: selectedPackage?.year ?? null,
+						duration: selectedPackage?.duration ?? null,
+					},
+					selected_flight: selectedFlight
+						? {
+								id: String(selectedFlight._id),
+								month: selectedFlight.month,
+								flight: selectedFlight.flight ?? "",
+								return_date: selectedFlight.return_date,
+								return_sector: selectedFlight.return_sector,
+								departure_date: selectedFlight.departure_date,
+								departure_sector: selectedFlight.departure_sector,
+							}
+						: null,
+				};
+			}),
+		};
 	},
 });
 
@@ -909,6 +1058,53 @@ export const resequenceByCreatedAt = mutation({
 			totalQuotations: quotations.length,
 			updatedCount,
 			summaryByYear,
+		};
+	},
+});
+
+export const deleteById = mutation({
+	args: {
+		quotationId: v.string(),
+	},
+	handler: async (ctx, { quotationId }) => {
+		// Find the quotation
+		const quotation = await findQuotationByStringId(ctx, quotationId);
+		if (!quotation) {
+			throw new Error(`Quotation ${quotationId} not found`);
+		}
+
+		// Delete all quotation items for this quotation
+		const items = await ctx.db
+			.query("quotation_items")
+			.withIndex("by_quotation_id", (q) =>
+				q.eq("quotation_id", quotationId),
+			)
+			.collect();
+
+		for (const item of items) {
+			await ctx.db.delete(item._id);
+		}
+
+		// Delete all quotation logs for this quotation
+		const logs = await ctx.db
+			.query("quotation_logs")
+			.withIndex("by_quotation_id", (q) =>
+				q.eq("quotation_id", quotationId),
+			)
+			.collect();
+
+		for (const log of logs) {
+			await ctx.db.delete(log._id);
+		}
+
+		// Delete the quotation itself
+		await ctx.db.delete(quotation._id);
+
+		return {
+			success: true,
+			deletedQuotationId: quotationId,
+			deletedItemsCount: items.length,
+			deletedLogsCount: logs.length,
 		};
 	},
 });

@@ -9,6 +9,7 @@
  */
 
 import type * as clients from "../clients.js";
+import type * as constants from "../constants.js";
 import type * as packages from "../packages.js";
 import type * as profiles from "../profiles.js";
 import type * as quotations from "../quotations.js";
@@ -21,6 +22,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   clients: typeof clients;
+  constants: typeof constants;
   packages: typeof packages;
   profiles: typeof profiles;
   quotations: typeof quotations;

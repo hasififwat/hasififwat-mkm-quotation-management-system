@@ -92,7 +92,8 @@ export default defineSchema({
   })
     .index("by_client_id", ["client_id"])
     .index("by_package_id", ["package_id"])
-    .index("by_hijri_year", ["hijri_year"]),
+    .index("by_hijri_year", ["hijri_year"])
+    .index("by_updated_at", ["updated_at"]),
 
   quotation_items: defineTable({
     quotation_id: v.string(),
