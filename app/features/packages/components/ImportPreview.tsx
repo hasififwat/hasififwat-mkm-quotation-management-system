@@ -79,13 +79,13 @@ export const ImportPreview: React.FC<ImportPreviewProps> = ({
 					{enabledRooms.length > 0 ? (
 						enabledRooms.map((room) => (
 							<div
-								key={room.room_type}
+								key={room.name}
 								className="flex items-center justify-between border rounded-lg p-3"
 							>
 								<div className="flex items-center gap-2">
 									<span className="w-2 h-2 rounded-full bg-green-500" />
 									<span className="font-medium capitalize">
-										{room.room_type}
+										{room.name}
 									</span>
 								</div>
 								<span className="font-semibold">

@@ -28,7 +28,9 @@ export async function loader({ params }: Route.LoaderArgs) {
 		return redirect("/quotations");
 	}
 
-	return { initialData: initialData, allPackages, allClients };
+	const { stale_fields, snapshot_version_known, ...formData } = initialData;
+
+	return { initialData: formData, allPackages, allClients, stale_fields, snapshot_version_known };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -42,9 +44,14 @@ export async function action({ request }: Route.ActionArgs) {
 	const payload = await request.json();
 
 	try {
-		await client.mutation(api.quotations.update, {
-			payload,
-		});
+		if (payload._intent === "refresh_snapshot") {
+			await client.mutation(api.quotations.refreshSnapshot, {
+				quotation_id: payload.quotation_id,
+			});
+			return redirect(request.url);
+		}
+
+		await client.mutation(api.quotations.update, { payload });
 		return redirect("/quotations");
 	} catch (error) {
 		console.error("Error in quotation.update action:", error);

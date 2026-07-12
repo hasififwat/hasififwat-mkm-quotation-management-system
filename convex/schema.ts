@@ -2,12 +2,28 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+
+ inquiries: defineTable({
+    client_id: v.union(v.id("clients"), v.string()),
+    status: v.union(v.literal("open"), v.literal("won"), v.literal("lost")),
+    
+    title: v.string(),
+    
+    // Timestamps for clean data health
+    created_at: v.string(),
+    updated_at: v.string(),
+  })
+    .index("by_client_id", ["client_id"])
+    .index("by_status", ["status"]),
+
+
   clients: defineTable({
     name: v.string(),
     phone_number: v.optional(v.string()),
     created_at: v.string(),
     updated_at: v.string(),
-  }),
+  })
+    .index("by_phone_number", ["phone_number"]),
 
   hotel_templates: defineTable({
     hotel_type: v.string(),
@@ -72,14 +88,26 @@ export default defineSchema({
     unit: v.optional(v.string()),
   }),
 
-  quotations: defineTable({
+quotations: defineTable({
+    // The link to our inquiry state machine
+    inquiry_id: v.optional(v.union(v.id("inquiries"), v.string())), 
 
     hijri_year: v.string(),
     sequence_num: v.number(),
     revision: v.number(),
     client_name: v.string(),
     package_id: v.string(),
-    status: v.string(),
+    
+    // Status Model Hardening: Strict type checks for transitions
+    status: v.union(
+      v.literal("draft"),
+      v.literal("sent"),
+      v.literal("accepted"),
+      v.literal("rejected"),
+      v.literal("revised"),
+      v.literal("superseded")
+    ),
+    
     total_amount: v.number(),
     notes: v.optional(v.string()),
     created_at: v.string(),
@@ -89,7 +117,40 @@ export default defineSchema({
     branch: v.string(),
     flight_id: v.string(),
     client_id: v.string(),
+
+    package_snapshot: v.optional(v.object({
+      name: v.string(),
+      year: v.string(),
+      duration: v.string(),
+      transport: v.optional(v.string()),
+      package_code: v.optional(v.string()),
+      inclusions: v.optional(v.string()),
+      exclusions: v.optional(v.string()),
+      package_updated_at: v.optional(v.string()),
+      rooms: v.optional(v.array(v.object({
+        room_type: v.string(),
+        price: v.number(),
+        enabled: v.boolean(),
+      }))),
+    })),
+    flight_snapshot: v.optional(v.object({
+      id: v.string(),
+      month: v.string(),
+      flight: v.optional(v.string()),
+      departure_date: v.string(),
+      departure_sector: v.string(),
+      return_date: v.string(),
+      return_sector: v.string(),
+    })),
+    hotels_snapshot: v.optional(v.array(v.object({
+      hotel_type: v.string(),
+      name: v.optional(v.string()),
+      placeholder: v.string(),
+      enabled: v.boolean(),
+      meals: v.array(v.string()),
+    }))),
   })
+    .index("by_inquiry_id", ["inquiry_id"])
     .index("by_client_id", ["client_id"])
     .index("by_package_id", ["package_id"])
     .index("by_hijri_year", ["hijri_year"])

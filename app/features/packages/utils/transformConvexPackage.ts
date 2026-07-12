@@ -61,12 +61,12 @@ export function transformConvexPackage(
 			hotel_type: hotel.hotel_type,
 			meals: hotel.meals ?? [],
 		})),
-		rooms: packageData.rooms.map((room) => ({
+		rooms: packageData.rooms.map((room, index) => ({
 			_id: room._id,
 			name: room.room_type,
 			price: room.price,
 			enabled: room.enabled,
-			sort_order: room.sort_order ?? 0,
+			sort_order: index,
 		})),
 		flights: packageData.flights.map((flight) => ({
 			_id: flight._id,

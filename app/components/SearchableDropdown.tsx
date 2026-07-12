@@ -114,9 +114,10 @@ export function SearchableDropdown({
 							{options.map((option) => (
 								<CommandItem
 									key={normalizeValue(getOptionValue(option))}
-									value={normalizeValue(getOptionValue(option))}
-									onSelect={(currentValue) => {
-										onSelect(currentValue === value ? "" : currentValue);
+									value={String(option[optionsLabelKey as keyof DropdownOption] ?? "")}
+									onSelect={() => {
+										const optVal = normalizeValue(getOptionValue(option));
+										onSelect(optVal === value ? "" : optVal);
 									}}
 								>
 									{renderOption

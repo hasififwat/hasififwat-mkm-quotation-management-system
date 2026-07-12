@@ -19,14 +19,6 @@ import { useDebouncedSearch } from "~/hooks/useDebounce";
 import { getServerClient } from "~/lib/supabase/server";
 import type { Route } from "./+types/quotation.index";
 
-// Module-level page→cursor map so the page picker can list visited pages.
-// Key = page number (1-based), value = the Convex cursor for that page.
-// Only grows — never needs bootstrapping loops.
-const pageToCursor = new Map<number, string | null>([[1, null]]);
-// Tracks the sort context the cursor cache was built for.
-// If sort changes, we reset the cache (cursors are sort-order-specific).
-let currentSortKey = "updated_at:desc";
-
 export function meta() {
 	return [
 		{ title: "Quotations" },
@@ -58,19 +50,18 @@ export async function clientLoader({
 		| "updated_at"
 		| "created_at";
 	const dir = (url.searchParams.get("dir") ?? "desc") as "asc" | "desc";
-	const pageParam = Number.parseInt(url.searchParams.get("page") ?? "1", 10);
-	const page = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
-	// Cursor comes from the module-level cache (keyed by page number).
-	// Falls back to null (page 1) if the user lands directly on a deep page after a refresh.
-	const cursor: string | null = pageToCursor.get(page) ?? null;
+	// Cursor is stored directly in the URL — absence means first page (null).
+	const cursor: string | null = url.searchParams.get("cursor");
+	// Offset used only for search result pagination.
+	const offsetParam = Number.parseInt(
+		url.searchParams.get("offset") ?? "0",
+		10,
+	);
+	const offset = Number.isNaN(offsetParam) || offsetParam < 0 ? 0 : offsetParam;
 
-	// When searching, fetch all and filter client-side.
-	// Return the full filtered list — the component handles client-side pagination.
+	// When searching, fetch all, filter, sort, then slice by PAGE_SIZE.
 	if (searchTerm) {
-		const [all, totalCount] = await Promise.all([
-			client.query(api.quotations.list, {}),
-			client.query(api.quotations.count, { searchTerm }),
-		]);
+		const all = await client.query(api.quotations.list, {});
 		const filtered = all.filter((q) => {
 			const packageName = q.package?.name?.toLowerCase() ?? "";
 			const clientName = q.client_name?.toLowerCase() ?? "";
@@ -78,56 +69,44 @@ export async function clientLoader({
 				packageName.includes(searchTerm) || clientName.includes(searchTerm)
 			);
 		});
+		const isDesc = (url.searchParams.get("dir") ?? "desc") === "desc";
+		const sortCol = url.searchParams.get("sort") ?? "updated_at";
+		const sorted = [...filtered].sort((a, b) => {
+			const aVal = String((a as Record<string, unknown>)[sortCol] ?? "");
+			const bVal = String((b as Record<string, unknown>)[sortCol] ?? "");
+			const cmp = aVal.localeCompare(bVal);
+			return isDesc ? -cmp : cmp;
+		});
+		const quotations = sorted.slice(offset, offset + PAGE_SIZE);
 		return {
-			quotations: filtered,
-			allSearchResults: filtered,
-			isDone: true,
-			page,
+			quotations,
+			continueCursor: null as string | null,
+			isDone: offset + PAGE_SIZE >= sorted.length,
+			cursor: null as string | null,
 			searchTerm,
-			totalPages: Math.max(1, Math.ceil(totalCount / PAGE_SIZE)),
 			sort,
 			dir,
+			searchOffset: offset,
+			searchTotal: sorted.length,
 		};
 	}
 
-	// Reset cursor cache when sort changes (cursors are tied to a specific sort order)
-	const sortKey = `${sort}:${dir}`;
-	if (sortKey !== currentSortKey) {
-		pageToCursor.clear();
-		pageToCursor.set(1, null);
-		currentSortKey = sortKey;
-	}
-
-	// Single query — cursor comes directly from the URL, no looping needed
-	const [result, totalCount] = await Promise.all([
-		client.query(api.quotations.listPaginated, {
-			paginationOpts: { cursor, numItems: PAGE_SIZE },
-			sortBy: sort,
-			sortDir: dir,
-		}),
-		client.query(api.quotations.count, { searchTerm }),
-	]);
-
-	const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-
-	// Cache this page's cursor for the page picker
-	pageToCursor.set(page, cursor);
-	// Pre-cache the next page's cursor so clicking Next is instant.
-	// Only when NOT done — Convex returns a continueCursor even on the last page,
-	// which would add a phantom entry to the map and inflate the page picker.
-	if (!result.isDone && result.continueCursor) {
-		pageToCursor.set(page + 1, result.continueCursor);
-	}
+	const result = await client.query(api.quotations.listPaginated, {
+		paginationOpts: { cursor, numItems: PAGE_SIZE },
+		sortBy: sort,
+		sortDir: dir,
+	});
 
 	return {
 		quotations: result.page,
-		allSearchResults: null,
+		continueCursor: result.isDone ? null : (result.continueCursor ?? null),
 		isDone: result.isDone,
-		page,
+		cursor,
 		searchTerm,
-		totalPages,
 		sort,
 		dir,
+		searchOffset: 0,
+		searchTotal: 0,
 	};
 }
 clientLoader.hydrate = true as const;
@@ -137,133 +116,102 @@ export default function QuotationListingPage({
 }: Route.ComponentProps) {
 	const {
 		quotations,
-		allSearchResults,
+		continueCursor,
 		isDone,
-		page,
+		cursor,
 		searchTerm,
-		totalPages,
 		sort,
 		dir,
+		searchOffset,
+		searchTotal,
 	} = loaderData as {
-		quotations: unknown[];
-		allSearchResults: unknown[] | null;
+		quotations: unknown[] | undefined;
+		continueCursor: string | null;
 		isDone: boolean;
-		page: number;
+		cursor: string | null;
 		searchTerm: string;
-		totalPages: number | undefined;
 		sort: string | undefined;
 		dir: string | undefined;
+		searchOffset: number;
+		searchTotal: number;
 	};
 	const safeSort = (sort ?? "updated_at") as "updated_at" | "created_at";
 	const safeDir = (dir ?? "desc") as "asc" | "desc";
-	const safeTotalPages = totalPages ?? 1;
+	const isSearching = !!searchTerm;
+	const isFirstPage = isSearching ? (searchOffset ?? 0) === 0 : !cursor;
 	const navigate = useNavigate();
 	const navigation = useNavigation();
 	const searchProps = useDebouncedSearch(searchTerm);
 
 	const isNavigating = navigation.state !== "idle";
-	// Only show the search-input spinner when the *search term* is actually changing,
-	// not when the user just flips pages.
 	const pendingQ = navigation.location
 		? (new URLSearchParams(navigation.location.search).get("q") ?? "")
 		: null;
 	const isSearchLoading = isNavigating && pendingQ !== searchTerm;
-	// Only show the table overlay when navigating within the quotations listing itself,
-	// not when leaving to another page (e.g. /quotations/create).
 	const pendingPathname = navigation.location?.pathname ?? "";
 	const isTableLoading =
 		isNavigating &&
 		pendingPathname.startsWith("/quotations") &&
 		pendingPathname === "/quotations";
 
-	// Current sort state for TanStack Table (controlled)
 	const sorting: SortingState = [{ id: safeSort, desc: safeDir === "desc" }];
-
-	// Column visibility state
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [fieldFilterOpen, setFieldFilterOpen] = useState(false);
 	const [fieldSearchQuery, setFieldSearchQuery] = useState("");
 	const allColumnIds = Object.keys(COLUMN_LABELS);
 
-	// Client-side pagination state for search results is driven by the URL `page` param,
-	// so ?q=puan&page=3 correctly restores page 3 of search results.
+	// In search mode the loader already sorted+sliced — just use as-is.
+	const displayQuotations = useMemo(() => {
+		return quotations ?? [];
+	}, [quotations]);
 
-	// When in search mode, slice the full results client-side
-	const isSearching = !!searchTerm;
-	const allResults = allSearchResults ?? [];
-	const searchTotalPages = Math.max(
-		1,
-		Math.ceil(allResults.length / PAGE_SIZE),
-	);
-	// Sort search results client-side to match the selected sort column
-	const sortedSearchResults = useMemo(() => {
-		if (!isSearching || allResults.length === 0) return allResults;
-		const isDesc = safeDir === "desc";
-		return [...allResults].sort((a: unknown, b: unknown) => {
-			const aVal = String((a as Record<string, unknown>)[safeSort] ?? "");
-			const bVal = String((b as Record<string, unknown>)[safeSort] ?? "");
-			const cmp = aVal.localeCompare(bVal);
-			return isDesc ? -cmp : cmp;
-		});
-	}, [isSearching, allResults, safeSort, safeDir]);
-
-	// Use URL page param for search pagination (clamp to valid range)
-	const searchPage = Math.min(Math.max(1, page), searchTotalPages);
-
-	const searchSlice = sortedSearchResults.slice(
-		(searchPage - 1) * PAGE_SIZE,
-		searchPage * PAGE_SIZE,
-	);
-
-	const displayQuotations = isSearching ? searchSlice : (quotations ?? []);
-
-	// Server-side pagination (non-search)
-	const buildUrl = (targetPage: number, newSort?: string, newDir?: string) => {
+	const buildUrl = (
+		targetCursor: string | null,
+		newSort?: string,
+		newDir?: string,
+		newOffset?: number,
+	) => {
 		const params = new URLSearchParams();
 		if (searchTerm) params.set("q", searchTerm);
-		if (targetPage > 1) params.set("page", String(targetPage));
+		if (targetCursor) params.set("cursor", targetCursor);
+		if (newOffset) params.set("offset", String(newOffset));
 		const s = newSort ?? safeSort;
 		const d = newDir ?? safeDir;
-		// Only include sort params when they differ from the default
 		if (s !== "updated_at" || d !== "desc") {
 			params.set("sort", s);
 			params.set("dir", d);
 		}
-		return `/quotations?${params.toString()}`;
+		const qs = params.toString();
+		return `/quotations${qs ? `?${qs}` : ""}`;
 	};
 
 	const handlePreviousPage = () => {
 		if (isSearching) {
-			navigate(buildUrl(Math.max(1, searchPage - 1)));
+			const prevOffset = Math.max(0, (searchOffset ?? 0) - PAGE_SIZE);
+			navigate(buildUrl(null, undefined, undefined, prevOffset || undefined));
 		} else {
-			if (page <= 1) return;
-			navigate(buildUrl(page - 1));
+			navigate(-1);
 		}
 	};
 
 	const handleNextPage = () => {
 		if (isSearching) {
-			navigate(buildUrl(Math.min(searchTotalPages, searchPage + 1)));
+			const nextOffset = (searchOffset ?? 0) + PAGE_SIZE;
+			if (nextOffset < (searchTotal ?? 0)) {
+				navigate(buildUrl(null, undefined, undefined, nextOffset));
+			}
 		} else {
-			if (isDone) return;
-			navigate(buildUrl(page + 1));
+			if (isDone || !continueCursor) return;
+			navigate(buildUrl(continueCursor));
 		}
-	};
-
-	const handleGoToPage = (targetPage: number) => {
-		navigate(buildUrl(targetPage));
 	};
 
 	const handleSortChange = (newSorting: SortingState) => {
 		if (newSorting.length === 0) return;
 		const { id, desc } = newSorting[0];
-		// Sort change always resets to page 1 (new cursor context)
-		navigate(buildUrl(1, id, desc ? "desc" : "asc"));
+		// Sort change resets to first page (clears cursor and offset).
+		navigate(buildUrl(null, id, desc ? "desc" : "asc"));
 	};
-
-	const currentPage = isSearching ? searchPage : page;
-	const currentIsDone = isSearching ? searchPage >= searchTotalPages : isDone;
-	const totalKnownPages = isSearching ? searchTotalPages : safeTotalPages;
 
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
@@ -402,13 +350,10 @@ export default function QuotationListingPage({
 					<QuotationListing
 						data={displayQuotations}
 						isLoading={isTableLoading}
-						pageIndex={currentPage - 1}
-						pageSize={PAGE_SIZE}
-						isDone={currentIsDone}
-						totalKnownPages={totalKnownPages}
+						isDone={isSearching ? isDone : isDone}
+						isFirstPage={isFirstPage}
 						onPreviousPage={handlePreviousPage}
 						onNextPage={handleNextPage}
-						onGoToPage={handleGoToPage}
 						sorting={sorting}
 						onSortChange={handleSortChange}
 						columnVisibility={columnVisibility}

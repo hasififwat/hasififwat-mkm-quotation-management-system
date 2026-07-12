@@ -35,7 +35,7 @@ export const quotationFormSchema = z.object({
 	discounts: addsOnSchema.array().optional(),
 
 	status: z
-		.enum(["draft", "sent", "confirmed", "accepted", "rejected"])
+		.enum(["draft", "sent", "accepted", "rejected", "revised", "superseded"])
 		.default("draft"),
 });
 
@@ -70,10 +70,10 @@ export const quotationRowSchema = z.object({
 	status: z.enum([
 		"draft",
 		"sent",
-		"confirmed",
 		"accepted",
 		"rejected",
-		"expired",
+		"revised",
+		"superseded",
 	]),
 	total_amount: z.coerce.number(),
 
@@ -83,6 +83,8 @@ export const quotationRowSchema = z.object({
 	// Timestamps (Supabase returns ISO strings)
 	created_at: z.string(),
 	updated_at: z.string(),
+
+	is_stale: z.boolean().optional(),
 
 	// Nested Objects
 	package: packageInQuotationDetailsSchema,
@@ -167,10 +169,10 @@ export const quotationFullDetailsSchema = z.object({
 	status: z.enum([
 		"draft",
 		"sent",
-		"confirmed",
 		"accepted",
 		"rejected",
-		"expired",
+		"revised",
+		"superseded",
 	]),
 	client_name: z.string(),
 	pic_name: z.string(),

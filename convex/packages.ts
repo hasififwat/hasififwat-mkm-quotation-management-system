@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 function dedupeById<T extends { _id: string }>(items: T[]): T[] {
   return Array.from(new Map(items.map((item) => [item._id, item])).values());
@@ -390,8 +391,16 @@ export const updatePackage = mutation({
       .query("package_flights")
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
       .collect();
-    for (const flight of dedupeById(existingFlights)) {
-      await ctx.db.delete(flight._id);
+    const dedupedExistingFlights = dedupeById(existingFlights);
+    const existingFlightIdSet = new Set(dedupedExistingFlights.map((f) => String(f._id)));
+    const incomingFlightIdSet = new Set(
+      args.payload.flights.filter((f) => f._id).map((f) => f._id as string),
+    );
+    // Delete flights that were removed from the payload
+    for (const flight of dedupedExistingFlights) {
+      if (!incomingFlightIdSet.has(String(flight._id))) {
+        await ctx.db.delete(flight._id);
+      }
     }
 
     for (const hotel of args.payload.hotels) {
@@ -423,16 +432,28 @@ export const updatePackage = mutation({
       });
     }
 
+    // Patch existing flights in place (preserves _id so quotation references stay valid),
+    // or insert brand-new flights that have no _id yet.
     for (const flight of args.payload.flights) {
-      await ctx.db.insert("package_flights", {
-        package_id: existingPackage._id,
-        month: flight.month,
-        departure_date: flight.departure_date,
-        departure_sector: flight.departure_sector,
-        return_date: flight.return_date,
-        return_sector: flight.return_sector,
-        created_at: now,
-      });
+      if (flight._id && existingFlightIdSet.has(flight._id)) {
+        await ctx.db.patch(flight._id as Id<"package_flights">, {
+          month: flight.month,
+          departure_date: flight.departure_date,
+          departure_sector: flight.departure_sector,
+          return_date: flight.return_date,
+          return_sector: flight.return_sector,
+        });
+      } else {
+        await ctx.db.insert("package_flights", {
+          package_id: existingPackage._id,
+          month: flight.month,
+          departure_date: flight.departure_date,
+          departure_sector: flight.departure_sector,
+          return_date: flight.return_date,
+          return_sector: flight.return_sector,
+          created_at: now,
+        });
+      }
     }
 
     return {

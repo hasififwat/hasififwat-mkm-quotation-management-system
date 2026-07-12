@@ -415,6 +415,30 @@ export default function PDFPreview({ details, fileName }: Props) {
 							</View>
 						</View>
 
+						{pkg.transport && (
+							<View style={{ display: "flex", flexDirection: "row" }}>
+								<View
+									style={{
+										...styles.baseTableData,
+										flexBasis: 140,
+										textAlign: "left",
+									}}
+								>
+									<Text>JENIS PENGANGKUTAN</Text>
+								</View>
+								<View
+									style={{
+										...styles.baseTableData,
+										flex: 1,
+										textAlign: "left",
+										borderRight: "1px solid black inset",
+									}}
+								>
+									<Text>{pkg.transport.toUpperCase()}</Text>
+								</View>
+							</View>
+						)}
+
 						{activeHotels.map((hotel, i) => (
 							<View
 								style={{

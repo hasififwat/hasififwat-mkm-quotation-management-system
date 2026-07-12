@@ -10,39 +10,30 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import {
-	Check,
 	ChevronLeft,
 	ChevronRight,
-	ChevronsUpDown,
 	Eye,
 	Loader2,
 	MoreHorizontal,
 	PencilIcon,
 	Trash,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "@/components/ui/command";
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import {
 	Table,
@@ -60,13 +51,10 @@ interface DataTableProps<TData, TValue> {
 	handlePreview?: (quotation: TData) => void;
 	isLoading?: boolean;
 	// pagination
-	pageIndex?: number;
-	pageSize?: number;
 	isDone?: boolean;
-	totalKnownPages?: number;
+	isFirstPage?: boolean;
 	onPreviousPage?: () => void;
 	onNextPage?: () => void;
-	onGoToPage?: (page: number) => void;
 	// sorting
 	sorting?: SortingState;
 	onSortChange?: (sorting: SortingState) => void;
@@ -79,19 +67,15 @@ export function DataTable<TData, TValue>({
 	columns,
 	data = [],
 	isLoading = false,
-	pageIndex = 0,
-	pageSize = 25,
 	isDone = true,
-	totalKnownPages = 1,
+	isFirstPage = true,
 	onPreviousPage,
 	onNextPage,
-	onGoToPage,
 	sorting,
 	onSortChange,
 	columnVisibility = {},
 	onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) {
-	const [pagePickerOpen, setPagePickerOpen] = useState(false);
 	const table = useReactTable({
 		data,
 		columns,
@@ -187,12 +171,24 @@ export function DataTable<TData, TValue>({
 			if (columnId === "quotation_number") {
 				return (
 					<div className="flex flex-col gap-1">
-						<Link
-							to={`/quotations/review/${row.id}`}
-							className="font-mono text-sm hover:underline font-bold text-primary"
-						>
-							{row.quotation_number || "N/A"}
-						</Link>
+						<div className="flex items-center gap-1.5">
+							<Link
+								to={`/quotations/review/${row.id}`}
+								className="font-mono text-sm hover:underline font-bold text-primary"
+							>
+								{row.quotation_number || "N/A"}
+							</Link>
+							{row.is_stale && (
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger className="cursor-help text-amber-500 text-xs">⚠</TooltipTrigger>
+										<TooltipContent side="top">
+											Something has changed since this quotation was created — open to see details
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							)}
+						</div>
 						<div className="flex items-center gap-2 h-3">
 							<Button
 								variant="ghost"
@@ -242,14 +238,14 @@ export function DataTable<TData, TValue>({
 						break;
 					case "accepted":
 						variant = "default";
-						break; // or success if available
-					case "confirmed":
-						variant = "default";
+						break;
+					case "revised":
+						variant = "outline";
+						break;
+					case "superseded":
+						variant = "secondary";
 						break;
 					case "rejected":
-						variant = "destructive";
-						break;
-					case "expired":
 						variant = "destructive";
 						break;
 				}
@@ -328,75 +324,27 @@ export function DataTable<TData, TValue>({
 			</div>
 			{/* Pagination controls */}
 			{(onPreviousPage || onNextPage) && (
-				<div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-					<Popover open={pagePickerOpen} onOpenChange={setPagePickerOpen}>
-						<PopoverTrigger asChild>
-							<Button
-								variant="outline"
-								size="sm"
-								role="combobox"
-								aria-expanded={pagePickerOpen}
-								disabled={isLoading}
-								className="gap-1 min-w-[100px] justify-between text-sm"
-							>
-								<span className="text-muted-foreground">Page</span>
-								<span className="font-medium">{pageIndex + 1}</span>
-								<ChevronsUpDown className="h-3 w-3 opacity-50" />
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="w-[140px] p-0" align="start">
-							<Command>
-								<CommandInput placeholder="Jump to page..." />
-								<CommandList>
-									<CommandEmpty>No page found.</CommandEmpty>
-									<CommandGroup>
-										{Array.from(
-											{ length: totalKnownPages },
-											(_, i) => i + 1,
-										).map((p) => (
-											<CommandItem
-												key={p}
-												value={String(p)}
-												onSelect={() => {
-													setPagePickerOpen(false);
-													if (p !== pageIndex + 1) onGoToPage?.(p);
-												}}
-											>
-												<Check
-													className={`h-4 w-4 ${
-														p === pageIndex + 1 ? "opacity-100" : "opacity-0"
-													}`}
-												/>
-												Page {p}
-											</CommandItem>
-										))}
-									</CommandGroup>
-								</CommandList>
-							</Command>
-						</PopoverContent>
-					</Popover>
-					<div className="flex items-center gap-2">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={onPreviousPage}
-							disabled={pageIndex === 0 || isLoading}
-							className="gap-1"
-						>
-							<ChevronLeft className="h-4 w-4" />
-							Previous
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={onNextPage}
-							disabled={isDone || isLoading}
-							className="gap-1"
-						>
-							Next
-							<ChevronRight className="h-4 w-4" />
-						</Button>
-					</div>
+				<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-100">
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={onPreviousPage}
+						disabled={isFirstPage || isLoading}
+						className="gap-1"
+					>
+						<ChevronLeft className="h-4 w-4" />
+						Previous
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={onNextPage}
+						disabled={isDone || isLoading}
+						className="gap-1"
+					>
+						Next
+						<ChevronRight className="h-4 w-4" />
+					</Button>
 				</div>
 			)}
 		</div>

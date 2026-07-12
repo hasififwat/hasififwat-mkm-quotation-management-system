@@ -31,6 +31,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Download } from "lucide-react";
 import {
 	PackageUploadProvider,
 	usePackageUploadContext,
@@ -142,53 +143,63 @@ function PackageCreateFromScheduleContent() {
 						</p>
 					</div>
 					{!fileName && (
-						<button
-							type="button"
-							onDragOver={handleDragOver}
-							onDragLeave={handleDragLeave}
-							onDrop={handleDrop}
-							onClick={() => _fileInputRef.current?.click()}
-							className={`
-						w-full border-2 border-dashed rounded-lg p-10 text-center hover:bg-muted/50 transition-all cursor-pointer group outline-none focus-visible:ring-2 focus-visible:ring-primary
-						${isDragging ? "border-primary bg-primary/5 scale-[1.01]" : "border-muted-foreground/25"}
-					`}
-						>
-							<input
-								ref={_fileInputRef}
-								onChange={handleFileUpload}
-								type="file"
-								accept=".csv"
-								hidden
-							/>
-							<div className="flex flex-col items-center gap-3">
-								<div
-									className={`p-4 rounded-full transition-colors ${
-										isDragging
-											? "bg-primary/10"
-											: "bg-secondary group-hover:bg-secondary/80"
-									}`}
-								>
-									<UploadCloud
-										className={`w-8 h-8 transition-colors ${
+						<>
+							<button
+								type="button"
+								onDragOver={handleDragOver}
+								onDragLeave={handleDragLeave}
+								onDrop={handleDrop}
+								onClick={() => _fileInputRef.current?.click()}
+								className={`
+							w-full border-2 border-dashed rounded-lg p-10 text-center hover:bg-muted/50 transition-all cursor-pointer group outline-none focus-visible:ring-2 focus-visible:ring-primary
+							${isDragging ? "border-primary bg-primary/5 scale-[1.01]" : "border-muted-foreground/25"}
+						`}
+							>
+								<input
+									ref={_fileInputRef}
+									onChange={handleFileUpload}
+									type="file"
+									accept=".csv"
+									hidden
+								/>
+								<div className="flex flex-col items-center gap-3">
+									<div
+										className={`p-4 rounded-full transition-colors ${
 											isDragging
-												? "text-primary"
-												: "text-muted-foreground group-hover:text-foreground"
+												? "bg-primary/10"
+												: "bg-secondary group-hover:bg-secondary/80"
 										}`}
-									/>
+									>
+										<UploadCloud
+											className={`w-8 h-8 transition-colors ${
+												isDragging
+													? "text-primary"
+													: "text-muted-foreground group-hover:text-foreground"
+											}`}
+										/>
+									</div>
+									<div className="space-y-1">
+										<p className="text-sm font-medium text-foreground">
+											Click to upload or drag and drop
+										</p>
+										<p className="text-xs text-muted-foreground">
+											CSV files only
+										</p>
+									</div>
+									<span className="mt-2 inline-flex items-center justify-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
+										Select File
+									</span>
 								</div>
-								<div className="space-y-1">
-									<p className="text-sm font-medium text-foreground">
-										Click to upload or drag and drop
-									</p>
-									<p className="text-xs text-muted-foreground">
-										CSV files only
-									</p>
-								</div>
-								<span className="mt-2 inline-flex items-center justify-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
-									Select File
-								</span>
-							</div>
-						</button>
+							</button>
+							<a
+								href="/flight-schedule-sample-2026_2027.csv"
+								download
+								className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit"
+							>
+								<Download className="w-3 h-3" />
+								Download sample CSV
+							</a>
+						</>
 					)}
 
 					{fileName && (

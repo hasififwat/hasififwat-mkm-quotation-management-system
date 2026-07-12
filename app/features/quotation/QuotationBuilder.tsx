@@ -50,6 +50,7 @@ import { CreateClientModal } from "./components/CreateClientModal";
 import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
+import { STALE_FIELD_LABELS } from "./stale-labels";
 
 type Step = "basic" | "package" | "extras";
 
@@ -65,6 +66,8 @@ type QuotationBuilderLoaderData = {
 	initialData: QuotationFormValues | null;
 	allPackages: PackageOption[];
 	allClients: ClientsListResult;
+	stale_fields?: string[];
+	snapshot_version_known?: boolean;
 };
 
 type QuotationLineItemPayload = {
@@ -559,7 +562,7 @@ function FlightSelection({
 }
 
 export default function QuotationBuilder() {
-	const { initialData, allPackages, allClients } =
+	const { initialData, allPackages, allClients, stale_fields = [], snapshot_version_known = false } =
 		useLoaderData() as QuotationBuilderLoaderData;
 	const { profile } = useRouteLoaderData("routes/_protected");
 	const { qid } = useParams();
@@ -609,7 +612,7 @@ export default function QuotationBuilder() {
 			isValid = await trigger(["pic_name", "branch", "client_id"]);
 			if (isValid) setCurrentStep("package");
 		} else if (currentStep === "package") {
-			isValid = await trigger(["package_id", "selected_rooms"]);
+			isValid = await trigger(["package_id", "selected_rooms", "flight_id"]);
 			if (isValid) setCurrentStep("extras");
 		}
 	};
@@ -636,7 +639,7 @@ export default function QuotationBuilder() {
 		}
 
 		if (targetIndex > 1) {
-			const isPackageValid = await trigger(["package_id", "selected_rooms"]);
+			const isPackageValid = await trigger(["package_id", "selected_rooms", "flight_id"]);
 			if (!isPackageValid) return;
 		}
 
@@ -712,6 +715,41 @@ export default function QuotationBuilder() {
 					</div>
 				</CardContent>
 			</Card>
+			{qid && stale_fields.length > 0 && (
+				<div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+					<span className="mt-0.5 text-base">⚠</span>
+					<div className="flex-1">
+						<p className="font-medium">This quotation is out of date.</p>
+						<p className="text-amber-700 mt-0.5">
+							The following have changed since this quotation was created:{" "}
+							<span className="font-medium">
+								{stale_fields.map(f => STALE_FIELD_LABELS[f] ?? f).join(", ")}
+							</span>.
+							The PDF still reflects the original values.
+						</p>
+					</div>
+					<button
+						type="button"
+						className="shrink-0 rounded px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
+						onClick={() => {
+							submit(
+								{ _intent: "refresh_snapshot", quotation_id: qid },
+								{ method: "post", encType: "application/json" },
+							);
+						}}
+					>
+						Refresh snapshot
+					</button>
+				</div>
+			)}
+
+			{qid && !snapshot_version_known && (
+				<div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-500">
+					<span>🕐</span>
+					Snapshot age unknown — this quotation was created before version tracking was introduced.
+				</div>
+			)}
+
 			<form
 				id="quotation-form"
 				className="mx-auto lg:mx-0"
@@ -891,8 +929,9 @@ export default function QuotationBuilder() {
 													if (selectedPkg) {
 														setSelectedPackage(selectedPkg);
 														field.onChange(selectedId);
-														// Reset selected rooms when package changes
+														// Reset selected rooms and flight when package changes
 														setValue("selected_rooms", []);
+														setValue("flight_id", "");
 													}
 												}}
 											/>

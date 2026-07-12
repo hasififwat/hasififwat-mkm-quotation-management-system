@@ -1,4 +1,4 @@
-import { BlobProvider, PDFViewer } from "@react-pdf/renderer";
+import { BlobProvider } from "@react-pdf/renderer";
 import { api } from "convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 import fileSaver from "file-saver";
@@ -9,6 +9,7 @@ import { redirect } from "react-router";
 import { Button } from "~/components/ui/button";
 import PDFPreview from "~/features/quotation/components/PDFPreview";
 import PDFPreviewMobile from "~/features/quotation/components/PDFPreviewMobile";
+import { STALE_FIELD_LABELS } from "~/features/quotation/stale-labels";
 import type { Route } from "./+types/quotation.review";
 
 const { saveAs } = fileSaver;
@@ -30,9 +31,6 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 		},
 	);
 
-	console.log("Loader fetched initialData:", initialData);
-
-	// const pkg = await UmrahPackageService.getNewPackageTemplate(supabase);
 	if (!initialData) {
 		return redirect("/quotations");
 	}
@@ -82,38 +80,61 @@ export default function QuotationReviewPage({
 	);
 	const documentTitle = `${clientFileName}_${quotationFileName}`;
 
-	console.log(
-		"Rendering QuotationReviewPage with initialData:",
-		loaderData.initialData,
-	);
+	const staleFields: string[] = loaderData.initialData.stale_fields ?? [];
+
 	return (
 		<div
 			ref={containerRef}
 			className="col-span-full flex flex-col items-center bg-gray-100/50 overflow-hidden min-h-screen relative"
 		>
-			<PDFViewer className="w-full h-full hidden md:block">
-				<PDFPreview details={loaderData.initialData} fileName={documentTitle} />
-			</PDFViewer>
-			<div
-				className="bg-white shadow-lg my-8 md:hidden"
-				style={{
-					width: 794 * scale,
-					height: 1123 * scale,
-					transform: `scale(${scale})`,
-					transformOrigin: "top left",
-				}}
-			>
-				<PDFPreviewMobile details={loaderData.initialData} />
-			</div>
+			{staleFields.length > 0 && (
+				<div className="w-full flex items-center gap-3 border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
+					<span>⚠</span>
+					<span>
+						This PDF reflects the original values.{" "}
+						The following have changed since this quotation was created:{" "}
+						<span className="font-medium">
+							{staleFields.map(f => STALE_FIELD_LABELS[f] ?? f).join(", ")}
+						</span>.
+					</span>
+					<a
+						href={`/quotations/edit/${loaderData.initialData.id}`}
+						className="ml-auto shrink-0 rounded px-3 py-1 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
+					>
+						Go to edit → refresh snapshot
+					</a>
+				</div>
+			)}
+
+			{/* Desktop: render PDF into an iframe via blob URL */}
 			<BlobProvider document={<PDFPreview details={loaderData.initialData} />}>
-				{({ blob, url, loading, error }) => {
-					// You can use the blob, url, loading, and error here
-					// For example, you might want to provide a download link or handle loading state
-					return (
+				{({ blob, url, loading, error }) => (
+					<>
+						<div className="hidden md:flex w-full flex-1 flex-col items-center">
+							{loading && (
+								<div className="flex items-center justify-center h-screen text-muted-foreground text-sm">
+									Generating PDF…
+								</div>
+							)}
+							{error && (
+								<div className="flex items-center justify-center h-screen text-destructive text-sm">
+									Failed to generate PDF.
+								</div>
+							)}
+							{url && !loading && (
+								<iframe
+									src={url}
+									className="w-full flex-1 min-h-screen"
+									title="Quotation PDF Preview"
+								/>
+							)}
+						</div>
+
 						<div className="fixed bottom-8 right-8 z-50">
 							<Button
 								size="lg"
 								className="shadow-xl"
+								disabled={!blob || loading}
 								onClick={() => {
 									if (blob) {
 										saveAs(blob, `${documentTitle}.pdf`);
@@ -121,12 +142,32 @@ export default function QuotationReviewPage({
 								}}
 							>
 								<Printer className="mr-2 h-4 w-4" />
-								Download PDF
+								{loading ? "Generating…" : "Download PDF"}
 							</Button>
 						</div>
-					); // Replace with your desired UI
-				}}
+					</>
+				)}
 			</BlobProvider>
+
+			{/* Mobile: HTML preview scaled to fit viewport width */}
+			<div
+				className="bg-white shadow-lg my-8 md:hidden overflow-hidden"
+				style={{
+					width: 794 * scale,
+					height: 1123 * scale,
+				}}
+			>
+				<div
+					style={{
+						width: 794,
+						height: 1123,
+						transform: `scale(${scale})`,
+						transformOrigin: "top left",
+					}}
+				>
+					<PDFPreviewMobile details={loaderData.initialData} />
+				</div>
+			</div>
 		</div>
 	);
 }

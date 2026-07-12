@@ -1,10 +1,6 @@
 ---
-name: convex-setup-auth
-description:
-  Sets up Convex auth, identity mapping, and access control. Use for login, auth
-  providers, users tables, protected functions, or roles in a Convex app.
+description: "Sets up Convex auth, identity mapping, and access control. Use for login, auth providers, users tables, protected functions, or roles in a Convex app."
 ---
-
 # Convex Authentication Setup
 
 Implement secure authentication in Convex with user management and access

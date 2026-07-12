@@ -5,13 +5,10 @@ import { DataTable } from "./components/QuotationTable/data-table";
 interface Props {
 	data: unknown[];
 	isLoading?: boolean;
-	pageIndex?: number;
-	pageSize?: number;
 	isDone?: boolean;
-	totalKnownPages?: number;
+	isFirstPage?: boolean;
 	onPreviousPage?: () => void;
 	onNextPage?: () => void;
-	onGoToPage?: (page: number) => void;
 	sorting?: SortingState;
 	onSortChange?: (sorting: SortingState) => void;
 	columnVisibility?: VisibilityState;
@@ -21,13 +18,10 @@ interface Props {
 const QuotationListing: React.FC<Props> = ({
 	data,
 	isLoading = false,
-	pageIndex,
-	pageSize,
 	isDone,
-	totalKnownPages,
+	isFirstPage,
 	onPreviousPage,
 	onNextPage,
-	onGoToPage,
 	sorting,
 	onSortChange,
 	columnVisibility,
@@ -39,13 +33,10 @@ const QuotationListing: React.FC<Props> = ({
 				columns={columns}
 				data={data as Quotation[]}
 				isLoading={isLoading}
-				pageIndex={pageIndex}
-				pageSize={pageSize}
 				isDone={isDone}
-				totalKnownPages={totalKnownPages}
+				isFirstPage={isFirstPage}
 				onPreviousPage={onPreviousPage}
 				onNextPage={onNextPage}
-				onGoToPage={onGoToPage}
 				sorting={sorting}
 				onSortChange={onSortChange}
 				columnVisibility={columnVisibility}

@@ -46,16 +46,24 @@ const STEPS: { id: Step; label: string }[] = [
 const PackageBuilderHeader = ({
 	pid,
 	onBack,
+	isFirstStep,
 }: {
 	pid?: string;
 	onBack: () => void;
+	isFirstStep: boolean;
 }) => (
 	<div className="flex items-center gap-4">
-		<Link to="/packages" className="text-sm text-muted-foreground">
+		{isFirstStep ? (
+			<Link to="/packages" className="text-sm text-muted-foreground">
+				<Button variant="ghost" size="icon">
+					<ChevronLeft className="w-5 h-5" />
+				</Button>
+			</Link>
+		) : (
 			<Button variant="ghost" size="icon" onClick={onBack}>
 				<ChevronLeft className="w-5 h-5" />
 			</Button>
-		</Link>
+		)}
 		<h2 className="text-2xl font-bold tracking-tight">
 			{pid ? "Edit Package" : "Create Package"}
 		</h2>
@@ -121,22 +129,17 @@ const PackageBuilder: React.FC = () => {
 			const isBasicValid = await trigger(["name", "duration", "year"]);
 			if (!isBasicValid) {
 				const nameValue = getValues("name");
-				if (!nameValue || nameValue.trim().length === 0) {
+				if (!nameValue || nameValue.trim().length < 3) {
 					setFocus("name");
-					return false;
+				} else {
+					const durationValue = getValues("duration");
+					if (!durationValue || durationValue.trim().length === 0) {
+						setFocus("duration");
+					} else {
+						setFocus("year");
+					}
 				}
-
-				const durationValue = getValues("duration");
-				if (!durationValue || durationValue.trim().length === 0) {
-					setFocus("duration");
-					return false;
-				}
-
-				const yearValue = getValues("year");
-				if (!yearValue || yearValue.trim().length === 0) {
-					setFocus("year");
-					return false;
-				}
+				return false;
 			}
 		}
 
@@ -287,7 +290,11 @@ const PackageBuilder: React.FC = () => {
 
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 animate-slideIn">
-			<PackageBuilderHeader pid={pid} onBack={goToPreviousStep} />
+			<PackageBuilderHeader
+				pid={pid}
+				onBack={goToPreviousStep}
+				isFirstStep={currentStep === "basic"}
+			/>
 
 			{/* Step Navigation Header */}
 			<PackageStepNavigation

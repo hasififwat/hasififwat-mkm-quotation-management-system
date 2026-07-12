@@ -205,6 +205,12 @@ export default function PDFPreviewMobile({ details }: Props) {
 						)}
 					/>
 					<DetailRow label="JUMLAH HARI" value={pkg.duration} />
+					{pkg.transport && (
+						<DetailRow
+							label="JENIS PENGANGKUTAN"
+							value={pkg.transport.toUpperCase()}
+						/>
+					)}
 
 					{activeHotels.map((hotel, i) => (
 						<DetailRow

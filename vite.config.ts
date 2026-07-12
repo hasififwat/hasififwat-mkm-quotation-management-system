@@ -10,4 +10,16 @@ export default defineConfig({
 		},
 	},
 	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+	define: {
+		// @react-pdf/renderer uses Buffer internally — polyfill for the browser
+		global: "globalThis",
+	},
+	optimizeDeps: {
+		include: ["buffer"],
+	},
+	resolve: {
+		alias: {
+			buffer: "buffer",
+		},
+	},
 });

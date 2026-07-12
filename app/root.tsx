@@ -6,6 +6,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	type ShouldRevalidateFunctionArgs,
 	useLoaderData,
 } from "react-router";
 import type { Route } from "./+types/root";
@@ -28,6 +29,19 @@ export const links: Route.LinksFunction = () => [
 	},
 ];
 
+async function loggingMiddleware({ request, context }, next) {
+	console.log(`${new Date().toISOString()} ${request.method} ${request.url}`);
+	const start = performance.now();
+	const response = await next();
+	const duration = performance.now() - start;
+	console.log(
+		`${new Date().toISOString()} Response ${response.status} (${duration}ms)`,
+	);
+	return response;
+}
+
+export const middleware: Route.MiddlewareFunction[] = [loggingMiddleware];
+
 export async function loader({ request }: Route.LoaderArgs) {
 	// We don't need to block the root, just pass env vars or session status
 	const headers = new Headers();
@@ -36,6 +50,15 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 	const CONVEX_URL = process.env.CONVEX_URL!;
 	return { ENV: { CONVEX_URL } };
+}
+
+export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
+	// Avoid parent loader revalidation on normal link navigation.
+	if (formMethod && formMethod !== "GET") {
+		return true;
+	}
+
+	return false;
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

@@ -1,6 +1,7 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: number) {
 	const paddedSequence = String(sequenceNum).padStart(4, "0");
@@ -9,44 +10,19 @@ function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: 
 		: `${hijriYear}-${paddedSequence}`;
 }
 
-function getCurrentHijriYear() {
-	const parts = new Intl.DateTimeFormat("en-u-ca-islamic", {
-		year: "numeric",
-	}).formatToParts(new Date());
-
-	const yearPart = parts.find((part) => part.type === "year")?.value;
-	if (yearPart && yearPart.trim().length > 0) {
-		return yearPart;
-	}
-
-	return String(new Date().getFullYear());
-}
-
-function getNextHijriYear() {
-	const hijriYearMap = {
-		'2026/2027': "1448",
-		'2027/2028': "1449",
-	}
-	const currentHijriYear = getCurrentHijriYear();
-	const numericYear = Number.parseInt(currentHijriYear, 10);
-
-	if (Number.isNaN(numericYear)) {
-		return currentHijriYear;
-	}
-
-	return String(numericYear + 1);
-}
-
-
 function getMappedHijriYear(year: string) {
-
 	const hijriYearMap: Record<string, string> = {
-		'2026/2027': "1448H",
-		'2027/2028': "1449H",
-	}
-
-	return hijriYearMap[year] ?? year;
-
+		"2025/2026": "1447H",
+		"2026/2027": "1448H",
+		"2027/2028": "1449H",
+		"2028/2029": "1450H",
+		"2029/2030": "1451H",
+		"2030/2031": "1452H",
+		"2031/2032": "1453H",
+	};
+	const mapped = hijriYearMap[year];
+	if (!mapped) throw new Error(`No hijri year mapping for Gregorian range: ${year}`);
+	return mapped;
 }
 
 function normalizeCurrency(value: number) {
@@ -71,8 +47,160 @@ function parseCreatedAt(value: string) {
 }
 
 async function findQuotationByStringId(ctx: any, quotationId: string) {
-	const quotations = await ctx.db.query("quotations").collect();
-	return quotations.find((item: any) => String(item._id) === quotationId) ?? null;
+	return await ctx.db.get(quotationId as Id<"quotations">);
+}
+
+function buildPackageSnapshot(
+	pkg: {
+		name: string;
+		year: string;
+		duration: string;
+		transport?: string;
+		package_code?: string;
+		inclusions?: string;
+		exclusions?: string;
+		updated_at: string;
+	},
+	rooms: Array<{ room_type: string; price: number; enabled: boolean }>,
+) {
+	return {
+		name: pkg.name,
+		year: pkg.year,
+		duration: pkg.duration,
+		transport: pkg.transport,
+		package_code: pkg.package_code,
+		inclusions: pkg.inclusions,
+		exclusions: pkg.exclusions,
+		package_updated_at: pkg.updated_at,
+		rooms: rooms.map((r) => ({ room_type: r.room_type, price: r.price, enabled: r.enabled })),
+	};
+}
+
+function buildFlightSnapshot(flight: {
+	_id: Id<"package_flights">;
+	month: string;
+	flight?: string;
+	departure_date: string;
+	departure_sector: string;
+	return_date: string;
+	return_sector: string;
+}) {
+	return {
+		id: String(flight._id),
+		month: flight.month,
+		flight: flight.flight,
+		departure_date: flight.departure_date,
+		departure_sector: flight.departure_sector,
+		return_date: flight.return_date,
+		return_sector: flight.return_sector,
+	};
+}
+
+function buildHotelsSnapshot(
+	hotels: Array<{
+		_id: Id<"package_hotels">;
+		hotel_type: string;
+		name?: string;
+		placeholder: string;
+		enabled: boolean;
+	}>,
+	mealsByHotelId: Map<string, string[]>,
+) {
+	return hotels.map((hotel) => ({
+		hotel_type: hotel.hotel_type,
+		name: hotel.name,
+		placeholder: hotel.placeholder,
+		enabled: hotel.enabled,
+		meals: mealsByHotelId.get(String(hotel._id)) ?? [],
+	}));
+}
+
+function computeStaleFields(
+	pkgSnap: {
+		package_updated_at?: string;
+		name?: string;
+		year?: string;
+		duration?: string;
+		transport?: string;
+		package_code?: string;
+		inclusions?: string;
+		exclusions?: string;
+		rooms?: Array<{ room_type: string; price: number; enabled: boolean }>;
+	} | undefined | null,
+	flightSnap: {
+		departure_date: string;
+		return_date: string;
+		departure_sector: string;
+		return_sector: string;
+	} | undefined | null,
+	currentPackage: {
+		updated_at: string;
+		name: string;
+		year: string;
+		duration: string;
+		transport?: string;
+		package_code?: string;
+		inclusions?: string;
+		exclusions?: string;
+	} | undefined,
+	liveFlight: {
+		departure_date: string;
+		return_date: string;
+		departure_sector: string;
+		return_sector: string;
+	} | undefined,
+	liveRooms: Array<{ room_type: string; price: number; enabled: boolean }>,
+	liveHotels: Array<{ hotel_type: string; name?: string; enabled: boolean }>,
+	hotelSnap: Array<{ hotel_type: string; name?: string; enabled: boolean }> | undefined | null,
+): { stale_fields: string[]; snapshot_version_known: boolean } {
+	const stale_fields: string[] = [];
+	const snapshot_version_known = pkgSnap?.package_updated_at !== undefined;
+
+	if (pkgSnap && currentPackage) {
+		if (pkgSnap.name         !== undefined && pkgSnap.name         !== currentPackage.name)         stale_fields.push("package.name");
+		if (pkgSnap.year         !== undefined && pkgSnap.year         !== currentPackage.year)         stale_fields.push("package.year");
+		if (pkgSnap.duration     !== undefined && pkgSnap.duration     !== currentPackage.duration)     stale_fields.push("package.duration");
+		if (pkgSnap.transport    !== undefined && pkgSnap.transport    !== currentPackage.transport)    stale_fields.push("package.transport");
+		if (pkgSnap.inclusions   !== undefined && pkgSnap.inclusions   !== currentPackage.inclusions)   stale_fields.push("package.inclusions");
+		if (pkgSnap.exclusions   !== undefined && pkgSnap.exclusions   !== currentPackage.exclusions)   stale_fields.push("package.exclusions");
+		if (pkgSnap.package_code !== undefined && pkgSnap.package_code !== currentPackage.package_code) stale_fields.push("package.code");
+
+		if (pkgSnap.rooms && pkgSnap.rooms.length > 0 && liveRooms.length > 0) {
+			const snapPrices = new Map(pkgSnap.rooms.map((r) => [r.room_type, r.price]));
+			const roomPriceChanged = liveRooms.some(
+				(r) => snapPrices.has(r.room_type) && snapPrices.get(r.room_type) !== r.price,
+			);
+			const roomAdded = liveRooms.some((r) => !snapPrices.has(r.room_type));
+			if (roomPriceChanged || roomAdded) stale_fields.push("room_pricing");
+		}
+	}
+
+	if (hotelSnap && hotelSnap.length > 0 && liveHotels.length > 0) {
+		const snapMap = new Map(hotelSnap.map((h) => [h.hotel_type, h]));
+		const hotelChanged = liveHotels.some((live) => {
+			const snap = snapMap.get(live.hotel_type);
+			if (!snap) return true;
+			if (snap.name !== live.name) return true;
+			if (snap.enabled !== live.enabled) return true;
+			return false;
+		});
+		if (hotelChanged) stale_fields.push("hotels");
+	}
+
+	if (flightSnap && !liveFlight) {
+		stale_fields.push("flight.removed");
+	} else if (flightSnap && liveFlight) {
+		if (
+			liveFlight.departure_date    !== flightSnap.departure_date    ||
+			liveFlight.return_date       !== flightSnap.return_date       ||
+			liveFlight.departure_sector  !== flightSnap.departure_sector  ||
+			liveFlight.return_sector     !== flightSnap.return_sector
+		) {
+			stale_fields.push("flight");
+		}
+	}
+
+	return { stale_fields, snapshot_version_known };
 }
 
 export const list = query({
@@ -100,6 +228,17 @@ export const list = query({
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
 
+				const { stale_fields } = computeStaleFields(
+					quotation.package_snapshot,
+					quotation.flight_snapshot,
+					selectedPackage,
+					selectedFlight,
+					[], // room/hotel staleness requires detail view — skipped in list for performance
+					[],
+					null,
+				);
+				const is_stale = stale_fields.length > 0;
+
 				return {
 					id: String(quotation._id),
 					quotation_number: buildQuotationNumber(
@@ -116,6 +255,7 @@ export const list = query({
 					hijri_year: quotation.hijri_year,
 					created_at: quotation.created_at,
 					updated_at: quotation.updated_at,
+					is_stale,
 					package: {
 						id: selectedPackage ? String(selectedPackage._id) : null,
 						name: selectedPackage?.name ?? "Unknown Package",
@@ -247,6 +387,17 @@ export const listPaginated = query({
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
 
+				const { stale_fields: rowStaleFields } = computeStaleFields(
+					quotation.package_snapshot,
+					quotation.flight_snapshot,
+					selectedPackage,
+					selectedFlight,
+					[], // room/hotel staleness requires detail view — skipped in list for performance
+					[],
+					null,
+				);
+				const is_stale = rowStaleFields.length > 0;
+
 				return {
 					id: String(quotation._id),
 					quotation_number: buildQuotationNumber(
@@ -263,6 +414,7 @@ export const listPaginated = query({
 					hijri_year: quotation.hijri_year,
 					created_at: quotation.created_at,
 					updated_at: quotation.updated_at,
+					is_stale,
 					package: {
 						id: selectedPackage ? String(selectedPackage._id) : null,
 						name: selectedPackage?.name ?? "Unknown Package",
@@ -299,10 +451,10 @@ export const create = mutation({
 				v.union(
 					v.literal("draft"),
 					v.literal("sent"),
-					v.literal("confirmed"),
 					v.literal("accepted"),
 					v.literal("rejected"),
-					v.literal("expired"),
+					v.literal("revised"),
+					v.literal("superseded"),
 				),
 			),
 			created_by: v.optional(v.string()),
@@ -336,18 +488,26 @@ export const create = mutation({
 	handler: async (ctx, args) => {
 		const now = new Date().toISOString();
 
-		const hijriYear = getMappedHijriYear("" + new Date().getFullYear() + "/" + (new Date().getFullYear() + 1));	
+		const allPackages = await ctx.db.query("packages").collect();
+		const selectedPackage = allPackages.find(
+			(candidate) => String(candidate._id) === args.payload.package_id,
+		);
+		if (!selectedPackage) {
+			throw new Error("Package not found");
+		}
+		const hijriYear = getMappedHijriYear(selectedPackage.year);
 
-		const [hijriYearQuotations, allClients, allPackages, allFlights, allPackageRooms] =
+		const [hijriYearQuotations, allClients, allFlights, allPackageRooms, allPackageHotels, allPackageMeals] =
 			await Promise.all([
 				ctx.db
 					.query("quotations")
 					.withIndex("by_hijri_year", (q) => q.eq("hijri_year", hijriYear))
 					.collect(),
 				ctx.db.query("clients").collect(),
-				ctx.db.query("packages").collect(),
 				ctx.db.query("package_flights").collect(),
 				ctx.db.query("package_rooms").collect(),
+				ctx.db.query("package_hotels").collect(),
+				ctx.db.query("package_meals").collect(),
 			]);
 
 		const client = allClients.find(
@@ -355,13 +515,6 @@ export const create = mutation({
 		);
 		if (!client) {
 			throw new Error("Client not found");
-		}
-
-		const selectedPackage = allPackages.find(
-			(candidate) => String(candidate._id) === args.payload.package_id,
-		);
-		if (!selectedPackage) {
-			throw new Error("Package not found");
 		}
 
 		const selectedFlight = allFlights.find(
@@ -436,6 +589,25 @@ export const create = mutation({
 			.reduce((max, quotation) => Math.max(max, quotation.sequence_num), 0);
 
 		const nextSequenceNum = currentHijriYearMaxSeq + 1;
+
+		const hotelsForPkg = allPackageHotels.filter(
+			(h) => String(h.package_id) === args.payload.package_id,
+		);
+		const mealsByHotelId = new Map<string, string[]>();
+		for (const meal of allPackageMeals) {
+			const key = String(meal.package_hotel_id);
+			const bucket = mealsByHotelId.get(key) ?? [];
+			bucket.push(meal.meal_type);
+			mealsByHotelId.set(key, bucket);
+		}
+
+		const roomsForPkg = allPackageRooms.filter(
+			(r) => String(r.package_id) === args.payload.package_id,
+		);
+		const package_snapshot = buildPackageSnapshot(selectedPackage, roomsForPkg);
+		const flight_snapshot = buildFlightSnapshot(selectedFlight);
+		const hotels_snapshot = buildHotelsSnapshot(hotelsForPkg, mealsByHotelId);
+
 		const quotationId = await ctx.db.insert("quotations", {
 			hijri_year: hijriYear,
 			sequence_num: nextSequenceNum,
@@ -452,6 +624,9 @@ export const create = mutation({
 			branch: args.payload.branch,
 			flight_id: args.payload.flight_id,
 			client_id: args.payload.client_id,
+			package_snapshot,
+			flight_snapshot,
+			hotels_snapshot,
 		});
 
 		for (const room of sanitizedSelectedRooms) {
@@ -528,12 +703,15 @@ export const getQuotationForEdit = query({
 			return null;
 		}
 
-		const [items, packageRooms] = await Promise.all([
+		const [items, packageRooms, allPackages, allFlights, allPackageHotels] = await Promise.all([
 			ctx.db
 				.query("quotation_items")
 				.withIndex("by_quotation_id", (q) => q.eq("quotation_id", String(quotation._id)))
 				.collect(),
 			ctx.db.query("package_rooms").collect(),
+			ctx.db.query("packages").collect(),
+			ctx.db.query("package_flights").collect(),
+			ctx.db.query("package_hotels").collect(),
 		]);
 
 		const packageRoomById = new Map<string, (typeof packageRooms)[number]>();
@@ -570,6 +748,28 @@ export const getQuotationForEdit = query({
 				pax: item.quantity,
 			}));
 
+		const currentPackage = allPackages.find(
+			(p) => String(p._id) === quotation.package_id,
+		);
+		const liveFlight = allFlights.find(
+			(f) => String(f._id) === quotation.flight_id,
+		);
+		const liveRoomsForEdit = packageRooms.filter(
+			(r) => String(r.package_id) === quotation.package_id,
+		);
+		const liveHotelsForEdit = allPackageHotels.filter(
+			(h) => String(h.package_id) === quotation.package_id,
+		);
+		const { stale_fields, snapshot_version_known } = computeStaleFields(
+			quotation.package_snapshot,
+			quotation.flight_snapshot,
+			currentPackage,
+			liveFlight,
+			liveRoomsForEdit,
+			liveHotelsForEdit,
+			quotation.hotels_snapshot,
+		);
+
 		return {
 			id: String(quotation._id),
 			reference_number: buildQuotationNumber(
@@ -587,6 +787,8 @@ export const getQuotationForEdit = query({
 			adds_ons,
 			discounts,
 			status: quotation.status,
+			stale_fields,
+			snapshot_version_known,
 		};
 	},
 });
@@ -619,9 +821,6 @@ export const getQuotationFullDetails = query({
 		const selectedPackage = packages.find(
 			(item) => String(item._id) === quotation.package_id,
 		);
-		if (!selectedPackage) {
-			throw new Error("Package not found");
-		}
 
 		const availableFlights = packageFlights.filter(
 			(flight) => String(flight.package_id) === quotation.package_id,
@@ -690,8 +889,66 @@ export const getQuotationFullDetails = query({
 				};
 			});
 
-		const selectedFlight = availableFlights.find(
+		// Prefer snapshots (written at save time) over live package/flight data.
+		// Falls back to live queries for quotations created before snapshots were introduced.
+		const pkgSnap = quotation.package_snapshot;
+		const flightSnap = quotation.flight_snapshot;
+		const hotelSnap = quotation.hotels_snapshot;
+
+		if (!pkgSnap && !selectedPackage) {
+			throw new Error("Package not found and no snapshot available");
+		}
+
+		const liveFlight = availableFlights.find(
 			(flight) => String(flight._id) === quotation.flight_id,
+		);
+
+		const selected_flight = flightSnap
+			? {
+				id: flightSnap.id,
+				month: flightSnap.month,
+				flight: flightSnap.flight ?? "",
+				departure_date: flightSnap.departure_date,
+				return_date: flightSnap.return_date,
+				departure_sector: flightSnap.departure_sector,
+				return_sector: flightSnap.return_sector,
+			}
+			: liveFlight
+				? {
+					id: String(liveFlight._id),
+					month: liveFlight.month,
+					flight: liveFlight.flight ?? "",
+					departure_date: liveFlight.departure_date,
+					return_date: liveFlight.return_date,
+					departure_sector: liveFlight.departure_sector,
+					return_sector: liveFlight.return_sector,
+				}
+				: null;
+
+		const hotels = hotelSnap
+			? hotelSnap.map((h) => ({
+				hotel_type: h.hotel_type,
+				name: h.name ?? h.placeholder,
+				placeholder: h.placeholder,
+				enabled: h.enabled,
+				meals: h.meals,
+			}))
+			: availableHotels.map((hotel) => ({
+				hotel_type: hotel.hotel_type,
+				name: hotel.name ?? hotel.placeholder,
+				placeholder: hotel.placeholder,
+				enabled: hotel.enabled,
+				meals: (mealsByHotelId.get(String(hotel._id)) ?? []).map((meal) => meal.meal_type),
+			}));
+
+		const { stale_fields, snapshot_version_known } = computeStaleFields(
+			pkgSnap,
+			flightSnap,
+			selectedPackage,
+			liveFlight,
+			availableRooms,
+			availableHotels,
+			quotation.hotels_snapshot,
 		);
 
 		return {
@@ -710,24 +967,18 @@ export const getQuotationFullDetails = query({
 			created_at: quotation.created_at,
 			updated_at: quotation.updated_at,
 			hijri_year: quotation.hijri_year,
+			stale_fields,
+			snapshot_version_known,
 			package: {
-				id: String(selectedPackage._id),
-				name: selectedPackage.name,
-				year: selectedPackage.year,
-				duration: selectedPackage.duration,
-				transport: selectedPackage.transport ?? "",
-				inclusions: selectedPackage.inclusions ?? "",
-				exclusions: selectedPackage.exclusions ?? "",
-				package_code: selectedPackage.package_code ?? "",
-				hotels: availableHotels.map((hotel) => ({
-					hotel_type: hotel.hotel_type,
-					name: hotel.name ?? hotel.placeholder,
-					placeholder: hotel.placeholder,
-					enabled: hotel.enabled,
-					meals: (mealsByHotelId.get(String(hotel._id)) ?? []).map(
-						(meal) => meal.meal_type,
-					),
-				})),
+				id: quotation.package_id,
+				name: pkgSnap?.name ?? selectedPackage?.name ?? "",
+				year: pkgSnap?.year ?? selectedPackage?.year ?? "",
+				duration: pkgSnap?.duration ?? selectedPackage?.duration ?? "",
+				transport: pkgSnap?.transport ?? selectedPackage?.transport ?? "",
+				inclusions: pkgSnap?.inclusions ?? selectedPackage?.inclusions ?? "",
+				exclusions: pkgSnap?.exclusions ?? selectedPackage?.exclusions ?? "",
+				package_code: pkgSnap?.package_code ?? selectedPackage?.package_code ?? "",
+				hotels,
 				available_rooms: availableRooms.map((room) => ({
 					id: String(room._id),
 					room_type: room.room_type,
@@ -744,17 +995,7 @@ export const getQuotationFullDetails = query({
 					return_sector: flight.return_sector,
 				})),
 			},
-			selected_flight: selectedFlight
-				? {
-					id: String(selectedFlight._id),
-					month: selectedFlight.month,
-					flight: selectedFlight.flight ?? "",
-					departure_date: selectedFlight.departure_date,
-					return_date: selectedFlight.return_date,
-					departure_sector: selectedFlight.departure_sector,
-					return_sector: selectedFlight.return_sector,
-				}
-				: null,
+			selected_flight,
 			items: {
 				selected_rooms: selectedRooms,
 				adds_ons: addsOns,
@@ -778,10 +1019,10 @@ export const update = mutation({
 				v.union(
 					v.literal("draft"),
 					v.literal("sent"),
-					v.literal("confirmed"),
 					v.literal("accepted"),
 					v.literal("rejected"),
-					v.literal("expired"),
+					v.literal("revised"),
+					v.literal("superseded"),
 				),
 			),
 			created_by: v.optional(v.string()),
@@ -820,11 +1061,13 @@ export const update = mutation({
 
 		const now = new Date().toISOString();
 
-		const [allClients, allPackages, allFlights, allPackageRooms] = await Promise.all([
+		const [allClients, allPackages, allFlights, allPackageRooms, allPackageHotels, allPackageMeals] = await Promise.all([
 			ctx.db.query("clients").collect(),
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
 			ctx.db.query("package_rooms").collect(),
+			ctx.db.query("package_hotels").collect(),
+			ctx.db.query("package_meals").collect(),
 		]);
 
 		const client = allClients.find(
@@ -909,6 +1152,35 @@ export const update = mutation({
 
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
+		const packageChanged = args.payload.package_id !== quotation.package_id;
+		const flightChanged  = args.payload.flight_id  !== quotation.flight_id;
+
+		const hotelsForPkg = allPackageHotels.filter(
+			(h) => String(h.package_id) === args.payload.package_id,
+		);
+		const mealsByHotelId = new Map<string, string[]>();
+		for (const meal of allPackageMeals) {
+			const key = String(meal.package_hotel_id);
+			const bucket = mealsByHotelId.get(key) ?? [];
+			bucket.push(meal.meal_type);
+			mealsByHotelId.set(key, bucket);
+		}
+
+		const roomsForPkg = allPackageRooms.filter(
+			(r) => String(r.package_id) === args.payload.package_id,
+		);
+		const package_snapshot = packageChanged
+			? buildPackageSnapshot(selectedPackage, roomsForPkg)
+			: (quotation.package_snapshot ?? buildPackageSnapshot(selectedPackage, roomsForPkg));
+
+		const flight_snapshot = flightChanged
+			? buildFlightSnapshot(selectedFlight)
+			: (quotation.flight_snapshot ?? buildFlightSnapshot(selectedFlight));
+
+		const hotels_snapshot = packageChanged
+			? buildHotelsSnapshot(hotelsForPkg, mealsByHotelId)
+			: (quotation.hotels_snapshot ?? buildHotelsSnapshot(hotelsForPkg, mealsByHotelId));
+
 		await ctx.db.patch(quotation._id, {
 			client_name: client.name,
 			package_id: args.payload.package_id,
@@ -921,6 +1193,9 @@ export const update = mutation({
 			branch: args.payload.branch,
 			flight_id: args.payload.flight_id,
 			client_id: args.payload.client_id,
+			package_snapshot,
+			flight_snapshot,
+			hotels_snapshot,
 		});
 
 		const existingItems = await ctx.db
@@ -995,6 +1270,78 @@ export const update = mutation({
 			total_amount: totalAmount,
 			status: args.payload.status ?? quotation.status,
 		};
+	},
+});
+
+export const refreshSnapshot = mutation({
+	args: { quotation_id: v.string() },
+	handler: async (ctx, args) => {
+		const quotation = await findQuotationByStringId(ctx, args.quotation_id);
+		if (!quotation) throw new Error("Quotation not found");
+
+		const now = new Date().toISOString();
+
+		const [allPackages, allFlights, allPackageHotels, allPackageMeals, allPackageRooms] =
+			await Promise.all([
+				ctx.db.query("packages").collect(),
+				ctx.db.query("package_flights").collect(),
+				ctx.db.query("package_hotels").collect(),
+				ctx.db.query("package_meals").collect(),
+				ctx.db.query("package_rooms").collect(),
+			]);
+
+		const selectedPackage = allPackages.find(
+			(p) => String(p._id) === quotation.package_id,
+		);
+		if (!selectedPackage) throw new Error("Package no longer exists");
+
+		const selectedFlight = allFlights.find(
+			(f) => String(f._id) === quotation.flight_id,
+		);
+
+		const hotelsForPkg = allPackageHotels.filter(
+			(h) => String(h.package_id) === quotation.package_id,
+		);
+		const mealsByHotelId = new Map<string, string[]>();
+		for (const meal of allPackageMeals) {
+			const key = String(meal.package_hotel_id);
+			const bucket = mealsByHotelId.get(key) ?? [];
+			bucket.push(meal.meal_type);
+			mealsByHotelId.set(key, bucket);
+		}
+
+		const roomsForPkg = allPackageRooms.filter(
+			(r) => String(r.package_id) === quotation.package_id,
+		);
+		const package_snapshot = buildPackageSnapshot(selectedPackage, roomsForPkg);
+		const flight_snapshot = selectedFlight
+			? buildFlightSnapshot(selectedFlight)
+			: quotation.flight_snapshot;
+		const hotels_snapshot = buildHotelsSnapshot(hotelsForPkg, mealsByHotelId);
+
+		await ctx.db.patch(quotation._id, {
+			package_snapshot,
+			flight_snapshot,
+			hotels_snapshot,
+			updated_at: now,
+		});
+
+		const quotationNumber = buildQuotationNumber(
+			quotation.hijri_year,
+			quotation.sequence_num,
+			quotation.revision,
+		);
+
+		await ctx.db.insert("quotation_logs", {
+			quotation_id: String(quotation._id),
+			action: "snapshot_refreshed",
+			description: `Snapshot for ${quotationNumber} refreshed to package version ${selectedPackage.updated_at}`,
+			performed_by: "system",
+			created_at: now,
+			snapshot_data: JSON.stringify({ package_updated_at: selectedPackage.updated_at }),
+		});
+
+		return { success: true };
 	},
 });
 
@@ -1122,6 +1469,89 @@ export const deleteById = mutation({
 			deletedQuotationId: quotationId,
 			deletedItemsCount: items.length,
 			deletedLogsCount: logs.length,
+		};
+	},
+});
+
+/**
+ * Repair mutation: finds quotations whose flight_id no longer exists in
+ * package_flights (e.g. because a package was updated and flights were
+ * recreated) and remaps each one to the first available flight for that
+ * package.
+ *
+ * Always run with dryRun: true first to preview what would change.
+ */
+export const repairStaleFlightIds = mutation({
+	args: {
+		dryRun: v.optional(v.boolean()),
+	},
+	handler: async (ctx, args) => {
+		const dryRun = args.dryRun ?? false;
+
+		const [quotations, flights] = await Promise.all([
+			ctx.db.query("quotations").collect(),
+			ctx.db.query("package_flights").collect(),
+		]);
+
+		const validFlightIds = new Set(flights.map((f) => String(f._id)));
+
+		// Group current flights by package_id for lookup
+		const flightsByPackageId = new Map<string, (typeof flights)[number][]>();
+		for (const flight of flights) {
+			const key = String(flight.package_id);
+			const bucket = flightsByPackageId.get(key);
+			if (bucket) {
+				bucket.push(flight);
+			} else {
+				flightsByPackageId.set(key, [flight]);
+			}
+		}
+
+		const staleQuotations = quotations.filter(
+			(q) => !validFlightIds.has(q.flight_id),
+		);
+
+		const results: {
+			quotationId: string;
+			quotationNumber: string;
+			packageId: string;
+			oldFlightId: string;
+			newFlightId: string | null;
+			patched: boolean;
+		}[] = [];
+
+		for (const quotation of staleQuotations) {
+			const packageFlights = flightsByPackageId.get(quotation.package_id) ?? [];
+			const replacement = packageFlights.length > 0 ? packageFlights[0] : null;
+			const newFlightId = replacement ? String(replacement._id) : null;
+
+			const result = {
+				quotationId: String(quotation._id),
+				quotationNumber: buildQuotationNumber(
+					quotation.hijri_year,
+					quotation.sequence_num,
+					quotation.revision,
+				),
+				packageId: quotation.package_id,
+				oldFlightId: quotation.flight_id,
+				newFlightId,
+				patched: false,
+			};
+
+			if (!dryRun && newFlightId !== null) {
+				await ctx.db.patch(quotation._id, { flight_id: newFlightId });
+				result.patched = true;
+			}
+
+			results.push(result);
+		}
+
+		return {
+			dryRun,
+			staleCount: staleQuotations.length,
+			repairedCount: results.filter((r) => r.patched).length,
+			unresolvableCount: results.filter((r) => r.newFlightId === null).length,
+			results,
 		};
 	},
 });

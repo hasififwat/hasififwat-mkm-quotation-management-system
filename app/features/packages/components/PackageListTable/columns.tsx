@@ -11,4 +11,5 @@ export const columns: ColumnDef<PackageWithRooms>[] = [
 	{ id: "sections", header: "Sections" },
 	{ accessorKey: "season", header: "Season" },
 	{ accessorKey: "status", header: "Status" },
+	{ id: "action", header: "" },
 ];

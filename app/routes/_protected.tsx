@@ -1,4 +1,8 @@
-import type { LoaderFunctionArgs } from "react-router";
+import { useMemo } from "react";
+import type {
+	LoaderFunctionArgs,
+	ShouldRevalidateFunctionArgs,
+} from "react-router";
 import { Outlet, redirect, useLoaderData } from "react-router";
 import { SidebarLayout } from "~/layout/SidebarLayout";
 import { getServerClient } from "~/lib/supabase/server";
@@ -22,16 +26,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { profile };
 }
 
+export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
+	// Avoid profile refetch on normal in-app GET navigations.
+	if (formMethod && formMethod !== "GET") {
+		return true;
+	}
+
+	return false;
+}
+
 // 2. THE COMPONENT (The Layout)
 export default function ProtectedLayout() {
 	// Access the data returned by the loader
 	const { profile } = useLoaderData<typeof loader>();
 
-	console.log("ProtectedLayout loaded with profile:", profile);
+	const memoizedProfile = useMemo(() => profile, [profile]);
+
+	console.log("ProtectedLayout loaded with profile:", memoizedProfile);
 
 	return (
 		// Pass the user to your sidebar if needed
-		<SidebarLayout profile={profile}>
+		<SidebarLayout profile={memoizedProfile}>
 			<Outlet />
 		</SidebarLayout>
 	);

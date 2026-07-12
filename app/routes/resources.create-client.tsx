@@ -14,46 +14,44 @@ export async function action({ request }: Route.ActionArgs) {
 	const formData = await request.formData();
 	const name = String(formData.get("name") || "").trim();
 	const phone_number = String(formData.get("phone_number") || "").trim();
+	const force = formData.get("force") === "true";
 
 	if (!name) {
 		return new Response(
-			JSON.stringify({
-				success: false,
-				error: "Client name is required",
-			}),
-			{
-				status: 400,
-				headers: { "Content-Type": "application/json" },
-			},
+			JSON.stringify({ success: false, error: "Client name is required" }),
+			{ status: 400, headers: { "Content-Type": "application/json" } },
 		);
 	}
 
 	try {
-		const newClient = await client.mutation(api.clients.create, {
+		const result = await client.mutation(api.clients.create, {
 			name,
 			phone_number,
+			force,
 		});
 
+		if (result.alreadyExists) {
+			return new Response(
+				JSON.stringify({
+					success: false,
+					alreadyExists: true,
+					existing: result.existing,
+				}),
+				{ status: 200, headers: { "Content-Type": "application/json" } },
+			);
+		}
+
 		return new Response(
-			JSON.stringify({ success: true, clientId: newClient.id }),
-			{
-				status: 200,
-				headers: { "Content-Type": "application/json" },
-			},
+			JSON.stringify({ success: true, clientId: result.id }),
+			{ status: 200, headers: { "Content-Type": "application/json" } },
 		);
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : "Failed to create client";
 
 		return new Response(
-			JSON.stringify({
-				success: false,
-				error: message,
-			}),
-			{
-				status: 500,
-				headers: { "Content-Type": "application/json" },
-			},
+			JSON.stringify({ success: false, error: message }),
+			{ status: 500, headers: { "Content-Type": "application/json" } },
 		);
 	}
 }
