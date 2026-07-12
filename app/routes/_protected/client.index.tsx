@@ -1,31 +1,17 @@
 import { api } from "convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 import { PAGE_SIZE } from "convex/constants";
-import { redirect } from "react-router";
 import ClientsListingPage from "~/features/clients/ClientsListingPage";
-import { getServerClient } from "~/lib/supabase/server";
 import type { Route } from "./+types/client.index";
 
 export function meta() {
 	return [{ title: "Clients" }];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	if (!user) throw redirect("/", { headers });
-	return { convexUrl: process.env.CONVEX_URL! };
-}
-
 export async function clientLoader({
 	request,
-	serverLoader,
 }: Route.ClientLoaderArgs) {
-	const serverData = await serverLoader();
-	const convexUrl = (serverData as { convexUrl: string }).convexUrl;
+	const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
 	const http = new ConvexHttpClient(convexUrl);
 
 	const url = new URL(request.url);

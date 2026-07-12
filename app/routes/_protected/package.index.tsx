@@ -1,14 +1,13 @@
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Plus, Search } from "lucide-react";
-import { Form, Link, redirect } from "react-router"; // Removed unused useSubmit
+import { Form, Link } from "react-router";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getServerClient } from "@/lib/supabase/server";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -24,19 +23,8 @@ export function meta() {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	if (!user) {
-		throw redirect("/", { headers });
-	}
-
 	const url = new URL(request.url);
 	const searchTerm = url.searchParams.get("q") || "";
-
 	return { searchTerm };
 }
 

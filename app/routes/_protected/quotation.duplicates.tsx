@@ -1,7 +1,6 @@
 import { api } from "convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 import { useState } from "react";
-import { redirect } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,7 +12,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { getServerClient } from "~/lib/supabase/server";
 import type { Route } from "./+types/quotation.duplicates";
 
 export function meta() {
@@ -23,14 +21,7 @@ export function meta() {
 	];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	if (!user) throw redirect("/", { headers });
-
+export async function loader() {
 	const convexUrl = process.env.CONVEX_URL;
 	if (!convexUrl) throw new Error("CONVEX_URL not configured");
 	const client = new ConvexHttpClient(convexUrl);

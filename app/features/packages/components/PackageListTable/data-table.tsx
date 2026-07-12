@@ -42,8 +42,6 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { SeasonBadge } from "~/components/ui/season-badge";
-import { createClient } from "~/lib/supabase/client";
-import { UmrahPackageService } from "~/services/package-service";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -124,10 +122,8 @@ export function DataTable<TData, TValue>({
 		return `${day}/${month}/${year}`;
 	}, []);
 
-	const handleDelete = useCallback((pkgId: string) => {
-		const supabase = createClient();
-
-		UmrahPackageService.deletePackage(supabase, pkgId);
+	const handleDelete = useCallback((_pkgId: string) => {
+		console.warn("Package deletion not yet implemented in Convex");
 	}, []);
 
 	const handleStatusChange = useCallback(

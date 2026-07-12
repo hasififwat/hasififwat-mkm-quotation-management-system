@@ -1,6 +1,8 @@
-import { Form, useActionData, useNavigation } from "react-router";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
-
 import {
 	Card,
 	CardContent,
@@ -11,21 +13,36 @@ import {
 import { Field, FieldGroup, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 
-// Define the shape of the data returned by the action
-interface ActionResponse {
-	error?: string;
-}
+export function LoginForm() {
+	const { signIn } = useAuthActions();
+	const { isAuthenticated } = useConvexAuth();
+	const navigate = useNavigate();
+	const [error, setError] = useState<string | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-export function LoginForm({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	// ✅ 1. Get the result from the server action (null if no submission yet)
-	const actionData = useActionData() as ActionResponse | undefined;
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/packages");
+		}
+	}, [isAuthenticated, navigate]);
 
-	// ✅ 2. Check global navigation state to handle loading
-	const navigation = useNavigation();
-	const isSubmitting = navigation.state === "submitting";
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		setError(null);
+		setIsSubmitting(true);
+
+		const formData = new FormData(e.currentTarget);
+		const email = formData.get("email") as string;
+		const password = formData.get("password") as string;
+
+		try {
+			await signIn("password", { email, password, flow: "signIn" });
+			// navigation happens via useEffect once isAuthenticated becomes true
+		} catch {
+			setError("Invalid email or password.");
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<div>
@@ -37,55 +54,42 @@ export function LoginForm({
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{/* ✅ 3. Use React Router Form instead of HTML form */}
-					<Form method="post">
+					<form onSubmit={handleSubmit}>
 						<FieldGroup>
 							<Field>
 								<FieldLabel htmlFor="email">Email</FieldLabel>
 								<Input
 									id="email"
-									name="email" // Key for formData
+									name="email"
 									type="email"
 									placeholder="m@example.com"
 									required
+									disabled={isSubmitting}
 								/>
 							</Field>
 
 							<Field>
-								<div className="flex items-center">
-									<FieldLabel htmlFor="password">Password</FieldLabel>
-									{/* <Link
-                      to="/forgot-password"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link> */}
-								</div>
+								<FieldLabel htmlFor="password">Password</FieldLabel>
 								<Input
 									id="password"
-									name="password" // Key for formData
+									name="password"
 									type="password"
 									required
+									disabled={isSubmitting}
 								/>
 							</Field>
 
-							{/* ✅ 4. Display server errors here */}
-							{actionData?.error && (
-								<div className="text-sm text-red-500 font-medium">
-									{actionData.error}
-								</div>
+							{error && (
+								<div className="text-sm text-red-500 font-medium">{error}</div>
 							)}
 
 							<Field>
-								<Button type="submit" disabled={isSubmitting}>
+								<Button type="submit" disabled={isSubmitting} className="w-full">
 									{isSubmitting ? "Logging in..." : "Login"}
 								</Button>
-								{/* <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
-                </FieldDescription> */}
 							</Field>
 						</FieldGroup>
-					</Form>
+					</form>
 				</CardContent>
 			</Card>
 		</div>

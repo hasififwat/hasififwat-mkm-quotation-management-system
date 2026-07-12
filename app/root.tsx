@@ -1,4 +1,5 @@
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexReactClient } from "convex/react";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -15,7 +16,6 @@ import "./app.css";
 import { useState } from "react";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./features/theme/provider/ThemeProvider";
-import { getServerClient } from "./lib/supabase/server";
 
 export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,12 +43,7 @@ async function loggingMiddleware({ request, context }, next) {
 
 export const middleware: Route.MiddlewareFunction[] = [loggingMiddleware];
 
-export async function loader({ request }: Route.LoaderArgs) {
-	// We don't need to block the root, just pass env vars or session status
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-	await supabase.auth.getSession();
-
+export async function loader() {
 	const CONVEX_URL = process.env.CONVEX_URL!;
 	return { ENV: { CONVEX_URL } };
 }
@@ -74,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<ConvexProvider client={_convex}>{children}</ConvexProvider>
+				<ConvexAuthProvider client={_convex}>{children}</ConvexAuthProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</body>

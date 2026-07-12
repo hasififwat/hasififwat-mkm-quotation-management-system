@@ -12,10 +12,10 @@ export default [
 	),
 	index("routes/login.tsx"),
 
-	route("/sign-up", "routes/sign-up.tsx"),
 	route("/logout", "routes/logout.tsx"),
 
 	layout("routes/_protected.tsx", [
+		route("/sign-up", "routes/sign-up.tsx"),
 		route("dashboard", "routes/_protected/dashboard.tsx"),
 		route("/flights", "routes/_protected/flight.index.tsx"),
 		route("/packages", "routes/_protected/package.index.tsx"),

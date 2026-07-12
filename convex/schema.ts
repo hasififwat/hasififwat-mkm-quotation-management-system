@@ -1,7 +1,9 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  ...authTables,
 
  inquiries: defineTable({
     client_id: v.union(v.id("clients"), v.string()),
@@ -82,11 +84,12 @@ export default defineSchema({
   }).index("by_package_id", ["package_id"]),
 
   profiles: defineTable({
+    email: v.optional(v.string()),
     full_name: v.string(),
     branch: v.string(),
     updated_at: v.string(),
     unit: v.optional(v.string()),
-  }),
+  }).index("by_email", ["email"]),
 
 quotations: defineTable({
     // The link to our inquiry state machine
@@ -113,6 +116,7 @@ quotations: defineTable({
     created_at: v.string(),
     updated_at: v.string(),
     created_by: v.string(),
+    creator_id: v.optional(v.id("profiles")),
     pic_name: v.string(),
     branch: v.string(),
     flight_id: v.string(),
@@ -154,7 +158,8 @@ quotations: defineTable({
     .index("by_client_id", ["client_id"])
     .index("by_package_id", ["package_id"])
     .index("by_hijri_year", ["hijri_year"])
-    .index("by_updated_at", ["updated_at"]),
+    .index("by_updated_at", ["updated_at"])
+    .index("by_creator_id", ["creator_id"]),
 
   quotation_items: defineTable({
     quotation_id: v.string(),

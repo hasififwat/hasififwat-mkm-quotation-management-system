@@ -1,6 +1,7 @@
+import { useAuthActions } from "@convex-dev/auth/react";
 import { FileText, Home, LogOut, Menu, Package, Users } from "lucide-react";
 import type { ReactNode } from "react";
-import { Form, Link } from "react-router"; // ✅ Import Form
+import { useNavigate, Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import {
 	Sidebar,
@@ -77,9 +78,16 @@ interface SidebarLayoutProps {
 export function SidebarLayout({
 	children,
 	title,
-
 	profile,
 }: SidebarLayoutProps) {
+	const { signOut } = useAuthActions();
+	const navigate = useNavigate();
+
+	const handleSignOut = async () => {
+		await signOut();
+		navigate("/");
+	};
+
 	return (
 		<SidebarProvider>
 			<Sidebar>
@@ -117,26 +125,23 @@ export function SidebarLayout({
 							</div>
 							<div className="flex-1 overflow-hidden">
 								<div className="text-sm font-medium truncate">
-									{profile.full_name || "User"}
+									{profile?.full_name || "User"}
 									<p className="text-xs text-muted-foreground">
-										{profile.email || "user@example.com"}
+										{profile?.email || ""}
 									</p>
 								</div>
 							</div>
 						</div>
 
-						{/* ✅ NEW: Logout via Server Action */}
-						<Form action="/logout" method="post" className="w-full">
-							<Button
-								variant="outline"
-								size="sm"
-								type="submit"
-								className="w-full justify-start"
-							>
-								<LogOut className="size-4 mr-2" />
-								Sign Out
-							</Button>
-						</Form>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleSignOut}
+							className="w-full justify-start"
+						>
+							<LogOut className="size-4 mr-2" />
+							Sign Out
+						</Button>
 					</div>
 				</SidebarFooter>
 			</Sidebar>

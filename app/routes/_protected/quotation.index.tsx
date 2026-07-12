@@ -4,7 +4,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { PAGE_SIZE } from "convex/constants";
 import { Loader2, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link, redirect, useNavigate, useNavigation } from "react-router";
+import { Link, useNavigate, useNavigation } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,6 @@ import {
 import { COLUMN_LABELS } from "~/features/quotation/components/QuotationTable/columns";
 import QuotationListing from "~/features/quotation/QuotationListing";
 import { useDebouncedSearch } from "~/hooks/useDebounce";
-import { getServerClient } from "~/lib/supabase/server";
 import type { Route } from "./+types/quotation.index";
 
 export function meta() {
@@ -26,22 +25,10 @@ export function meta() {
 	];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-	const headers = new Headers();
-	const supabase = getServerClient(request, headers);
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	if (!user) throw redirect("/", { headers });
-	return { convexUrl: process.env.CONVEX_URL! };
-}
-
 export async function clientLoader({
 	request,
-	serverLoader,
 }: Route.ClientLoaderArgs) {
-	const serverData = await serverLoader();
-	const convexUrl = (serverData as { convexUrl: string }).convexUrl;
+	const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
 	const client = new ConvexHttpClient(convexUrl);
 
 	const url = new URL(request.url);
