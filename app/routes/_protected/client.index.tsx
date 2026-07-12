@@ -8,10 +8,32 @@ export function meta() {
 	return [{ title: "Clients" }];
 }
 
+export async function loader({ request }: Route.LoaderArgs) {
+	const url = new URL(request.url);
+	const searchTerm = url.searchParams.get("q") || "";
+	const picFilters = url.searchParams.getAll("pic");
+	const cursor = url.searchParams.get("cursor");
+	const offsetParam = parseInt(url.searchParams.get("offset") ?? "0", 10);
+	const offset = Number.isNaN(offsetParam) || offsetParam < 0 ? 0 : offsetParam;
+	return {
+		convexUrl: process.env.CONVEX_URL!,
+		clients: [] as unknown[],
+		isDone: false,
+		isFirstPage: !cursor,
+		continueCursor: null as string | null,
+		searchTerm,
+		picFilters,
+		allPics: [] as string[],
+		offset,
+		total: 0,
+	};
+}
+
 export async function clientLoader({
 	request,
+	serverLoader,
 }: Route.ClientLoaderArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
+	const { convexUrl } = (await serverLoader()) as { convexUrl: string };
 	const http = new ConvexHttpClient(convexUrl);
 
 	const url = new URL(request.url);
@@ -93,5 +115,5 @@ export default function ClientIndexPage({ loaderData }: Route.ComponentProps) {
 		offset: number;
 		total: number;
 	};
-	return <ClientsListingPage {...data} />;
+	return <ClientsListingPage {...(data as any)} />;
 }

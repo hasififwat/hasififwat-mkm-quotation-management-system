@@ -25,10 +25,33 @@ export function meta() {
 	];
 }
 
+export async function loader({ request }: Route.LoaderArgs) {
+	const url = new URL(request.url);
+	const searchTerm = url.searchParams.get("q")?.toLowerCase() || "";
+	const sort = (url.searchParams.get("sort") ?? "updated_at") as "updated_at" | "created_at";
+	const dir = (url.searchParams.get("dir") ?? "desc") as "asc" | "desc";
+	const cursor = url.searchParams.get("cursor");
+	const offsetParam = Number.parseInt(url.searchParams.get("offset") ?? "0", 10);
+	const offset = Number.isNaN(offsetParam) || offsetParam < 0 ? 0 : offsetParam;
+	return {
+		convexUrl: process.env.CONVEX_URL!,
+		quotations: [] as unknown[],
+		continueCursor: null as string | null,
+		isDone: false,
+		cursor,
+		searchTerm,
+		sort,
+		dir,
+		searchOffset: offset,
+		searchTotal: 0,
+	};
+}
+
 export async function clientLoader({
 	request,
+	serverLoader,
 }: Route.ClientLoaderArgs) {
-	const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
+	const { convexUrl } = (await serverLoader()) as { convexUrl: string };
 	const client = new ConvexHttpClient(convexUrl);
 
 	const url = new URL(request.url);
