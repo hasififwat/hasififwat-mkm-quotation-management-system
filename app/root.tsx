@@ -13,6 +13,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 
 import { useState } from "react";
+import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./features/theme/provider/ThemeProvider";
 import { getServerClient } from "./lib/supabase/server";
 
@@ -85,6 +86,7 @@ export default function App() {
 	return (
 		<ThemeProvider>
 			<Outlet />
+			<Toaster />
 		</ThemeProvider>
 	);
 }

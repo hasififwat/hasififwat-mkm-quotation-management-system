@@ -29,6 +29,7 @@ export default [
 		}),
 		route("/clients", "routes/_protected/client.index.tsx"),
 		route("/clients/create", "routes/_protected/client.create.tsx"),
+		route("/clients/:cid", "routes/_protected/client.$cid.tsx"),
 		route("/quotations", "routes/_protected/quotation.index.tsx"),
 		route(
 			"/quotations/duplicates",

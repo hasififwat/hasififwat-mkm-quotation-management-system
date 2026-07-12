@@ -64,6 +64,7 @@ export const quotationRowSchema = z.object({
 
 	// Client & User Info
 	client_name: z.string(),
+	client_id: z.string(),
 	pic_name: z.string(),
 	branch: z.string(),
 

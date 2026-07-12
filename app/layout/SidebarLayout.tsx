@@ -1,4 +1,4 @@
-import { FileText, Home, LogOut, Menu, Package } from "lucide-react";
+import { FileText, Home, LogOut, Menu, Package, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { Form, Link } from "react-router"; // ✅ Import Form
 import { Button } from "~/components/ui/button";
@@ -35,6 +35,11 @@ const menuItems = [
 		title: "Quotations",
 		icon: FileText,
 		url: "/quotations",
+	},
+	{
+		title: "Clients",
+		icon: Users,
+		url: "/clients",
 	},
 ];
 

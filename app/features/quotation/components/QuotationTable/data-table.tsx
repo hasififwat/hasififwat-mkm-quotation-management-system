@@ -212,6 +212,17 @@ export function DataTable<TData, TValue>({
 				);
 			}
 
+			if (columnId === "client_name") {
+				return (
+					<Link
+						to={`/clients/${row.client_id}`}
+						className="hover:underline text-sm"
+					>
+						{row.client_name}
+					</Link>
+				);
+			}
+
 			if (columnId === "package") {
 				return renderPackageCell(row.package);
 			}
