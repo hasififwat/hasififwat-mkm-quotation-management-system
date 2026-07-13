@@ -87,10 +87,11 @@ export function SearchableDropdown({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
+					type="button"
 					variant="outline"
 					role="combobox"
 					aria-expanded={open}
-					className="justify-between"
+					className="w-full justify-between"
 					disabled={disabled}
 				>
 					{value && selectedOption
@@ -101,7 +102,7 @@ export function SearchableDropdown({
 					<ChevronsUpDown className="opacity-50" />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="p-0">
+			<PopoverContent className="p-0 w-[--radix-popover-trigger-width]">
 				<Command>
 					<CommandInput
 						placeholder={`Search ${placeholder.toLowerCase()}`}
@@ -114,7 +115,8 @@ export function SearchableDropdown({
 							{options.map((option) => (
 								<CommandItem
 									key={normalizeValue(getOptionValue(option))}
-									value={String(option[optionsLabelKey as keyof DropdownOption] ?? "")}
+									value={normalizeValue(getOptionValue(option))}
+									keywords={[String(option[optionsLabelKey as keyof DropdownOption] ?? "")]}
 									onSelect={() => {
 										const optVal = normalizeValue(getOptionValue(option));
 										onSelect(optVal === value ? "" : optVal);

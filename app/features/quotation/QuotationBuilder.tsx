@@ -8,12 +8,13 @@ import {
 	useForm,
 	useFormContext,
 } from "react-hook-form";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 import {
 	Link,
 	useLoaderData,
 	useNavigation,
 	useParams,
-	useRouteLoaderData,
 	useSubmit,
 } from "react-router";
 import { SearchableDropdown } from "~/components/SearchableDropdown";
@@ -564,7 +565,7 @@ function FlightSelection({
 export default function QuotationBuilder() {
 	const { initialData, allPackages, allClients, stale_fields = [], snapshot_version_known = false } =
 		useLoaderData() as QuotationBuilderLoaderData;
-	const { profile } = useRouteLoaderData("routes/_protected");
+	const profile = useQuery(api.profiles.getMyProfile);
 	const { qid } = useParams();
 	const submit = useSubmit();
 	const navigation = useNavigation();
@@ -585,8 +586,8 @@ export default function QuotationBuilder() {
 	const methods = useForm<QuotationFormInput, unknown, QuotationFormValues>({
 		resolver: zodResolver(quotationFormSchema),
 		defaultValues: initialData ?? {
-			pic_name: profile.full_name || "",
-			branch: profile.branch || "",
+			pic_name: profile?.full_name || "",
+			branch: profile?.branch || "",
 		},
 		mode: "onChange",
 	});
