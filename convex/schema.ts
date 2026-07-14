@@ -45,6 +45,7 @@ export default defineSchema({
     package_code: v.optional(v.string()),
     inclusions: v.optional(v.string()),
     exclusions: v.optional(v.string()),
+    archived: v.optional(v.boolean()),
     created_at: v.string(),
     updated_at: v.string(),
   }),

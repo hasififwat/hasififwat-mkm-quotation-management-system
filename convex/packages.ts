@@ -56,11 +56,14 @@ export const listWithRooms = query({
   },
   handler: async (ctx, args) => {
     let packages = await ctx.db.query("packages").collect();
-    
+
+    // Exclude archived packages
+    packages = packages.filter((pkg) => !pkg.archived);
+
     // Filter by search term if provided
     if (args.searchTerm && args.searchTerm.trim() !== "") {
       const searchLower = args.searchTerm.toLowerCase();
-      packages = packages.filter((pkg) => 
+      packages = packages.filter((pkg) =>
         pkg.name.toLowerCase().includes(searchLower)
       );
     }
@@ -1128,5 +1131,15 @@ export const reconcilePackageHotelsFromTemplates = mutation({
       deletedMealCount,
       insertedByTemplateType,
     };
+  },
+});
+
+export const archivePackage = mutation({
+  args: { id: v.id("packages") },
+  handler: async (ctx, args) => {
+    const pkg = await ctx.db.get(args.id);
+    if (!pkg) throw new Error("Package not found");
+    await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
+    return { id: args.id };
   },
 });

@@ -13,6 +13,7 @@ import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import {
+	Archive,
 	ArrowDown,
 	ArrowUp,
 	ArrowUpDown,
@@ -21,7 +22,6 @@ import {
 	Loader2,
 	MoreHorizontal,
 	PencilIcon,
-	Trash,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
@@ -64,6 +64,7 @@ export function DataTable<TData, TValue>({
 	isLoading = false,
 }: DataTableProps<TData, TValue>) {
 	const updatePackageStatus = useMutation(api.packages.updatePackageStatus);
+	const archivePackage = useMutation(api.packages.archivePackage);
 	const [statusLoadingById, setStatusLoadingById] = useState<
 		Record<string, boolean>
 	>({});
@@ -139,9 +140,17 @@ export function DataTable<TData, TValue>({
 		return `${day}/${month}/${year}`;
 	}, []);
 
-	const handleDelete = useCallback((_pkgId: string) => {
-		console.warn("Package deletion not yet implemented in Convex");
-	}, []);
+	const handleArchive = useCallback(
+		async (pkgId: string) => {
+			if (!confirm("Archive this package? It will be hidden from the listing.")) return;
+			try {
+				await archivePackage({ id: pkgId as Id<"packages"> });
+			} catch (error) {
+				console.error("Failed to archive package", error);
+			}
+		},
+		[archivePackage],
+	);
 
 	const handleStatusChange = useCallback(
 		async (pkgId: string, nextStatus: "published" | "unpublished") => {
@@ -175,15 +184,18 @@ export function DataTable<TData, TValue>({
 								Edit
 							</DropdownMenuItem>
 						</Link>
-						<DropdownMenuItem onClick={() => handleDelete(pkg._id)}>
-							<Trash />
-							Delete
+						<DropdownMenuItem
+							onClick={() => handleArchive(pkg._id)}
+							className="text-muted-foreground"
+						>
+							<Archive />
+							Archive
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);
 		},
-		[handleDelete],
+		[handleArchive],
 	);
 
 	const renderCell = useCallback(
