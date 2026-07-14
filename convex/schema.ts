@@ -46,7 +46,7 @@ export default defineSchema({
     inclusions: v.optional(v.string()),
     exclusions: v.optional(v.string()),
     archived: v.optional(v.boolean()),
-    source: v.optional(v.union(v.literal("sync"), v.literal("manual"))),
+    source: v.optional(v.union(v.literal("sync"), v.literal("manual"), v.literal("unsync"))),
     created_at: v.string(),
     updated_at: v.string(),
   }),
@@ -97,8 +97,9 @@ export default defineSchema({
 
 quotations: defineTable({
     // The link to our inquiry state machine
-    inquiry_id: v.optional(v.union(v.id("inquiries"), v.string())), 
+    inquiry_id: v.optional(v.union(v.id("inquiries"), v.string())),
 
+    archived: v.optional(v.boolean()),
     hijri_year: v.string(),
     sequence_num: v.number(),
     revision: v.number(),

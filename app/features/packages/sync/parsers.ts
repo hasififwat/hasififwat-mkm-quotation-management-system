@@ -186,7 +186,7 @@ type ExistingPackage = {
   name: string;
   season?: string | null;
   status?: string;
-  source?: string;
+  source?: "sync" | "manual" | "unsync";
   transport?: string;
   hotels?: DbHotel[];
 };
@@ -279,8 +279,8 @@ export function buildSyncPlan(
       });
     } else if (row.match_status === "MATCHED" && row.db_id) {
       const dbPkg = existingPackages.find((p) => p._id === row.db_id) ?? null;
-      // Promote manual/unset packages matched by the price list to source "sync"
-      if (dbPkg && dbPkg.source !== "sync") {
+      // Only promote "manual" packages — "unsync" were deliberately edited, leave them
+      if (dbPkg && dbPkg.source === "manual") {
         packagesToPromote.push(row.db_id);
       }
       const current_hotels: SyncHotel[] = (dbPkg?.hotels ?? []).map((h) => ({
@@ -299,7 +299,8 @@ export function buildSyncPlan(
         rooms,
         row,
       };
-      const changes = dbPkg ? computeChanges(spec, dbPkg) : [];
+      // "unsync" packages were manually edited after sync — skip overwriting them
+      const changes = (dbPkg && dbPkg.source !== "unsync") ? computeChanges(spec, dbPkg) : [];
       if (changes.length > 0) {
         packagesToUpdate.push({ ...spec, changes });
       }

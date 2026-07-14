@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 export function meta() {
   return [{ title: "Flight Audit - MKM Quotation" }];
@@ -155,14 +156,25 @@ export default function FlightAuditPage() {
                     <TableCell className="text-sm tabular-nums">{f.return_date}</TableCell>
                     <TableCell className="text-xs font-mono">{f.return_sector}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={source === "sync"
-                          ? "text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30"
-                          : "text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30"}
-                      >
-                        {source}
-                      </Badge>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge
+                              variant="outline"
+                              className={source === "sync"
+                                ? "text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30 cursor-default"
+                                : "text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30 cursor-default"}
+                            >
+                              {source}
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {source === "sync"
+                              ? "Added by MFF sync — managed automatically"
+                              : "Manually added — not affected by sync"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </TableCell>
                   </TableRow>
                 );

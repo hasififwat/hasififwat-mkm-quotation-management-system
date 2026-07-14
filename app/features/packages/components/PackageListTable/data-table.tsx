@@ -305,15 +305,21 @@ export function DataTable<TData, TValue>({
 
 			if (columnId === "source") {
 				const src = (cell.row.original as TData & { source?: string }).source ?? "manual";
+				const badgeClass =
+					src === "sync"   ? "text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30 text-[10px] cursor-default"
+					: src === "unsync" ? "text-orange-600 border-orange-300 bg-orange-50 dark:bg-orange-950/30 text-[10px] cursor-default"
+					:                    "text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30 text-[10px] cursor-default";
+				const tooltip =
+					src === "sync"   ? "Created or matched by the MFF sync — managed automatically"
+					: src === "unsync" ? "Originally from MFF sync but manually edited — sync will not overwrite"
+					:                    "Manually created — not affected by sync";
 				return (
-					<Badge
-						variant="outline"
-						className={src === "sync"
-							? "text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30 text-[10px]"
-							: "text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30 text-[10px]"}
-					>
-						{src}
-					</Badge>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Badge variant="outline" className={badgeClass}>{src}</Badge>
+						</TooltipTrigger>
+						<TooltipContent>{tooltip}</TooltipContent>
+					</Tooltip>
 				);
 			}
 

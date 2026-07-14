@@ -9,14 +9,17 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
+import { useMutation } from "convex/react";
 import {
+	Archive,
 	ChevronLeft,
 	ChevronRight,
 	Eye,
 	Loader2,
 	MoreHorizontal,
 	PencilIcon,
-	Trash,
 } from "lucide-react";
 import { useCallback } from "react";
 import { Link } from "react-router";
@@ -76,6 +79,20 @@ export function DataTable<TData, TValue>({
 	columnVisibility = {},
 	onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) {
+	const archiveQuotation = useMutation(api.quotations.archiveQuotation);
+
+	const handleArchive = useCallback(
+		async (quotationId: string) => {
+			if (!confirm("Archive this quotation? It will be hidden from the listing.")) return;
+			try {
+				await archiveQuotation({ id: quotationId as Id<"quotations"> });
+			} catch (error) {
+				console.error("Failed to archive quotation", error);
+			}
+		},
+		[archiveQuotation],
+	);
+
 	const table = useReactTable({
 		data,
 		columns,
@@ -153,14 +170,17 @@ export function DataTable<TData, TValue>({
 							Edit
 						</DropdownMenuItem>
 					</Link>
-					<DropdownMenuItem className="text-destructive focus:text-destructive">
-						<Trash className="mr-2 h-4 w-4" />
-						Delete
+					<DropdownMenuItem
+						onClick={() => handleArchive(quotation.id)}
+						className="text-muted-foreground"
+					>
+						<Archive className="mr-2 h-4 w-4" />
+						Archive
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		);
-	}, []);
+	}, [handleArchive]);
 
 	const renderCell = useCallback(
 		(cell: Cell<TData, unknown>) => {
@@ -271,7 +291,7 @@ export function DataTable<TData, TValue>({
 
 			return flexRender(cell.column.columnDef.cell, cell.getContext());
 		},
-		[renderFormattedDate, renderPackageCell, renderDropdownMenu, renderAmount],
+		[renderFormattedDate, renderPackageCell, renderDropdownMenu, renderAmount, handleArchive],
 	);
 
 	return (

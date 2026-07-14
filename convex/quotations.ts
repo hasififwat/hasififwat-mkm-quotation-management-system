@@ -235,6 +235,7 @@ export const list = query({
 		}
 
 		return quotations
+			.filter((q) => !q.archived)
 			.sort((a, b) => b.created_at.localeCompare(a.created_at))
 			.map((quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
@@ -304,8 +305,10 @@ export const count = query({
 			ctx.db.query("packages").collect(),
 		]);
 
+		const activeQuotations = allQuotations.filter((q) => !q.archived);
+
 		if (!normalizedSearch) {
-			return allQuotations.length;
+			return activeQuotations.length;
 		}
 
 		const packageNameById = new Map<string, string>();
@@ -313,7 +316,7 @@ export const count = query({
 			packageNameById.set(String(pkg._id), (pkg.name ?? "").toLowerCase());
 		}
 
-		return allQuotations.filter((quotation) => {
+		return activeQuotations.filter((quotation) => {
 			const clientName = quotation.client_name?.toLowerCase() ?? "";
 			const packageName = packageNameById.get(quotation.package_id) ?? "";
 			return (
@@ -374,10 +377,11 @@ export const listPaginated = query({
 		const order = sortDir ?? "desc";
 		const result =
 			(sortBy ?? "updated_at") === "created_at"
-				? await ctx.db.query("quotations").order(order).paginate(paginationOpts)
+				? await ctx.db.query("quotations").filter((q) => q.neq(q.field("archived"), true)).order(order).paginate(paginationOpts)
 				: await ctx.db
 						.query("quotations")
 						.withIndex("by_updated_at")
+						.filter((q) => q.neq(q.field("archived"), true))
 						.order(order)
 						.paginate(paginationOpts);
 
@@ -1580,5 +1584,16 @@ export const repairStaleFlightIds = mutation({
 			unresolvableCount: results.filter((r) => r.newFlightId === null).length,
 			results,
 		};
+	},
+});
+
+
+export const archiveQuotation = mutation({
+	args: { id: v.id("quotations") },
+	handler: async (ctx, args) => {
+		const quotation = await ctx.db.get(args.id);
+		if (!quotation) throw new Error("Quotation not found");
+		await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
+		return { id: args.id };
 	},
 });

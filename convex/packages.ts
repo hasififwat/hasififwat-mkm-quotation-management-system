@@ -401,6 +401,8 @@ export const updatePackage = mutation({
       status: args.payload.status,
       inclusions: args.payload.inclusions || "",
       exclusions: args.payload.exclusions || "",
+      // If previously sync-managed, mark as unsync — was MFF-built but now manually edited
+      source: existingPackage.source === "sync" ? "unsync" : (existingPackage.source ?? "manual"),
       updated_at: now,
     });
 
@@ -1172,7 +1174,8 @@ export const promotePackageToSync = mutation({
   handler: async (ctx, args) => {
     for (const id of args.ids) {
       const p = await ctx.db.get(id as unknown as Parameters<typeof ctx.db.get>[0]);
-      if (p && p.source !== "sync") {
+      // Only promote "manual" — "unsync" packages were deliberately edited, leave them
+      if (p && p.source === "manual") {
         await ctx.db.patch(p._id, { source: "sync" });
       }
     }

@@ -85,4 +85,5 @@ export const columns: ColumnDef<Quotation>[] = [
 		header: ({ column }) => <SortableHeader column={column} label="Updated At" />,
 		enableSorting: true,
 	},
+	{ id: "action", header: "", enableSorting: false },
 ];
