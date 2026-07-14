@@ -28,6 +28,7 @@ export function normalizePackageMutationPayload(data: IPackageDetailsForm) {
 		flights: (data.flights ?? []).map((flight) => ({
 			_id: flight._id,
 			month: flight.month ?? "",
+			flight: flight.code || undefined,
 			departure_date: flight.departure ?? "",
 			departure_sector: flight.sector_departure ?? "",
 			return_date: flight.return ?? "",

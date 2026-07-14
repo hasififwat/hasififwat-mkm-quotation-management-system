@@ -30,6 +30,7 @@ type ConvexPackageData = {
 		year_key?: string;
 		pakej?: string;
 		code?: string;
+		flight?: string;
 		month: string;
 		departure_date: string;
 		departure_sector: string;
@@ -72,7 +73,7 @@ export function transformConvexPackage(
 			_id: flight._id,
 			year_key: flight.year_key ?? "",
 			pakej: flight.pakej ?? "",
-			code: flight.code ?? "",
+			code: flight.flight ?? flight.code ?? "",
 			month: flight.month,
 			departure: flight.departure_date,
 			return: flight.return_date,

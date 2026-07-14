@@ -61,7 +61,8 @@ export const columns: ColumnDef<Quotation>[] = [
 		id: "umrah_dates",
 		header: "Umrah Dates",
 		cell: ({ row }) => {
-			const flight = row.original.selected_flight;
+			const snap = row.original.flight_snapshot;
+			const flight = snap ?? row.original.selected_flight;
 			if (!flight?.departure_date || !flight?.return_date) {
 				return <span className="text-muted-foreground text-xs">—</span>;
 			}

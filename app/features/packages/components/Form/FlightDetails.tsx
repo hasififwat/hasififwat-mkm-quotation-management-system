@@ -23,6 +23,14 @@ import {
 } from "~/components/ui/select";
 import type { IPackageDetailsForm } from "../../schema";
 
+const AIRLINES = [
+	{ value: "MALAYSIA AIRLINES", label: "Malaysia Airlines" },
+	{ value: "SAUDI AIRLINES", label: "Saudi Airlines" },
+	{ value: "OMAN AIR", label: "Oman Air" },
+	{ value: "EMIRATES", label: "Emirates" },
+	{ value: "AIRASIA", label: "AirAsia" },
+];
+
 const MONTHS = [
 	{ value: "JAN", label: "January" },
 	{ value: "FEB", label: "February" },
@@ -138,8 +146,35 @@ export default function FlightDetails({
 								)}
 							/>
 
-							{/* Month Select */}
-							<div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+							{/* Airline + Month row */}
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								{/* Airline Select */}
+								<Controller
+									name={`flights.${index}.code`}
+									control={control}
+									render={({ field: airlineField }) => (
+										<Field>
+											<Label>Airline</Label>
+											<Select
+												value={airlineField.value}
+												onValueChange={airlineField.onChange}
+											>
+												<SelectTrigger className="w-full">
+													<SelectValue placeholder="Select airline" />
+												</SelectTrigger>
+												<SelectContent>
+													{AIRLINES.map((airline) => (
+														<SelectItem key={airline.value} value={airline.value}>
+															{airline.label}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</Field>
+									)}
+								/>
+
+								{/* Month Select */}
 								<Controller
 									name={`flights.${index}.month`}
 									control={control}
@@ -169,7 +204,10 @@ export default function FlightDetails({
 										</Field>
 									)}
 								/>
+							</div>
 
+							{/* Dates + Sectors */}
+							<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 								{/* Departure Date */}
 								<Controller
 									name={`flights.${index}.departure`}

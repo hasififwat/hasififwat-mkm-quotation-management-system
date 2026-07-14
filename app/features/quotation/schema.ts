@@ -92,6 +92,10 @@ export const quotationRowSchema = z.object({
 
 	// This is nullable because a quotation might not have a flight selected yet
 	selected_flight: flightDetailsSchema.nullable(),
+	flight_snapshot: z.object({
+		departure_date: z.string(),
+		return_date: z.string(),
+	}).passthrough().nullable().optional(),
 });
 
 const quotationRowArraySchema = z.array(quotationRowSchema);

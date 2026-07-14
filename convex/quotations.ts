@@ -287,6 +287,7 @@ export const list = query({
 							departure_sector: selectedFlight.departure_sector,
 						}
 						: null,
+					flight_snapshot: quotation.flight_snapshot ?? null,
 				};
 			});
 	},
@@ -457,6 +458,7 @@ export const listPaginated = query({
 								departure_sector: selectedFlight.departure_sector,
 							}
 						: null,
+					flight_snapshot: quotation.flight_snapshot ?? null,
 				};
 			}),
 		};

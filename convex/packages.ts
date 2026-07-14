@@ -264,6 +264,7 @@ export const createPackage = mutation({
         v.object({
           _id: v.optional(v.string()),
           month: v.string(),
+          flight: v.optional(v.string()),
           departure_date: v.string(),
           departure_sector: v.string(),
           return_date: v.string(),
@@ -321,6 +322,7 @@ export const createPackage = mutation({
       await ctx.db.insert("package_flights", {
         package_id: packageDocId,
         month: flight.month,
+        flight: flight.flight || undefined,
         departure_date: flight.departure_date,
         departure_sector: flight.departure_sector,
         return_date: flight.return_date,
@@ -370,6 +372,7 @@ export const updatePackage = mutation({
         v.object({
           _id: v.optional(v.string()),
           month: v.string(),
+          flight: v.optional(v.string()),
           departure_date: v.string(),
           departure_sector: v.string(),
           return_date: v.string(),
@@ -478,6 +481,7 @@ export const updatePackage = mutation({
       if (flight._id && existingFlightIdSet.has(flight._id)) {
         await ctx.db.patch(flight._id as Id<"package_flights">, {
           month: flight.month,
+          flight: flight.flight || undefined,
           departure_date: flight.departure_date,
           departure_sector: flight.departure_sector,
           return_date: flight.return_date,
@@ -487,6 +491,7 @@ export const updatePackage = mutation({
         await ctx.db.insert("package_flights", {
           package_id: existingPackage._id,
           month: flight.month,
+          flight: flight.flight || undefined,
           departure_date: flight.departure_date,
           departure_sector: flight.departure_sector,
           return_date: flight.return_date,
