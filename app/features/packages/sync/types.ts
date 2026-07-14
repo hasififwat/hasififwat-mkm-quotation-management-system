@@ -138,6 +138,7 @@ export type DbFlight = {
 export type SyncPlan = {
   packagesToCreate: PackageCreateSpec[];
   packagesToUpdate: PackageUpdateSpec[];
+  packagesToPromote: string[]; // DB package IDs to mark source: "sync"
   flightsToAdd: FlightAddSpec[];
   flightsToRemove: FlightRemoveSpec[];
   flightsToPromote: string[]; // DB flight IDs to mark source: "sync"

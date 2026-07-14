@@ -186,6 +186,7 @@ type ExistingPackage = {
   name: string;
   season?: string | null;
   status?: string;
+  source?: string;
   transport?: string;
   hotels?: DbHotel[];
 };
@@ -245,6 +246,7 @@ export function buildSyncPlan(
 ): SyncPlan {
   const packagesToCreate: PackageCreateSpec[] = [];
   const packagesToUpdate: PackageUpdateSpec[] = [];
+  const packagesToPromote: string[] = [];
 
   // Clone source: prefer same-name package with most data (any season)
   const cloneSourceByName = new Map<string, ExistingPackage>();
@@ -277,6 +279,10 @@ export function buildSyncPlan(
       });
     } else if (row.match_status === "MATCHED" && row.db_id) {
       const dbPkg = existingPackages.find((p) => p._id === row.db_id) ?? null;
+      // Promote manual/unset packages matched by the price list to source "sync"
+      if (dbPkg && dbPkg.source !== "sync") {
+        packagesToPromote.push(row.db_id);
+      }
       const current_hotels: SyncHotel[] = (dbPkg?.hotels ?? []).map((h) => ({
         hotel_type: h.hotel_type.toUpperCase(),
         name: (h.name ?? "").trim(),
@@ -368,7 +374,7 @@ export function buildSyncPlan(
     }
   }
 
-  return { packagesToCreate, packagesToUpdate, flightsToAdd, flightsToRemove, flightsToPromote };
+  return { packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToRemove, flightsToPromote };
 }
 
 // ─── Price list parser ────────────────────────────────────────────────────────

@@ -561,6 +561,7 @@ export const listWithHotelsAndMeals = query({
       season:    p.season ?? "",
       year:      p.year,
       status:    p.status,
+      source:    p.source ?? "manual",
       transport: p.transport ?? "",
       hotels:    hotelsByPkg.get(String(p._id)) ?? [],
     }));
@@ -1163,5 +1164,17 @@ export const setPackagesSourceManual = mutation({
       }
     }
     return count;
+  },
+});
+
+export const promotePackageToSync = mutation({
+  args: { ids: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    for (const id of args.ids) {
+      const p = await ctx.db.get(id as unknown as Parameters<typeof ctx.db.get>[0]);
+      if (p && p.source !== "sync") {
+        await ctx.db.patch(p._id, { source: "sync" });
+      }
+    }
   },
 });

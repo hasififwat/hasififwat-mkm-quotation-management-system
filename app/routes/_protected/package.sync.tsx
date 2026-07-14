@@ -1056,6 +1056,7 @@ export default function PackageSyncPage() {
   const existingPackages = useQuery(api.packages.listWithHotelsAndMeals) ?? [];
   const dbFlights = useQuery(api.packageFlights.listAll) ?? [];
   const syncPackage = useMutation(api.packages.syncPackageFromCsv);
+  const promotePackageToSync = useMutation(api.packages.promotePackageToSync);
   const addFlight = useMutation(api.packageFlights.addFlight);
   const deleteFlight = useMutation(api.packageFlights.deleteFlight);
   const promoteToSync = useMutation(api.packageFlights.promoteToSync);
@@ -1143,6 +1144,13 @@ export default function PackageSyncPage() {
         updated++;
       } catch (e) { errors.push(`Update ${spec.db_name}: ${String(e)}`); }
       done++;
+    }
+
+    if (plan.packagesToPromote.length > 0) {
+      setProgress({ phase: "packages", done, total, current: `Classifying ${plan.packagesToPromote.length} packages as sync…` });
+      try {
+        await promotePackageToSync({ ids: plan.packagesToPromote });
+      } catch (e) { errors.push(`Promote packages: ${String(e)}`); }
     }
 
     for (const spec of plan.flightsToAdd) {
