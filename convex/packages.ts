@@ -392,6 +392,68 @@ export const updatePackage = mutation({
     const nextSeason =
       args.payload.season?.trim() || existingPackage.season || args.payload.year;
 
+    // Read existing hotels/meals/rooms BEFORE deleting so we can compare against the
+    // incoming payload to decide whether any sync-managed field actually changed.
+    const existingHotels = await ctx.db
+      .query("package_hotels")
+      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
+      .collect();
+    const allExistingHotels = dedupeById(existingHotels);
+
+    const existingHotelsNorm = await Promise.all(
+      allExistingHotels.map(async (h) => {
+        const meals = await ctx.db
+          .query("package_meals")
+          .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", h._id))
+          .collect();
+        return {
+          hotel_type: h.hotel_type.toUpperCase(),
+          name: (h.name ?? "").trim(),
+          meals: meals.map((m) => m.meal_type).sort().join("+"),
+        };
+      }),
+    );
+
+    const existingRooms = await ctx.db
+      .query("package_rooms")
+      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
+      .collect();
+    const allExistingRooms = dedupeById(existingRooms);
+
+    // Detect whether any sync-managed field (transport, hotels, rooms) actually changed.
+    // Inclusions/exclusions are NOT sync-managed — editing only those should not unsync the package.
+    const transportChanged =
+      (args.payload.transport ?? "").trim() !== (existingPackage.transport ?? "").trim();
+
+    const hotelsChanged = (() => {
+      const incoming = args.payload.hotels.map((h) => ({
+        hotel_type: h.hotel_type.toUpperCase(),
+        name: (h.name ?? "").trim(),
+        meals: [...h.meals].sort().join("+"),
+      }));
+      if (incoming.length !== existingHotelsNorm.length) return true;
+      const existingMap = new Map(existingHotelsNorm.map((h) => [h.hotel_type, h]));
+      return incoming.some((h) => {
+        const e = existingMap.get(h.hotel_type);
+        return !e || e.name !== h.name || e.meals !== h.meals;
+      });
+    })();
+
+    const roomsChanged = (() => {
+      if (args.payload.rooms.length !== allExistingRooms.length) return true;
+      const existingMap = new Map(allExistingRooms.map((r) => [r.room_type, r]));
+      return args.payload.rooms.some((r) => {
+        const e = existingMap.get(r.room_type);
+        return !e || e.price !== r.price || e.enabled !== r.enabled;
+      });
+    })();
+
+    const syncManagedFieldChanged = transportChanged || hotelsChanged || roomsChanged;
+    const nextSource =
+      existingPackage.source === "sync" && syncManagedFieldChanged
+        ? "unsync"
+        : (existingPackage.source ?? "manual");
+
     await ctx.db.patch(args.id, {
       name: args.payload.name,
       duration: args.payload.duration,
@@ -401,16 +463,9 @@ export const updatePackage = mutation({
       status: args.payload.status,
       inclusions: args.payload.inclusions || "",
       exclusions: args.payload.exclusions || "",
-      // If previously sync-managed, mark as unsync — was MFF-built but now manually edited
-      source: existingPackage.source === "sync" ? "unsync" : (existingPackage.source ?? "manual"),
+      source: nextSource,
       updated_at: now,
     });
-
-    const existingHotels = await ctx.db
-      .query("package_hotels")
-      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
-      .collect();
-    const allExistingHotels = dedupeById(existingHotels);
 
     for (const hotel of allExistingHotels) {
       const existingMeals = await ctx.db
@@ -425,11 +480,7 @@ export const updatePackage = mutation({
       await ctx.db.delete(hotel._id);
     }
 
-    const existingRooms = await ctx.db
-      .query("package_rooms")
-      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
-      .collect();
-    for (const room of dedupeById(existingRooms)) {
+    for (const room of allExistingRooms) {
       await ctx.db.delete(room._id);
     }
 
