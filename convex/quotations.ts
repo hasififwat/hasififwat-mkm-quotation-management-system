@@ -1597,3 +1597,13 @@ export const archiveQuotation = mutation({
 		return { id: args.id };
 	},
 });
+
+export const getItemsByQuotationId = query({
+	args: { id: v.string() },
+	handler: async (ctx, args) => {
+		return await ctx.db
+			.query("quotation_items")
+			.withIndex("by_quotation_id", (q) => q.eq("quotation_id", args.id))
+			.collect();
+	},
+});

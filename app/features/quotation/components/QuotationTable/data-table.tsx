@@ -1,12 +1,14 @@
 import type {
 	Cell,
 	ColumnDef,
+	ExpandedState,
 	SortingState,
 	VisibilityState,
 } from "@tanstack/react-table";
 import {
 	flexRender,
 	getCoreRowModel,
+	getExpandedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
@@ -14,6 +16,7 @@ import type { Id } from "convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import {
 	Archive,
+	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
 	Eye,
@@ -21,8 +24,8 @@ import {
 	MoreHorizontal,
 	PencilIcon,
 } from "lucide-react";
-import { useCallback } from "react";
-import { Link } from "react-router";
+import { Fragment, useCallback, useState } from "react";
+import { Link, useRevalidator } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +50,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { Quotation } from "./columns";
+import { QuotationExpandedRow } from "./QuotationExpandedRow";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -80,28 +84,35 @@ export function DataTable<TData, TValue>({
 	onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) {
 	const archiveQuotation = useMutation(api.quotations.archiveQuotation);
+	const revalidator = useRevalidator();
+	const [expanded, setExpanded] = useState<ExpandedState>({});
 
 	const handleArchive = useCallback(
 		async (quotationId: string) => {
 			if (!confirm("Archive this quotation? It will be hidden from the listing.")) return;
 			try {
 				await archiveQuotation({ id: quotationId as Id<"quotations"> });
+				revalidator.revalidate();
 			} catch (error) {
 				console.error("Failed to archive quotation", error);
 			}
 		},
-		[archiveQuotation],
+		[archiveQuotation, revalidator],
 	);
 
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		getExpandedRowModel: getExpandedRowModel(),
+		getRowCanExpand: () => true,
 		manualSorting: true,
 		state: {
 			sorting: sorting ?? [],
 			columnVisibility,
+			expanded,
 		},
+		onExpandedChange: setExpanded,
 		onSortingChange: (updater) => {
 			const next =
 				typeof updater === "function" ? updater(sorting ?? []) : updater;
@@ -128,18 +139,6 @@ export function DataTable<TData, TValue>({
 		[],
 	);
 
-	const renderFormattedDate = useCallback((dateString: string) => {
-		try {
-			const date = new Date(dateString);
-			const day = String(date.getDate()).padStart(2, "0");
-			const month = String(date.getMonth() + 1).padStart(2, "0");
-			const year = date.getFullYear();
-			return `${day}/${month}/${year}`;
-		} catch (_e) {
-			return dateString;
-		}
-	}, []);
-
 	const renderAmount = useCallback((amount: number) => {
 		return new Intl.NumberFormat("ms-MY", {
 			style: "currency",
@@ -147,46 +146,64 @@ export function DataTable<TData, TValue>({
 		}).format(amount);
 	}, []);
 
-	const renderDropdownMenu = useCallback((quotation: Quotation) => {
-		return (
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="h-8 w-8 p-0">
-						<span className="sr-only">Open menu</span>
-						<MoreHorizontal className="h-4 w-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<Link to={`/quotations/review/${quotation.id}`}>
-						<DropdownMenuItem>
-							<Eye className="mr-2 h-4 w-4" />
-							Preview
+	const renderDropdownMenu = useCallback(
+		(quotation: Quotation) => {
+			return (
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" className="h-8 w-8 p-0">
+							<span className="sr-only">Open menu</span>
+							<MoreHorizontal className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<Link to={`/quotations/review/${quotation.id}`}>
+							<DropdownMenuItem>
+								<Eye className="mr-2 h-4 w-4" />
+								Preview
+							</DropdownMenuItem>
+						</Link>
+						<Link to={`/quotations/edit/${quotation.id}`}>
+							<DropdownMenuItem>
+								<PencilIcon className="mr-2 h-4 w-4" />
+								Edit
+							</DropdownMenuItem>
+						</Link>
+						<DropdownMenuItem
+							onClick={() => handleArchive(quotation.id)}
+							className="text-muted-foreground"
+						>
+							<Archive className="mr-2 h-4 w-4" />
+							Archive
 						</DropdownMenuItem>
-					</Link>
-
-					<Link to={`/quotations/edit/${quotation.id}`}>
-						<DropdownMenuItem>
-							<PencilIcon className="mr-2 h-4 w-4" />
-							Edit
-						</DropdownMenuItem>
-					</Link>
-					<DropdownMenuItem
-						onClick={() => handleArchive(quotation.id)}
-						className="text-muted-foreground"
-					>
-						<Archive className="mr-2 h-4 w-4" />
-						Archive
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		);
-	}, [handleArchive]);
+					</DropdownMenuContent>
+				</DropdownMenu>
+			);
+		},
+		[handleArchive],
+	);
 
 	const renderCell = useCallback(
 		(cell: Cell<TData, unknown>) => {
 			const columnId = cell.column.id;
 			const cellValue = cell.getValue();
 			const row = cell.row.original as Quotation;
+
+			if (columnId === "expand") {
+				const isExpanded = cell.row.getIsExpanded();
+				return (
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-7 w-7"
+						onClick={cell.row.getToggleExpandedHandler()}
+					>
+						<ChevronDown
+							className={`h-4 w-4 text-muted-foreground transition-transform duration-150 ${isExpanded ? "" : "-rotate-90"}`}
+						/>
+					</Button>
+				);
+			}
 
 			if (columnId === "quotation_number") {
 				return (
@@ -251,36 +268,18 @@ export function DataTable<TData, TValue>({
 				return renderAmount(row.total_amount);
 			}
 
-			if (columnId === "created_at" || columnId === "updated_at") {
-				return renderFormattedDate(cellValue as string);
-			}
-
 			if (columnId === "status") {
 				const status = cellValue as string;
 				let variant: "default" | "secondary" | "destructive" | "outline" =
 					"default";
-
 				switch (status) {
-					case "draft":
-						variant = "secondary";
-						break;
-					case "sent":
-						variant = "outline";
-						break;
-					case "accepted":
-						variant = "default";
-						break;
-					case "revised":
-						variant = "outline";
-						break;
-					case "superseded":
-						variant = "secondary";
-						break;
-					case "rejected":
-						variant = "destructive";
-						break;
+					case "draft": variant = "secondary"; break;
+					case "sent": variant = "outline"; break;
+					case "accepted": variant = "default"; break;
+					case "revised": variant = "outline"; break;
+					case "superseded": variant = "secondary"; break;
+					case "rejected": variant = "destructive"; break;
 				}
-
 				const capStatus = status.charAt(0).toUpperCase() + status.slice(1);
 				return <Badge variant={variant}>{capStatus}</Badge>;
 			}
@@ -291,7 +290,7 @@ export function DataTable<TData, TValue>({
 
 			return flexRender(cell.column.columnDef.cell, cell.getContext());
 		},
-		[renderFormattedDate, renderPackageCell, renderDropdownMenu, renderAmount, handleArchive],
+		[renderPackageCell, renderDropdownMenu, renderAmount],
 	);
 
 	return (
@@ -309,36 +308,44 @@ export function DataTable<TData, TValue>({
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id} className="whitespace-nowrap">
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-										</TableHead>
-									);
-								})}
+								{headerGroup.headers.map((header) => (
+									<TableHead key={header.id} className="whitespace-nowrap">
+										{header.isPlaceholder
+											? null
+											: flexRender(
+													header.column.columnDef.header,
+													header.getContext(),
+												)}
+									</TableHead>
+								))}
 							</TableRow>
 						))}
 					</TableHeader>
 					<TableBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell) => {
-										return (
+								<Fragment key={row.id}>
+									<TableRow data-state={row.getIsSelected() && "selected"}>
+										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id} className="whitespace-nowrap">
 												{renderCell(cell)}
 											</TableCell>
-										);
-									})}
-								</TableRow>
+										))}
+									</TableRow>
+									{row.getIsExpanded() && (
+										<TableRow className="hover:bg-transparent">
+											<TableCell className="p-0" />
+											<TableCell
+												colSpan={row.getVisibleCells().length - 1}
+												className="p-0 border-b"
+											>
+												<QuotationExpandedRow
+													quotation={row.original as Quotation}
+												/>
+											</TableCell>
+										</TableRow>
+									)}
+								</Fragment>
 							))
 						) : (
 							<TableRow>
