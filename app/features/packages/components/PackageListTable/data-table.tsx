@@ -3,12 +3,19 @@ import type { Cell, ColumnDef } from "@tanstack/react-table";
 import {
 	flexRender,
 	getCoreRowModel,
+	getExpandedRowModel,
+	getGroupedRowModel,
+	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import type { ExpandedState, GroupingState, SortingState } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import {
+	ArrowDown,
+	ArrowUp,
+	ArrowUpDown,
 	ChevronDown,
 	Copy,
 	Loader2,
@@ -16,7 +23,7 @@ import {
 	PencilIcon,
 	Trash,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
@@ -63,11 +70,31 @@ export function DataTable<TData, TValue>({
 	const [statusOverridesById, setStatusOverridesById] = useState<
 		Record<string, "published" | "unpublished">
 	>({});
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [expanded, setExpanded] = useState<ExpandedState>(true);
+	const [grouping] = useState<GroupingState>(["season"]);
+	const [columnVisibility] = useState<Record<string, boolean>>({ season: false });
+
+	// Add hidden season column used only for grouping
+	const allColumns = useMemo<ColumnDef<TData, unknown>[]>(
+		() => [
+			{ id: "season", accessorKey: "season" } as ColumnDef<TData, unknown>,
+			...columns,
+		],
+		[columns],
+	);
 
 	const table = useReactTable({
 		data,
-		columns,
+		columns: allColumns,
 		getCoreRowModel: getCoreRowModel(),
+		getGroupedRowModel: getGroupedRowModel(),
+		getExpandedRowModel: getExpandedRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		onSortingChange: setSorting,
+		onExpandedChange: setExpanded,
+		groupedColumnMode: false,
+		state: { sorting, grouping, expanded, columnVisibility },
 	});
 
 	const renderPackageCell = useCallback(
@@ -97,15 +124,6 @@ export function DataTable<TData, TValue>({
 						<span className="text-xs text-muted-foreground">
 							{_duration ?? "N/A"} . {_year}
 						</span>
-
-						{/* <Button
-							variant="ghost"
-							size="sm"
-							className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
-							asChild
-						>
-							<Link to={`/packages/edit/${pkg?._id}`}>Edit</Link>
-						</Button> */}
 					</div>
 				</div>
 			);
@@ -113,7 +131,6 @@ export function DataTable<TData, TValue>({
 		[handlePreview],
 	);
 
-	//Format 2026-01-16T19:10:06.730972+00:00 16/01/2026
 	const renderFormattedDate = useCallback((dateString: string) => {
 		const date = new Date(dateString);
 		const day = String(date.getDate()).padStart(2, "0");
@@ -128,28 +145,14 @@ export function DataTable<TData, TValue>({
 
 	const handleStatusChange = useCallback(
 		async (pkgId: string, nextStatus: "published" | "unpublished") => {
-			setStatusLoadingById((prev) => ({
-				...prev,
-				[pkgId]: true,
-			}));
-
+			setStatusLoadingById((prev) => ({ ...prev, [pkgId]: true }));
 			try {
-				await updatePackageStatus({
-					id: pkgId as Id<"packages">,
-					status: nextStatus,
-				});
-
-				setStatusOverridesById((prev) => ({
-					...prev,
-					[pkgId]: nextStatus,
-				}));
+				await updatePackageStatus({ id: pkgId as Id<"packages">, status: nextStatus });
+				setStatusOverridesById((prev) => ({ ...prev, [pkgId]: nextStatus }));
 			} catch (error) {
 				console.error("Failed to update package status", error);
 			} finally {
-				setStatusLoadingById((prev) => ({
-					...prev,
-					[pkgId]: false,
-				}));
+				setStatusLoadingById((prev) => ({ ...prev, [pkgId]: false }));
 			}
 		},
 		[updatePackageStatus],
@@ -224,15 +227,6 @@ export function DataTable<TData, TValue>({
 				);
 			}
 
-			if (columnId === "season") {
-				const season = (cellValue as string | undefined) ?? "";
-				return (
-					<div className="flex justify-center">
-						<SeasonBadge season={season} />
-					</div>
-				);
-			}
-
 			if (columnId === "created_at" || columnId === "updated_at") {
 				return renderFormattedDate(cellValue as string);
 			}
@@ -270,9 +264,7 @@ export function DataTable<TData, TValue>({
 											</>
 										) : (
 											<>
-												<span
-													className={`h-1.5 w-1.5 rounded-full ${statusDotClass}`}
-												/>
+												<span className={`h-1.5 w-1.5 rounded-full ${statusDotClass}`} />
 												{capStatus}
 												<ChevronDown className="h-3 w-3" />
 											</>
@@ -301,15 +293,8 @@ export function DataTable<TData, TValue>({
 
 			if (columnId === "sections") {
 				const row = cell.row.original as TData & {
-					hotels?: Array<{
-						enabled?: boolean;
-						name?: string;
-						meals?: string[];
-					}>;
-					rooms?: Array<{
-						enabled?: boolean;
-						price?: number;
-					}>;
+					hotels?: Array<{ enabled?: boolean; name?: string; meals?: string[] }>;
+					rooms?: Array<{ enabled?: boolean; price?: number }>;
 					inclusions?: string;
 					exclusions?: string;
 					flights?: unknown[];
@@ -321,15 +306,12 @@ export function DataTable<TData, TValue>({
 						Boolean(hotel.name?.trim()) ||
 						(hotel.meals?.length ?? 0) > 0,
 				);
-
 				const hasRoomDetails = (row.rooms ?? []).some(
 					(room) => room.enabled || (room.price ?? 0) > 0,
 				);
-
 				const hasInclusionExclusion = Boolean(
 					row.inclusions?.trim() || row.exclusions?.trim(),
 				);
-
 				const hasFlightsDetails = (row.flights?.length ?? 0) > 0;
 
 				return (
@@ -357,6 +339,9 @@ export function DataTable<TData, TValue>({
 			statusOverridesById,
 		],
 	);
+
+	const visibleColCount = table.getVisibleLeafColumns().length;
+
 	return (
 		<div className="overflow-hidden">
 			<TooltipProvider>
@@ -366,19 +351,32 @@ export function DataTable<TData, TValue>({
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
 									const columnId = header.column.id;
-									const isCenteredColumn =
-										columnId === "season" || columnId === "status";
+									const isCenteredColumn = columnId === "status";
+									const canSort = header.column.getCanSort();
+									const sorted = header.column.getIsSorted();
 									return (
 										<TableHead
 											key={header.id}
 											className={isCenteredColumn ? "text-center" : ""}
 										>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
+											{header.isPlaceholder ? null : canSort ? (
+												<button
+													type="button"
+													onClick={header.column.getToggleSortingHandler()}
+													className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+												>
+													{flexRender(header.column.columnDef.header, header.getContext())}
+													{sorted === "asc" ? (
+														<ArrowUp className="h-3.5 w-3.5" />
+													) : sorted === "desc" ? (
+														<ArrowDown className="h-3.5 w-3.5" />
+													) : (
+														<ArrowUpDown className="h-3.5 w-3.5 opacity-40" />
 													)}
+												</button>
+											) : (
+												flexRender(header.column.columnDef.header, header.getContext())
+											)}
 										</TableHead>
 									);
 								})}
@@ -388,10 +386,7 @@ export function DataTable<TData, TValue>({
 					<TableBody>
 						{isLoading ? (
 							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
+								<TableCell colSpan={visibleColCount} className="h-24 text-center">
 									<div className="inline-flex items-center gap-2 text-muted-foreground">
 										<Loader2 className="h-4 w-4 animate-spin" />
 										Loading data...
@@ -399,32 +394,52 @@ export function DataTable<TData, TValue>({
 								</TableCell>
 							</TableRow>
 						) : table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell) => {
-										const isCenteredColumn =
-											cell.column.id === "season" ||
-											cell.column.id === "status";
-										return (
-											<TableCell
-												key={cell.id}
-												className={`${cell.column.id === "action" ? "w-16" : ""} ${isCenteredColumn ? "text-center" : ""}`}
-											>
-												{renderCell(cell)}
+							table.getRowModel().rows.map((row) => {
+								if (row.getIsGrouped()) {
+									const season = (row.getValue("season") as string | undefined) ?? "";
+									const isExpanded = row.getIsExpanded();
+									return (
+										<TableRow
+											key={row.id}
+											className="cursor-pointer bg-muted/20 hover:bg-muted/40 border-y"
+											onClick={row.getToggleExpandedHandler()}
+										>
+											<TableCell colSpan={visibleColCount} className="py-2.5">
+												<div className="flex items-center gap-2">
+													<ChevronDown
+														className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${!isExpanded ? "-rotate-90" : ""}`}
+													/>
+													<SeasonBadge season={season} />
+													<span className="text-xs text-muted-foreground">
+														{row.subRows.length} package{row.subRows.length !== 1 ? "s" : ""}
+													</span>
+												</div>
 											</TableCell>
-										);
-									})}
-								</TableRow>
-							))
+										</TableRow>
+									);
+								}
+								return (
+									<TableRow
+										key={row.id}
+										data-state={row.getIsSelected() && "selected"}
+									>
+										{row.getVisibleCells().map((cell) => {
+											const isCenteredColumn = cell.column.id === "status";
+											return (
+												<TableCell
+													key={cell.id}
+													className={`${cell.column.id === "action" ? "w-16" : ""} ${isCenteredColumn ? "text-center" : ""}`}
+												>
+													{renderCell(cell)}
+												</TableCell>
+											);
+										})}
+									</TableRow>
+								);
+							})
 						) : (
 							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
+								<TableCell colSpan={visibleColCount} className="h-24 text-center">
 									No results.
 								</TableCell>
 							</TableRow>

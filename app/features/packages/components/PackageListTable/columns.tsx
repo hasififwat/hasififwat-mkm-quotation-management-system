@@ -7,9 +7,9 @@ type PackageWithRooms = FunctionReturnType<
 >[number];
 
 export const columns: ColumnDef<PackageWithRooms>[] = [
-	{ accessorKey: "name", header: "Package Name" },
-	{ id: "sections", header: "Sections" },
-	{ accessorKey: "season", header: "Season" },
-	{ accessorKey: "status", header: "Status" },
-	{ id: "action", header: "" },
+	{ accessorKey: "name", header: "Package Name", enableSorting: true },
+	{ id: "sections", header: "Sections", enableSorting: false },
+	{ accessorKey: "status", header: "Status", enableSorting: false },
+	{ accessorKey: "created_at", header: "Created", enableSorting: true },
+	{ id: "action", header: "", enableSorting: false },
 ];
