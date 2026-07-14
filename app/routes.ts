@@ -18,6 +18,7 @@ export default [
 		route("/sign-up", "routes/sign-up.tsx"),
 		route("dashboard", "routes/_protected/dashboard.tsx"),
 		route("/flights", "routes/_protected/flight.index.tsx"),
+		route("/flights/audit", "routes/_protected/flight.audit.tsx"),
 		route("/packages", "routes/_protected/package.index.tsx"),
 		route("/packages/create", "routes/_protected/package.create.tsx"),
 		route(

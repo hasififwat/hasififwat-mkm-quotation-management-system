@@ -54,10 +54,12 @@ export default defineSchema({
     package_id: v.union(v.id("packages"), v.string()),
     month: v.string(),
     flight: v.optional(v.string()),
+    return_flight: v.optional(v.string()),
     departure_date: v.string(),
     departure_sector: v.string(),
     return_date: v.string(),
     return_sector: v.string(),
+    source: v.optional(v.union(v.literal("sync"), v.literal("manual"))),
     created_at: v.string(),
   }).index("by_package_id", ["package_id"]),
 

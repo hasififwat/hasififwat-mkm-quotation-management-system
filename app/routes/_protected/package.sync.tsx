@@ -3,10 +3,12 @@ import type { Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import {
   AlertTriangle,
+  Check,
   CheckCircle2,
   ChevronDown,
   FileText,
   Loader2,
+  Pencil,
   Plus,
   RefreshCw,
   Trash2,
@@ -32,9 +34,10 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
+  airlineName,
   buildSyncPlan,
-  parseFlightDiffCsv,
-  parsePackageMappingCsv,
+  parseMffCsv,
+  parsePriceListCsv,
 } from "~/features/packages/sync/parsers";
 import type {
   ApplyProgress,
@@ -42,6 +45,7 @@ import type {
   FlightAddSpec,
   FlightRemoveSpec,
   PackageCreateSpec,
+  PackageMappingRow,
   PackageUpdateSpec,
   SyncPlan,
 } from "~/features/packages/sync/types";
@@ -540,10 +544,15 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
           </div>
         )}
         <div className="space-y-2 mx-2 mb-2">
-          {entries.map((entry) => (
+          {entries.map((entry) => {
+            const pureAdds    = entry.flightsToAdd.filter(f => f.row.status !== "edited");
+            const editedAdds  = entry.flightsToAdd.filter(f => f.row.status === "edited");
+            const pureRemoves = entry.flightsToRemove.filter(f => f.row.status !== "edited");
+            const hasFlights  = pureAdds.length > 0 || editedAdds.length > 0 || pureRemoves.length > 0;
+            return (
             <Collapsible key={entry.key} defaultOpen={false}>
               <CollapsibleTrigger className="w-full">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-md border text-left ${entry.flightsToAdd.length === 0 && entry.flightsToRemove.length === 0 ? "bg-muted/20 opacity-60 hover:opacity-80" : "bg-muted/40 hover:bg-muted/70"}`}>
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-md border text-left ${!hasFlights ? "bg-muted/20 opacity-60 hover:opacity-80" : "bg-muted/40 hover:bg-muted/70"}`}>
                   {entry.action === "create" && <Plus className="w-3.5 h-3.5 text-green-600 shrink-0" />}
                   {entry.action === "update" && <RefreshCw className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
                   {entry.action === "flights-only" && <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
@@ -551,41 +560,61 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
                   <Badge variant="outline" className="text-xs shrink-0">{entry.season}</Badge>
                   {entry.action === "create" && <Badge className="text-xs bg-green-100 text-green-800 border-0 shrink-0">New package</Badge>}
                   {entry.action === "update" && <Badge className="text-xs bg-blue-100 text-blue-800 border-0 shrink-0">Updated</Badge>}
-                  {entry.flightsToAdd.length > 0 && (
-                    <span className="text-xs text-emerald-600 shrink-0">+{entry.flightsToAdd.length} flights</span>
+                  {pureAdds.length > 0 && (
+                    <span className="text-xs text-emerald-600 shrink-0">+{pureAdds.length} flights</span>
                   )}
-                  {entry.flightsToRemove.length > 0 && (
-                    <span className="text-xs text-red-500 shrink-0">−{entry.flightsToRemove.length} flights</span>
+                  {editedAdds.length > 0 && (
+                    <span className="text-xs text-blue-600 shrink-0">{editedAdds.length} updated</span>
+                  )}
+                  {pureRemoves.length > 0 && (
+                    <span className="text-xs text-red-500 shrink-0">−{pureRemoves.length} flights</span>
                   )}
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                {(entry.flightsToAdd.length > 0 || entry.flightsToRemove.length > 0) && (
+                {hasFlights && (
                   <div className="rounded-md border mx-1 mt-1 mb-2 overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-6"></TableHead>
+                          <TableHead>Airline</TableHead>
                           <TableHead>Departure</TableHead>
+                          <TableHead>Dep. Flight</TableHead>
                           <TableHead>Dep. Sector</TableHead>
                           <TableHead>Return</TableHead>
                           <TableHead>Ret. Sector</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {entry.flightsToAdd.map((f, i) => (
+                        {pureAdds.map((f, i) => (
                           <TableRow key={`add-${i}`} className="bg-emerald-50 dark:bg-emerald-950/20">
                             <TableCell><Plus className="w-3 h-3 text-emerald-600" /></TableCell>
+                            <TableCell className="text-xs font-medium">{airlineName(f.row.airline)}</TableCell>
                             <TableCell className="text-xs">{f.departure_date}</TableCell>
+                            <TableCell className="text-xs font-mono">{f.row.dep_flight}</TableCell>
                             <TableCell className="text-xs">{f.departure_sector}</TableCell>
                             <TableCell className="text-xs">{f.return_date}</TableCell>
                             <TableCell className="text-xs">{f.return_sector}</TableCell>
                           </TableRow>
                         ))}
-                        {entry.flightsToRemove.map((f, i) => (
+                        {editedAdds.map((f, i) => (
+                          <TableRow key={`edit-${i}`} className="bg-blue-50 dark:bg-blue-950/20">
+                            <TableCell><Pencil className="w-3 h-3 text-blue-500" /></TableCell>
+                            <TableCell className="text-xs font-medium">{airlineName(f.row.airline)}</TableCell>
+                            <TableCell className="text-xs">{f.departure_date}</TableCell>
+                            <TableCell className="text-xs font-mono">{f.row.dep_flight}</TableCell>
+                            <TableCell className="text-xs">{f.departure_sector}</TableCell>
+                            <TableCell className="text-xs">{f.return_date}</TableCell>
+                            <TableCell className="text-xs">{f.return_sector}</TableCell>
+                          </TableRow>
+                        ))}
+                        {pureRemoves.map((f, i) => (
                           <TableRow key={`rem-${i}`} className="bg-red-50 dark:bg-red-950/20">
                             <TableCell><Trash2 className="w-3 h-3 text-red-500" /></TableCell>
+                            <TableCell className="text-xs font-medium">{airlineName(f.row.airline)}</TableCell>
                             <TableCell className="text-xs">{f.departure_date}</TableCell>
+                            <TableCell className="text-xs font-mono">{f.row.dep_flight}</TableCell>
                             <TableCell className="text-xs">{f.row.departure_sector}</TableCell>
                             <TableCell className="text-xs">{f.return_date}</TableCell>
                             <TableCell className="text-xs">{f.row.return_sector}</TableCell>
@@ -597,10 +626,427 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
                 )}
               </CollapsibleContent>
             </Collapsible>
-          ))}
+            );
+          })}
         </div>
       </AccordionContent>
     </AccordionItem>
+  );
+}
+
+// ─── Step 2: Flight diff verification ────────────────────────────────────────
+
+import type { FlightDiffRow } from "~/features/packages/sync/types";
+
+function FlightDiffStep({
+  rows,
+  onBack,
+  onContinue,
+}: {
+  rows: FlightDiffRow[];
+  onBack: () => void;
+  onContinue: () => void;
+}) {
+  const added         = rows.filter(r => r.status === "added");
+  const willRemove    = rows.filter(r => r.status === "removed" && r.season !== "2026/2027");
+  const legacySkipped = rows.filter(r => r.status === "removed" && r.season === "2026/2027");
+  const noDbPkg       = rows.filter(r => r.status === "no_db_package");
+  const unchanged     = rows.filter(r => r.status === "unchanged");
+  const edited        = rows.filter(r => r.status === "edited");
+
+  // Group flights by "package|season"
+  function groupByPackage(list: FlightDiffRow[]) {
+    const map = new Map<string, { name: string; season: string; rows: FlightDiffRow[] }>();
+    for (const r of list) {
+      const key = `${r.package_name}|${r.season}`;
+      if (!map.has(key)) map.set(key, { name: r.package_name, season: r.season, rows: [] });
+      map.get(key)!.rows.push(r);
+    }
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  function FlightGroupTable({ group, rowClass }: { group: ReturnType<typeof groupByPackage>[0]; rowClass: string }) {
+    return (
+      <Collapsible defaultOpen={group.rows.length <= 5}>
+        <CollapsibleTrigger asChild>
+          <button type="button" className="w-full flex items-center gap-2 px-3 py-2 rounded-md border bg-muted/30 hover:bg-muted/50 text-left text-sm">
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <span className="font-medium flex-1">{group.name}</span>
+            <Badge variant="outline" className="text-xs">{group.season}</Badge>
+            <span className="text-xs text-muted-foreground">{group.rows.length} flight{group.rows.length !== 1 ? "s" : ""}</span>
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="rounded-md border mx-1 mt-1 mb-2 overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-xs">
+                  <TableHead>Airline</TableHead>
+                  <TableHead>Departure</TableHead>
+                  <TableHead>Dep. Flight</TableHead>
+                  <TableHead>Dep. Sector</TableHead>
+                  <TableHead>Return</TableHead>
+                  <TableHead>Ret. Sector</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {group.rows.map((r, i) => (
+                  <TableRow key={i} className={rowClass}>
+                    <TableCell className="text-xs font-medium">{r.airline ? airlineName(r.airline) : "—"}</TableCell>
+                    <TableCell className="text-xs">{r.departure_date}</TableCell>
+                    <TableCell className="text-xs font-mono">{r.dep_flight || "—"}</TableCell>
+                    <TableCell className="text-xs">{r.departure_sector}</TableCell>
+                    <TableCell className="text-xs">{r.return_date}</TableCell>
+                    <TableCell className="text-xs">{r.return_sector}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Summary */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/20 p-3 text-center">
+          <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{added.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">To add</p>
+        </div>
+        <div className="rounded-lg border bg-red-50 dark:bg-red-950/20 p-3 text-center">
+          <p className="text-2xl font-bold text-red-700 dark:text-red-400">{willRemove.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">To remove</p>
+          {legacySkipped.length > 0 && (
+            <p className="text-xs text-muted-foreground/60 mt-0.5">+{legacySkipped.length} legacy skipped</p>
+          )}
+        </div>
+        <div className={`rounded-lg border p-3 text-center ${edited.length > 0 ? "bg-blue-50 dark:bg-blue-950/20" : ""}`}>
+          <p className={`text-2xl font-bold ${edited.length > 0 ? "text-blue-700 dark:text-blue-400" : "text-muted-foreground"}`}>{edited.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Airline / sector changed</p>
+        </div>
+        <div className="rounded-lg border p-3 text-center">
+          <p className="text-2xl font-bold text-muted-foreground">{unchanged.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Unchanged</p>
+        </div>
+        <div className={`rounded-lg border p-3 text-center ${noDbPkg.length > 0 ? "bg-amber-50 dark:bg-amber-950/20" : ""}`}>
+          <p className={`text-2xl font-bold ${noDbPkg.length > 0 ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground"}`}>{noDbPkg.length}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">No package match</p>
+        </div>
+      </div>
+
+      {/* No DB package warning */}
+      {noDbPkg.length > 0 && (
+        <Card className="border-amber-300">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-amber-700">
+              <AlertTriangle className="w-4 h-4" />
+              {noDbPkg.length} flight{noDbPkg.length !== 1 ? "s" : ""} could not be matched to a package
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              These MFF rows have no matching package in the DB or in the Create list. They will be skipped on Apply.
+            </p>
+          </CardHeader>
+          <CardContent className="p-0 overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-xs">
+                  <TableHead>MFF Name</TableHead>
+                  <TableHead>Canonical Name</TableHead>
+                  <TableHead>Season</TableHead>
+                  <TableHead>Departure</TableHead>
+                  <TableHead>Return</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {noDbPkg.map((r, i) => (
+                  <TableRow key={i} className="bg-amber-50/50 dark:bg-amber-950/10">
+                    <TableCell className="text-xs font-mono">{r.notes}</TableCell>
+                    <TableCell className="text-xs font-medium">{r.package_name}</TableCell>
+                    <TableCell className="text-xs"><Badge variant="outline">{r.season}</Badge></TableCell>
+                    <TableCell className="text-xs">{r.departure_date}</TableCell>
+                    <TableCell className="text-xs">{r.return_date}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Added flights */}
+      {added.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <Plus className="w-4 h-4 text-emerald-600" />
+            {added.length} flights to add
+          </h3>
+          {groupByPackage(added).map(g => (
+            <FlightGroupTable key={g.name + g.season} group={g} rowClass="bg-emerald-50/50 dark:bg-emerald-950/10" />
+          ))}
+        </div>
+      )}
+
+      {/* Edited flights (airline / sector changed) */}
+      {edited.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-blue-600" />
+            {edited.length} flights with airline or sector changes
+            <span className="text-xs font-normal text-muted-foreground">— old flight will be replaced with new</span>
+          </h3>
+          {groupByPackage(edited).map(group => (
+            <Collapsible key={group.name + group.season} defaultOpen>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 px-3 py-2 rounded-md border bg-blue-50/50 dark:bg-blue-950/10 hover:bg-blue-50 text-left text-sm">
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <span className="font-medium flex-1">{group.name}</span>
+                  <Badge variant="outline" className="text-xs">{group.season}</Badge>
+                  <span className="text-xs text-muted-foreground">{group.rows.length} change{group.rows.length !== 1 ? "s" : ""}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="rounded-md border mx-1 mt-1 mb-2 overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="text-xs">
+                        <TableHead>Date</TableHead>
+                        <TableHead>Field</TableHead>
+                        <TableHead>Current (DB)</TableHead>
+                        <TableHead className="w-6 text-center">→</TableHead>
+                        <TableHead>New (MFF)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {group.rows.flatMap((r, i) => {
+                        const changes: { field: string; old: string; new: string }[] = [];
+                        if (r.db_airline !== undefined && r.db_airline !== r.airline)
+                          changes.push({ field: "Airline", old: airlineName(r.db_airline) || "(unknown)", new: airlineName(r.airline) });
+                        if (r.db_dep_sector && r.db_dep_sector !== r.departure_sector)
+                          changes.push({ field: "Dep. Sector", old: r.db_dep_sector, new: r.departure_sector });
+                        if (r.db_ret_sector && r.db_ret_sector !== r.return_sector)
+                          changes.push({ field: "Ret. Sector", old: r.db_ret_sector, new: r.return_sector });
+                        return changes.map((c, j) => (
+                          <TableRow key={`${i}-${j}`} className="bg-blue-50/30 dark:bg-blue-950/10">
+                            {j === 0 && (
+                              <TableCell className="text-xs" rowSpan={changes.length}>{r.departure_date}</TableCell>
+                            )}
+                            <TableCell className="text-xs font-medium text-muted-foreground">{c.field}</TableCell>
+                            <TableCell className="text-xs font-mono line-through text-red-500/70">{c.old}</TableCell>
+                            <TableCell className="text-xs text-center text-muted-foreground">→</TableCell>
+                            <TableCell className="text-xs font-mono text-green-600 font-medium">{c.new}</TableCell>
+                          </TableRow>
+                        ));
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
+        </div>
+      )}
+
+      {/* Flights to remove */}
+      {willRemove.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold flex items-center gap-2">
+            <Trash2 className="w-4 h-4 text-red-600" />
+            {willRemove.length} flights to remove
+          </h3>
+          {groupByPackage(willRemove).map(g => (
+            <FlightGroupTable key={g.name + g.season} group={g} rowClass="bg-red-50/50 dark:bg-red-950/10" />
+          ))}
+        </div>
+      )}
+
+      {/* Legacy skipped */}
+      {legacySkipped.length > 0 && (
+        <div className="space-y-2">
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <button type="button" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                <ChevronDown className="w-3.5 h-3.5" />
+                {legacySkipped.length} legacy 2026/2027 flights — will NOT be removed
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <p className="text-xs text-muted-foreground mb-2 mt-1 ml-5">
+                These flights belong to the old 2026/2027 season and are intentionally preserved to avoid breaking existing quotations.
+              </p>
+              <div className="ml-5 space-y-2">
+                {groupByPackage(legacySkipped).map(g => (
+                  <FlightGroupTable key={g.name + g.season} group={g} rowClass="opacity-50" />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      )}
+
+      {/* Nothing to change */}
+      {added.length === 0 && edited.length === 0 && willRemove.length === 0 && noDbPkg.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
+          <p className="text-sm">All {unchanged.length} flights are already up to date.</p>
+        </div>
+      )}
+
+      {unchanged.length > 0 && (added.length > 0 || edited.length > 0 || willRemove.length > 0) && (
+        <p className="text-xs text-muted-foreground text-center">
+          {unchanged.length} flights already in DB — no changes needed
+        </p>
+      )}
+
+      <div className="flex items-center justify-between pt-2">
+        <Button variant="outline" onClick={onBack}>← Back</Button>
+        <Button onClick={onContinue}>Continue to Review →</Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Stepper ──────────────────────────────────────────────────────────────────
+
+const STEPS = ["Upload Files", "Verify Mapping", "Verify Flights", "Review & Apply"];
+
+function Stepper({ step }: { step: number }) {
+  return (
+    <div className="flex items-center gap-0">
+      {STEPS.map((label, i) => (
+        <div key={i} className="flex items-center flex-1 last:flex-none">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+              i < step  ? "bg-primary border-primary text-primary-foreground"
+              : i === step ? "border-primary text-primary bg-background"
+              : "border-muted-foreground/30 text-muted-foreground/50 bg-background"
+            }`}>
+              {i < step ? <Check className="w-3.5 h-3.5" /> : i + 1}
+            </div>
+            <span className={`text-sm font-medium hidden sm:block ${i === step ? "text-foreground" : "text-muted-foreground/60"}`}>
+              {label}
+            </span>
+          </div>
+          {i < STEPS.length - 1 && (
+            <div className={`h-0.5 flex-1 mx-3 transition-colors ${i < step ? "bg-primary" : "bg-muted-foreground/20"}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Step 1: Mapping verification ────────────────────────────────────────────
+
+function MappingStep({
+  rows,
+  onBack,
+  onContinue,
+}: {
+  rows: PackageMappingRow[];
+  onBack: () => void;
+  onContinue: () => void;
+}) {
+  const matched = rows.filter(r => r.match_status === "MATCHED").length;
+  const newCount = rows.filter(r => r.match_status === "NEW").length;
+
+  // Group by season in order of appearance
+  const bySeason = new Map<string, PackageMappingRow[]>();
+  for (const r of rows) {
+    if (!bySeason.has(r.season_code)) bySeason.set(r.season_code, []);
+    bySeason.get(r.season_code)!.push(r);
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Summary stats */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-lg border p-3 text-center">
+          <p className="text-2xl font-bold">{bySeason.size}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Seasons detected</p>
+        </div>
+        <div className="rounded-lg border bg-green-50 dark:bg-green-950/20 p-3 text-center">
+          <p className="text-2xl font-bold text-green-700 dark:text-green-400">{matched}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Matched to DB</p>
+        </div>
+        <div className="rounded-lg border bg-amber-50 dark:bg-amber-950/20 p-3 text-center">
+          <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{newCount}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">New (not in DB)</p>
+        </div>
+      </div>
+
+      {/* Per-season tables */}
+      {Array.from(bySeason.entries()).map(([season, seasonRows]) => {
+        const first = seasonRows[0];
+        return (
+          <Card key={season}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <CardTitle className="text-sm font-semibold">{season}</CardTitle>
+                <span className="text-xs text-muted-foreground">{first.season_start} → {first.season_end}</span>
+                <span className="text-xs text-muted-foreground ml-auto">{seasonRows.length} packages</span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="text-xs">
+                    <TableHead>Package</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">QDP</TableHead>
+                    <TableHead className="text-right">DBL</TableHead>
+                    <TableHead>Transport</TableHead>
+                    <TableHead>Makkah</TableHead>
+                    <TableHead>Madinah</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {seasonRows.map((r, i) => (
+                    <TableRow key={i} className={r.match_status === "NEW" ? "bg-amber-50/50 dark:bg-amber-950/10" : ""}>
+                      <TableCell className="text-xs font-medium">
+                        {r.canonical_name}
+                        {r.price_list_segment && (
+                          <span className="ml-1 text-muted-foreground font-normal">({r.price_list_segment})</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {r.match_status === "MATCHED" ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
+                            <Check className="w-3 h-3" /> {r.db_name || r.canonical_name}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded">
+                            <Plus className="w-3 h-3" /> NEW
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-xs text-right tabular-nums">
+                        {r.qdp_price != null ? r.qdp_price.toLocaleString() : <span className="text-muted-foreground/50">—</span>}
+                      </TableCell>
+                      <TableCell className="text-xs text-right tabular-nums">
+                        {r.dbl_price != null ? r.dbl_price.toLocaleString() : <span className="text-muted-foreground/50">—</span>}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{r.transport || "—"}</TableCell>
+                      <TableCell className="text-xs">{r.makkah_hotel || <span className="text-muted-foreground/50">—</span>}</TableCell>
+                      <TableCell className="text-xs">{r.madinah_hotel || <span className="text-muted-foreground/50">—</span>}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        );
+      })}
+
+      <div className="flex items-center justify-between pt-2">
+        <Button variant="outline" onClick={onBack}>← Back</Button>
+        <Button onClick={onContinue} disabled={rows.length === 0}>
+          Looks correct — Continue →
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -608,15 +1054,17 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
 
 export default function PackageSyncPage() {
   const existingPackages = useQuery(api.packages.listWithHotelsAndMeals) ?? [];
+  const dbFlights = useQuery(api.packageFlights.listAll) ?? [];
   const syncPackage = useMutation(api.packages.syncPackageFromCsv);
   const addFlight = useMutation(api.packageFlights.addFlight);
   const deleteFlight = useMutation(api.packageFlights.deleteFlight);
+  const promoteToSync = useMutation(api.packageFlights.promoteToSync);
 
-  const [mappingText, setMappingText] = useState<string | null>(null);
-  const [mappingFileName, setMappingFileName] = useState<string | null>(null);
-  const [flightText, setFlightText] = useState<string | null>(null);
-  const [flightFileName, setFlightFileName] = useState<string | null>(null);
-
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [priceListText, setPriceListText] = useState<string | null>(null);
+  const [priceListFileName, setPriceListFileName] = useState<string | null>(null);
+  const [mffText, setMffText] = useState<string | null>(null);
+  const [mffFileName, setMffFileName] = useState<string | null>(null);
   const [progress, setProgress] = useState<ApplyProgress | null>(null);
   const [result, setResult] = useState<ApplyResult | null>(null);
 
@@ -629,30 +1077,25 @@ export default function PackageSyncPage() {
     });
   }, []);
 
-  const handleMappingFile = useCallback(async (file: File) => {
-    setMappingFileName(file.name);
-    setMappingText(await readFile(file));
-    setResult(null);
-  }, [readFile]);
+  const mappingRows = useMemo(
+    () => (priceListText ? parsePriceListCsv(priceListText, existingPackages) : []),
+    [priceListText, existingPackages],
+  );
 
-  const handleFlightFile = useCallback(async (file: File) => {
-    setFlightFileName(file.name);
-    setFlightText(await readFile(file));
-    setResult(null);
-  }, [readFile]);
+  const flightRows = useMemo(
+    () => (mffText ? parseMffCsv(mffText, mappingRows, existingPackages, dbFlights) : []),
+    [mffText, mappingRows, existingPackages, dbFlights],
+  );
 
-  const plan = useMemo<SyncPlan | null>(() => {
-    if (!mappingText && !flightText) return null;
-    const mappingRows = mappingText ? parsePackageMappingCsv(mappingText) : [];
-    const flightRows = flightText ? parseFlightDiffCsv(flightText) : [];
-    return buildSyncPlan(mappingRows, flightRows, existingPackages);
-  }, [mappingText, flightText, existingPackages]);
+  const plan = useMemo<SyncPlan | null>(
+    () => (step >= 3 ? buildSyncPlan(mappingRows, flightRows, existingPackages) : null),
+    [mappingRows, flightRows, existingPackages, step],
+  );
 
   const totalChanges = plan
-    ? plan.packagesToCreate.length +
-      plan.packagesToUpdate.length +
+    ? plan.packagesToCreate.length + plan.packagesToUpdate.length +
       plan.flightsToAdd.length +
-      plan.flightsToRemove.length
+      plan.flightsToRemove.filter(f => f.row.status !== "edited").length
     : 0;
 
   const applying = progress !== null && progress.phase !== "done";
@@ -662,111 +1105,94 @@ export default function PackageSyncPage() {
     setResult(null);
 
     const total =
-      plan.packagesToCreate.length +
-      plan.packagesToUpdate.length +
-      plan.flightsToAdd.length +
-      plan.flightsToRemove.length;
+      plan.packagesToCreate.length + plan.packagesToUpdate.length +
+      plan.flightsToAdd.length + plan.flightsToRemove.length;
 
     let done = 0;
     const errors: string[] = [];
-    let created = 0;
-    let updated = 0;
-    let flightsAdded = 0;
-    let flightsRemoved = 0;
-
-    // Map from "name|season" → newly created package id (for no-db-package flights)
+    let created = 0, updated = 0, flightsAdded = 0, flightsRemoved = 0;
     const newPackageIdMap = new Map<string, string>();
 
     setProgress({ phase: "packages", done: 0, total, current: "Starting…" });
 
-    // 1. Create packages
     for (const spec of plan.packagesToCreate) {
       setProgress({ phase: "packages", done, total, current: `Creating ${spec.name} (${spec.season})…` });
       try {
         const res = await syncPackage({
-          name: spec.name,
-          season: spec.season,
-          year: spec.year,
-          duration: spec.duration,
-          transport: spec.transport,
-          hotels: spec.hotels,
-          rooms: spec.rooms,
+          name: spec.name, season: spec.season, year: spec.year,
+          duration: spec.duration, transport: spec.transport,
+          hotels: spec.hotels, rooms: spec.rooms,
           clone_from_id: spec.clone_from_id ? (spec.clone_from_id as Id<"packages">) : undefined,
         });
         newPackageIdMap.set(`${spec.name.trim().toUpperCase()}|${spec.season.trim().toUpperCase()}`, res.id);
         created++;
-      } catch (e) {
-        errors.push(`Create ${spec.name} (${spec.season}): ${String(e)}`);
-      }
+      } catch (e) { errors.push(`Create ${spec.name} (${spec.season}): ${String(e)}`); }
       done++;
     }
 
-    // 2. Update packages
     for (const spec of plan.packagesToUpdate) {
       setProgress({ phase: "packages", done, total, current: `Updating ${spec.db_name}…` });
       try {
         await syncPackage({
           db_id: spec.db_id as Id<"packages">,
-          name: spec.row.canonical_name,
-          season: spec.row.season_code,
+          name: spec.row.canonical_name, season: spec.row.season_code,
           year: spec.row.season_start.substring(0, 4) + "/" + (parseInt(spec.row.season_start.substring(0, 4), 10) + 1),
-          duration: spec.row.duration,
-          transport: spec.transport,
-          hotels: spec.hotels,
-          rooms: spec.rooms,
+          duration: spec.row.duration, transport: spec.transport,
+          hotels: spec.hotels, rooms: spec.rooms,
         });
         updated++;
-      } catch (e) {
-        errors.push(`Update ${spec.db_name}: ${String(e)}`);
-      }
+      } catch (e) { errors.push(`Update ${spec.db_name}: ${String(e)}`); }
       done++;
     }
 
-    // 3. Add flights
     for (const spec of plan.flightsToAdd) {
       setProgress({ phase: "flights", done, total, current: `Adding flight ${spec.package_name} ${spec.departure_date}…` });
-
       let packageId = spec.db_package_id;
       if (spec.needs_new_package) {
         packageId = newPackageIdMap.get(`${spec.package_name.trim().toUpperCase()}|${spec.season.trim().toUpperCase()}`) ?? "";
       }
-
       if (!packageId) {
         errors.push(`Flight ${spec.package_name} ${spec.departure_date}: package not found`);
-        done++;
-        continue;
+        done++; continue;
       }
-
       try {
         await addFlight({
-          package_id: packageId as Id<"packages">,
-          month: spec.month,
-          departure_date: spec.departure_date,
-          departure_sector: spec.departure_sector,
-          return_date: spec.return_date,
-          return_sector: spec.return_sector,
+          package_id: packageId as Id<"packages">, month: spec.month,
+          dep_flight: airlineName(spec.row.airline) || undefined,
+          departure_date: spec.departure_date, departure_sector: spec.departure_sector,
+          return_date: spec.return_date, return_sector: spec.return_sector,
+          source: "sync",
         });
         flightsAdded++;
-      } catch (e) {
-        errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`);
-      }
+      } catch (e) { errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`); }
       done++;
     }
 
-    // 4. Remove flights
     for (const spec of plan.flightsToRemove) {
       setProgress({ phase: "flights", done, total, current: `Removing flight ${spec.package_name} ${spec.departure_date}…` });
       try {
         await deleteFlight({ id: spec.db_flight_id as Id<"package_flights"> });
         flightsRemoved++;
-      } catch (e) {
-        errors.push(`Remove flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`);
-      }
+      } catch (e) { errors.push(`Remove flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`); }
       done++;
+    }
+
+    if (plan.flightsToPromote.length > 0) {
+      setProgress({ phase: "flights", done, total, current: `Classifying ${plan.flightsToPromote.length} flights as sync…` });
+      try {
+        await promoteToSync({ ids: plan.flightsToPromote });
+      } catch (e) { errors.push(`Promote flights: ${String(e)}`); }
     }
 
     setProgress({ phase: "done", done: total, total, current: "Done" });
     setResult({ created, updated, flightsAdded, flightsRemoved, errors });
+  }
+
+  function resetUpload() {
+    setPriceListText(null); setPriceListFileName(null);
+    setMffText(null); setMffFileName(null);
+    setProgress(null); setResult(null);
+    setStep(0);
   }
 
   return (
@@ -774,122 +1200,171 @@ export default function PackageSyncPage() {
       <div>
         <h2 className="text-xl md:text-2xl font-bold tracking-tight">Package Sync</h2>
         <p className="text-slate-500 text-sm mt-1">
-          Upload your CSV files to create and update packages in one step.
+          Import packages and flights directly from the Master Price List and MFF flight schedule.
         </p>
       </div>
 
-      {/* Upload */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <DropZone
-          label="Package Mapping CSV"
-          description="package-mapping.csv from docs/sync-1448h"
-          fileName={mappingFileName}
-          onFile={handleMappingFile}
-          onClear={() => { setMappingText(null); setMappingFileName(null); setResult(null); }}
-        />
-        <DropZone
-          label="Flight Diff CSV"
-          description="flight-diff.csv from docs/sync-1448h"
-          fileName={flightFileName}
-          onFile={handleFlightFile}
-          onClear={() => { setFlightText(null); setFlightFileName(null); setResult(null); }}
-        />
-      </div>
+      <Stepper step={step} />
 
-      {/* Result banner */}
-      {result && (
-        <Card className={result.errors.length > 0 ? "border-amber-400" : "border-green-400"}>
-          <CardContent className="pt-4 space-y-2">
-            <div className="flex items-center gap-2 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-              Sync complete
-            </div>
-            <div className="text-sm text-muted-foreground grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <span>Packages created: <strong>{result.created}</strong></span>
-              <span>Packages updated: <strong>{result.updated}</strong></span>
-              <span>Flights added: <strong>{result.flightsAdded}</strong></span>
-              <span>Flights removed: <strong>{result.flightsRemoved}</strong></span>
-            </div>
-            {result.errors.length > 0 && (
-              <div className="mt-2 space-y-1">
-                <p className="text-sm font-medium text-amber-700">{result.errors.length} error(s):</p>
-                {result.errors.map((e, i) => (
-                  <p key={i} className="text-xs text-amber-700 font-mono">{e}</p>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Progress */}
-      {applying && progress && (
+      {/* ── Step 0: Upload ── */}
+      {step === 0 && (
         <Card>
-          <CardContent className="pt-4 space-y-3">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              {progress.current}
-            </div>
-            <Progress value={(progress.done / Math.max(progress.total, 1)) * 100} />
-            <p className="text-xs text-muted-foreground">{progress.done} / {progress.total}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Review */}
-      {plan && totalChanges > 0 && !applying && !result && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base">
-              Review {totalChanges} changes
-            </CardTitle>
-            <Button onClick={handleApply} disabled={applying}>
-              Apply {totalChanges} changes
-            </Button>
+          <CardHeader>
+            <CardTitle className="text-base">Upload source files</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Export both files from Excel as CSV, then drop them here.
+            </p>
           </CardHeader>
-          <div className="px-6 pb-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border-b">
-            <div className="rounded-lg border bg-green-50 dark:bg-green-950/20 p-3 text-center">
-              <p className="text-2xl font-bold text-green-700 dark:text-green-400">{plan.packagesToCreate.length}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Packages to create</p>
+          <CardContent className="space-y-3">
+            <DropZone
+              label="Master Price List CSV"
+              description="MASTER PRICE LIST 2026_2027.csv — exported from Excel"
+              fileName={priceListFileName}
+              onFile={async (f) => { setPriceListFileName(f.name); setPriceListText(await readFile(f)); }}
+              onClear={() => { setPriceListText(null); setPriceListFileName(null); }}
+            />
+            <DropZone
+              label="MFF Flight Schedule CSV"
+              description="UPDATED MFF 2026_2027 - MFF VERSION X.csv — exported from Excel"
+              fileName={mffFileName}
+              onFile={async (f) => { setMffFileName(f.name); setMffText(await readFile(f)); }}
+              onClear={() => { setMffText(null); setMffFileName(null); }}
+            />
+            <div className="flex justify-end pt-2">
+              <Button
+                disabled={!priceListText}
+                onClick={() => setStep(1)}
+              >
+                Parse & Continue →
+              </Button>
             </div>
-            <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-3 text-center">
-              <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{plan.packagesToUpdate.length}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Packages to update</p>
-            </div>
-            <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/20 p-3 text-center">
-              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{plan.flightsToAdd.length}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Flights to add</p>
-            </div>
-            <div className="rounded-lg border bg-red-50 dark:bg-red-950/20 p-3 text-center">
-              <p className="text-2xl font-bold text-red-700 dark:text-red-400">{plan.flightsToRemove.length}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Flights to remove</p>
-            </div>
-          </div>
-          <CardContent className="p-0">
-            <Accordion type="multiple" defaultValue={["merged"]}>
-              <MergedPlanSection plan={plan} />
-              <PackagesToCreateSection items={plan.packagesToCreate} />
-              <PackagesToUpdateSection items={plan.packagesToUpdate} />
-              <FlightsToAddSection items={plan.flightsToAdd} />
-              <FlightsToRemoveSection items={plan.flightsToRemove} />
-            </Accordion>
           </CardContent>
         </Card>
       )}
 
-      {plan && totalChanges === 0 && (
-        <div className="text-center py-10 text-muted-foreground">
-          <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
-          <p className="text-sm">Nothing to sync — all packages and flights are up to date.</p>
-        </div>
+      {/* ── Step 1: Mapping verification ── */}
+      {step === 1 && (
+        <MappingStep
+          rows={mappingRows}
+          onBack={() => setStep(0)}
+          onContinue={() => setStep(2)}
+        />
       )}
 
-      {/* Apply button at bottom too when review is long */}
-      {plan && totalChanges > 5 && !applying && !result && (
-        <div className="flex justify-end">
-          <Button onClick={handleApply} disabled={applying} size="lg">
-            Apply {totalChanges} changes
-          </Button>
+      {/* ── Step 2: Flight diff verification ── */}
+      {step === 2 && (
+        <FlightDiffStep
+          rows={flightRows}
+          onBack={() => setStep(1)}
+          onContinue={() => setStep(3)}
+        />
+      )}
+
+      {/* ── Step 3: Review & Apply ── */}
+      {step === 3 && (
+        <div className="space-y-4">
+          {/* Result banner */}
+          {result && (
+            <Card className={result.errors.length > 0 ? "border-amber-400" : "border-green-400"}>
+              <CardContent className="pt-4 space-y-2">
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                  Sync complete
+                </div>
+                <div className="text-sm text-muted-foreground grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <span>Packages created: <strong>{result.created}</strong></span>
+                  <span>Packages updated: <strong>{result.updated}</strong></span>
+                  <span>Flights added: <strong>{result.flightsAdded}</strong></span>
+                  <span>Flights removed: <strong>{result.flightsRemoved}</strong></span>
+                </div>
+                {result.errors.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-sm font-medium text-amber-700">{result.errors.length} error(s):</p>
+                    {result.errors.map((e, i) => (
+                      <p key={i} className="text-xs text-amber-700 font-mono">{e}</p>
+                    ))}
+                  </div>
+                )}
+                <Button variant="outline" size="sm" onClick={resetUpload} className="mt-2">
+                  Start over
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Progress */}
+          {applying && progress && (
+            <Card>
+              <CardContent className="pt-4 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {progress.current}
+                </div>
+                <Progress value={(progress.done / Math.max(progress.total, 1)) * 100} />
+                <p className="text-xs text-muted-foreground">{progress.done} / {progress.total}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Review */}
+          {plan && totalChanges > 0 && !applying && !result && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-base">Review {totalChanges} changes</CardTitle>
+                <Button onClick={handleApply}>Apply {totalChanges} changes</Button>
+              </CardHeader>
+              <div className="px-6 pb-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border-b">
+                <div className="rounded-lg border bg-green-50 dark:bg-green-950/20 p-3 text-center">
+                  <p className="text-2xl font-bold text-green-700 dark:text-green-400">{plan.packagesToCreate.length}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Packages to create</p>
+                </div>
+                <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-3 text-center">
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{plan.packagesToUpdate.length}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Packages to update</p>
+                </div>
+                <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/20 p-3 text-center">
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{plan.flightsToAdd.filter(f => f.row.status !== "edited").length}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Flights to add</p>
+                </div>
+                <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-3 text-center">
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{plan.flightsToAdd.filter(f => f.row.status === "edited").length}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Flights to update</p>
+                </div>
+                <div className="rounded-lg border bg-red-50 dark:bg-red-950/20 p-3 text-center">
+                  <p className="text-2xl font-bold text-red-700 dark:text-red-400">{plan.flightsToRemove.filter(f => f.row.status !== "edited").length}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Flights to remove</p>
+                </div>
+              </div>
+              <CardContent className="p-0">
+                <Accordion type="multiple" defaultValue={["merged"]}>
+                  <MergedPlanSection plan={plan} />
+                  <PackagesToCreateSection items={plan.packagesToCreate} />
+                  <PackagesToUpdateSection items={plan.packagesToUpdate} />
+                  <FlightsToAddSection items={plan.flightsToAdd} />
+                  <FlightsToRemoveSection items={plan.flightsToRemove} />
+                </Accordion>
+              </CardContent>
+            </Card>
+          )}
+
+          {plan && totalChanges === 0 && !applying && !result && (
+            <div className="text-center py-10 text-muted-foreground">
+              <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
+              <p className="text-sm">Nothing to sync — all packages and flights are up to date.</p>
+            </div>
+          )}
+
+          {plan && totalChanges > 5 && !applying && !result && (
+            <div className="flex justify-end">
+              <Button onClick={handleApply} size="lg">Apply {totalChanges} changes</Button>
+            </div>
+          )}
+
+          {!applying && !result && (
+            <div className="flex justify-start">
+              <Button variant="outline" onClick={() => setStep(2)}>← Back to Flights</Button>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -44,6 +44,10 @@ export type FlightDiffRow = {
   db_package_id: string;
   db_flight_id: string;
   notes: string;
+  // populated for "edited" rows only
+  db_airline?: string;
+  db_dep_sector?: string;
+  db_ret_sector?: string;
 };
 
 export type SyncHotel = {
@@ -116,11 +120,27 @@ export type FlightRemoveSpec = {
   row: FlightDiffRow;
 };
 
+export type DbFlight = {
+  _id: string;
+  package_id: string;
+  package_name: string;
+  package_season: string;
+  month: string;
+  flight: string;
+  return_flight: string;
+  departure_date: string;
+  departure_sector: string;
+  return_date: string;
+  return_sector: string;
+  source: "sync" | "manual";
+};
+
 export type SyncPlan = {
   packagesToCreate: PackageCreateSpec[];
   packagesToUpdate: PackageUpdateSpec[];
   flightsToAdd: FlightAddSpec[];
   flightsToRemove: FlightRemoveSpec[];
+  flightsToPromote: string[]; // DB flight IDs to mark source: "sync"
 };
 
 export type ApplyProgress = {
