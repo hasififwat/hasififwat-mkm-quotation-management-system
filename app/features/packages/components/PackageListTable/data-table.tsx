@@ -303,6 +303,20 @@ export function DataTable<TData, TValue>({
 				);
 			}
 
+			if (columnId === "source") {
+				const src = (cell.row.original as TData & { source?: string }).source ?? "manual";
+				return (
+					<Badge
+						variant="outline"
+						className={src === "sync"
+							? "text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-950/30 text-[10px]"
+							: "text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30 text-[10px]"}
+					>
+						{src}
+					</Badge>
+				);
+			}
+
 			if (columnId === "sections") {
 				const row = cell.row.original as TData & {
 					hotels?: Array<{ enabled?: boolean; name?: string; meals?: string[] }>;

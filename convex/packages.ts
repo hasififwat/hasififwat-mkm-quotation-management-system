@@ -285,6 +285,7 @@ export const createPackage = mutation({
       status: args.payload.status,
       inclusions: args.payload.inclusions || "",
       exclusions: args.payload.exclusions || "",
+      source: "manual",
       created_at: now,
       updated_at: now,
     });
@@ -961,6 +962,7 @@ export const syncPackageFromCsv = mutation({
       status: "unpublished",
       inclusions,
       exclusions,
+      source: "sync",
       created_at: now,
       updated_at: now,
     });
@@ -1146,5 +1148,20 @@ export const archivePackage = mutation({
     if (!pkg) throw new Error("Package not found");
     await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
     return { id: args.id };
+  },
+});
+
+export const setPackagesSourceManual = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const packages = await ctx.db.query("packages").collect();
+    let count = 0;
+    for (const p of packages) {
+      if (!p.source) {
+        await ctx.db.patch(p._id, { source: "manual" });
+        count++;
+      }
+    }
+    return count;
   },
 });

@@ -46,6 +46,7 @@ export default defineSchema({
     inclusions: v.optional(v.string()),
     exclusions: v.optional(v.string()),
     archived: v.optional(v.boolean()),
+    source: v.optional(v.union(v.literal("sync"), v.literal("manual"))),
     created_at: v.string(),
     updated_at: v.string(),
   }),
