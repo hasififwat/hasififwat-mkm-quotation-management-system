@@ -48,7 +48,11 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { SeasonBadge } from "~/components/ui/season-badge";
+import { SeasonBadge, getSeasonBadgeClass } from "~/components/ui/season-badge";
+
+function seasonAnchorId(season: string) {
+	return "season-" + season.trim().replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
+}
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -97,6 +101,19 @@ export function DataTable<TData, TValue>({
 		groupedColumnMode: false,
 		state: { sorting, grouping, expanded, columnVisibility },
 	});
+
+	const orderedSeasons = useMemo(() => {
+		const seen = new Set<string>();
+		const result: string[] = [];
+		for (const item of data) {
+			const season = (item as { season?: string }).season?.trim();
+			if (season && !seen.has(season)) {
+				seen.add(season);
+				result.push(season);
+			}
+		}
+		return result.sort();
+	}, [data]);
 
 	const renderPackageCell = useCallback(
 		(
@@ -372,10 +389,44 @@ export function DataTable<TData, TValue>({
 		],
 	);
 
+	const [seasonNavOpen, setSeasonNavOpen] = useState(false);
 	const visibleColCount = table.getVisibleLeafColumns().length;
 
 	return (
 		<div className="overflow-hidden">
+			{orderedSeasons.length > 1 && (
+				<div className="fixed bottom-6 right-4 z-50 flex flex-col gap-1.5 items-end">
+					{seasonNavOpen && (
+						<>
+							{orderedSeasons.map((season) => (
+								<button
+									key={season}
+									type="button"
+									onClick={() => {
+										document
+											.getElementById(seasonAnchorId(season))
+											?.scrollIntoView({ behavior: "smooth", block: "start" });
+										setSeasonNavOpen(false);
+									}}
+									className={`px-2.5 py-1 rounded-full border text-[11px] font-medium shadow-sm backdrop-blur-sm bg-background/80 hover:scale-105 transition-transform ${getSeasonBadgeClass(season)}`}
+								>
+									{season}
+								</button>
+							))}
+						</>
+					)}
+					<button
+						type="button"
+						onClick={() => setSeasonNavOpen((o) => !o)}
+						className="w-9 h-9 rounded-full border bg-background shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:shadow-lg transition-all"
+						aria-label={seasonNavOpen ? "Close season navigator" : "Jump to season"}
+					>
+						<ChevronDown
+							className={`w-4 h-4 transition-transform duration-200 ${seasonNavOpen ? "rotate-180" : ""}`}
+						/>
+					</button>
+				</div>
+			)}
 			<TooltipProvider>
 				<Table>
 					<TableHeader>
@@ -433,6 +484,7 @@ export function DataTable<TData, TValue>({
 									return (
 										<TableRow
 											key={row.id}
+											id={seasonAnchorId(season)}
 											className="cursor-pointer bg-muted/20 hover:bg-muted/40 border-y"
 											onClick={row.getToggleExpandedHandler()}
 										>
