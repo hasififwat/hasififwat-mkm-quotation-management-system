@@ -24,6 +24,8 @@ export default [
 			"/packages/create-from-schedule",
 			"routes/_protected/package.create-from-schedule.tsx",
 		),
+		route("/packages/stats", "routes/_protected/package.stats.tsx"),
+		route("/packages/sync", "routes/_protected/package.sync.tsx"),
 		route("/packages/edit/:pid", "routes/_protected/package.edit.tsx", {
 			id: "package-edit",
 		}),

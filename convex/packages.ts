@@ -13,6 +13,43 @@ export const list = query({
   },
 });
 
+const QUOTATION_STATUSES = ["draft", "sent", "accepted", "rejected", "revised", "superseded"] as const;
+
+export const listWithQuotationCounts = query({
+  args: {},
+  handler: async (ctx) => {
+    const [packages, quotations] = await Promise.all([
+      ctx.db.query("packages").collect(),
+      ctx.db.query("quotations").collect(),
+    ]);
+
+    const quotationsByPackage = new Map<string, typeof quotations>();
+    for (const q of quotations) {
+      const bucket = quotationsByPackage.get(q.package_id) ?? [];
+      bucket.push(q);
+      quotationsByPackage.set(q.package_id, bucket);
+    }
+
+    return packages
+      .map((pkg) => {
+        const qs = quotationsByPackage.get(String(pkg._id)) ?? [];
+        const by_status = Object.fromEntries(
+          QUOTATION_STATUSES.map((s) => [s, qs.filter((q) => q.status === s).length])
+        ) as Record<typeof QUOTATION_STATUSES[number], number>;
+        return {
+          id: String(pkg._id),
+          name: pkg.name,
+          year: pkg.year,
+          season: pkg.season ?? null,
+          status: pkg.status,
+          total: qs.length,
+          by_status,
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+  },
+});
+
 export const listWithRooms = query({
   args: {
     searchTerm: v.optional(v.string()),
@@ -462,6 +499,106 @@ export const updatePackage = mutation({
   },
 });
 
+export const listWithRoomPricesOnly = query({
+  args: {},
+  handler: async (ctx) => {
+    const [packages, rooms] = await Promise.all([
+      ctx.db.query("packages").collect(),
+      ctx.db.query("package_rooms").collect(),
+    ]);
+    const roomsByPkg = new Map<string, { room_type: string; price: number; enabled: boolean }[]>();
+    for (const r of rooms) {
+      const id = String(r.package_id);
+      const list = roomsByPkg.get(id) ?? [];
+      list.push({ room_type: r.room_type, price: r.price, enabled: r.enabled });
+      roomsByPkg.set(id, list);
+    }
+    return packages.map((p) => ({
+      _id:    String(p._id),
+      name:   p.name,
+      season: p.season ?? "",
+      year:   p.year,
+      status: p.status,
+      rooms:  roomsByPkg.get(String(p._id)) ?? [],
+    }));
+  },
+});
+
+export const listWithHotelsAndMeals = query({
+  args: {},
+  handler: async (ctx) => {
+    const [packages, hotels, meals] = await Promise.all([
+      ctx.db.query("packages").collect(),
+      ctx.db.query("package_hotels").collect(),
+      ctx.db.query("package_meals").collect(),
+    ]);
+    const mealsByHotelId = new Map<string, string[]>();
+    for (const m of meals) {
+      const id = String(m.package_hotel_id);
+      const list = mealsByHotelId.get(id) ?? [];
+      list.push(m.meal_type);
+      mealsByHotelId.set(id, list);
+    }
+    const hotelsByPkg = new Map<string, { hotel_type: string; name: string; enabled: boolean; meals: string[] }[]>();
+    for (const h of hotels) {
+      const id = String(h.package_id);
+      const list = hotelsByPkg.get(id) ?? [];
+      list.push({ hotel_type: h.hotel_type, name: h.name ?? "", enabled: h.enabled, meals: mealsByHotelId.get(String(h._id)) ?? [] });
+      hotelsByPkg.set(id, list);
+    }
+    return packages.map((p) => ({
+      _id:       String(p._id),
+      name:      p.name,
+      season:    p.season ?? "",
+      year:      p.year,
+      status:    p.status,
+      transport: p.transport ?? "",
+      hotels:    hotelsByPkg.get(String(p._id)) ?? [],
+    }));
+  },
+});
+
+export const patchRoomPrices = mutation({
+  args: {
+    package_id: v.id("packages"),
+    prices: v.array(v.object({ room_type: v.string(), price: v.number() })),
+  },
+  handler: async (ctx, args) => {
+    const pkg = await ctx.db.get(args.package_id);
+    if (!pkg) throw new Error(`Package not found: ${args.package_id}`);
+
+    const rooms = await ctx.db
+      .query("package_rooms")
+      .withIndex("by_package_id", (q) => q.eq("package_id", args.package_id))
+      .collect();
+
+    const results = [];
+    for (const { room_type, price } of args.prices) {
+      const room = rooms.find((r) => r.room_type === room_type);
+      if (!room) {
+        results.push({ room_type, status: "not_found" });
+        continue;
+      }
+      await ctx.db.patch(room._id, { price });
+      results.push({ room_type, old_price: room.price, new_price: price, status: "updated" });
+    }
+    return { package_name: pkg.name, season: pkg.season, results };
+  },
+});
+
+export const patchSeason = mutation({
+  args: {
+    id: v.id("packages"),
+    season: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const pkg = await ctx.db.get(args.id);
+    if (!pkg) throw new Error(`Package not found: ${args.id}`);
+    await ctx.db.patch(args.id, { season: args.season.trim() });
+    return { id: args.id, name: pkg.name, old_season: pkg.season, new_season: args.season.trim() };
+  },
+});
+
 export const updatePackageStatus = mutation({
   args: {
     id: v.id("packages"),
@@ -717,6 +854,134 @@ export const backfillMissingHotelsFromTemplates = mutation({
       insertedCount,
       insertedByTemplateType,
     };
+  },
+});
+
+export const syncPackageFromCsv = mutation({
+  args: {
+    db_id: v.optional(v.id("packages")),
+    clone_from_id: v.optional(v.id("packages")),
+    name: v.string(),
+    season: v.string(),
+    year: v.string(),
+    duration: v.string(),
+    transport: v.string(),
+    hotels: v.array(
+      v.object({
+        hotel_type: v.string(),
+        name: v.string(),
+        meals: v.array(v.string()),
+      }),
+    ),
+    rooms: v.array(
+      v.object({
+        room_type: v.string(),
+        price: v.number(),
+        enabled: v.boolean(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const now = new Date().toISOString();
+
+    if (args.db_id) {
+      const pkg = await ctx.db.get(args.db_id);
+      if (!pkg) throw new Error(`Package ${args.db_id} not found`);
+
+      await ctx.db.patch(args.db_id, { transport: args.transport, updated_at: now });
+
+      const existingHotels = await ctx.db
+        .query("package_hotels")
+        .withIndex("by_package_id", (q) => q.eq("package_id", args.db_id!))
+        .collect();
+      for (const hotel of existingHotels) {
+        const meals = await ctx.db
+          .query("package_meals")
+          .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", hotel._id))
+          .collect();
+        for (const m of meals) await ctx.db.delete(m._id);
+        await ctx.db.delete(hotel._id);
+      }
+      for (const hotel of args.hotels) {
+        const hotelId = await ctx.db.insert("package_hotels", {
+          package_id: args.db_id,
+          hotel_type: hotel.hotel_type,
+          name: hotel.name,
+          enabled: hotel.name.length > 0,
+          placeholder: "",
+          created_at: now,
+        });
+        for (const mealType of hotel.meals) {
+          await ctx.db.insert("package_meals", { package_hotel_id: hotelId, meal_type: mealType, created_at: now });
+        }
+      }
+
+      const existingRooms = await ctx.db
+        .query("package_rooms")
+        .withIndex("by_package_id", (q) => q.eq("package_id", args.db_id!))
+        .collect();
+      for (const r of existingRooms) await ctx.db.delete(r._id);
+      for (const room of args.rooms) {
+        await ctx.db.insert("package_rooms", {
+          package_id: args.db_id,
+          room_type: room.room_type,
+          price: room.price,
+          enabled: room.enabled,
+          created_at: now,
+        });
+      }
+
+      return { action: "updated" as const, id: String(args.db_id) };
+    }
+
+    let inclusions = "";
+    let exclusions = "";
+    if (args.clone_from_id) {
+      const source = await ctx.db.get(args.clone_from_id);
+      if (source) {
+        inclusions = source.inclusions ?? "";
+        exclusions = source.exclusions ?? "";
+      }
+    }
+
+    const packageId = await ctx.db.insert("packages", {
+      name: args.name,
+      season: args.season,
+      year: args.year,
+      duration: args.duration,
+      transport: args.transport,
+      status: "unpublished",
+      inclusions,
+      exclusions,
+      created_at: now,
+      updated_at: now,
+    });
+
+    for (const hotel of args.hotels) {
+      const hotelId = await ctx.db.insert("package_hotels", {
+        package_id: packageId,
+        hotel_type: hotel.hotel_type,
+        name: hotel.name,
+        enabled: hotel.name.length > 0,
+        placeholder: "",
+        created_at: now,
+      });
+      for (const mealType of hotel.meals) {
+        await ctx.db.insert("package_meals", { package_hotel_id: hotelId, meal_type: mealType, created_at: now });
+      }
+    }
+
+    for (const room of args.rooms) {
+      await ctx.db.insert("package_rooms", {
+        package_id: packageId,
+        room_type: room.room_type,
+        price: room.price,
+        enabled: room.enabled,
+        created_at: now,
+      });
+    }
+
+    return { action: "created" as const, id: String(packageId) };
   },
 });
 

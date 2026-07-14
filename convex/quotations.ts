@@ -172,6 +172,9 @@ function computeStaleFields(
 			);
 			const roomAdded = liveRooms.some((r) => !snapPrices.has(r.room_type));
 			if (roomPriceChanged || roomAdded) stale_fields.push("room_pricing");
+		} else if ((!pkgSnap.rooms || pkgSnap.rooms.length === 0) && liveRooms.length > 0) {
+			// Snapshot predates room price tracking — treat as stale so agent must re-verify pricing
+			stale_fields.push("room_pricing");
 		}
 	}
 
@@ -206,10 +209,11 @@ function computeStaleFields(
 export const list = query({
 	args: {},
 	handler: async (ctx) => {
-		const [quotations, packages, packageFlights] = await Promise.all([
+		const [quotations, packages, packageFlights, packageRooms] = await Promise.all([
 			ctx.db.query("quotations").collect(),
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
+			ctx.db.query("package_rooms").collect(),
 		]);
 
 			const packagesById = new Map<string, (typeof packages)[number]>();
@@ -222,18 +226,27 @@ export const list = query({
 				flightsById.set(String(flight._id), flight);
 		}
 
+		const roomsByPackageId = new Map<string, (typeof packageRooms)>();
+		for (const room of packageRooms) {
+			const id = String(room.package_id);
+			const bucket = roomsByPackageId.get(id) ?? [];
+			bucket.push(room);
+			roomsByPackageId.set(id, bucket);
+		}
+
 		return quotations
 			.sort((a, b) => b.created_at.localeCompare(a.created_at))
 			.map((quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
+				const liveRooms = roomsByPackageId.get(quotation.package_id) ?? [];
 
 				const { stale_fields } = computeStaleFields(
 					quotation.package_snapshot,
 					quotation.flight_snapshot,
 					selectedPackage,
 					selectedFlight,
-					[], // room/hotel staleness requires detail view — skipped in list for performance
+					liveRooms,
 					[],
 					null,
 				);
@@ -367,9 +380,10 @@ export const listPaginated = query({
 						.order(order)
 						.paginate(paginationOpts);
 
-		const [allPackages, allFlights] = await Promise.all([
+		const [allPackages, allFlights, allRooms] = await Promise.all([
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
+			ctx.db.query("package_rooms").collect(),
 		]);
 
 		const packagesById = new Map<string, (typeof allPackages)[number]>();
@@ -382,18 +396,27 @@ export const listPaginated = query({
 			flightsById.set(String(flight._id), flight);
 		}
 
+		const roomsByPackageId = new Map<string, (typeof allRooms)>();
+		for (const room of allRooms) {
+			const id = String(room.package_id);
+			const bucket = roomsByPackageId.get(id) ?? [];
+			bucket.push(room);
+			roomsByPackageId.set(id, bucket);
+		}
+
 		return {
 			...result,
 			page: result.page.map((quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
+				const liveRooms = roomsByPackageId.get(quotation.package_id) ?? [];
 
 				const { stale_fields: rowStaleFields } = computeStaleFields(
 					quotation.package_snapshot,
 					quotation.flight_snapshot,
 					selectedPackage,
 					selectedFlight,
-					[], // room/hotel staleness requires detail view — skipped in list for performance
+					liveRooms,
 					[],
 					null,
 				);

@@ -1,5 +1,5 @@
 import { useAuthActions } from "@convex-dev/auth/react";
-import { FileText, Home, LogOut, Menu, Package, Users } from "lucide-react";
+import { FileText, Home, LogOut, Menu, Package, RefreshCw, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { useNavigate, Link } from "react-router";
 import { Button } from "~/components/ui/button";
@@ -41,6 +41,11 @@ const menuItems = [
 		title: "Clients",
 		icon: Users,
 		url: "/clients",
+	},
+	{
+		title: "Sync Packages",
+		icon: RefreshCw,
+		url: "/packages/sync",
 	},
 ];
 
