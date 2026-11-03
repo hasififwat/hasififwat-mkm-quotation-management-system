@@ -21,7 +21,7 @@ export const metadata = {
 };
 
 export default async function PackageCreateFromSchedulePage() {
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 	const templateData = await client.query(api.packages.getPackageTemplate, {});
 
 	return (

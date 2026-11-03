@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -28,7 +29,9 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={inter.variable} suppressHydrationWarning>
 			<body>
-				<Providers>{children}</Providers>
+				<ConvexAuthNextjsServerProvider>
+					<Providers>{children}</Providers>
+				</ConvexAuthNextjsServerProvider>
 			</body>
 		</html>
 	);

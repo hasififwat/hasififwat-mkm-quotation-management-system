@@ -1,6 +1,11 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+
+async function requirePackageAccess(ctx: Pick<QueryCtx, "auth">): Promise<void> {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Not authenticated");
+}
 
 function dedupeById<T extends { _id: string }>(items: T[]): T[] {
   return Array.from(new Map(items.map((item) => [item._id, item])).values());
@@ -9,6 +14,7 @@ function dedupeById<T extends { _id: string }>(items: T[]): T[] {
 export const list = query({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     return await ctx.db.query("packages").collect();
   },
 });
@@ -18,6 +24,7 @@ const QUOTATION_STATUSES = ["draft", "sent", "accepted", "rejected", "revised", 
 export const listWithQuotationCounts = query({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     const [packages, quotations] = await Promise.all([
       ctx.db.query("packages").collect(),
       ctx.db.query("quotations").collect(),
@@ -55,6 +62,7 @@ export const listWithRooms = query({
     searchTerm: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     let packages = await ctx.db.query("packages").collect();
 
     // Exclude archived packages
@@ -135,6 +143,7 @@ export const getById = query({
     id: v.id("packages"),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const pkg = await ctx.db.get(args.id);
     if (!pkg) {
       return null;
@@ -185,6 +194,7 @@ export const getById = query({
 export const getPackageTemplate = query({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     const hotelTemplates = await ctx.db.query("hotel_templates").collect();
     const roomTemplates = await ctx.db
       .query("room_templates")
@@ -208,6 +218,7 @@ export const checkExistingPackagesForYear = query({
     ),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const existingPackages = await ctx.db.query("packages").collect();
 
     const normalizedInput = new Set(
@@ -274,6 +285,7 @@ export const createPackage = mutation({
     }),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const now = new Date().toISOString();
 
     const packageDocId = await ctx.db.insert("packages", {
@@ -383,6 +395,7 @@ export const updatePackage = mutation({
     }),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const existingPackage = await ctx.db.get(args.id);
     if (!existingPackage) {
       throw new Error("Package not found");
@@ -564,6 +577,7 @@ export const updatePackage = mutation({
 export const listWithRoomPricesOnly = query({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     const [packages, rooms] = await Promise.all([
       ctx.db.query("packages").collect(),
       ctx.db.query("package_rooms").collect(),
@@ -589,6 +603,7 @@ export const listWithRoomPricesOnly = query({
 export const listWithHotelsAndMeals = query({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     const [packages, hotels, meals] = await Promise.all([
       ctx.db.query("packages").collect(),
       ctx.db.query("package_hotels").collect(),
@@ -627,6 +642,7 @@ export const patchRoomPrices = mutation({
     prices: v.array(v.object({ room_type: v.string(), price: v.number() })),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const pkg = await ctx.db.get(args.package_id);
     if (!pkg) throw new Error(`Package not found: ${args.package_id}`);
 
@@ -655,6 +671,7 @@ export const patchSeason = mutation({
     season: v.string(),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const pkg = await ctx.db.get(args.id);
     if (!pkg) throw new Error(`Package not found: ${args.id}`);
     await ctx.db.patch(args.id, { season: args.season.trim() });
@@ -668,6 +685,7 @@ export const updatePackageStatus = mutation({
     status: v.union(v.literal("published"), v.literal("unpublished")),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const existingPackage = await ctx.db.get(args.id);
     if (!existingPackage) {
       throw new Error("Package not found");
@@ -720,6 +738,7 @@ export const createPackageWithFlight = mutation({
     }),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const now = new Date().toISOString();
 
     const hotelTemplates = await ctx.db.query("hotel_templates").collect();
@@ -848,6 +867,7 @@ export const backfillMissingHotelsFromTemplates = mutation({
     dryRun: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const dryRun = args.dryRun ?? false;
     const now = new Date().toISOString();
 
@@ -945,6 +965,7 @@ export const syncPackageFromCsv = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const now = new Date().toISOString();
 
     if (args.db_id) {
@@ -1055,6 +1076,7 @@ export const reconcilePackageHotelsFromTemplates = mutation({
     keepBeforeIso: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const dryRun = args.dryRun ?? false;
     const now = new Date().toISOString();
     const keepBeforeIso = args.keepBeforeIso;
@@ -1198,6 +1220,7 @@ export const reconcilePackageHotelsFromTemplates = mutation({
 export const archivePackage = mutation({
   args: { id: v.id("packages") },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     const pkg = await ctx.db.get(args.id);
     if (!pkg) throw new Error("Package not found");
     await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
@@ -1208,6 +1231,7 @@ export const archivePackage = mutation({
 export const setPackagesSourceManual = mutation({
   args: {},
   handler: async (ctx) => {
+    await requirePackageAccess(ctx);
     const packages = await ctx.db.query("packages").collect();
     let count = 0;
     for (const p of packages) {
@@ -1223,6 +1247,7 @@ export const setPackagesSourceManual = mutation({
 export const promotePackageToSync = mutation({
   args: { ids: v.array(v.string()) },
   handler: async (ctx, args) => {
+    await requirePackageAccess(ctx);
     for (const id of args.ids) {
       const p = await ctx.db.get(id as Id<"packages">);
       // Only promote "manual" — "unsync" packages were deliberately edited, leave them

@@ -76,10 +76,24 @@ keystrokes go to that service, so you can answer Convex prompts there.
 To run a service on its own, use `pnpm dev:web` or `pnpm convex:dev`.
 Edit `mprocs.yaml` to add more services later.
 
+Use `pnpm dev:web` for web-only development. `pnpm dev` also starts the Convex
+watcher, which publishes local backend changes to the selected deployment.
+
+### Package access
+
+Package functions require a signed-in Convex identity. The Next.js auth adapter
+stores the session in cookies and forwards its token to server-side loaders.
+Existing browser-only sessions need one fresh sign-in after this change.
+
+Maintenance scripts that call package functions through `convex run` also need
+an explicit authorized identity through the CLI's `--identity` option. An admin
+deployment credential alone does not supply a user identity to these handlers.
+
 ### Environment variables
 
 - `NEXT_PUBLIC_CONVEX_URL` — required, used by the browser (`ConvexReactClient`) and as a fallback on the server.
 - `CONVEX_URL` — optional, server-only override for Server Components / Route Handlers (`src/lib/convex-server.ts`).
+- `.env.example` selects `glad-wombat-72` for work on this migration branch.
 
 ## Notes / deviations from the original
 

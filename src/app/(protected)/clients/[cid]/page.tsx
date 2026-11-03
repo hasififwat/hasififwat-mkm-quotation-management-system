@@ -13,7 +13,7 @@ export const metadata = {
 
 export default async function ClientDetailPageRoute({ params }: Params) {
 	const { cid } = await params;
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 	const data = await client.query(api.clients.getWithQuotations, {
 		client_id: cid,
 	});

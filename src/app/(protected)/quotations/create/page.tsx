@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 export default async function QuotationCreatePage() {
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 	const [packagesData, allClients] = await Promise.all([
 		client.query(api.packages.listWithRooms, {}),
 		client.query(api.clients.list, {}),

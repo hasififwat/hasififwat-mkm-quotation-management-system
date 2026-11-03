@@ -66,7 +66,7 @@ function normalizeTemplateData(templateData: unknown): {
 }
 
 export default async function PackageCreatePage() {
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 
 	const [allPackagesData, templateData] = await Promise.all([
 		client.query(api.packages.listWithRooms, {}),

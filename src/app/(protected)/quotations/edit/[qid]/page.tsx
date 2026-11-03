@@ -10,7 +10,7 @@ type Params = { params: Promise<{ qid: string }> };
 
 export default async function QuotationEditPage({ params }: Params) {
 	const { qid } = await params;
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 
 	const [initialData, packagesData, allClients] = await Promise.all([
 		client.query(api.quotations.getQuotationForEdit, {

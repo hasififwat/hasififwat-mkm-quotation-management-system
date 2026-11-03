@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerConvexClient } from "~/lib/convex-server";
 
 export async function POST(request: NextRequest) {
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 
 	const formData = await request.formData();
 	const name = String(formData.get("name") || "").trim();

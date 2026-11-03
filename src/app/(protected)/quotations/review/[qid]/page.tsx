@@ -14,7 +14,7 @@ export const metadata = {
 
 export default async function QuotationReviewPage({ params }: Params) {
 	const { qid } = await params;
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 
 	const initialData = await client.query(api.quotations.getQuotationFullDetails, {
 		target_quotation_id: qid,

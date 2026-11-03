@@ -7,7 +7,7 @@ import type { IPackageDetails } from "~/features/packages/schema";
 import { normalizePackageMutationPayload } from "~/features/packages/utils";
 
 export async function POST(request: NextRequest) {
-	const client = getServerConvexClient();
+	const client = await getServerConvexClient();
 	const data = (await request.json()) as IPackageDetails;
 	const payload = normalizePackageMutationPayload(data);
 
