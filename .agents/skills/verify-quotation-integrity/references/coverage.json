@@ -1,0 +1,36 @@
+{
+  "lastSyncCommit": "ed4145fd3a4f74b18f7ffd57d358bdff192750cb",
+  "sourceWasUncommitted": true,
+  "checkedAt": "2026-11-02",
+  "source": "convex/quotations.ts",
+  "sourceSha256": "2e17467c227153a16eba3fcfb61d9c3579dc59fa657e4280908ea79853e4b9b6",
+  "functions": ["create", "update"],
+  "executedHelpers": [
+    "findQuotationByStringId",
+    "getMappedHijriYear",
+    "normalizeCurrency",
+    "buildLineTotal",
+    "buildPackageSnapshot",
+    "buildFlightSnapshot",
+    "buildHotelsSnapshot",
+    "buildQuotationNumber"
+  ],
+  "supportingFilesToReviewOnChange": [
+    "convex/schema.ts",
+    "convex/_generated/server.js",
+    "src/lib/convex-server.ts",
+    "src/app/api/quotations/create/route.ts",
+    "src/app/api/quotations/update/route.ts",
+    "src/app/(protected)/layout.tsx"
+  ],
+  "versions": {
+    "node": "24.19.0",
+    "typescript": "5.9.3",
+    "convex": "1.45.0"
+  },
+  "finiteCases": 864,
+  "properties": {
+    "authenticated_writes": "fails: 16 bounded counterexamples; no identity check in either handler",
+    "flight_matches_package": "passes; removing either real guard is detected"
+  }
+}

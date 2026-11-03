@@ -1,0 +1,24 @@
+procs:
+  next:
+    cmd: ["pnpm", "dev:web"]
+    cwd: "<CONFIG_DIR>"
+    stop: SIGINT
+  convex:
+    cmd: ["pnpm", "convex:dev"]
+    cwd: "<CONFIG_DIR>"
+    stop: SIGINT
+
+proc_list_width: 24
+scrollback: 10000
+
+keymap_procs:
+  "<1>": { c: select-proc, index: 0 }
+  "<2>": { c: select-proc, index: 1 }
+  "<Tab>": { c: toggle-focus }
+  "<q>": { c: quit }
+  "<C-c>": { c: quit }
+  "<C-q>": { c: quit }
+
+keymap_term:
+  "<Tab>": { c: toggle-focus }
+  "<C-q>": { c: quit }
