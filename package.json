@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:packages-auth": "node --test scripts/packages-authorization.test.mjs scripts/convex-server-auth.test.mjs",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy"
   },
