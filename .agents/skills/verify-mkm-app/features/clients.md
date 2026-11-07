@@ -29,8 +29,11 @@ name/phone. History checks require a quotation linked to that client.
   its known quotation number and amount. Click `Collapse` and require the details
   to disappear. Record a missing quotation fixture as an unmet precondition.
 - **List creation.** Click `New Client`. Require a usable client form at
-  `/clients/create`. Current source renders only `Client Create Page` there:
-  record that journey as failing rather than substituting the builder modal.
+  `/clients/create` with `Name`, `Phone`, `Create Client`, and `Cancel`.
+  Submit blank fields and require native validation with no creation request.
+  Fill a unique synthetic name and phone. Click `Create Client`, require the
+  Clients list, search for the fixture, and reload to prove persistence.
+  For a failed save, require a visible alert and preserved inputs before retry.
 - **Builder creation.** At `/quotations/create`, click `Create New Client`.
   In the `Create New Client` dialog, fill `#name` (`Client Name`) and
   `#phone_number` (`Phone Number`); click `Create Client`. Use a unique synthetic
@@ -40,8 +43,8 @@ name/phone. History checks require a quotation linked to that client.
 
 ## Gotchas
 
-- The standalone route is an unfinished placeholder in this checkout. The modal
-  is a distinct entry point and cannot make the list-entry journey pass.
+- Verify the standalone route and the builder modal separately. They share the
+  creation form, but each has its own completion behavior.
 - The builder's new-client POST uses `/api/clients/create`. A modal closing is
   insufficient evidence of the record being saved.
 - Creation requires disposable backend data and an agreed fixture cleanup path;
