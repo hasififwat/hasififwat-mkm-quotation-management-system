@@ -561,6 +561,7 @@ function FlightSelection({
 
 export default function QuotationBuilder({
 	initialData,
+	initialClientId,
 	allPackages,
 	allClients,
 	qid,
@@ -568,6 +569,7 @@ export default function QuotationBuilder({
 	snapshot_version_known = false,
 }: {
 	initialData: QuotationFormValues | null;
+	initialClientId?: string;
 	allPackages: QuotationBuilderLoaderData["allPackages"];
 	allClients: QuotationBuilderLoaderData["allClients"];
 	qid?: string;
@@ -594,6 +596,7 @@ export default function QuotationBuilder({
 		defaultValues: initialData ?? {
 			pic_name: profile?.full_name || "",
 			branch: profile?.branch || "",
+			client_id: initialClientId ?? "",
 		},
 		mode: "onChange",
 	});

@@ -30,9 +30,19 @@ must be supported by the backend's Gregorian-to-Hijri mapping.
 - **List entry.** Click `Create Quotation`; require `/quotations/create` with
   `PIC Name`, `Branch`, `Client Name`, and `Package` fields.
 - **Client entry.** Use the actual `Create quotation` link in the client row;
-  require the builder and inspect its selected client. The route currently does
-  not consume `client_id`; report a missing preselection if observed instead of
-  selecting the client manually and declaring this entry point passed.
+  require the builder with that client selected. Change the client manually and
+  confirm the selection updates. A list entry without `client_id` starts blank.
+- **Client query validation.** Open the create route with a blank, repeated,
+  invalid, or unavailable `client_id`. Require the neutral warning that the
+  requested client could not be selected, a blank client selection, and a working
+  manual client picker. Accept only one string that exactly matches a loaded
+  client ID. Whitespace around an otherwise valid ID must not match.
+- **Client query navigation.** Enter PIC name, branch, notes, and package details.
+  Navigate within the create route to a different valid `client_id`, then an
+  invalid one, then remove it. Each changed client context starts a fresh draft
+  with the requested client selected or blank when unavailable. Changing unrelated query parameters must
+  preserve a manually selected client. Reopen an existing quotation for editing
+  with a different `client_id` in the URL and require its saved client to remain.
 - **Save.** Fill `#pic_name` and `#branch`, choose the fixture using
   `Select a client` and `Select a package`, then use `Flight Selection`. Choose
   the fixture's room and its `pax-...` control from the current snapshot, set a
@@ -50,6 +60,6 @@ must be supported by the backend's Gregorian-to-Hijri mapping.
 - Room availability and flight association depend on the selected package.
   Missing data is a failed precondition, not permission to weaken the journey.
 - A client-history entry and list entry are separate paths. Initial creation
-  source currently ignores the client query parameter; inspect this on changes.
+  accepts client context only from an exact match in the loaded clients list.
 - Authentication enforcement in the backend is a separate property covered by
   `$verify-quotation-integrity`; a successful UI guard is not that proof.
