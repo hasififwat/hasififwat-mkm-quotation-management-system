@@ -150,6 +150,18 @@ An investigation is not complete merely because the requested
 information has been collected. It is complete when the findings
 have been understood and communicated at an appropriate depth.
 
+## UI verification evidence in pull requests
+
+For every PR that changes the UI, include screenshots or a short video directly
+in the PR description or a clearly linked PR comment. Use images that render on
+GitHub, not local file paths or text-only logs. For bug fixes, show the original
+failure and corrected behavior when practical. Capture validation and error
+states relevant to the change, and verify the rendered layout before posting.
+Record the preview URL and exact tested commit with the evidence. Use disposable
+records, keep secrets and unrelated customer data out of captures, and report
+fixture cleanup. A save message or screenshot alone does not prove persistence;
+verify the saved record in a second view and after reload.
+
 ## Project-local pstack
 
 Pstack is installed in `.agents/pstack/`, with discovery links in
