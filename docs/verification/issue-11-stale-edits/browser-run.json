@@ -1,0 +1,16 @@
+{
+  "repo": "/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c",
+  "runDir": "/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-qpZbJn",
+  "workspace": "/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/.next/mkm-verify-mhhsKz",
+  "token": "ee1d0fa4-ea8c-414a-8c7b-911a48235d47",
+  "ownerScript": "/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/.next/mkm-verify-mhhsKz/verification-owner.cjs",
+  "pid": 4664,
+  "port": 3105,
+  "url": "http://127.0.0.1:3105",
+  "startedAt": "2026-11-11T07:50:03.382Z",
+  "commit": "2f76d7ee3528ae9f82d9d2f84a19645ba930cc4c",
+  "nextVersion": "16.3.4",
+  "sourceDigest": "db54ae91c869303c6297ad6a71dbdb62c209e793f3632e67c2bbf3b34ded6b6c",
+  "backendIsolation": "Shared configured Convex deployment; anonymous UI only until disposable fixtures are supplied",
+  "bundler": "turbopack"
+}

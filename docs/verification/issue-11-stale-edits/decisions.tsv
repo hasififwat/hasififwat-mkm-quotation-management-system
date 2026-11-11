@@ -1,2 +1,6 @@
 ts	phase	decision	why	evidence	result
 2026-11-11T08:00:00Z	pickup	Continue WI5 from merged WI4	Preserve completed evidence and isolate ownership	docs/verification/issue-11-protect-references.md	base e77bacc5
+2026-11-11T07:54:59Z	audit	Supersede initial timestamp	The first row used a manually entered phase timestamp, not a measured clock time; it records a real base decision only	git base e77bacc5	initial timestamp not authoritative
+2026-11-11T07:54:59Z	design	Choose canonical raw aggregate token	Two designs prefer one derived rule over coordinated revision bumps	design.md	implemented
+2026-11-11T07:54:59Z	verify	282 checks pass; preserve prior journeys	New handler and browser evidence cover WI5 while unchanged prior evidence remains authoritative	tests.txt; browser-proof.json	pass with undeployed boundary
+2026-11-11T07:54:59Z	cleanup	No live rows written; close tabs and stop helpers	Reuse archived owned fixture and prove route rejection without backend deployment	browser-cleanup.json	clean
