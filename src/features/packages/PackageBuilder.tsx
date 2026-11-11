@@ -123,7 +123,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 }) => {
 	const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
 	const saveStateRef = useRef<SaveState>({ kind: "idle" });
-	const attemptedDraft = useRef<IPackageDetailsForm | null>(null);
+	const [attemptedDraft, setAttemptedDraft] = useState<IPackageDetailsForm | null>(null);
 	const transitionSave = (state: SaveState) => {
 		saveStateRef.current = state;
 		setSaveState(state);
@@ -268,7 +268,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		if (["saving", "unknown", "saved"].includes(saveStateRef.current.kind)) return;
 		transitionSave({ kind: "saving" });
 		setSubmissionErrors([]);
-		attemptedDraft.current = structuredClone(getValues());
+		setAttemptedDraft(structuredClone(getValues()));
 		try {
 			const res = await fetch(
 				data._id ? "/api/packages/update" : "/api/packages/create",
@@ -303,7 +303,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 			format: "mkm-package-draft",
 			version: 1,
 			currentDraft: getValues(),
-			attemptedDraft: attemptedDraft.current,
+			attemptedDraft,
 			outcome: saveStateRef.current.kind,
 		}, null, 2)], { type: "application/json" });
 		const url = URL.createObjectURL(blob);
@@ -314,7 +314,6 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		setTimeout(() => URL.revokeObjectURL(url), 1000);
 	};
 
-	const submit = methods.handleSubmit(_onSubmit, onInvalid);
 	const saveBlocked = ["saving", "unknown", "saved"].includes(saveState.kind);
 
 	const renderSuspenseImportButton = (
@@ -409,7 +408,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 						event.preventDefault();
 						return;
 					}
-					void submit(event);
+					return methods.handleSubmit(_onSubmit, onInvalid)(event);
 				}}
 			>
 				{saveState.kind === "saved" && (
@@ -425,7 +424,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 						{saveState.kind === "unknown" && <p>Saving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.</p>}
 						<div className="flex gap-4 items-center">
 							<Button type="button" variant="outline" onClick={downloadDraft}>Download complete draft</Button>
-							<a className="underline" href={`/packages?q=${encodeURIComponent(attemptedDraft.current?.name ?? "")}`} target="_blank" rel="noopener noreferrer">Check Packages in a new tab</a>
+							<a className="underline" href={`/packages?q=${encodeURIComponent(attemptedDraft?.name ?? "")}`} target="_blank" rel="noopener noreferrer">Check Packages in a new tab</a>
 						</div>
 					</div>
 				)}

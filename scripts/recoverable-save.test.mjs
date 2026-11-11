@@ -12,12 +12,11 @@ function builder(fetch) {
   const refs=[]; let cursor=0; const states=[]; let stateCursor=0;
   const react={createElement:(type,props,...children)=>({type,props:{...props,children}}),useRef: initial=>refs[cursor++]??(refs[cursor-1]={current:initial}),useState:initial=>{const i=stateCursor++; states[i]??=initial;return [states[i],value=>{states[i]=value}];},useEffect:()=>{}};
   const exports={}; const router={push:()=>{},refresh:()=>{}};
-  let validSubmit;
-  const methods={getValues:()=>values,trigger:async()=>true,setFocus:()=>{},handleSubmit:fn=>{validSubmit=fn;return fn}};
+  const methods={getValues:()=>values,trigger:async()=>true,setFocus:()=>{},handleSubmit:fn=>()=>fn(values)};
   vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText,{exports,fetch,structuredClone,crypto:globalThis.crypto,console,require(id){if(id==='react')return react;if(id==='react-hook-form')return {useForm:()=>methods};if(id==='next/navigation')return {useRouter:()=>router};if(id==='@hookform/resolvers/zod')return {zodResolver:()=>{}};return new Proxy({},{get:(_,key)=>key});}});
   function render(){cursor=0;stateCursor=0;return exports.default({initialData:values,allPackages:[]});}
   function find(node,predicate){if(!node||typeof node!=='object')return; if(predicate(node))return node;return (node.props?.children??[]).flat(Infinity).map(n=>find(n,predicate)).find(Boolean);}
-  const submit=()=>{render();return validSubmit(values);};
+  const submit=async()=>{await find(render(),n=>n.type?.name==='PackageStepNavigation').props.onStepChange('preview');return find(render(),n=>n.type==='form').props.onSubmit({preventDefault(){}});};
   return {submit,values,states,render,find};
 }
 test('save callback excludes a second invocation synchronously',async()=>{
