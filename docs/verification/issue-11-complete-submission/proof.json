@@ -1,0 +1,67 @@
+{
+  "feature": "PKG-002 complete submission",
+  "frontendCommit": "47a6f3c2ccf41abe11885544aff53d50089b6d47",
+  "baseCommit": "a3bc744fcbfd9b632fa878e1c6ef813f3dfe99bb",
+  "origin": "http://127.0.0.1:3102",
+  "negativePrice": {
+    "value": "-50",
+    "openedStep": "pricing",
+    "focusedField": "rooms.0.price",
+    "retained": true,
+    "packageWriteRequests": 0
+  },
+  "blankPrice": {
+    "value": "",
+    "openedStep": "pricing",
+    "retained": true,
+    "packageWriteRequests": 0
+  },
+  "incompleteFlight": {
+    "openedStep": "flights",
+    "focusedControl": "departure date trigger",
+    "retainedRoomPrice": "1234.56",
+    "packageWriteRequests": 0
+  },
+  "pricesAfterReopenAndReload": {
+    "Double": 1234.56,
+    "Triple": 0
+  },
+  "flightAfterReload": {
+    "departure": "2026-11-12",
+    "return": "2026-11-23",
+    "sectors": "",
+    "airline": "",
+    "month": ""
+  },
+  "package": {
+    "id": "jd7f0wtvvaz49z6ynerp0wz2098j1pe5",
+    "name": "MKM WI2 20261111-ROOT-0459",
+    "cleanup": "archived, no results in filtered list"
+  },
+  "quotation": {
+    "id": "k97ceac8keyy1zyfa4khwc62x58j0j53",
+    "reference": "1448H-0325",
+    "client": "existing synthetic dev_test, unchanged",
+    "DoublePax": 2,
+    "TriplePax": 1,
+    "expectedTotal": 2469.12,
+    "persistedListTotal": 2469.12,
+    "reloadedListTotal": 2469.12,
+    "cleanup": "archived; no quotations found in reloaded filtered list"
+  },
+  "backendDeployed": false,
+  "localActualHandlerTests": 127,
+  "supportedYearAndAuthorizationTests": 96,
+  "limits": [
+    "Browser used existing backend; new Convex guards established locally only",
+    "PDF review snapshot timed out; no PDF correctness claim",
+    "In-memory adapter does not enforce platform validators, rollback or concurrency"
+  ],
+  "cleanup": {
+    "signedOut": true,
+    "ownedTabsClosed": 3,
+    "helperStopped": true,
+    "temporaryEnvironmentRemoved": true,
+    "archivedRowsRetained": true
+  }
+}
