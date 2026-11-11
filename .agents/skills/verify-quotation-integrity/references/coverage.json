@@ -1,10 +1,13 @@
 {
-  "lastSyncCommit": "63b1e6a5e4d67c588c07da5f9fec8c72c049908c",
+  "lastSyncCommit": "47a6f3c2ccf41abe11885544aff53d50089b6d47",
   "sourceWasUncommitted": false,
   "checkedAt": "2026-11-11",
   "source": "convex/quotations.ts",
-  "sourceSha256": "fc2fa7e6dca5e603a0d08c57ff833865efe0abd2e24d116cf6dad6f6614ac656",
-  "functions": ["create", "update"],
+  "sourceSha256": "019af509f675c7021533d084f568e0317f0b1351a400454169f97f9887b65863",
+  "functions": [
+    "create",
+    "update"
+  ],
   "executedHelpers": [
     "findQuotationByStringId",
     "getMappedHijriYear",
@@ -13,7 +16,14 @@
     "buildPackageSnapshot",
     "buildFlightSnapshot",
     "buildHotelsSnapshot",
-    "buildQuotationNumber"
+    "buildQuotationNumber",
+    "validateQuotationPrices",
+    "requirePrices",
+    "requirePrice",
+    "priceError",
+    "requireFlightDates",
+    "flightDateErrors",
+    "isCalendarDate"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",
@@ -23,7 +33,8 @@
     "src/app/api/quotations/update/route.ts",
     "src/app/(protected)/layout.tsx",
     "src/domain/umrah-years.ts",
-    "scripts/helpers/load-typescript.mjs"
+    "scripts/helpers/load-typescript.mjs",
+    "src/domain/submission-validation.ts"
   ],
   "versions": {
     "node": "26.11.1",
@@ -37,6 +48,7 @@
   },
   "supportingSourceSha256": {
     "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
-    "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352"
+    "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352",
+    "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e"
   }
 }
