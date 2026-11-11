@@ -7,6 +7,7 @@ import Module, { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { typescriptLoader } from "../../../../scripts/helpers/load-typescript.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 const require = createRequire(path.join(repo, "package.json"));
@@ -32,6 +33,13 @@ function loadActualHandlers(source) {
   const mod = new Module(sourcePath, undefined);
   mod.filename = sourcePath;
   mod.paths = Module._nodeModulePaths(path.dirname(sourcePath));
+  const load = typescriptLoader(repo);
+  const nodeRequire = mod.require.bind(mod);
+  mod.require = (id) => {
+    const filename = path.resolve(path.dirname(sourcePath), `${id}.ts`);
+    if (id.startsWith(".") && fs.existsSync(filename)) return load(filename);
+    return nodeRequire(id);
+  };
   mod._compile(compiled.outputText, sourcePath);
   assert.equal(typeof mod.exports.create._handler, "function");
   assert.equal(typeof mod.exports.update._handler, "function");

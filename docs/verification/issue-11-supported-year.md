@@ -6,7 +6,7 @@ Verified locally on 2026-11-11. The goal is to reject unsupported package years,
 
 - Requested base, initial HEAD, and local `origin/migration/nextjs-upgrade`: `db4b6555537281618eca5d68bd52bb8cfeb8dbdf`.
 - Regression commit: `92beb0b0a66046038b6d5952cd573197850ea7cb` (`test: cover supported Umrah year write boundaries and quotation compatibility`). Production files were unchanged when the regressions ran and when this commit was made.
-- Implementation commit: the commit introducing this document, titled `fix: enforce supported Umrah years across package writers`. Resolve its exact SHA with `git log -1 --format=%H -- docs/verification/issue-11-supported-year.md`. The handoff reports both ordered SHAs. A commit cannot embed its own hash.
+- Implementation commit: `63b1e6a5e4d67c588c07da5f9fec8c72c049908c`, titled `fix: enforce supported Umrah years across package writers`. A subsequent verification-only commit records the parent review and browser attempt.
 - Browser-helper snapshot: regression commit plus uncommitted implementation, source digest `56635812fb1abd2b21bf1fb8f94ca1ed6944a7a270edb0ed59b86cda0434622c`. It is not a browser-tested final commit.
 
 ## Behavior and scope
@@ -30,7 +30,7 @@ Commands run from this worktree with Node `v24.19.0`. Dependencies use an ignore
 | `pnpm lint` | 20 errors, 37 warnings | 20 errors, 37 warnings, exit 1 |
 | `git diff --check` | Clean | Pass |
 
-The initial root typecheck exposed missing generated Next image declarations, and the first refinement inferred a narrowed output type. Generating Next declarations and annotating the refinement callback's boolean return preserved the required string output. The final root typecheck passes. The first Convex command refused to run without its tsconfig; the subsequent command with the temporary official config passed without deployment or codegen.
+The initial root typecheck exposed missing generated Next image declarations, and the first refinement inferred a narrowed output type. Generating Next declarations and annotating the refinement callback's boolean return preserved the required string output. The final root typecheck passes. The parent independently reran the 64 regression tests, 32 authorization tests, and root typecheck on Node `v26.11.1`. The first Convex command refused to run without its tsconfig; the subsequent command with the temporary official config passed without deployment or codegen.
 
 Failing-before output is retained locally at `/tmp/mkm-year-red.tap`; passing output is `/tmp/mkm-year-green.tap`. The intended failures include `Missing expected rejection` from unsupported writers, schema accepting `2026`, and the normalizer returning `2025/2026` for missing year. One failure records the not-yet-created catalog. All seven valid create/reopen/update/reopen/quotation cases passed before and after. Auth output is `/tmp/mkm-year-auth.log`; root and Convex typecheck logs are `/tmp/mkm-year-typecheck.log` and `/tmp/mkm-year-convex.log`.
 
@@ -52,15 +52,26 @@ Evidence directory: `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mk
 
 The helper started Next 16.3.4 but Turbopack rejected the shared dependency symlink with `Symlink .../node_modules is invalid, it points out of the filesystem root`. HTTP readiness failed before browser navigation. `preview_status` showed default and incognito profiles but no active tab. No tab was opened, screenshot captured, or browser persistence verified. The parent baseline attempt also lacked authenticated disposable fixtures, as recorded in `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-o4uvgc`.
 
-The helper's automatic cleanup ran, followed by explicit `control.mjs stop` for the owned run. `cleanup.json` confirms workspace removal and retained evidence; `lsof -iTCP:3101 -sTCP:LISTEN` returned no listener. The copied worktree `.env.local` was removed. The temporary Convex tsconfig was removed. No generated files, secrets, or screenshot claims are committed. No push, PR, ticket update, deployment, merge, or historical-data change occurred.
+The helper's automatic cleanup ran, followed by explicit `control.mjs stop` for the owned run. `cleanup.json` confirms workspace removal and retained evidence; `lsof -iTCP:3101 -sTCP:LISTEN` returned no listener. The copied worktree `.env.local` was removed. The temporary Convex tsconfig was removed. No generated files or secrets are committed. The parent screenshot below records the later access limitation. No deployment, merge, shared backend write, or historical-data change occurred during verification.
+
+The parent resolved the symlink startup failure by materializing local dependency paths in the ignored worktree, without installing or changing dependency versions. A second helper run on port 3101 served Next 16.3.4 at implementation commit `63b1e6a5e4d67c588c07da5f9fec8c72c049908c`. Opening `http://localhost:3101/packages/create` redirected to the hydrated login page with Email, Password, and Login controls. The helper doctor was healthy. No authenticated verification account or disposable backend was available, so the builder and its saved result were not exercised.
+
+Parent evidence is retained at `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-WKDxtq`. The owned tab was closed, the helper stopped, the source snapshot removed, and the ignored environment copy removed. The screenshot contains empty credential fields and demonstrates the access limitation only.
+
+![Authenticated builder access requires login](issue-11-supported-year/login-required.png)
+
+Two independent adversarial reviews found no reproduced regression. Local probes executed the actual builder submission with the installed React Hook Form and Zod resolver, checked empty create defaults and the actual picker choices, verified historical reads, and challenged exact membership and authentication-first guards. Those probes do not substitute for browser interaction.
+
+The existing quotation-integrity checker initially could not resolve the newly shared TypeScript module. Its loader now resolves relative TypeScript helpers through the same repository loader as the tests. The properties and 864-case domain remain unchanged. Base and head both report 16 existing anonymous-write counterexamples, zero package/flight-association failures, and zero adapter errors. Both guard-removal mutation tests were detected, and the original baseline was restored. This is verification maintenance; quotation authentication is outside the supported-year work item. Run `node .agents/skills/verify-quotation-integrity/scripts/check.mjs --self-test`. Exit 1 remains expected for the recorded authentication finding, rather than indicating an adapter failure.
 
 Known gaps below use inferred rarity, not production measurements.
 
 | Finding | What goes wrong | What it takes to hit it | Rarity | Who is hurt | Bucket |
 |---|---|---|---|---|---|
-| 1. Authenticated browser proof remains incomplete | Final-submit error display and save/reopen/quotation persistence have no end-to-end browser evidence | Run the builder with a working dependency snapshot, authenticated account, and disposable deployment | Common in this local setup, inferred | Reviewer lacks UI proof | Accept as known gap for this handoff; parent must assess before UI PR merge |
+| 1. Authenticated browser proof remains incomplete | Final-submit error display and save/reopen/quotation persistence have no end-to-end browser evidence | Run the builder with an authenticated verification account and disposable deployment | Common in this local setup, inferred | Reviewer lacks UI proof | Accept as known gap for this handoff; parent must assess before UI PR merge |
 | 2. Existing lint debt | Full lint exits 1 despite zero new diagnostics | Run full repository lint | Common, measured on base and head | Maintainers cannot use full lint exit as a new-regression signal | Accept as known gap; unrelated to issue 11 |
-| 3. Unsupported historical values need deliberate selection on save | An existing invalid year cannot be saved again unchanged | Edit an old package outside the seven supported ranges | Occasional, inferred; production prevalence unknown | Package editor must choose a supported year | Accept as known gap required by the requested write invariant; historical reads remain available |
+| 3. Existing quotation authentication finding | The bounded checker still reproduces anonymous quotation writes on base and head; the year refactor does not change that behavior | Invoke quotation create or update directly without identity using a valid fixture | Occasional, inferred; endpoint usage was not measured | Business quotation records can be written without identity | Later ticket; existing finding outside this year-only fix |
+| 4. Unsupported historical values need deliberate selection on save | An existing invalid year cannot be saved again unchanged | Edit an old package outside the seven supported ranges | Occasional, inferred; production prevalence unknown | Package editor must choose a supported year | Accept as known gap required by the requested write invariant; historical reads remain available |
 
 A disposable authenticated environment would allow the missing browser evidence. Production counts could change the historical-value rarity assessment. No live audit was performed.
 
