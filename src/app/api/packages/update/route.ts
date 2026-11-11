@@ -1,3 +1,5 @@
+import { ConvexError } from "convex/values";
+import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import type { NextRequest } from "next/server";
@@ -31,6 +33,10 @@ export async function POST(request: NextRequest) {
 		});
 		return NextResponse.json({ success: true, packageId: result.packageId });
 	} catch (error) {
+		if (error instanceof ConvexError && isPackageReferenceConflict(error.data)) {
+			return NextResponse.json({ success: false, ...error.data }, { status: 400 });
+		}
+
 		console.error("Error in packages.update API route:", error);
 		return NextResponse.json(
 			{
