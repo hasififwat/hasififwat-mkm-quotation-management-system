@@ -1,0 +1,2 @@
+ts	phase	decision	why	evidence	result
+2026-11-11T08:00:00Z	pickup	Continue WI5 from merged WI4	Preserve completed evidence and isolate ownership	docs/verification/issue-11-protect-references.md	base e77bacc5

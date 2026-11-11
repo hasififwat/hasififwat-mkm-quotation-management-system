@@ -8,15 +8,15 @@ const require = createRequire(import.meta.url);
 const ts = require('typescript');
 const referenceConflict = load(require('node:path').resolve('src/domain/package-reference-conflict.ts'));
 const source = fs.readFileSync('src/features/packages/PackageBuilder.tsx','utf8');
-function builder(fetch, initialValues) {
+export function builder(fetch, initialValues) {
   const values = initialValues ?? fixtureForm();if(!initialValues){values.name='Complete draft';values.rooms[0].price='1234.56';}
   const downloads=[];const resolver=require('@hookform/resolvers/zod').zodResolver(packageSchema);
   const refs=[]; let cursor=0; const states=[]; let stateCursor=0;
-  const react={createElement:(type,props,...children)=>({type,props:{...props,children}}),useRef: initial=>refs[cursor++]??(refs[cursor-1]={current:initial}),useState:initial=>{const i=stateCursor++; states[i]??=initial;return [states[i],value=>{states[i]=value}];},useEffect:()=>{}};
+  const react={createElement:(type,props,...children)=>({type,props:{...props,children}}),useRef: initial=>refs[cursor++]??(refs[cursor-1]={current:initial}),useState:initial=>{const i=stateCursor++; states[i]??=typeof initial==='function'?initial():initial;return [states[i],value=>{states[i]=value}];},useEffect:()=>{}};
   const exports={}; const router={push:()=>{},refresh:()=>{}};
   const methods={setValue:(key,value)=>{values[key]=value;},getValues:path=>path?path.split('.').reduce((v,k)=>v[k],values):values,trigger:async()=>true,setFocus:()=>{},handleSubmit:(fn,invalid)=>async()=>{const result=await resolver(values,{}, {criteriaMode:"firstError",shouldUseNativeValidation:false});return Object.keys(result.errors).length?invalid(result.errors):fn(result.values)}};
-  vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText,{exports,fetch,structuredClone,Blob,setTimeout,URL:{createObjectURL:blob=>{downloads.push(blob);return "blob:test"},revokeObjectURL(){}},document:{createElement:()=>({click(){}})},crypto:globalThis.crypto,console,require(id){if(id==='~/domain/package-reference-conflict')return referenceConflict;if(id.includes('RoomDetails'))return {__esModule:true,default:function RoomDetails(){}};if(id==='react')return react;if(id==='react-hook-form')return {useForm:()=>methods};if(id==='next/navigation')return {useRouter:()=>router};if(id==='@hookform/resolvers/zod')return {zodResolver:()=>{}};return new Proxy({},{get:(_,key)=>key});}});
-  function render(){cursor=0;stateCursor=0;return exports.default({initialData:values,allPackages:[]});}
+  vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText,{exports,fetch,structuredClone,Blob,setTimeout,URL:{createObjectURL:blob=>{downloads.push(blob);return "blob:test"},revokeObjectURL(){}},document:{createElement:()=>({click(){}})},crypto:globalThis.crypto,console,require(id){if(id==='~/domain/package-edit-conflict')return load(require('node:path').resolve('src/domain/package-edit-conflict.ts'));if(id==='~/domain/package-reference-conflict')return referenceConflict;if(id.includes('RoomDetails'))return {__esModule:true,default:function RoomDetails(){}};if(id==='react')return react;if(id==='react-hook-form')return {useForm:()=>methods};if(id==='next/navigation')return {useRouter:()=>router};if(id==='@hookform/resolvers/zod')return {zodResolver:()=>{}};return new Proxy({},{get:(_,key)=>key});}});
+  function render(props=values){cursor=0;stateCursor=0;return exports.default({initialData:props,allPackages:[]});}
   function find(node,predicate){if(!node||typeof node!=='object')return; if(predicate(node))return node;return (node.props?.children??[]).flat(Infinity).map(n=>find(n,predicate)).find(Boolean);}
   const submit=async()=>{await find(render(),n=>n.type?.name==='PackageStepNavigation').props.onStepChange('preview');return find(render(),n=>n.type==='form').props.onSubmit({preventDefault(){}});};
   return {submit,values,states,render,find,downloads};
@@ -96,7 +96,7 @@ test('section import rejects removal through actual update handler and keeps dra
   const app=builder(async(_url,options)=>{
     calls++;
     try {
-      const result=await packages.updatePackage._handler(database.ctx,{id,payload:normalize(JSON.parse(options.body))});
+      const result=await packages.updatePackage._handler(database.ctx,{id,expectedEditToken:JSON.parse(options.body).editToken,payload:normalize(JSON.parse(options.body))});
       return {ok:true,json:async()=>({success:true,packageId:result.packageId})};
     }catch(error){return {ok:false,status:400,json:async()=>({success:false,...error.data})};}
   },initial);
@@ -111,4 +111,16 @@ test('section import rejects removal through actual update handler and keeps dra
   assert.equal(app.states.find(value=>value?.kind==='rejected')?.kind,'rejected');
   imported.rooms[0].name='Quad';importRooms.props.handleImport(imported);await app.submit();
   assert.equal(calls,2);assert.match(JSON.stringify(app.states),/saved/);
+});
+
+for (const typed of [true,false]) test(`HTTP409 typed=${typed} preserves full draft and blocks redispatch`,async()=>{
+  let calls=0;const app=builder(async()=>{calls++;return {ok:false,status:409,json:async()=>({code:typed?'PACKAGE_EDIT_CONFLICT':'OTHER',message:'Changed package. Not saved. Download draft.'})}});
+  const before=structuredClone(app.values);await app.submit();await app.submit();assert.equal(calls,1);assert.deepEqual(app.values,before);assert.match(JSON.stringify(app.states),typed?/conflict/:/unknown/);
+  app.find(app.render(),n=>n.props?.children?.includes('Download complete draft')).props.onClick();const data=JSON.parse(await app.downloads[0].text());assert.deepEqual(data.currentDraft,before);assert.deepEqual(data.attemptedDraft,before);
+});
+test('prop refresh and section import cannot replace original submitted baseline',async()=>{
+  const initial=fixtureForm();initial._id='packages:old';initial.editToken='loaded-old';let sent;
+  const app=builder(async(_url,options)=>{sent=JSON.parse(options.body);return {ok:true,json:async()=>({success:true,packageId:initial._id})}},initial);
+  app.render();app.render({...initial,_id:'packages:new',editToken:'loaded-new'});app.values.editToken='imported-token';app.values.name='My edited draft';
+  await app.submit();assert.equal(sent.editToken,'loaded-old');assert.equal(sent._id,'packages:old');assert.equal(sent.name,'My edited draft');
 });

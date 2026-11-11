@@ -49,6 +49,7 @@ const roomSchema = roomSchemaApiRes;
 
 export const packageSchema = z.object({
 	_id: z.string().optional(),
+	editToken: z.string().optional(),
 
 	year: umrahYearSchema,
 

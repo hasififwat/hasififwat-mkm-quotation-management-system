@@ -1,3 +1,4 @@
+import { packageEditToken, readPackageEditSnapshot, requireCurrentPackageEdit } from "./lib/packageEditSnapshot";
 import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
@@ -151,27 +152,9 @@ export const getById = query({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
-    const pkg = await ctx.db.get(args.id);
-    if (!pkg) {
-      return null;
-    }
-
-    const packageRooms = await ctx.db
-      .query("package_rooms")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageFlights = await ctx.db
-      .query("package_flights")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageHotels = await ctx.db
-      .query("package_hotels")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageMeals = await ctx.db.query("package_meals").collect();
+    const snapshot = await readPackageEditSnapshot(ctx, args.id);
+    if (!snapshot) return null;
+    const { package: pkg, rooms: packageRooms, flights: packageFlights, hotels: packageHotels, meals: packageMeals } = snapshot;
     const mealsByPackageHotelId = new Map<(typeof packageMeals)[number]["package_hotel_id"], (typeof packageMeals)[number][]>();
 
     for (const meal of packageMeals) {
@@ -186,6 +169,7 @@ export const getById = query({
 
     return {
       ...pkg,
+      editToken: packageEditToken(snapshot),
       rooms: dedupeById(packageRooms),
       flights: dedupeById(packageFlights),
       hotels: dedupeById(packageHotels).map((hotel) => ({
@@ -363,6 +347,7 @@ export const createPackage = mutation({
 export const updatePackage = mutation({
   args: {
     id: v.id("packages"),
+    expectedEditToken: v.optional(v.string()),
     payload: v.object({
       name: v.string(),
       duration: v.string(),
@@ -413,6 +398,10 @@ export const updatePackage = mutation({
     if (!existingPackage) {
       throw new Error("Package not found");
     }
+
+    const snapshot = await readPackageEditSnapshot(ctx, args.id);
+    if (!snapshot) throw new Error("Package not found");
+    requireCurrentPackageEdit(args.expectedEditToken, snapshot);
 
     const now = new Date().toISOString();
     const nextSeason =

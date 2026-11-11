@@ -1,5 +1,6 @@
 "use client";
 
+import { isPackageEditConflict } from "~/domain/package-edit-conflict";
 import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +33,7 @@ import {
 
 type SaveState =
 	| { kind: "idle" | "saving" | "saved"; packageId?: string }
-	| { kind: "rejected" | "unknown"; message: string };
+	| { kind: "rejected" | "unknown" | "conflict"; message: string };
 
 type Step =
 	| "basic"
@@ -130,11 +131,12 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		saveStateRef.current = state;
 		setSaveState(state);
 	};
-	const packageId = initialData?._id || null;
+	const [baseline] = useState(() => structuredClone(initialData));
+	const packageId = baseline._id || null;
 
 	const methods = useForm<IPackageDetailsForm, unknown, IPackageDetails>({
 		resolver: zodResolver(packageSchema),
-		defaultValues: initialData,
+		defaultValues: baseline,
 		mode: "onChange",
 		shouldFocusError: false,
 	});
@@ -267,7 +269,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	};
 
 	const _onSubmit = async (data: IPackageDetails) => {
-		if (["saving", "unknown", "saved"].includes(saveStateRef.current.kind)) return;
+		if (["saving", "unknown", "saved", "conflict"].includes(saveStateRef.current.kind)) return;
 		transitionSave({ kind: "saving" });
 		setSubmissionErrors([]);
 		setAttemptedDraft(structuredClone(getValues()));
@@ -277,11 +279,15 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(data),
+					body: JSON.stringify({ ...data, _id: baseline._id, editToken: baseline.editToken }),
 				},
 			);
 			const body = await res.json().catch(() => null) as { success?: boolean; packageId?: string; error?: string; code?: string; message?: string } | null;
 			if (!res.ok) {
+				if (res.status === 409 && isPackageEditConflict(body)) {
+					transitionSave({ kind: "conflict", message: body.message });
+					return;
+				}
 				transitionSave({
 					kind: res.status === 400 ? "rejected" : "unknown",
 					message: res.status === 400
@@ -318,7 +324,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		setTimeout(() => URL.revokeObjectURL(url), 1000);
 	};
 
-	const saveBlocked = ["saving", "unknown", "saved"].includes(saveState.kind);
+	const saveBlocked = ["saving", "unknown", "saved", "conflict"].includes(saveState.kind);
 
 	const renderSuspenseImportButton = (
 		settingKey: keyof IPackageDetailsForm,
@@ -422,9 +428,10 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 						<p><Link className="underline" href="/packages">Back to Packages</Link></p>
 					</div>
 				)}
-				{(saveState.kind === "unknown" || saveState.kind === "rejected") && (
+				{(saveState.kind === "unknown" || saveState.kind === "rejected" || saveState.kind === "conflict") && (
 					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm space-y-3">
 						<p className="font-semibold">{saveState.message}</p>
+						{saveState.kind === "conflict" && <Link className="underline" href={`/packages/edit/${packageId}`} target="_blank" rel="noopener noreferrer">Open latest package in another tab</Link>}
 						{saveState.kind === "unknown" && <p>Saving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.</p>}
 						<div className="flex gap-4 items-center">
 							<Button type="button" variant="outline" onClick={downloadDraft}>Download complete draft</Button>
