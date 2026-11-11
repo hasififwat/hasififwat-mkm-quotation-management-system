@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-11T07:22:00.941Z",
+  "commit": "63c57f0c3e370f2659c48bbe260a296e22a092f6",
+  "sourceSha256": "019af509f675c7021533d084f568e0317f0b1351a400454169f97f9887b65863",
+  "versions": {
+    "node": "v26.11.1",
+    "typescript": "5.9.3",
+    "convex": "1.45.0"
+  },
+  "baselineRestored": true,
+  "baseline": {
+    "cases": 864,
+    "successfulCalls": 32,
+    "rejectedCalls": 832,
+    "positiveWitnesses": {
+      "create": 8,
+      "update": 8
+    },
+    "adapterErrors": []
+  },
+  "properties": {
+    "authenticated_writes": 16,
+    "flight_matches_package": 0
+  },
+  "mutationTests": [
+    {
+      "operation": "create",
+      "detected": true,
+      "associationFailures": 16
+    },
+    {
+      "operation": "update",
+      "detected": true,
+      "associationFailures": 16
+    }
+  ]
+}
