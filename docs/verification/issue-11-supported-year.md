@@ -7,7 +7,7 @@ Verified locally on 2026-11-11. The goal is to reject unsupported package years,
 - Requested base, initial HEAD, and local `origin/migration/nextjs-upgrade`: `db4b6555537281618eca5d68bd52bb8cfeb8dbdf`.
 - Regression commit: `92beb0b0a66046038b6d5952cd573197850ea7cb` (`test: cover supported Umrah year write boundaries and quotation compatibility`). Production files were unchanged when the regressions ran and when this commit was made.
 - Implementation commit: `63b1e6a5e4d67c588c07da5f9fec8c72c049908c`, titled `fix: enforce supported Umrah years across package writers`. A subsequent verification-only commit records the parent review and browser attempt.
-- Browser-helper snapshot: regression commit plus uncommitted implementation, source digest `56635812fb1abd2b21bf1fb8f94ca1ed6944a7a270edb0ed59b86cda0434622c`. It is not a browser-tested final commit.
+- Authenticated browser snapshot: `78e8959dc78dc8648525965cbe43765ab8db3ede`, at `http://localhost:3101`. The following commit adds evidence only.
 
 ## Behavior and scope
 
@@ -19,7 +19,7 @@ The normalizer copies year without a date fallback. Actual create/update and cre
 
 ## Executable evidence
 
-Commands run from this worktree with Node `v24.19.0`. Dependencies use an ignored symlink to the existing root `node_modules`. No dependencies were installed. Set `pnpm_config_verify_deps_before_run=false` for pnpm commands below; otherwise pnpm tries to reinstall the shared dependency directory and aborts for lack of a TTY.
+Commands run from this worktree with Node `v24.19.0`. The initial handler checks shared the root dependencies through an ignored symlink. For the successful browser run, local dependency paths were materialized using the same installed versions to satisfy Turbopack. No dependency versions changed. Set `pnpm_config_verify_deps_before_run=false` for pnpm commands below; otherwise pnpm tries to reinstall the shared dependency directory and aborts for lack of a TTY.
 
 | Command | Before | After |
 |---|---|---|
@@ -44,21 +44,33 @@ The invalid matrix covers empty, calendar `2026`, malformed separators, leading/
 
 Each of all seven accepted years runs actual normalized create, getById, transformed update, getById, and quotation create. Assertions independently specify the expected Hijri code, reference such as `1447H-0001`, and persisted package snapshot year. Both offered years are included. Alternate writers exercise supported insert paths too, and CSV update accepts an ignored unsupported year without changing stored year. These are handler-level integration tests, not Convex hosted transaction or browser tests. UI wiring was inspected directly; no source-text tests or component rendering are represented as end-to-end proof.
 
-## Browser attempt and cleanup
+## Authenticated browser verification and cleanup
 
-Read the app-verification skill and package journey. Ran `node .agents/skills/verify-mkm-app/scripts/control.mjs start --port 3101` against an isolated source snapshot. The ignored root environment file was copied locally without printing it. No account was created and no shared backend writes were performed.
+Used the repository [app-verification skill](../../.agents/skills/verify-mkm-app/SKILL.md) and package journey. The initial helper attempt failed because Turbopack rejected an external dependency symlink; local dependency paths resolved that startup issue. A subsequent login-only attempt did not use the available credentials and was insufficient verification. The authenticated run below supersedes that access limitation.
 
-Evidence directory: `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-J1xtTF`.
+On 2026-11-11, the web-only helper served an isolated snapshot of frontend commit `78e8959dc78dc8648525965cbe43765ab8db3ede` at `http://localhost:3101`. Signed in using the existing `.env.local` credentials without publishing their values. Real native browser controls drove the actual builders; no internal form setters or mocked pages were used. T3 preview could not paste into the login controls on two attempts, so native Chrome incognito was used. A separate private Safari session additionally reopened the first package. No account was created.
 
-The helper started Next 16.3.4 but Turbopack rejected the shared dependency symlink with `Symlink .../node_modules is invalid, it points out of the filesystem root`. HTTP readiness failed before browser navigation. `preview_status` showed default and incognito profiles but no active tab. No tab was opened, screenshot captured, or browser persistence verified. The parent baseline attempt also lacked authenticated disposable fixtures, as recorded in `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-o4uvgc`.
+The user explicitly authorized credentialed end-to-end testing. The existing configured Convex deployment was used with uniquely named disposable records. No Convex watcher, deployment, import, or historical-data correction ran. The backend revision was not pinned: these browser results prove valid-path compatibility and UI persistence against that backend, while the local actual-handler regressions prove the changed server guards. Unsupported API values were not submitted to the shared backend.
 
-The helper's automatic cleanup ran, followed by explicit `control.mjs stop` for the owned run. `cleanup.json` confirms workspace removal and retained evidence; `lsof -iTCP:3101 -sTCP:LISTEN` returned no listener. The copied worktree `.env.local` was removed. The temporary Convex tsconfig was removed. No generated files or secrets are committed. The parent screenshot below records the later access limitation. No deployment, merge, shared backend write, or historical-data change occurred during verification.
+| Browser check | Observed result |
+|---|---|
+| Leave year empty and press Basic Details Next | Stayed on Basic Details; displayed `Choose a supported Umrah year` |
+| Open Umrah year picker | Exactly `2025/2026` and `2026/2027` offered |
+| Create each package through Preview and Save | Both found through the package list, reopened, and fully reloaded with the selected year |
+| Edit transportation, save, reopen, and fully reload | Both retained `E2E edited verification bus` and their selected year |
+| Create quotation from each package for the existing synthetic `dev_test` client | Both saved using Quad RM 1,200 × 2 passengers |
+| Open each saved quotation through its review link, then fully reload | `1447H-0001` and `1448H-0325`, respectively; both PDF reviews retained the intended package and RM 2,400 total |
 
-The parent resolved the symlink startup failure by materializing local dependency paths in the ignored worktree, without installing or changing dependency versions. A second helper run on port 3101 served Next 16.3.4 at implementation commit `63b1e6a5e4d67c588c07da5f9fec8c72c049908c`. Opening `http://localhost:3101/packages/create` redirected to the hydrated login page with Email, Password, and Login controls. The helper doctor was healthy. No authenticated verification account or disposable backend was available, so the builder and its saved result were not exercised.
+Fixture marker: `TK0B5Q`. The sanitized [proof ledger](issue-11-supported-year/proof.json) records exact owned IDs and cleanup results. The existing synthetic client was reused without editing it. Cleanup authenticated as the same account, checked exact names, years, quotation package/client IDs, references and the unique notes marker before changing anything. Both owned quotations were deleted and queried again to confirm absence. Both owned packages were archived and queried again to confirm their archived state. No pre-existing package, quotation, or client was edited. Quotation sequence numbers consumed by testing were not reset.
 
-Parent evidence is retained at `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-WKDxtq`. The owned tab was closed, the helper stopped, the source snapshot removed, and the ignored environment copy removed. The screenshot contains empty credential fields and demonstrates the access limitation only.
+The account was signed out and owned private test windows closed. The helper stopped its owned process and removed its source snapshot; the worktree environment copy was removed. Evidence directory: `/private/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-verify-TK0B5Q`. The local private `/tmp/mkm-year-e2e-evidence` directory retains raw captures and the cleanup backup. Published screenshots are pixel crops of actual browser captures, excluding browser chrome and the account sidebar. They contain only synthetic test details and the application's standard quotation template.
 
-![Authenticated builder access requires login](issue-11-supported-year/login-required.png)
+![Required year feedback](issue-11-supported-year/year-required.png)
+![Offered year choices](issue-11-supported-year/year-options.png)
+![2025/2026 after edit, save and reload](issue-11-supported-year/package-2025-edit-reloaded.png)
+![2026/2027 after edit, save and reload](issue-11-supported-year/package-2026-edit-reloaded.png)
+![Saved 1447H quotation after reload](issue-11-supported-year/quotation-2025-reloaded.png)
+![Saved 1448H quotation after reload](issue-11-supported-year/quotation-2026-reloaded.png)
 
 Two independent adversarial reviews found no reproduced regression. Local probes executed the actual builder submission with the installed React Hook Form and Zod resolver, checked empty create defaults and the actual picker choices, verified historical reads, and challenged exact membership and authentication-first guards. Those probes do not substitute for browser interaction.
 
@@ -68,13 +80,13 @@ Known gaps below use inferred rarity, not production measurements.
 
 | Finding | What goes wrong | What it takes to hit it | Rarity | Who is hurt | Bucket |
 |---|---|---|---|---|---|
-| 1. Authenticated browser proof remains incomplete | Final-submit error display and save/reopen/quotation persistence have no end-to-end browser evidence | Run the builder with an authenticated verification account and disposable deployment | Common in this local setup, inferred | Reviewer lacks UI proof | Accept as known gap for this handoff; parent must assess before UI PR merge |
+| 1. Backend revision not pinned in browser run | The browser run cannot establish that the new server guards were deployed | Use the configured backend without deploying this branch | Common, measured for this run | Reviewer must use the local handler regressions for server-guard evidence | Accept as known gap; no deployment was requested |
 | 2. Existing lint debt | Full lint exits 1 despite zero new diagnostics | Run full repository lint | Common, measured on base and head | Maintainers cannot use full lint exit as a new-regression signal | Accept as known gap; unrelated to issue 11 |
 | 3. Existing quotation authentication finding | The bounded checker still reproduces anonymous quotation writes on base and head; the year refactor does not change that behavior | Invoke quotation create or update directly without identity using a valid fixture | Occasional, inferred; endpoint usage was not measured | Business quotation records can be written without identity | Later ticket; existing finding outside this year-only fix |
 | 4. Unsupported historical values need deliberate selection on save | An existing invalid year cannot be saved again unchanged | Edit an old package outside the seven supported ranges | Occasional, inferred; production prevalence unknown | Package editor must choose a supported year | Accept as known gap required by the requested write invariant; historical reads remain available |
 
-A disposable authenticated environment would allow the missing browser evidence. Production counts could change the historical-value rarity assessment. No live audit was performed.
+An isolated deployment of this branch would add hosted proof of the new writer guards. Production counts could change the historical-value rarity assessment. No historical-data audit was performed.
 
 ## Implementation decisions
 
-Model the Domain put mapping and selection policy in one catalog. Boundary Discipline placed guards after authentication at the writers. Test Behavior, Not Implementation drove assertions through registered handlers and persisted snapshots. Laziness Protocol kept the final submit change to year validation and removed the duplicate quotation map. Prove It Works required successful valid paths alongside rejection tests and an explicit statement of the browser limit. The unavailable external deslop skill was not installed; the diff received manual cleanup instead. The parent retains independent review, push, PR, and ticket ownership.
+Model the Domain put mapping and selection policy in one catalog. Boundary Discipline placed guards after authentication at the writers. Test Behavior, Not Implementation drove assertions through registered handlers and persisted snapshots. Laziness Protocol kept the final submit change to year validation and removed the duplicate quotation map. Prove It Works required successful valid paths alongside rejection tests and an explicit distinction between browser, local-handler and deployed-backend evidence. The unavailable external deslop skill was not installed; the diff received manual cleanup instead. The parent retains independent review, push, PR, and ticket ownership.
