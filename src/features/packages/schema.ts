@@ -1,3 +1,4 @@
+import { flightDateErrors, parsePriceInput } from "../../domain/submission-validation";
 import { isSupportedUmrahYear } from "../../domain/umrah-years";
 import { z } from "zod";
 import { FlightImportSchema } from "../flights/schema";
@@ -6,6 +7,21 @@ const umrahYearSchema = z.string().refine(
 	(value): boolean => isSupportedUmrahYear(value),
 	"Choose a supported Umrah year",
 );
+
+const priceInputSchema = z.union([z.number(), z.string()]).transform((value, ctx) => {
+	try {
+		return parsePriceInput(value);
+	} catch (error) {
+		ctx.addIssue({ code: "custom", message: error instanceof Error ? error.message : "Enter a valid price." });
+		return z.NEVER;
+	}
+});
+
+const completeFlightSchema = FlightImportSchema.superRefine((flight, ctx) => {
+	const errors = flightDateErrors({ departure_date: flight.departure, return_date: flight.return });
+	if (errors.departure_date) ctx.addIssue({ code: "custom", path: ["departure"], message: errors.departure_date });
+	if (errors.return_date) ctx.addIssue({ code: "custom", path: ["return"], message: errors.return_date });
+});
 
 const hotelSchemaApiRes = z.object({
 	_id: z.string(),
@@ -24,7 +40,7 @@ const hotelSchema = hotelSchemaApiRes.extend({
 const roomSchemaApiRes = z.object({
 	_id: z.string(),
 	name: z.string().min(3, "Room name is required"),
-	price: z.number().min(0, "Price must be positive"),
+	price: priceInputSchema,
 	enabled: z.boolean().default(false),
 	sort_order: z.number(),
 });
@@ -54,7 +70,7 @@ export const packageSchema = z.object({
 	rooms: z.array(roomSchema).default([]),
 
 	//Array of flights
-	flights: z.array(FlightImportSchema).default([]),
+	flights: z.array(completeFlightSchema).default([]),
 });
 
 export const selectedPackageSchema = z.array(
@@ -62,7 +78,7 @@ export const selectedPackageSchema = z.array(
 		name: z.string().min(3, "Package name must be at least 3 characters"),
 		season: z.string().min(1, "Season is required"),
 		flights: z
-			.array(FlightImportSchema)
+			.array(completeFlightSchema)
 			.min(1, "At least one flight is required"),
 		selected: z.boolean(),
 	}),
@@ -70,7 +86,7 @@ export const selectedPackageSchema = z.array(
 
 export const seasonalRoomPriceSchema = z.object({
 	room_type: z.string().min(1, "Room type is required"),
-	price: z.number().min(0, "Price must be 0 or greater"),
+	price: priceInputSchema,
 	enabled: z.boolean(),
 });
 

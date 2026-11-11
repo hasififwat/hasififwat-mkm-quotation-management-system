@@ -1,3 +1,4 @@
+import { parsePriceInput } from "../../../domain/submission-validation";
 import type { IPackageDetailsForm } from "../schema";
 
 export function normalizePackageMutationPayload(data: IPackageDetailsForm) {
@@ -20,7 +21,7 @@ export function normalizePackageMutationPayload(data: IPackageDetailsForm) {
 		rooms: (data.rooms ?? []).map((room) => ({
 			_id: room._id,
 			room_type: room.name,
-			price: Number(room.price ?? 0),
+			price: parsePriceInput(room.price),
 			enabled: room.enabled ?? false,
 		})),
 		flights: (data.flights ?? []).map((flight) => ({

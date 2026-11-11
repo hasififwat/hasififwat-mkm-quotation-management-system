@@ -136,7 +136,7 @@ export const PackagePreviewCard = ({
 								<div key={room._id ?? room.name} className="space-y-1">
 									<p className="text-muted-foreground">{room.name}</p>
 									<p className="text-lg font-semibold">
-										RM {(room.price as number).toLocaleString("en-US")}
+										RM {room.price === "" ? "Price required" : Number(room.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 									</p>
 								</div>
 							))}

@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
-import React, { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { FormProvider, useForm, type FieldErrors, type FieldPath } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -122,15 +122,54 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const packageId = initialData?._id || null;
 
-	const methods = useForm<IPackageDetailsForm>({
+	const methods = useForm<IPackageDetailsForm, unknown, IPackageDetails>({
 		resolver: zodResolver(packageSchema),
 		defaultValues: initialData,
 		mode: "onChange",
+		shouldFocusError: false,
 	});
 
 	const { setValue, getValues, trigger, setFocus } = methods;
 
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
+
+	const [submissionErrors, setSubmissionErrors] = useState<string[]>([]);
+	const [focusRequest, setFocusRequest] = useState<{ path: FieldPath<IPackageDetailsForm> } | null>(null);
+
+	useEffect(() => {
+		if (focusRequest) {
+			setFocus(focusRequest.path);
+		}
+	}, [focusRequest, setFocus]);
+
+	const onInvalid = (errors: FieldErrors<IPackageDetailsForm>) => {
+		const messages: Array<{ path: string; message: string }> = [];
+		const collect = (value: unknown, path: string) => {
+			if (!value || typeof value !== "object") return;
+			if ("message" in value && typeof value.message === "string") {
+				messages.push({ path, message: value.message });
+				return;
+			}
+			for (const [key, child] of Object.entries(value)) {
+				if (key !== "ref") collect(child, path ? `${path}.${key}` : key);
+			}
+		};
+		collect(errors, "");
+		const first = messages[0];
+		if (!first) return;
+		const root = first.path.split(".")[0];
+		const stepByField: Record<string, Step> = {
+			hotels: "hotels", inclusions: "inclusions", exclusions: "inclusions", rooms: "pricing", flights: "flights",
+		};
+		setCurrentStep(stepByField[root] ?? "basic");
+		setFocusRequest({ path: first.path as FieldPath<IPackageDetailsForm> });
+		setSubmissionErrors(messages.map(({ path, message }) => {
+			const [field, index] = path.split(".");
+			if (field === "rooms") return `${getValues(`rooms.${Number(index)}.name`)} price. ${message}`;
+			if (field === "flights") return `Flight ${Number(index) + 1}. ${message}`;
+			return message;
+		}));
+	};
 
 	const validateCurrentStep = async () => {
 		if (currentStep === "basic") {
@@ -217,7 +256,8 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		setCurrentStep(nextStep);
 	};
 
-	const _onSubmit = async (data: IPackageDetailsForm) => {
+	const _onSubmit = async (data: IPackageDetails) => {
+		setSubmissionErrors([]);
 		if (!(await trigger("year"))) {
 			setCurrentStep("basic");
 			return;
@@ -329,12 +369,15 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 
 			<form
 				className="space-y-6"
-				onSubmit={(e) => {
-					e.preventDefault();
-
-					_onSubmit(getValues());
-				}}
+				noValidate
+				onSubmit={methods.handleSubmit(_onSubmit, onInvalid)}
 			>
+				{submissionErrors.length > 0 && (
+					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm text-destructive">
+						<p className="font-semibold">Correct these fields before saving.</p>
+						<ul className="list-disc pl-5">{submissionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul>
+					</div>
+				)}
 				<FormProvider {...methods}>
 					<BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
 

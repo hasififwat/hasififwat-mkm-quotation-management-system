@@ -40,12 +40,13 @@ for (const price of badPrices) {
     });
   }
 }
-for (const departure_date of badDates.concat("2027-02-01")) {
+for (const dateField of ["departure_date", "return_date"]) {
+for (const date of badDates.concat(dateField === "departure_date" ? "2027-02-01" : "2026-12-31")) {
   for (const writer of ["createPackage", "updatePackage", "createPackageWithFlight", "addFlight"]) {
-    test(`${writer} rejects incomplete or invalid flight ${JSON.stringify(departure_date)}`, async () => {
+    test(`${writer} rejects incomplete or invalid flight ${dateField} ${JSON.stringify(date)}`, async () => {
       const s = state(); const id = await create(s,form());
-      const payload = normalize(form()); payload.flights[0].departure_date = departure_date;
-      const data = form(); data.flights[0].departure = departure_date;
+      const payload = normalize(form()); payload.flights[0][dateField] = date;
+      const data = form(); data.flights[0][dateField === "departure_date" ? "departure" : "return"] = date;
       const args = writer === "addFlight" ? {package_id:id,...payload.flights[0]}
         : writer === "createPackageWithFlight" ? {payload:{year:"2026/2027",packages:[{name:"Good fixture",flights:[]},{name:"Bad fixture",flights:data.flights}]}}
         : {id,payload};
@@ -54,6 +55,7 @@ for (const departure_date of badDates.concat("2027-02-01")) {
       assert.equal(packageSchema.safeParse(data).success,false);
     });
   }
+}
 }
 for (const writer of ["create", "update"]) {
   for (const section of ["selected_rooms", "adds_ons", "discounts"]) {
@@ -103,3 +105,12 @@ for (const price of [0, 1234.56]) {
   });
 }
 test("packages can be saved without any flight", async () => {const s=state();const data=form();data.flights=[];await create(s,data);assert.equal(s.tables.package_flights.length,0);});
+
+for (const writer of ["create", "update"]) {
+  test(`quotation ${writer} rejects invalid historical package prices before snapshot writes`, async () => {
+    const s = state(); const id = await create(s, form()); const payload = quotePayload(id, s.tables.package_flights[0]._id);
+    payload.id = (await quotations.create._handler(s.ctx, {payload})).id;
+    s.tables.package_rooms[0].price = -10;
+    await unchanged(s, () => quotations[writer]._handler(s.ctx, {payload}), /price/i);
+  });
+}

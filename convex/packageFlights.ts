@@ -1,3 +1,4 @@
+import { requireFlightDates } from "../src/domain/submission-validation";
 import type { Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
@@ -15,6 +16,7 @@ export const addFlight = mutation({
     source: v.optional(v.union(v.literal("sync"), v.literal("manual"))),
   },
   handler: async (ctx, args) => {
+    requireFlightDates(args);
     const now = new Date().toISOString();
     const id = await ctx.db.insert("package_flights", {
       package_id: args.package_id,

@@ -4,12 +4,16 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { getServerConvexClient } from "~/lib/convex-server";
-import type { IPackageDetailsForm } from "~/features/packages/schema";
+import { packageSchema } from "~/features/packages/schema";
 import { normalizePackageMutationPayload } from "~/features/packages/utils";
 
 export async function POST(request: NextRequest) {
 	const client = await getServerConvexClient();
-	const data = (await request.json()) as IPackageDetailsForm;
+	const result = packageSchema.safeParse(await request.json());
+	if (!result.success) {
+		return NextResponse.json({ success: false, error: "Correct the invalid package fields.", issues: result.error.issues }, { status: 400 });
+	}
+	const data = result.data;
 
 	if (!data._id) {
 		return NextResponse.json(

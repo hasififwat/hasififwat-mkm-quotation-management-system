@@ -1,3 +1,4 @@
+import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
@@ -292,6 +293,8 @@ export const createPackage = mutation({
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
     requireSupportedUmrahYear(args.payload.year);
+    requirePrices(args.payload.rooms);
+    args.payload.flights.forEach((flight, index) => requireFlightDates(flight, `Flight ${index + 1}`));
     const now = new Date().toISOString();
 
     const packageDocId = await ctx.db.insert("packages", {
@@ -403,6 +406,8 @@ export const updatePackage = mutation({
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
     requireSupportedUmrahYear(args.payload.year);
+    requirePrices(args.payload.rooms);
+    args.payload.flights.forEach((flight, index) => requireFlightDates(flight, `Flight ${index + 1}`));
     const existingPackage = await ctx.db.get(args.id);
     if (!existingPackage) {
       throw new Error("Package not found");
@@ -650,6 +655,7 @@ export const patchRoomPrices = mutation({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
+    requirePrices(args.prices);
     const pkg = await ctx.db.get(args.package_id);
     if (!pkg) throw new Error(`Package not found: ${args.package_id}`);
 
@@ -747,11 +753,20 @@ export const createPackageWithFlight = mutation({
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
     requireSupportedUmrahYear(args.payload.year);
+    for (const item of args.payload.packages) {
+      requirePrices(item.rooms ?? []);
+      item.flights.forEach((flight, index) => requireFlightDates({ departure_date: flight.departure, return_date: flight.return }, `Flight ${index + 1}`));
+    }
     const now = new Date().toISOString();
 
     const hotelTemplates = await ctx.db.query("hotel_templates").collect();
     const roomTemplates = await ctx.db.query("room_templates").collect();
     const existingPackages = await ctx.db.query("packages").collect();
+
+    for (const item of args.payload.packages) {
+      const matched = existingPackages.some((pkg) => pkg.name === item.name && pkg.year === args.payload.year && (pkg.season || "") === (item.season || ""));
+      if (!matched && !item.rooms?.length) requirePrices(roomTemplates);
+    }
 
     const createdPackageIds: Array<{
       name: string;
@@ -975,6 +990,7 @@ export const syncPackageFromCsv = mutation({
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
     if (!args.db_id) requireSupportedUmrahYear(args.year);
+    requirePrices(args.rooms);
     const now = new Date().toISOString();
 
     if (args.db_id) {
