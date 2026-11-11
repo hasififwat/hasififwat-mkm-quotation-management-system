@@ -1,0 +1,782 @@
+{
+  "snapshot": "e98314b847fd7813de30a068f8a23e0efa470d28",
+  "routes": [
+    {
+      "source": "src/app/(protected)/clients/[cid]/page.tsx",
+      "route": "/clients/[cid]",
+      "kind": "page",
+      "features": [
+        "clients.md#client-003"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/clients/create/page.tsx",
+      "route": "/clients/create",
+      "kind": "page",
+      "features": [
+        "clients.md#client-005"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/clients/page.tsx",
+      "route": "/clients",
+      "kind": "page",
+      "features": [
+        "clients.md#client-001"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/dashboard/page.tsx",
+      "route": "/dashboard",
+      "kind": "page",
+      "features": [
+        "dashboard.md#dash-001"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/flights/audit/page.tsx",
+      "route": "/flights/audit",
+      "kind": "page",
+      "features": [
+        "flights.md#flight-001"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/flights/page.tsx",
+      "route": "/flights",
+      "kind": "page",
+      "features": [
+        "flights.md#flight-005"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/create-from-schedule/page.tsx",
+      "route": "/packages/create-from-schedule",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-005",
+        "flights.md#flight-003"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/create/page.tsx",
+      "route": "/packages/create",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-002",
+        "flights.md#flight-002"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/edit/[pid]/page.tsx",
+      "route": "/packages/edit/[pid]",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-002",
+        "flights.md#flight-002"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/page.tsx",
+      "route": "/packages",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-001"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/stats/page.tsx",
+      "route": "/packages/stats",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-004"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/packages/sync/page.tsx",
+      "route": "/packages/sync",
+      "kind": "page",
+      "features": [
+        "packages.md#pkg-006",
+        "flights.md#flight-004"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/quotations/create/page.tsx",
+      "route": "/quotations/create",
+      "kind": "page",
+      "features": [
+        "quotations.md#quote-003"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/quotations/duplicates/page.tsx",
+      "route": "/quotations/duplicates",
+      "kind": "page",
+      "features": [
+        "quotations.md#quote-007"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/quotations/edit/[qid]/page.tsx",
+      "route": "/quotations/edit/[qid]",
+      "kind": "page",
+      "features": [
+        "quotations.md#quote-004",
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/quotations/page.tsx",
+      "route": "/quotations",
+      "kind": "page",
+      "features": [
+        "quotations.md#quote-001",
+        "quotations.md#quote-002"
+      ]
+    },
+    {
+      "source": "src/app/(protected)/quotations/review/[qid]/page.tsx",
+      "route": "/quotations/review/[qid]",
+      "kind": "page",
+      "features": [
+        "quotations.md#quote-006",
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "source": "src/app/api/clients/create/route.ts",
+      "route": "/api/clients/create",
+      "kind": "POST",
+      "features": [
+        "clients.md#client-004"
+      ]
+    },
+    {
+      "source": "src/app/api/packages/create-with-flight/route.ts",
+      "route": "/api/packages/create-with-flight",
+      "kind": "POST",
+      "features": [
+        "packages.md#pkg-005"
+      ]
+    },
+    {
+      "source": "src/app/api/packages/create/route.ts",
+      "route": "/api/packages/create",
+      "kind": "POST",
+      "features": [
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "source": "src/app/api/packages/update/route.ts",
+      "route": "/api/packages/update",
+      "kind": "POST",
+      "features": [
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "source": "src/app/api/quotations/create/route.ts",
+      "route": "/api/quotations/create",
+      "kind": "POST",
+      "features": [
+        "quotations.md#quote-003"
+      ]
+    },
+    {
+      "source": "src/app/api/quotations/update/route.ts",
+      "route": "/api/quotations/update",
+      "kind": "POST",
+      "features": [
+        "quotations.md#quote-004",
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "source": "src/app/logout/page.tsx",
+      "route": "/logout",
+      "kind": "page",
+      "features": [
+        "authentication.md#auth-006"
+      ]
+    },
+    {
+      "source": "src/app/page.tsx",
+      "route": "/",
+      "kind": "page",
+      "features": [
+        "authentication.md#auth-001"
+      ]
+    },
+    {
+      "source": "src/app/sign-up/page.tsx",
+      "route": "/sign-up",
+      "kind": "page",
+      "features": [
+        "authentication.md#auth-003"
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "name": "auth:isAuthenticated",
+      "source": "convex/auth.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-002"
+      ]
+    },
+    {
+      "name": "auth:signIn",
+      "source": "convex/auth.ts",
+      "kind": "action",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-001",
+        "authentication.md#auth-007"
+      ]
+    },
+    {
+      "name": "auth:signOut",
+      "source": "convex/auth.ts",
+      "kind": "action",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-006"
+      ]
+    },
+    {
+      "name": "auth:store",
+      "source": "convex/auth.ts",
+      "kind": "internalMutation",
+      "visibility": "internal",
+      "features": [
+        "authentication.md#auth-007"
+      ]
+    },
+    {
+      "name": "clients:create",
+      "source": "convex/clients.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-004"
+      ]
+    },
+    {
+      "name": "clients:findDuplicateClients",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-006"
+      ]
+    },
+    {
+      "name": "clients:getAgentNames",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-001"
+      ]
+    },
+    {
+      "name": "clients:getWithQuotations",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-003"
+      ]
+    },
+    {
+      "name": "clients:list",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-004"
+      ]
+    },
+    {
+      "name": "clients:listWithStats",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-001",
+        "clients.md#client-002"
+      ]
+    },
+    {
+      "name": "clients:listWithStatsPaginated",
+      "source": "convex/clients.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-001",
+        "clients.md#client-002"
+      ]
+    },
+    {
+      "name": "clients:mergeClients",
+      "source": "convex/clients.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "clients.md#client-006"
+      ]
+    },
+    {
+      "name": "packageFlights:addFlight",
+      "source": "convex/packageFlights.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "flights.md#flight-004",
+        "flights.md#flight-006"
+      ]
+    },
+    {
+      "name": "packageFlights:deleteFlight",
+      "source": "convex/packageFlights.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "flights.md#flight-004",
+        "flights.md#flight-006"
+      ]
+    },
+    {
+      "name": "packageFlights:listAll",
+      "source": "convex/packageFlights.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "flights.md#flight-001",
+        "flights.md#flight-004",
+        "flights.md#flight-006"
+      ]
+    },
+    {
+      "name": "packageFlights:promoteToSync",
+      "source": "convex/packageFlights.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "flights.md#flight-004",
+        "flights.md#flight-006"
+      ]
+    },
+    {
+      "name": "packageFlights:setSourceManual",
+      "source": "convex/packageFlights.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "flights.md#flight-006"
+      ]
+    },
+    {
+      "name": "packages:archivePackage",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-003"
+      ]
+    },
+    {
+      "name": "packages:backfillMissingHotelsFromTemplates",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:checkExistingPackagesForYear",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-005"
+      ]
+    },
+    {
+      "name": "packages:createPackage",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "name": "packages:createPackageWithFlight",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-005"
+      ]
+    },
+    {
+      "name": "packages:getById",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "name": "packages:getPackageTemplate",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-002",
+        "packages.md#pkg-005"
+      ]
+    },
+    {
+      "name": "packages:list",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:listWithHotelsAndMeals",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-006"
+      ]
+    },
+    {
+      "name": "packages:listWithQuotationCounts",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-004"
+      ]
+    },
+    {
+      "name": "packages:listWithRoomPricesOnly",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:listWithRooms",
+      "source": "convex/packages.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-001",
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "name": "packages:patchRoomPrices",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:patchSeason",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:promotePackageToSync",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-006"
+      ]
+    },
+    {
+      "name": "packages:reconcilePackageHotelsFromTemplates",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:setPackagesSourceManual",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-007"
+      ]
+    },
+    {
+      "name": "packages:syncPackageFromCsv",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-006"
+      ]
+    },
+    {
+      "name": "packages:updatePackage",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-002"
+      ]
+    },
+    {
+      "name": "packages:updatePackageStatus",
+      "source": "convex/packages.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "packages.md#pkg-003"
+      ]
+    },
+    {
+      "name": "profiles:createProfileForEmail",
+      "source": "convex/profiles.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-005"
+      ]
+    },
+    {
+      "name": "profiles:createUserAccount",
+      "source": "convex/profiles.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-003"
+      ]
+    },
+    {
+      "name": "profiles:getMyProfile",
+      "source": "convex/profiles.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-004"
+      ]
+    },
+    {
+      "name": "profiles:migrateQuotationCreators",
+      "source": "convex/profiles.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-005"
+      ]
+    },
+    {
+      "name": "profiles:removeLegacySupabaseIds",
+      "source": "convex/profiles.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-005"
+      ]
+    },
+    {
+      "name": "profiles:setProfileEmail",
+      "source": "convex/profiles.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "authentication.md#auth-005"
+      ]
+    },
+    {
+      "name": "quotations:archiveQuotation",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-002"
+      ]
+    },
+    {
+      "name": "quotations:count",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-008"
+      ]
+    },
+    {
+      "name": "quotations:create",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-003"
+      ]
+    },
+    {
+      "name": "quotations:deleteById",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-007"
+      ]
+    },
+    {
+      "name": "quotations:findDuplicates",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-007"
+      ]
+    },
+    {
+      "name": "quotations:getItemsByQuotationId",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-002"
+      ]
+    },
+    {
+      "name": "quotations:getQuotationForEdit",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-004",
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "name": "quotations:getQuotationFullDetails",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-006",
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "name": "quotations:list",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-001"
+      ]
+    },
+    {
+      "name": "quotations:listPaginated",
+      "source": "convex/quotations.ts",
+      "kind": "query",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-001"
+      ]
+    },
+    {
+      "name": "quotations:refreshSnapshot",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-005"
+      ]
+    },
+    {
+      "name": "quotations:repairStaleFlightIds",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-008"
+      ]
+    },
+    {
+      "name": "quotations:resequenceByCreatedAt",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-008"
+      ]
+    },
+    {
+      "name": "quotations:update",
+      "source": "convex/quotations.ts",
+      "kind": "mutation",
+      "visibility": "public",
+      "features": [
+        "quotations.md#quote-004"
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "source": "convex/inquiries.ts",
+      "reason": "Empty module. Inquiry table and quotation inquiry_id exist, but this module registers no operations."
+    },
+    {
+      "source": "convex/http.ts",
+      "reason": "Auth HTTP router registration is covered separately in coverage.md, not a Convex query or mutation."
+    },
+    {
+      "source": "convex/_generated/",
+      "reason": "Generated binding helpers, not application operation implementations."
+    },
+    {
+      "source": "convex/schema.ts",
+      "reason": "Table definitions, covered by infrastructure data relationships and feature documents."
+    },
+    {
+      "source": "convex/auth.config.ts",
+      "reason": "Auth provider configuration, covered by AUTH."
+    },
+    {
+      "source": "convex/convex.config.ts",
+      "reason": "Aggregate component registration, covered by APP. No application operation export."
+    },
+    {
+      "source": "convex/constants.ts",
+      "reason": "PAGE_SIZE constant, not a registered operation."
+    },
+    {
+      "source": "public/",
+      "reason": "Static assets and schedule sample, not App Router pages or handlers."
+    }
+  ]
+}
