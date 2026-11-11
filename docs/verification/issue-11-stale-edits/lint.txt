@@ -38,9 +38,6 @@ $ eslint
 /Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/fix-package-seasons.js
   53:10  warning  'runConvexMutation' is defined but never used  @typescript-eslint/no-unused-vars
 
-/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs
-  10:108  warning  'id' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
 /Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/src/app/(protected)/clients/page.tsx
   96:5   warning  React Hook useEffect has a missing dependency: 'picFilters'. Either include it or remove the dependency array                             react-hooks/exhaustive-deps
   96:18  warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
@@ -295,7 +292,7 @@ Calling setState synchronously within an effect body causes cascading renders th
 /Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/src/layout/SidebarLayout.tsx
   88:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 56 problems (20 errors, 36 warnings)
+✖ 55 problems (20 errors, 35 warnings)
   0 errors and 4 warnings potentially fixable with the `--fix` option.
 
 [ELIFECYCLE] Command failed with exit code 1.
