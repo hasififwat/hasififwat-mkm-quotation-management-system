@@ -1,5 +1,7 @@
 "use client";
 
+import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
@@ -278,12 +280,14 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 					body: JSON.stringify(data),
 				},
 			);
-			const body = await res.json().catch(() => null) as { success?: boolean; packageId?: string; error?: string } | null;
+			const body = await res.json().catch(() => null) as { success?: boolean; packageId?: string; error?: string; code?: string; message?: string } | null;
 			if (!res.ok) {
 				transitionSave({
 					kind: res.status === 400 ? "rejected" : "unknown",
 					message: res.status === 400
-						? "The package was not saved. Correct the invalid fields and save again. Your complete draft is still here."
+						? isPackageReferenceConflict(body)
+							? body.message
+							: "The package was not saved. Correct the invalid fields and save again. Your complete draft is still here."
 						: `We could not confirm whether the package saved (HTTP ${res.status}). Your complete draft is still here.`,
 				});
 				return;

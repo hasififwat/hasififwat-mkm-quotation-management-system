@@ -1,3 +1,4 @@
+import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { v } from "convex/values";
@@ -445,6 +446,23 @@ export const updatePackage = mutation({
       .collect();
     const allExistingRooms = dedupeById(existingRooms);
 
+    const existingFlights = await ctx.db
+      .query("package_flights")
+      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
+      .collect();
+    const dedupedExistingFlights = dedupeById(existingFlights);
+    const existingFlightIdSet = new Set(dedupedExistingFlights.map((f) => String(f._id)));
+    const incomingFlightIdSet = new Set(
+      args.payload.flights.filter((f) => f._id).map((f) => f._id as string),
+    );
+    await requireQuotationReferencesPreserved(
+      ctx,
+      existingPackage._id,
+      allExistingRooms,
+      new Set(dedupedExistingFlights.filter(f => !incomingFlightIdSet.has(String(f._id))).map(f => String(f._id))),
+      new Set(args.payload.rooms.map(room => room.room_type)),
+    );
+
     // Detect whether any sync-managed field (transport, hotels, rooms) actually changed.
     // Inclusions/exclusions are NOT sync-managed — editing only those should not unsync the package.
     const transportChanged =
@@ -509,15 +527,6 @@ export const updatePackage = mutation({
       await ctx.db.delete(room._id);
     }
 
-    const existingFlights = await ctx.db
-      .query("package_flights")
-      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
-      .collect();
-    const dedupedExistingFlights = dedupeById(existingFlights);
-    const existingFlightIdSet = new Set(dedupedExistingFlights.map((f) => String(f._id)));
-    const incomingFlightIdSet = new Set(
-      args.payload.flights.filter((f) => f._id).map((f) => f._id as string),
-    );
     // Delete flights that were removed from the payload
     for (const flight of dedupedExistingFlights) {
       if (!incomingFlightIdSet.has(String(flight._id))) {
