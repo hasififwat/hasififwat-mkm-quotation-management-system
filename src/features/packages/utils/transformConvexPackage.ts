@@ -2,6 +2,7 @@ import type { IPackageDetailsForm } from "../schema";
 
 type ConvexPackageData = {
 	_id: string;
+	editToken?: string;
 	name: string;
 	duration: string;
 	year: string;
@@ -45,6 +46,7 @@ export function transformConvexPackage(
 ): IPackageDetailsForm {
 	return {
 		_id: packageData._id,
+		editToken: packageData.editToken,
 		name: packageData.name,
 		duration: packageData.duration,
 		year: packageData.year,

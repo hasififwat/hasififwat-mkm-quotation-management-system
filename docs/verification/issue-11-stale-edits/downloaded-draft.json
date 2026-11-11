@@ -1,0 +1,177 @@
+{
+  "format": "mkm-package-draft",
+  "version": 1,
+  "currentDraft": {
+    "_id": "jd762d8eetf8fte6y3m15nbhbs8j1kp3",
+    "name": "MKM WI4 20261111 ROOT 0723",
+    "duration": "14 days",
+    "year": "2026/2027",
+    "transport": "",
+    "status": "unpublished",
+    "inclusions": "",
+    "exclusions": "",
+    "hotels": [
+      {
+        "_id": "jh72az51ctxrsaf5yhy7f5dcs18j1g0p",
+        "_creationTime": 1794382066088.049,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "makkah",
+        "meals": []
+      },
+      {
+        "_id": "jh7d5p4a4d6kj8tdg222rd8bz98j02jw",
+        "_creationTime": 1794382066088.0493,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "taif",
+        "meals": []
+      },
+      {
+        "_id": "jh7eq3eapvf2k4j8da4w4bxm3x8j1rxf",
+        "_creationTime": 1794382066088.0496,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "madinah",
+        "meals": []
+      },
+      {
+        "_id": "jh725jqjr70cws91fcmre8ryzx8j0wch",
+        "_creationTime": 1794382066088.0498,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "aziziah",
+        "meals": []
+      }
+    ],
+    "rooms": [
+      {
+        "_id": "js79zebt734szbkp60x3s6h4th8j08w6",
+        "name": "Double",
+        "price": 1234.56,
+        "enabled": true,
+        "sort_order": 0
+      },
+      {
+        "_id": "js71fb05tapazptvrkrw9dress8j136a",
+        "name": "Triple",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 1
+      },
+      {
+        "_id": "js754pnj59bh4hnjb0hx04tefd8j0s9n",
+        "name": "Quad",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 2
+      },
+      {
+        "_id": "js740bmwnmp4g0gfcwfje3bm4h8j1rxt",
+        "name": "Quint",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 3
+      },
+      {
+        "_id": "js73h88rjg7tjkkgk1cxdyq7j98j12ms",
+        "name": "Suite",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 4
+      }
+    ],
+    "flights": []
+  },
+  "attemptedDraft": {
+    "_id": "jd762d8eetf8fte6y3m15nbhbs8j1kp3",
+    "name": "MKM WI4 20261111 ROOT 0723",
+    "duration": "14 days",
+    "year": "2026/2027",
+    "transport": "",
+    "status": "unpublished",
+    "inclusions": "",
+    "exclusions": "",
+    "hotels": [
+      {
+        "_id": "jh72az51ctxrsaf5yhy7f5dcs18j1g0p",
+        "_creationTime": 1794382066088.049,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "makkah",
+        "meals": []
+      },
+      {
+        "_id": "jh7d5p4a4d6kj8tdg222rd8bz98j02jw",
+        "_creationTime": 1794382066088.0493,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "taif",
+        "meals": []
+      },
+      {
+        "_id": "jh7eq3eapvf2k4j8da4w4bxm3x8j1rxf",
+        "_creationTime": 1794382066088.0496,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "madinah",
+        "meals": []
+      },
+      {
+        "_id": "jh725jqjr70cws91fcmre8ryzx8j0wch",
+        "_creationTime": 1794382066088.0498,
+        "name": "",
+        "enabled": false,
+        "placeholder": "Hotel Nozol Royal Inn @ setaraf (150m+/-) 4 star",
+        "hotel_type": "aziziah",
+        "meals": []
+      }
+    ],
+    "rooms": [
+      {
+        "_id": "js79zebt734szbkp60x3s6h4th8j08w6",
+        "name": "Double",
+        "price": 1234.56,
+        "enabled": true,
+        "sort_order": 0
+      },
+      {
+        "_id": "js71fb05tapazptvrkrw9dress8j136a",
+        "name": "Triple",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 1
+      },
+      {
+        "_id": "js754pnj59bh4hnjb0hx04tefd8j0s9n",
+        "name": "Quad",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 2
+      },
+      {
+        "_id": "js740bmwnmp4g0gfcwfje3bm4h8j1rxt",
+        "name": "Quint",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 3
+      },
+      {
+        "_id": "js73h88rjg7tjkkgk1cxdyq7j98j12ms",
+        "name": "Suite",
+        "price": 0,
+        "enabled": false,
+        "sort_order": 4
+      }
+    ],
+    "flights": []
+  },
+  "outcome": "conflict"
+}

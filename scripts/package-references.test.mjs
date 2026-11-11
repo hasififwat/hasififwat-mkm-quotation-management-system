@@ -37,13 +37,14 @@ test('room ID churn permits reopening and saving a quotation with unchanged type
   assert.equal(s.tables.quotation_items.find(i=>i.item_type==='room').package_room_id,s.tables.package_rooms[0]._id);
 });
 test('description fallback protects the type after earlier room ID churn',async()=>{
-  const {s,data}=await fixture();await save(s,data);data.rooms=[];
+  const {s,data}=await fixture();await save(s,data);data.editToken=(await read(s,data._id)).editToken;data.rooms=[];
   await rejectsWithoutWrites(s,()=>save(s,data),/Quad/);
 });
 test('unreferenced flight and room removal succeeds despite snapshot copies',async()=>{
   const {s,id,data}=await fixture();
   const extraRoom=await s.ctx.db.insert('package_rooms',{package_id:id,room_type:'Double',price:0,enabled:true});
   const extraFlight=await s.ctx.db.insert('package_flights',{...s.tables.package_flights[0],_id:undefined,package_id:id});
+  data.editToken=(await read(s,id)).editToken;
   await save(s,data);
   assert.ok(!s.tables.package_rooms.some(r=>r._id===extraRoom));assert.ok(!s.tables.package_flights.some(r=>r._id===extraFlight));
 });

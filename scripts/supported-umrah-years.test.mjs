@@ -51,7 +51,7 @@ function form(year='2026/2027') {
 }
 async function create(s, data) { return (await packages.createPackage._handler(s.ctx, {payload:normalize(data)})).packageDocId; }
 async function read(s, id) { return packages.getById._handler(s.ctx, {id}); }
-async function save(s, data) { return packages.updatePackage._handler(s.ctx, {id:data._id, payload:normalize(data)}); }
+async function save(s, data) { return packages.updatePackage._handler(s.ctx, {id:data._id, expectedEditToken:data.editToken, payload:normalize(data)}); }
 function quotePayload(package_id, flight_id, room_type='Quad', price=1200) { return {pic_name:'Fixture staff',branch:'Fixture',client_id:'client:1',package_id,flight_id,selected_rooms:[{room_type,price,pax:1}],adds_ons:[],discounts:[]}; }
 
 const mappings = [
