@@ -1,3 +1,4 @@
+import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
@@ -21,6 +22,21 @@ function normalizeCurrency(value: number) {
 
 function buildLineTotal(price: number, pax: number) {
 	return normalizeCurrency(price * pax);
+}
+
+function validateQuotationPrices(payload: {
+	selected_rooms: Array<{ price: number; pax: number }>;
+	adds_ons?: Array<{ price: number; pax: number }>;
+	discounts?: Array<{ price: number; pax: number }>;
+}) {
+	for (const [label, rows] of [["Room", payload.selected_rooms], ["Add-on", payload.adds_ons ?? []], ["Discount", payload.discounts ?? []]] as const) {
+		requirePrices(rows, label);
+		for (const row of rows) {
+			if (!Number.isFinite(row.pax) || !Number.isFinite(row.price * Math.max(1, Math.floor(row.pax)) * 100)) {
+				throw new Error(`${label} quantity and amount must be finite.`);
+			}
+		}
+	}
 }
 
 function parseCreatedAt(value: string) {
@@ -503,6 +519,7 @@ export const create = mutation({
 		}),
 	},
 	handler: async (ctx, args) => {
+		validateQuotationPrices(args.payload);
 		const now = new Date().toISOString();
 
 		const allPackages = await ctx.db.query("packages").collect();
@@ -545,6 +562,7 @@ export const create = mutation({
 			throw new Error("Selected flight does not belong to the selected package");
 		}
 
+		requireFlightDates(selectedFlight);
 		if (args.payload.selected_rooms.length === 0) {
 			throw new Error("At least one room selection is required");
 		}
@@ -600,6 +618,9 @@ export const create = mutation({
 			0,
 		);
 
+		if (![roomsTotal, addOnsTotal, discountsTotal, (roomsTotal + addOnsTotal - discountsTotal) * 100].every(Number.isFinite)) {
+			throw new Error("Quotation amount must be finite.");
+		}
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
 		const currentHijriYearMaxSeq = hijriYearQuotations
@@ -621,6 +642,7 @@ export const create = mutation({
 		const roomsForPkg = allPackageRooms.filter(
 			(r) => String(r.package_id) === args.payload.package_id,
 		);
+		requirePrices(roomsForPkg, "Package room");
 		const package_snapshot = buildPackageSnapshot(selectedPackage, roomsForPkg);
 		const flight_snapshot = buildFlightSnapshot(selectedFlight);
 		const hotels_snapshot = buildHotelsSnapshot(hotelsForPkg, mealsByHotelId);
@@ -1071,6 +1093,7 @@ export const update = mutation({
 		}),
 	},
 	handler: async (ctx, args) => {
+		validateQuotationPrices(args.payload);
 		const quotation = await findQuotationByStringId(ctx, args.payload.id);
 		if (!quotation) {
 			throw new Error("Quotation not found");
@@ -1112,6 +1135,7 @@ export const update = mutation({
 			throw new Error("Selected flight does not belong to the selected package");
 		}
 
+		requireFlightDates(selectedFlight);
 		if (args.payload.selected_rooms.length === 0) {
 			throw new Error("At least one room selection is required");
 		}
@@ -1167,6 +1191,9 @@ export const update = mutation({
 			0,
 		);
 
+		if (![roomsTotal, addOnsTotal, discountsTotal, (roomsTotal + addOnsTotal - discountsTotal) * 100].every(Number.isFinite)) {
+			throw new Error("Quotation amount must be finite.");
+		}
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
 		const packageChanged = args.payload.package_id !== quotation.package_id;
@@ -1186,6 +1213,7 @@ export const update = mutation({
 		const roomsForPkg = allPackageRooms.filter(
 			(r) => String(r.package_id) === args.payload.package_id,
 		);
+		requirePrices(roomsForPkg, "Package room");
 		const package_snapshot = packageChanged
 			? buildPackageSnapshot(selectedPackage, roomsForPkg)
 			: (quotation.package_snapshot ?? buildPackageSnapshot(selectedPackage, roomsForPkg));

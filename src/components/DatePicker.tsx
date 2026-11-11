@@ -13,6 +13,8 @@ import {
 import { cn } from "~/lib/utils";
 
 interface DatePickerProps {
+	triggerRef?: React.Ref<HTMLButtonElement>;
+	invalid?: boolean;
 	value?: string; // ISO date string (YYYY-MM-DD)
 	onChange?: (value: string) => void;
 	placeholder?: string;
@@ -22,6 +24,8 @@ interface DatePickerProps {
 export function DatePicker({
 	value,
 	onChange,
+	triggerRef,
+	invalid,
 	placeholder = "Pick a date",
 	className,
 }: DatePickerProps) {
@@ -49,6 +53,8 @@ export function DatePicker({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
+					ref={triggerRef}
+					aria-invalid={invalid}
 					type="button"
 					variant="outline"
 					data-empty={!dateValue}

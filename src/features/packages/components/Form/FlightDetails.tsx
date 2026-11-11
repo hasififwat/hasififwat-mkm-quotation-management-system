@@ -96,8 +96,7 @@ export default function FlightDetails({
 					</div>
 				</CardTitle>
 				<CardDescription>
-					Add flight schedules for this package. You can add multiple flight
-					entries.
+					Each flight needs valid departure and return dates. Airline, month, and sectors are optional. Remove an unfinished flight to save without it.
 				</CardDescription>
 			</CardHeader>
 
@@ -156,7 +155,7 @@ export default function FlightDetails({
 									control={control}
 									render={({ field: airlineField }) => (
 										<Field>
-											<Label>Airline</Label>
+											<Label>Airline (optional)</Label>
 											<Select
 												value={airlineField.value}
 												onValueChange={airlineField.onChange}
@@ -182,7 +181,7 @@ export default function FlightDetails({
 									control={control}
 									render={({ field: monthField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
-											<Label>Month</Label>
+											<Label>Month (optional)</Label>
 											<Select
 												value={monthField.value}
 												onValueChange={monthField.onChange}
@@ -218,6 +217,8 @@ export default function FlightDetails({
 										<Field data-invalid={fieldState.invalid}>
 											<Label>Departure Date</Label>
 											<DatePicker
+												triggerRef={dateField.ref}
+												invalid={fieldState.invalid}
 												value={dateField.value}
 												onChange={dateField.onChange}
 												placeholder="Select date"
@@ -237,7 +238,7 @@ export default function FlightDetails({
 									control={control}
 									render={({ field: sectorField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
-											<Label>Departure Sector</Label>
+											<Label>Departure Sector (optional)</Label>
 											<Input
 												{...sectorField}
 												placeholder="e.g., KUL-JED"
@@ -261,6 +262,8 @@ export default function FlightDetails({
 										<Field data-invalid={fieldState.invalid}>
 											<Label>Return Date</Label>
 											<DatePicker
+												triggerRef={dateField.ref}
+												invalid={fieldState.invalid}
 												value={dateField.value}
 												onChange={dateField.onChange}
 												placeholder="Select date"
@@ -280,7 +283,7 @@ export default function FlightDetails({
 									control={control}
 									render={({ field: sectorField, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
-											<Label>Return Sector</Label>
+											<Label>Return Sector (optional)</Label>
 											<Input
 												{...sectorField}
 												placeholder="e.g., JED-KUL"

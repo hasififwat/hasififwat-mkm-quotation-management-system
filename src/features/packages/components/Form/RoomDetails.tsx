@@ -85,23 +85,31 @@ export default function RoomDetails({
 											</button>
 
 											{/* PRICE INPUT */}
-											{enabledField.value && (
-												<Controller
-													name={`rooms.${index}.price`}
-													control={control}
-													render={({ field: priceField }) => (
-														<div className="w-full max-w-35">
-															<Input
-																{...priceField}
-																value={priceField.value as number}
-																type="number"
-																placeholder="0.00"
-																className="h-9 text-right"
-															/>
-														</div>
-													)}
-												/>
-											)}
+											<Controller
+												name={`rooms.${index}.price`}
+												control={control}
+												render={({ field: priceField, fieldState: priceState }) => (
+													<div className="w-full max-w-35">
+														<Input
+															{...priceField}
+															value={priceField.value ?? ""}
+															aria-label={`${field.name} price`}
+															aria-invalid={priceState.invalid}
+															aria-describedby={`room-price-error-${index}`}
+															min="0"
+															step="0.01"
+															type="number"
+															placeholder="0.00"
+															className="h-9 text-right"
+														/>
+														{priceState.error && (
+															<p id={`room-price-error-${index}`} className="mt-1 text-xs text-destructive">
+																{priceState.error.message}
+															</p>
+														)}
+													</div>
+												)}
+											/>
 										</div>
 									</Field>
 								)}
