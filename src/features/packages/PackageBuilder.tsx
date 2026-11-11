@@ -2,10 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm, type FieldErrors, type FieldPath } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -28,6 +27,10 @@ import {
 	type IPackageDetailsForm,
 	packageSchema,
 } from "./schema";
+
+type SaveState =
+	| { kind: "idle" | "saving" | "saved"; packageId?: string }
+	| { kind: "rejected" | "unknown"; message: string };
 
 type Step =
 	| "basic"
@@ -118,8 +121,13 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	initialData,
 	allPackages,
 }) => {
-	const router = useRouter();
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
+	const saveStateRef = useRef<SaveState>({ kind: "idle" });
+	const attemptedDraft = useRef<IPackageDetailsForm | null>(null);
+	const transitionSave = (state: SaveState) => {
+		saveStateRef.current = state;
+		setSaveState(state);
+	};
 	const packageId = initialData?._id || null;
 
 	const methods = useForm<IPackageDetailsForm, unknown, IPackageDetails>({
@@ -257,12 +265,10 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	};
 
 	const _onSubmit = async (data: IPackageDetails) => {
+		if (["saving", "unknown", "saved"].includes(saveStateRef.current.kind)) return;
+		transitionSave({ kind: "saving" });
 		setSubmissionErrors([]);
-		if (!(await trigger("year"))) {
-			setCurrentStep("basic");
-			return;
-		}
-		setIsSubmitting(true);
+		attemptedDraft.current = structuredClone(getValues());
 		try {
 			const res = await fetch(
 				data._id ? "/api/packages/update" : "/api/packages/create",
@@ -272,16 +278,44 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 					body: JSON.stringify(data),
 				},
 			);
+			const body = await res.json().catch(() => null) as { success?: boolean; packageId?: string; error?: string } | null;
 			if (!res.ok) {
-				const body = (await res.json().catch(() => ({}))) as { error?: string };
-				console.error("Failed to save package:", body.error ?? res.status);
+				transitionSave({
+					kind: res.status === 400 ? "rejected" : "unknown",
+					message: res.status === 400
+						? "The package was not saved. Correct the invalid fields and save again. Your complete draft is still here."
+						: `We could not confirm whether the package saved (HTTP ${res.status}). Your complete draft is still here.`,
+				});
 				return;
 			}
-			router.push("/packages");
-		} finally {
-			setIsSubmitting(false);
+			if (body?.success !== true || typeof body.packageId !== "string" || !body.packageId) {
+				transitionSave({ kind: "unknown", message: "The server response did not confirm the saved package. Your complete draft is still here." });
+				return;
+			}
+			transitionSave({ kind: "saved", packageId: body.packageId });
+		} catch {
+			transitionSave({ kind: "unknown", message: "The connection failed before we could confirm the save. Your complete draft is still here." });
 		}
 	};
+
+	const downloadDraft = () => {
+		const blob = new Blob([JSON.stringify({
+			format: "mkm-package-draft",
+			version: 1,
+			currentDraft: getValues(),
+			attemptedDraft: attemptedDraft.current,
+			outcome: saveStateRef.current.kind,
+		}, null, 2)], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "mkm-package-draft.json";
+		link.click();
+		setTimeout(() => URL.revokeObjectURL(url), 1000);
+	};
+
+	const submit = methods.handleSubmit(_onSubmit, onInvalid);
+	const saveBlocked = ["saving", "unknown", "saved"].includes(saveState.kind);
 
 	const renderSuspenseImportButton = (
 		settingKey: keyof IPackageDetailsForm,
@@ -370,14 +404,38 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 			<form
 				className="space-y-6"
 				noValidate
-				onSubmit={methods.handleSubmit(_onSubmit, onInvalid)}
+				onSubmit={(event) => {
+					if (currentStep !== "preview" || saveBlocked) {
+						event.preventDefault();
+						return;
+					}
+					void submit(event);
+				}}
 			>
+				{saveState.kind === "saved" && (
+					<div role="status" className="rounded-lg border p-4 space-y-2">
+						<p className="font-semibold">Package saved successfully.</p>
+						<Link className="underline" href={`/packages/edit/${saveState.packageId}`}>View saved package</Link>
+						<p><Link className="underline" href="/packages">Back to Packages</Link></p>
+					</div>
+				)}
+				{(saveState.kind === "unknown" || saveState.kind === "rejected") && (
+					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm space-y-3">
+						<p className="font-semibold">{saveState.message}</p>
+						{saveState.kind === "unknown" && <p>Saving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.</p>}
+						<div className="flex gap-4 items-center">
+							<Button type="button" variant="outline" onClick={downloadDraft}>Download complete draft</Button>
+							<a className="underline" href={`/packages?q=${encodeURIComponent(attemptedDraft.current?.name ?? "")}`} target="_blank" rel="noopener noreferrer">Check Packages in a new tab</a>
+						</div>
+					</div>
+				)}
 				{submissionErrors.length > 0 && (
 					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm text-destructive">
 						<p className="font-semibold">Correct these fields before saving.</p>
 						<ul className="list-disc pl-5">{submissionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul>
 					</div>
 				)}
+				<fieldset disabled={saveState.kind === "saving" || saveState.kind === "saved"} className="space-y-6 min-w-0">
 				<FormProvider {...methods}>
 					<BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
 
@@ -425,9 +483,12 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 						<PackagePreviewCard
 							getValues={getValues}
 							onPrevious={goToPreviousStep}
+							savePending={saveState.kind === "saving"}
+							saveBlocked={saveBlocked}
 						/>
 					)}
 				</FormProvider>
+				</fieldset>
 			</form>
 		</div>
 	);
