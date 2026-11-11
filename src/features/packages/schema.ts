@@ -1,5 +1,11 @@
+import { isSupportedUmrahYear } from "../../domain/umrah-years";
 import { z } from "zod";
 import { FlightImportSchema } from "../flights/schema";
+
+const umrahYearSchema = z.string().refine(
+	(value): boolean => isSupportedUmrahYear(value),
+	"Choose a supported Umrah year",
+);
 
 const hotelSchemaApiRes = z.object({
 	_id: z.string(),
@@ -28,7 +34,7 @@ const roomSchema = roomSchemaApiRes;
 export const packageSchema = z.object({
 	_id: z.string().optional(),
 
-	year: z.string().min(1, " Year is required (e.g., '2026/2027')"),
+	year: umrahYearSchema,
 
 	name: z.string().min(3, "Package name must be at least 3 characters"),
 	duration: z.string().min(1, "Duration is required (e.g., '12 Days')"),
@@ -74,7 +80,7 @@ export const seasonalPricingSchema = z.object({
 });
 
 export const selectedPackageFormSchema = z.object({
-	year: z.string().min(1, "Year is required"),
+	year: umrahYearSchema,
 	packages: selectedPackageSchema,
 	seasonal_prices: z.array(seasonalPricingSchema).default([]),
 });

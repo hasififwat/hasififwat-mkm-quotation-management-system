@@ -1,3 +1,4 @@
+import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
@@ -9,6 +10,10 @@ async function requirePackageAccess(ctx: Pick<QueryCtx, "auth">): Promise<void> 
 
 function dedupeById<T extends { _id: string }>(items: T[]): T[] {
   return Array.from(new Map(items.map((item) => [item._id, item])).values());
+}
+
+function requireSupportedUmrahYear(year: string) {
+  if (!isSupportedUmrahYear(year)) throw new Error("Choose a supported Umrah year");
 }
 
 export const list = query({
@@ -286,6 +291,7 @@ export const createPackage = mutation({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
+    requireSupportedUmrahYear(args.payload.year);
     const now = new Date().toISOString();
 
     const packageDocId = await ctx.db.insert("packages", {
@@ -396,6 +402,7 @@ export const updatePackage = mutation({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
+    requireSupportedUmrahYear(args.payload.year);
     const existingPackage = await ctx.db.get(args.id);
     if (!existingPackage) {
       throw new Error("Package not found");
@@ -739,6 +746,7 @@ export const createPackageWithFlight = mutation({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
+    requireSupportedUmrahYear(args.payload.year);
     const now = new Date().toISOString();
 
     const hotelTemplates = await ctx.db.query("hotel_templates").collect();
@@ -966,6 +974,7 @@ export const syncPackageFromCsv = mutation({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
+    if (!args.db_id) requireSupportedUmrahYear(args.year);
     const now = new Date().toISOString();
 
     if (args.db_id) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { SELECTABLE_UMRAH_YEARS } from "~/domain/umrah-years";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
 	Select,
@@ -34,8 +35,9 @@ export function UmrahYearSelect({
 				</SelectTrigger>
 				<SelectContent>
 					<SelectGroup>
-						<SelectItem value="2025/2026">2025/2026</SelectItem>
-						<SelectItem value="2026/2027">2026/2027</SelectItem>
+						{SELECTABLE_UMRAH_YEARS.map(year => (
+							<SelectItem key={year} value={year}>{year}</SelectItem>
+						))}
 					</SelectGroup>
 				</SelectContent>
 			</Select>

@@ -5,9 +5,7 @@ export function normalizePackageMutationPayload(data: IPackageDetailsForm) {
 		name: data.name,
 		duration: data.duration,
 		transport: data.transport ?? "",
-		year:
-			data.year ??
-			`${new Date().getFullYear() - 1}/${new Date().getFullYear()}`,
+		year: data.year,
 		status: data.status ?? "unpublished",
 		inclusions: data.inclusions ?? "",
 		exclusions: data.exclusions ?? "",

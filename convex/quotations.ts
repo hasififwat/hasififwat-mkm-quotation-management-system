@@ -1,3 +1,4 @@
+import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
@@ -8,21 +9,6 @@ function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: 
 	return revision > 0
 		? `${hijriYear}-${paddedSequence}-R${revision}`
 		: `${hijriYear}-${paddedSequence}`;
-}
-
-function getMappedHijriYear(year: string) {
-	const hijriYearMap: Record<string, string> = {
-		"2025/2026": "1447H",
-		"2026/2027": "1448H",
-		"2027/2028": "1449H",
-		"2028/2029": "1450H",
-		"2029/2030": "1451H",
-		"2030/2031": "1452H",
-		"2031/2032": "1453H",
-	};
-	const mapped = hijriYearMap[year];
-	if (!mapped) throw new Error(`No hijri year mapping for Gregorian range: ${year}`);
-	return mapped;
 }
 
 function normalizeCurrency(value: number) {

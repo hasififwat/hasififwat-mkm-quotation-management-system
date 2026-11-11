@@ -44,6 +44,9 @@ tool performs **bounded exhaustive execution**, not an unbounded mathematical
 proof. It transpiles `convex/quotations.ts`, obtains the actual registered
 `create._handler` and `update._handler`, and executes each against an in-memory
 adapter for exactly the database operations those paths currently use.
+Shared TypeScript dependencies resolve through `scripts/helpers/load-typescript.mjs`. The checker
+compiles each original or mutant quotation source separately, so dependency
+loading does not replace the source under test.
 
 All **864** cases in this Cartesian product run, with one operation per fresh
 database state:

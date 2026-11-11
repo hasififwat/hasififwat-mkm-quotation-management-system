@@ -22,7 +22,7 @@ const createEmptyTemplate = (templateData: {
 	return {
 		name: "",
 		duration: "",
-		year: new Date().getFullYear().toString(),
+		year: "",
 		transport: "",
 		status: "unpublished",
 		inclusions: "",

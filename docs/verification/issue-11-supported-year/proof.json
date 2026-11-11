@@ -1,0 +1,70 @@
+{
+  "feature": "PKG-002 supported Umrah years",
+  "frontendCommit": "78e8959dc78dc8648525965cbe43765ab8db3ede",
+  "origin": "http://localhost:3101",
+  "credentials": "Existing .env.local credentials, values omitted",
+  "yearRequired": {
+    "passed": true,
+    "message": "Choose a supported Umrah year"
+  },
+  "offeredYears": [
+    "2025/2026",
+    "2026/2027"
+  ],
+  "packages": [
+    {
+      "id": "jd78w27qnstk3j8ry6rfjv777s8j0fyz",
+      "name": "E2E11-TK0B5Q-2025",
+      "year": "2025/2026",
+      "reopened": true,
+      "reloaded": true,
+      "editSavedAndReloaded": true
+    },
+    {
+      "id": "jd79agh5bnqd9rjct01ja9ww3x8j1xft",
+      "name": "E2E11-TK0B5Q-2026",
+      "year": "2026/2027",
+      "reopened": true,
+      "reloaded": true,
+      "editSavedAndReloaded": true
+    }
+  ],
+  "quotations": [
+    {
+      "id": "k970wrmkv5fxn8w0xkk1kdjj418j194q",
+      "reference": "1447H-0001",
+      "packageId": "jd78w27qnstk3j8ry6rfjv777s8j0fyz",
+      "year": "2025/2026",
+      "reopened": true,
+      "reloaded": true,
+      "total": 2400
+    },
+    {
+      "id": "k97d3hh9qpe2zqg5jwg0ggpw818j18dn",
+      "reference": "1448H-0325",
+      "packageId": "jd79agh5bnqd9rjct01ja9ww3x8j1xft",
+      "year": "2026/2027",
+      "reopened": true,
+      "reloaded": true,
+      "total": 2400
+    }
+  ],
+  "reusedClient": {
+    "id": "j571c33qghq9gbq2sfzb9r5pb1825vww",
+    "name": "dev_test",
+    "modified": false
+  },
+  "verification": "Real native browser actions against the configured Convex backend; no backend deployment performed",
+  "cleanup": {
+    "run": "TK0B5Q",
+    "quotationsDeleted": [
+      "k970wrmkv5fxn8w0xkk1kdjj418j194q",
+      "k97d3hh9qpe2zqg5jwg0ggpw818j18dn"
+    ],
+    "packagesArchived": [
+      "jd78w27qnstk3j8ry6rfjv777s8j0fyz",
+      "jd79agh5bnqd9rjct01ja9ww3x8j1xft"
+    ],
+    "existingClientModified": false
+  }
+}

@@ -1,27 +1,11 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import path from "node:path";
-import vm from "node:vm";
-import { createRequire } from "node:module";
+import { typescriptLoader } from "./helpers/load-typescript.mjs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const localRequire = createRequire(path.join(repo, "package.json"));
-const ts = localRequire("typescript");
-const sourcePath = path.join(repo, "convex/packages.ts");
-const compiled = ts.transpileModule(fs.readFileSync(sourcePath, "utf8"), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-});
-const handlers = {};
-vm.runInNewContext(compiled.outputText, {
-  exports: handlers,
-  require(id) {
-    return localRequire(id === "./_generated/server"
-      ? path.join(repo, "convex/_generated/server.js")
-      : id);
-  },
-}, { filename: sourcePath });
+const handlers = typescriptLoader(repo)(path.join(repo, "convex/packages.ts"));
 
 const now = "2026-11-03T00:00:00.000Z";
 const fixture = {

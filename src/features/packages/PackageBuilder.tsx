@@ -218,6 +218,10 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	};
 
 	const _onSubmit = async (data: IPackageDetailsForm) => {
+		if (!(await trigger("year"))) {
+			setCurrentStep("basic");
+			return;
+		}
 		setIsSubmitting(true);
 		try {
 			const res = await fetch(

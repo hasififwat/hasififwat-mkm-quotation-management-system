@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "ed4145fd3a4f74b18f7ffd57d358bdff192750cb",
-  "sourceWasUncommitted": true,
-  "checkedAt": "2026-11-02",
+  "lastSyncCommit": "63b1e6a5e4d67c588c07da5f9fec8c72c049908c",
+  "sourceWasUncommitted": false,
+  "checkedAt": "2026-11-11",
   "source": "convex/quotations.ts",
-  "sourceSha256": "2e17467c227153a16eba3fcfb61d9c3579dc59fa657e4280908ea79853e4b9b6",
+  "sourceSha256": "fc2fa7e6dca5e603a0d08c57ff833865efe0abd2e24d116cf6dad6f6614ac656",
   "functions": ["create", "update"],
   "executedHelpers": [
     "findQuotationByStringId",
@@ -21,10 +21,12 @@
     "src/lib/convex-server.ts",
     "src/app/api/quotations/create/route.ts",
     "src/app/api/quotations/update/route.ts",
-    "src/app/(protected)/layout.tsx"
+    "src/app/(protected)/layout.tsx",
+    "src/domain/umrah-years.ts",
+    "scripts/helpers/load-typescript.mjs"
   ],
   "versions": {
-    "node": "24.19.0",
+    "node": "26.11.1",
     "typescript": "5.9.3",
     "convex": "1.45.0"
   },
@@ -32,5 +34,9 @@
   "properties": {
     "authenticated_writes": "fails: 16 bounded counterexamples; no identity check in either handler",
     "flight_matches_package": "passes; removing either real guard is detected"
+  },
+  "supportingSourceSha256": {
+    "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
+    "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352"
   }
 }
