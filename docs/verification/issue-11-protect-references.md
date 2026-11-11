@@ -60,15 +60,13 @@ After restoring real fetch, a deliberate Save succeeded. The separate tab reload
 
 ![Typed reference rejection injected at fetch, with retained draft](issue-11-protect-references/rejection.png)
 
-![Room import previews the owned package](issue-11-protect-references/import.png)
-
-![Permitted edit persists after reload](issue-11-protect-references/reload.png)
-
 ![A separate listing confirms persisted duration](issue-11-protect-references/list.png)
 
 Only the owned package was archived after checking its unique name and ID. The filtered list then showed `No results.` The archived row remains stored. No client, quotation, or unrelated record changed. Sign-out returned to hydrated login controls. Both owned tabs were closed. The helper stopped and removed its private snapshot, including the copied environment. The worktree environment copy was removed. [Cleanup manifest](issue-11-protect-references/browser-cleanup.json) records process cleanup.
 
 ![The owned fixture is absent from the filtered list after archive](issue-11-protect-references/cleanup.png)
+
+Visual review found transition blur in the initial feedback, dialog, and reload captures. The blurred captures were removed. A second read-only capture run at `b39600f25e9abc3a05fd8269a5977421d3e99d46`, with identical product source, reopened the archived owned package and injected the same typed rejection. The settled replacement image above is clear. This run sent no real package writes and created no records. Initial navigation timed out during compilation, then the same owned tab reached hydrated login. Sign-out, tab closure, helper shutdown, and environment removal were repeated. [Capture manifest](issue-11-protect-references/capture-run.json) and [capture cleanup](issue-11-protect-references/capture-cleanup.json) record this evidence-only follow-up.
 
 Parent review inspected the product diff and independently reran all 259 tests, TypeScript, and whitespace checks successfully. The [independent review](issue-11-protect-references/review.md) found no blocker in the stated scope and zero added comments or suppressions. Optional external deslop and control-ui skills remain unavailable; direct diff inspection and the app verification skill supplied those checks. Cross-family trail review was unavailable under the Codex-only project configuration. The two [design](issue-11-protect-references/design-a.md) [candidates](issue-11-protect-references/design-b.md) and [decision log](issue-11-protect-references/decisions.tsv) preserve the choice.
 
