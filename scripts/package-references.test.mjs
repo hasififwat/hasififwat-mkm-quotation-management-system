@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {packages, quotations, state, form, create, read, save, transform, quotePayload} from './helpers/submission-fixtures.mjs';
+import {quotations, state, form, create, read, save, transform, quotePayload} from './helpers/submission-fixtures.mjs';
 
 async function fixture() {
   const s=state(); const id=await create(s,form());
@@ -50,4 +50,35 @@ test('unreferenced flight and room removal succeeds despite snapshot copies',asy
 test('preexisting missing selections do not block ordinary package edits',async()=>{
   const {s,data}=await fixture();s.tables.quotations[0].flight_id='historical-missing';s.tables.quotation_items[0].package_room_id='historical-missing';s.tables.quotation_items[0].description='Historical type';
   data.name='Ordinary edit';await save(s,data);assert.equal(s.tables.packages[0].name,'Ordinary edit');
+});
+for(const status of ['draft','sent','accepted','rejected','revised','superseded'])test(`${status} quotation keeps referenced flight protected`,async()=>{
+  const {s,data}=await fixture();s.tables.quotations[0].status=status;data.flights=[];
+  await rejectsWithoutWrites(s,()=>save(s,data),/flight/);
+});
+test('snapshot-only rooms, addons and other-package quotations do not block removal',async()=>{
+  const {s,id,qid}=await fixture();
+  await s.ctx.db.insert('package_rooms',{package_id:id,room_type:'Double',price:10,enabled:true});
+  s.tables.quotations[0].package_snapshot.rooms.push({room_type:'Double',price:10,enabled:true});
+  await s.ctx.db.insert('quotation_items',{quotation_id:qid,item_type:'addon',description:'Double',package_room_id:'',quantity:1,unit_price:10,created_at:''});
+  const other=await create(s,form());await quotations.create._handler(s.ctx,{payload:quotePayload(other,s.tables.package_flights.find(f=>f.package_id===other)._id)});
+  const data=transform(await read(s,id));data.rooms=data.rooms.filter(r=>r.name!=='Double');
+  await save(s,data);assert.ok(!s.tables.package_rooms.some(r=>r.package_id===id&&r.room_type==='Double'));
+});
+test('a replacement flight with identical dates does not preserve its referenced ID',async()=>{
+  const {s,data}=await fixture();data.flights[0]._id='foreign-flight';
+  await rejectsWithoutWrites(s,()=>save(s,data),/flight/);
+});
+test('linked room type takes precedence over a historical description mismatch',async()=>{
+  const {s,data}=await fixture();s.tables.quotation_items[0].description='Historical type';data.rooms=[];
+  await rejectsWithoutWrites(s,()=>save(s,data),/Quad/);
+});
+test('ordinary save does not correct or reject a preexisting description mismatch',async()=>{
+  const {s,qid,data}=await fixture();s.tables.quotation_items[0].description='Historical type';
+  await save(s,data);
+  const reopened=await quotations.getQuotationForEdit._handler(s.ctx,{target_quotation_id:qid});
+  assert.equal(reopened.selected_rooms[0].room_type,'Historical type');
+});
+test('conflict lists a bounded set of references and the remaining affected count',async()=>{
+  const {s,id,data}=await fixture();for(let i=0;i<6;i++)await quotations.create._handler(s.ctx,{payload:quotePayload(id,s.tables.package_flights[0]._id)});
+  data.flights=[];await rejectsWithoutWrites(s,()=>save(s,data),/Another 2 quotations/);
 });
