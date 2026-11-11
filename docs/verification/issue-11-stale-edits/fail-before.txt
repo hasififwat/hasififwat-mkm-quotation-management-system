@@ -193,7 +193,7 @@ test at scripts/package-stale-edits.test.mjs:8:44
 test at scripts/package-stale-edits.test.mjs:9:1
 ✖ fresh baseline permits zero price and retained flight identity (0.2705ms)
   AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
-  
+
   undefined
       at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:9:305)
       at async Test.run (node:internal/test_runner/test:1389:7)
