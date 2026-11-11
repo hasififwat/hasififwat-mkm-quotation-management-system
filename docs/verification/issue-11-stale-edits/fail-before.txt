@@ -1,0 +1,207 @@
+✖ two loaded editors: newer inclusions and added flight survive older name-only save (4.465375ms)
+✖ independent add write invalidates loaded baseline (0.4295ms)
+✖ independent update write invalidates loaded baseline (0.291375ms)
+✖ independent delete write invalidates loaded baseline (0.265125ms)
+✖ independent status write invalidates loaded baseline (0.275167ms)
+✖ independent room write invalidates loaded baseline (0.266666ms)
+✖ independent hotel write invalidates loaded baseline (0.191458ms)
+✖ independent meal write invalidates loaded baseline (0.197042ms)
+✖ independent archive write invalidates loaded baseline (0.251916ms)
+✖ missing or wrong token undefined rejects before writes (0.23075ms)
+✖ missing or wrong token  rejects before writes (0.1725ms)
+✖ missing or wrong token forged rejects before writes (0.141875ms)
+✖ fresh baseline permits zero price and retained flight identity (0.2705ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 0
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 277.438792
+
+✖ failing tests:
+
+test at scripts/package-stale-edits.test.mjs:6:1
+✖ two loaded editors: newer inclusions and added flight survive older name-only save (4.465375ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:6:352)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent add write invalidates loaded baseline (0.4295ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent update write invalidates loaded baseline (0.291375ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent delete write invalidates loaded baseline (0.265125ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent status write invalidates loaded baseline (0.275167ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent room write invalidates loaded baseline (0.266666ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent hotel write invalidates loaded baseline (0.191458ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent meal write invalidates loaded baseline (0.197042ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:7:88
+✖ independent archive write invalidates loaded baseline (0.251916ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:7:1053)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:8:44
+✖ missing or wrong token undefined rejects before writes (0.23075ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:8:173)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:8:44
+✖ missing or wrong token  rejects before writes (0.1725ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:8:173)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:8:44
+✖ missing or wrong token forged rejects before writes (0.141875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejects (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:5:95)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:8:173)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-stale-edits.test.mjs:9:1
+✖ fresh baseline permits zero price and retained flight identity (0.2705ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  undefined
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-66c1ba32-f54b532ae09eb38c/scripts/package-stale-edits.test.mjs:9:305)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
