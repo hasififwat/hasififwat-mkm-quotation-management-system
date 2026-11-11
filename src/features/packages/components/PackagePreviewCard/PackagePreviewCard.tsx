@@ -23,9 +23,13 @@ import type { IPackageDetailsForm } from "../../schema";
 export const PackagePreviewCard = ({
 	getValues,
 	onPrevious,
+	savePending,
+	saveBlocked,
 }: {
 	getValues: UseFormGetValues<IPackageDetailsForm>;
 	onPrevious: () => void;
+	savePending: boolean;
+	saveBlocked: boolean;
 }) => {
 	const pkg = getValues();
 	const inclusionsText = pkg.inclusions ?? "";
@@ -212,11 +216,11 @@ export const PackagePreviewCard = ({
 				</Accordion>
 			</CardContent>
 			<CardFooter className="flex justify-between">
-				<Button variant="outline" onClick={onPrevious}>
+				<Button type="button" variant="outline" onClick={onPrevious}>
 					<ChevronLeft className="w-4 h-4 mr-2" /> Previous
 				</Button>
-				<Button className="gap-2 " type="submit">
-					<Save className="w-4 h-4" /> Save Package
+				<Button className="gap-2 " type="submit" disabled={saveBlocked} aria-busy={savePending}>
+					<Save className="w-4 h-4" /> {savePending ? "Saving package..." : "Save Package"}
 				</Button>
 			</CardFooter>
 		</Card>

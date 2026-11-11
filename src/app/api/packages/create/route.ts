@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
 	const payload = normalizePackageMutationPayload(data);
 
 	try {
-		await client.mutation(api.packages.createPackage, { payload });
-		return NextResponse.json({ success: true });
+		const result = await client.mutation(api.packages.createPackage, { payload });
+		return NextResponse.json({ success: true, packageId: result.packageDocId });
 	} catch (error) {
 		console.error("Error in packages.create API route:", error);
 		return NextResponse.json(

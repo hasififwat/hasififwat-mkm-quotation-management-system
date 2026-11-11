@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
 	const payload = normalizePackageMutationPayload(data);
 
 	try {
-		await client.mutation(api.packages.updatePackage, {
+		const result = await client.mutation(api.packages.updatePackage, {
 			id: data._id as Id<"packages">,
 			payload,
 		});
-		return NextResponse.json({ success: true });
+		return NextResponse.json({ success: true, packageId: result.packageId });
 	} catch (error) {
 		console.error("Error in packages.update API route:", error);
 		return NextResponse.json(

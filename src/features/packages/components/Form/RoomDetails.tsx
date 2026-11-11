@@ -120,7 +120,7 @@ export default function RoomDetails({
 			</CardContent>
 
 			<CardFooter className="flex justify-between">
-				<Button variant="outline" onClick={goToPreviousStep}>
+				<Button type="button" variant="outline" onClick={goToPreviousStep}>
 					<ChevronLeft className="w-4 h-4 mr-2" /> Previous
 				</Button>
 				<Button type="button" onClick={goToNextStep}>
