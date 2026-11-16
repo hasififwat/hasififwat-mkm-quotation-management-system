@@ -24,7 +24,7 @@ vm.runInNewContext(compiled.outputText, {
   },
 }, {filename:sourcePath});
 
-for (const route of ['/api/quotations/create', '/api/quotations/update', '/api/packages/create']) {
+for (const route of ['/api/quotations/create', '/api/quotations/update', '/api/packages/create', '/api/clients/create']) {
   test(`anonymous ${route} returns 401 JSON`, async () => {
     const response = await exported.default(new Request(`https://fixture.invalid${route}`, {method:'POST'}), {
       convexAuth:{isAuthenticated:async () => false},
