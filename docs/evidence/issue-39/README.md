@@ -56,8 +56,14 @@ PDFPreviewMobile. Prove It Works led to failing and passing browser geometry,
 the mobile review fixture, and inspection of the real PDF.
 
 The fixture route never entered the shipping app source. No cloud fixtures
-need deletion. The owned local server remains available for the parent's
-independent inspection. Its manifest is `/private/tmp/mkm-issue39-fixture/run.json`.
+need deletion. The parent independently reproduced the failure, copied the corrected component
+into the same isolated Next fixture, reloaded, and confirmed heights
+`[34,34,34,34]`, aligned totals, and continuous borders at
+`http://localhost:3129/layout-fixture?verify=after`. Parent typecheck, scoped lint,
+and diff checks passed. An independent source and comment review found no material
+correctness issue. Both owned servers on ports 3129 and 3939 were stopped after
+verification. The parent tab was closed. No cloud records were written.
+The implementation fixture manifest is `/private/tmp/mkm-issue39-fixture/run.json`.
 
 After migration advanced to f8d8e2bc, the branch was rebased and all five
 component geometry cases and typecheck passed again on the recorded product commit.
