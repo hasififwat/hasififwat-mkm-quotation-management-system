@@ -1,0 +1,56 @@
+{
+  "source": "Read-only /private/tmp/issue59-pdf-error-observation.json supplied by #59",
+  "claimed_worker_observations": [
+    {
+      "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed",
+      "revision_id": "n5703pj36g6apegyp6mnrttdfd8jbdt1",
+      "state": {
+        "kind": "failed",
+        "reason": "PDF creation failed. Retry this saved revision."
+      },
+      "input_sha256": "82cb5438c1afa97bac079738746f931793db770fb0648e2dc4d44cdebcc0e529",
+      "valid_json": true,
+      "input_hash_matches": true,
+      "captured_error": "mh7egq535t5wkqnafwbh31hs998ja2ed | Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"} | Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"}\n    at performAsyncSyscall (convex:/user/_deps/node/I75GB6AS.js:985:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async runMutation (convex:/user/_deps/node/I75GB6AS.js:1057:15)\n    at async handler (convex:/user/quotationPdfWorker.js:678:5)\n    at async invokeFunction (convex:/user/_deps/node/I75GB6AS.js:1334:9)\n    at async invokeAction (convex:/user/_deps/node/I75GB6AS.js:1395:10)\n    at bundledFunctions.js:65226:21\n    at async runWithEnvironmentVariables (bundledFunctions.js:65041:12)\n    at async executeInner (bundledFunctions.js:65199:10)\n    at async execute (bundledFunctions.js:65159:21)"
+    }
+  ],
+  "original_states_at_capture": [
+    {
+      "artifact_id": "mh7ab4qrvtav30n09m4001968n8jb8mw",
+      "state": "ready"
+    },
+    {
+      "artifact_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq",
+      "state": "ready"
+    },
+    {
+      "artifact_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp",
+      "state": "ready"
+    },
+    {
+      "artifact_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5",
+      "state": "ready"
+    },
+    {
+      "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed",
+      "state": "failed"
+    },
+    {
+      "artifact_id": "mh708tx09cskc8h6wqkx29h4ah8jbbmt",
+      "state": "pending"
+    },
+    {
+      "artifact_id": "mh74s1ekbak05tq861kwh0eaz98jb17a",
+      "state": "pending"
+    },
+    {
+      "artifact_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8",
+      "state": "ready"
+    },
+    {
+      "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh",
+      "state": "ready"
+    }
+  ],
+  "limits": "This preserves the captured claimed-worker error only. Earlier cleaned-up failure causes remain unknown."
+}
