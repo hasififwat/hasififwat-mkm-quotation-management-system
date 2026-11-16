@@ -41,3 +41,11 @@ Existing media remains evidence only at its recorded heads. [Reference video](ht
 | Native window remains | Unused incognito window | Fallback | Known | User | Cleanup |
 
 [Cleanup](cleanup.json) confirms services stopped and private instance removed, including credentials. No old 43/44 instance was touched. T3 tab closed; native window remains.
+
+## Delivery after the branch merges
+
+PR50 and PR51 reached migration/nextjs-upgrade during verification. PR49 merged into the price branch, PR48 merged into the schedule branch, and PR52 merged into the already-merged reference branch. Those merges did not carry the final three repairs to the migration branch.
+
+[PR53](https://github.com/hasififwat/hasififwat-mkm-quotation-management-system/pull/53) delivers the exact verified combined head `5ab3470fb011b072aa03e7087a4b8f1a8d626dde` directly to migration/nextjs-upgrade. The merge-tree check is clean and yields the same tree as the verified head. No new product source was written for this delivery PR. The coordinator did not merge a PR or deploy a shared backend.
+
+[Coordinator decision trail](coordinator-decisions.tsv) records the verification, audit corrections, and delivery check. The source and media limits above still apply.
