@@ -1,0 +1,11 @@
+{
+  "baseline": "bab5e142207df4bac78e54956f44c12d389ec045",
+  "testedHead": "3844e30c3e3bba0fcc90f73b9e2c00409a77fe20",
+  "preview": "http://sync45.localhost:3550/packages/sync",
+  "sha256": {
+    "src/features/packages/sync/parsers.ts": "371a7e1c78673a2d979e82fb8dfada440d2b4579734bae8ba535ad9c476b0a40",
+    "src/features/packages/sync/types.ts": "ecc7073c184019835664f4cad7c95405a472efcd122baefe4f0f804c561e1766",
+    "src/app/(protected)/packages/sync/page.tsx": "42135d99869f801cc03d182c1d0baae819de63653a08145b4053fdba505adf45",
+    "scripts/sync-schedule-safety.test.mjs": "e870b48307248c52caa1ae47bb70245ffc945ae21fbf216fb79702940b7e51f5"
+  }
+}

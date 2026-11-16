@@ -1,0 +1,11 @@
+{
+  "ownedTabsClosed": true,
+  "runtimeRemoved": true,
+  "generatedCredentialsAndDatabaseRemoved": true,
+  "checkoutEnvironmentRemoved": true,
+  "portsFree": {
+    "3550": true,
+    "3560": true,
+    "3561": true
+  }
+}

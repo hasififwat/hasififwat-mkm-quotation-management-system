@@ -1,0 +1,20 @@
+✔ unsupported upload never proposes saved-flight removal (37.383083ms)
+✔ partial schedule preserves missing flights by default and still imports valid additions (3.029833ms)
+✔ explicit scope authorizes only in-range synced missing flights (1.412958ms)
+✔ unknown alias reports diagnostics and blocks removals even with authorization (0.659166ms)
+✔ object property alias reports diagnostics and blocks removals even with authorization (0.379625ms)
+✔ unsupported year reports diagnostics and blocks removals even with authorization (0.359583ms)
+✔ impossible date reports diagnostics and blocks removals even with authorization (0.221333ms)
+✔ unknown section reports diagnostics and blocks removals even with authorization (0.159959ms)
+✔ malformed row reports diagnostics and blocks removals even with authorization (0.169166ms)
+✔ a complete selected scope can deliberately lose its final flight (0.568666ms)
+✔ existing edited-flight behavior does not need removal authorization (0.987958ms)
+✔ unrecognized schedule data in the preamble blocks removals (0.26ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6038.0085

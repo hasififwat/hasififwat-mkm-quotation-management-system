@@ -1,0 +1,148 @@
+✖ unsupported upload never proposes saved-flight removal (2.407834ms)
+✖ partial schedule preserves missing flights by default and still imports valid additions (0.917125ms)
+✖ explicit scope authorizes only in-range synced missing flights (0.489292ms)
+✖ unknown alias reports diagnostics and blocks removals even with authorization (0.288792ms)
+✖ unsupported year reports diagnostics and blocks removals even with authorization (0.2385ms)
+✖ impossible date reports diagnostics and blocks removals even with authorization (0.508583ms)
+✖ unknown section reports diagnostics and blocks removals even with authorization (0.24ms)
+✖ malformed row reports diagnostics and blocks removals even with authorization (0.700958ms)
+✖ a complete selected scope can deliberately lose its final flight (0.362333ms)
+✖ existing edited-flight behavior does not need removal authorization (3.57175ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 0
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4901.118917
+
+✖ failing tests:
+
+test at scripts/sync-schedule-safety.test.mjs:13:1
+✖ unsupported upload never proposes saved-flight removal (2.407834ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-schedule-safety.test.mjs:16:1
+✖ partial schedule preserves missing flights by default and still imports valid additions (0.917125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-schedule-safety.test.mjs:21:1
+✖ explicit scope authorizes only in-range synced missing flights (0.489292ms)
+  TypeError: Cannot read properties of undefined (reading 'find')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:24:37)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:29:3
+✖ unknown alias reports diagnostics and blocks removals even with authorization (0.288792ms)
+  TypeError: Cannot read properties of undefined (reading 'map')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:31:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:29:3
+✖ unsupported year reports diagnostics and blocks removals even with authorization (0.2385ms)
+  TypeError: Cannot read properties of undefined (reading 'map')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:31:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:29:3
+✖ impossible date reports diagnostics and blocks removals even with authorization (0.508583ms)
+  TypeError: Cannot read properties of undefined (reading 'map')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:31:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:29:3
+✖ unknown section reports diagnostics and blocks removals even with authorization (0.24ms)
+  TypeError: Cannot read properties of undefined (reading 'map')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:31:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:29:3
+✖ malformed row reports diagnostics and blocks removals even with authorization (0.700958ms)
+  TypeError: Cannot read properties of undefined (reading 'map')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:31:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:37:1
+✖ a complete selected scope can deliberately lose its final flight (0.362333ms)
+  TypeError: Cannot read properties of undefined (reading 'find')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:39:37)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-schedule-safety.test.mjs:43:1
+✖ existing edited-flight behavior does not need removal authorization (3.57175ms)
+  TypeError: Cannot read properties of undefined (reading '0')
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/scripts/sync-schedule-safety.test.mjs:45:27)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

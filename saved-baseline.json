@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "k5754ysvrj5h1yxd38skw6zb098jbzsk",
+    "departure_date": "2026-12-10",
+    "departure_sector": "KUL-JED",
+    "flight": "TEST003",
+    "month": "December",
+    "package_id": "mh78ecc0xx5nn440zdhbjdxz558jayeq",
+    "package_name": "Save Recovery Test Package",
+    "package_season": "2026/2027",
+    "return_date": "2026-12-22",
+    "return_flight": "",
+    "return_sector": "JED-KUL",
+    "source": "manual"
+  },
+  {
+    "_id": "k57885df6c8srj65wbcnh6zhd18jb6da",
+    "departure_date": "2026-11-01",
+    "departure_sector": "KUL-JED",
+    "flight": "Saudi Airlines",
+    "month": "NOV",
+    "package_id": "mh7agbw687p93sct61hbdn9p4h8jayf5",
+    "package_name": "MENARA JAM",
+    "package_season": "MS - NOV",
+    "return_date": "2026-11-22",
+    "return_flight": "",
+    "return_sector": "JED-KUL",
+    "source": "sync"
+  },
+  {
+    "_id": "k576yqt6k6qv61k9896bvmmev58jaqrj",
+    "departure_date": "2026-11-10",
+    "departure_sector": "KUL-JED",
+    "flight": "Saudi Airlines",
+    "month": "NOV",
+    "package_id": "mh7agbw687p93sct61hbdn9p4h8jayf5",
+    "package_name": "MENARA JAM",
+    "package_season": "MS - NOV",
+    "return_date": "2026-11-22",
+    "return_flight": "",
+    "return_sector": "JED-KUL",
+    "source": "sync"
+  }
+]

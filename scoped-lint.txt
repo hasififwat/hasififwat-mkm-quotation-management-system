@@ -1,0 +1,9 @@
+
+/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-45-sync-schedule-sa-7d5ffa59992430ff/src/app/(protected)/packages/sync/page.tsx
+  1082:9  warning  The 'existingPackages' logical expression could make the dependencies of useMemo Hook (at line 1110) change on every render. To fix this, wrap the initialization of 'existingPackages' in its own useMemo() Hook                           react-hooks/exhaustive-deps
+  1082:9  warning  The 'existingPackages' logical expression could make the dependencies of useMemo Hook (at line 1116) change on every render. To fix this, wrap the initialization of 'existingPackages' in its own useMemo() Hook                           react-hooks/exhaustive-deps
+  1082:9  warning  The 'existingPackages' logical expression could make the dependencies of useMemo Hook (at line 1122) change on every render. To fix this, wrap the initialization of 'existingPackages' in its own useMemo() Hook                           react-hooks/exhaustive-deps
+  1083:9  warning  The 'dbFlights' logical expression could make the dependencies of useMemo Hook (at line 1116) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'dbFlights' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+✖ 4 problems (0 errors, 4 warnings)
+
