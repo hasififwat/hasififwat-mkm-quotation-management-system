@@ -3,7 +3,8 @@ import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
+import { packageSyncKey, PACKAGE_SYNC_CONFLICT_MESSAGE } from "../src/domain/package-sync-intent";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
@@ -635,15 +636,20 @@ export const listWithHotelsAndMeals = query({
       list.push({ hotel_type: h.hotel_type, name: h.name ?? "", enabled: h.enabled, meals: mealsByHotelId.get(String(h._id)) ?? [] });
       hotelsByPkg.set(id, list);
     }
-    return packages.map((p) => ({
-      _id:       String(p._id),
-      name:      p.name,
-      season:    p.season ?? "",
-      year:      p.year,
-      status:    p.status,
-      source:    p.source ?? "manual",
-      transport: p.transport ?? "",
-      hotels:    hotelsByPkg.get(String(p._id)) ?? [],
+    return Promise.all(packages.map(async (p) => {
+      const snapshot = await readPackageEditSnapshot(ctx, p._id);
+      if (!snapshot) throw new Error("Package not found");
+      return {
+        editToken: packageEditToken(snapshot),
+        _id:       String(p._id),
+        name:      p.name,
+        season:    p.season ?? "",
+        year:      p.year,
+        status:    p.status,
+        source:    p.source ?? "manual",
+        transport: p.transport ?? "",
+        hotels:    hotelsByPkg.get(String(p._id)) ?? [],
+      };
     }));
   },
 });
@@ -966,6 +972,7 @@ export const backfillMissingHotelsFromTemplates = mutation({
 export const syncPackageFromCsv = mutation({
   args: {
     db_id: v.optional(v.id("packages")),
+    expected_edit_token: v.optional(v.string()),
     clone_from_id: v.optional(v.id("packages")),
     name: v.string(),
     season: v.string(),
@@ -994,8 +1001,10 @@ export const syncPackageFromCsv = mutation({
     const now = new Date().toISOString();
 
     if (args.db_id) {
-      const pkg = await ctx.db.get(args.db_id);
-      if (!pkg) throw new Error(`Package ${args.db_id} not found`);
+      const snapshot = await readPackageEditSnapshot(ctx, args.db_id);
+      if (!snapshot || snapshot.package.source === "unsync" || !args.expected_edit_token || args.expected_edit_token !== packageEditToken(snapshot)) {
+        throw new ConvexError({ code: "PACKAGE_SYNC_CONFLICT", message: PACKAGE_SYNC_CONFLICT_MESSAGE });
+      }
 
       await ctx.db.patch(args.db_id, { transport: args.transport, updated_at: now });
 
@@ -1041,6 +1050,12 @@ export const syncPackageFromCsv = mutation({
       }
 
       return { action: "updated" as const, id: String(args.db_id) };
+    }
+
+    const existing = await ctx.db.query("packages").collect();
+    const key = packageSyncKey(args.name, args.season);
+    if (existing.some(pkg => packageSyncKey(pkg.name, pkg.season ?? "") === key)) {
+      throw new ConvexError({ code: "PACKAGE_SYNC_CONFLICT", message: PACKAGE_SYNC_CONFLICT_MESSAGE });
     }
 
     let inclusions = "";
