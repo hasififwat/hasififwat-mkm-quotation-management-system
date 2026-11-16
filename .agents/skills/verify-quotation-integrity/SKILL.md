@@ -133,3 +133,11 @@ digest. Move the sync record only after checking that correspondence.
 Use `/maintain-formal-verification-skill` after merges or changes that skipped
 this check. This is not a TLA+ model, so the TLA+-specific `/statechart` result
 workflow does not apply.
+
+## Revision save extension
+
+Ticket #56 adds `scripts/helpers/revision-integrity.mjs` to the same checker. It executes the actual registered `quotationRevisionSaves.save` handler for 864 additional create and append replacement cases. Append cases begin with a valid saved family. The identity, package, flight, client, room, quantity, and price domains match the legacy check. The release and completed migration are fixture rows. This does not activate a shared backend.
+
+The extension requires authenticated success witnesses and zero unexpected adapter errors. Its two real guard mutants remove the new authentication and association checks. Together with the four legacy mutants, `--self-test` requires six detected mutants. Adapters reject unknown tables, indexes, index fields, and unsupported methods. The source override loader only changes scratch source in memory.
+
+Retry order, retained selections, cents, source ownership, release gates, and historical provenance have focused tests in `scripts/quotation-revision-saves.test.mjs`. Real transaction and concurrency evidence comes from `scripts/check-revision-backend.mjs`, outside this bounded adapter check.

@@ -40,3 +40,28 @@ test('inactive gate and frozen legacy contracts write nothing',async()=>{
   await assert.rejects(()=>quotations.update._handler(s.ctx,{payload:{id:command.source_revision_id}}),/frozen/);
   assert.deepEqual(plain(s.tables),before);
 });
+test('saved status survives while new revision starts draft and receipts are actor scoped',async()=>{
+  const {s,command}=await fixture();s.tables.quotations[0].status='sent';
+  const next=await revisions.save._handler(s.ctx,{command});
+  assert.equal(s.tables.quotations[0].status,'sent');
+  assert.equal(s.tables.quotations.find(q=>q._id===next.id).status,'draft');
+  const before=plain(s.tables);
+  s.ctx.auth.getUserIdentity=async()=>({subject:'different-actor'});
+  await assert.rejects(()=>revisions.save._handler(s.ctx,{command}),e=>e.data?.code==='QUOTATION_STALE_EDITOR');
+  assert.deepEqual(plain(s.tables),before);
+});
+test('explicit same-ID replacement requires current reviewed context and preserves cross-year base',async()=>{
+  const {s,command}=await fixture();const pkg=s.tables.packages[0];
+  const context=await reviewedQuote(s,pkg._id,s.tables.package_flights[0]._id);
+  const selection={mode:'replace',package_id:pkg._id,flight_id:s.tables.package_flights[0]._id,reviewed_context:context.reviewed_context,rooms:[{room_type:'Quad',price:123.45,pax:2}]};
+  pkg.year='2027/2028';
+  const before=plain(s.tables);
+  await assert.rejects(()=>revisions.save._handler(s.ctx,{command:{...command,selection}}),e=>e.data?.code==='QUOTATION_SELECTION_CONFLICT');
+  assert.deepEqual(plain(s.tables),before);
+  const current=await reviewedQuote(s,pkg._id,s.tables.package_flights[0]._id);
+  const next=await revisions.save._handler(s.ctx,{command:{...command,selection:{...selection,reviewed_context:current.reviewed_context}}});
+  const row=s.tables.quotations.find(q=>q._id===next.id);
+  assert.equal(row.hijri_year,s.tables.quotations[0].hijri_year);
+  assert.equal(row.sequence_num,s.tables.quotations[0].sequence_num);
+  assert.equal(row.total_amount,246.9);
+});

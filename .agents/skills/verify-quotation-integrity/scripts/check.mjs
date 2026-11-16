@@ -86,8 +86,11 @@ function createDatabase() {
       let direction='asc';
       const fieldValue=(row,field)=>field.split('.').reduce((value,key)=>value?.[key],row);
       const query = {
-        withIndex(_name, callback) {
-          const builder = { eq(field, value) { predicates.push([field, value]); return builder; } };
+        withIndex(name, callback) {
+          const indexes = {by_key:['key'], by_hijri_year:['hijri_year'], by_actor_request_key:['actor','request_key'], by_reference:table==='quotation_create_receipts'?['result.hijri_year','result.sequence_num']:['hijri_year','sequence_num'], by_quotation_id:['quotation_id']};
+          assert.ok(name in indexes, `Adapter does not implement index ${name}`);
+          let position=0;
+          const builder = { eq(field, value) { assert.equal(field,indexes[name][position++]); predicates.push([field, value]); return builder; } };
           callback(builder);
           return query;
         },

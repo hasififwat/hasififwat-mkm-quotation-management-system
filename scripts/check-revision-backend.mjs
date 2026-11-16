@@ -94,6 +94,8 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const beforeFailure=await dump();
   await assert.rejects(()=>client.mutation('fixture:rollback',{command:append(independent[0],'rollback')}));
   assert.deepEqual(await dump(),beforeFailure);
+  await assert.rejects(()=>client.mutation('fixture:rollback',{command:{...create,request_key:key()}}));
+  assert.deepEqual(await dump(),beforeFailure);
   await assert.rejects(()=>save({...append(independent[0]),family_id:other.family_id}));
   await assert.rejects(()=>save(append(zero)));
   assert.deepEqual(await dump(),beforeFailure);
