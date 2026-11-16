@@ -49,3 +49,9 @@ A fresh independent Codex reviewer ran all four focused tests and inspected the 
 | --- | --- | --- | --- | --- | --- |
 | Existing pre-fix artifacts have no scheduled watchdog. | Code deployment alone cannot wake a stranded row. | A preclaim action failed before this fix. | Confirmed in the #61 fixture. | Staff awaiting saved PDFs. | Targeted integration repair. |
 | Hosted behavior remains unverified. | Local injection does not establish hosted platform failure frequency or latency. | Execute on hosted Convex. | Environment dependent. | Release integrators. | Verification limit. |
+
+## Recorded committed-source run
+
+Implementation `0e5db1232323b4340e97a31c9a7bdf88391f9179` passed the repeated preclaim injection on Node v24.19.0 and Convex 1.45.0 at `http://127.0.0.1:13485`. [Automatic recovery results](automatic-recovery.json) preserve both failed-action scheduler snapshots and the single ready attempt. Manual rescue calls were zero. The final stored PDF was 169262 bytes with SHA-256 `6166a108f30258429ba1dac97019e957b8b3e69968add4ebe2699fc42c2e08b4`. Both downloads matched that hash. The temporary database and owned process group were removed.
+
+Production build, typecheck, all 627 repository tests, all four focused recovery tests, and the ordinary full PDF backend verifier passed on the same implementation tree. This verification does not activate the release or repair the preserved #61 fixture. That owner retains the captured pre-fix record and performs its targeted repair and final combined acceptance separately.
