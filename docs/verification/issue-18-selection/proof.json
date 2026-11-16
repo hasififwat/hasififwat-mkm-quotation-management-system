@@ -1,0 +1,45 @@
+{
+  "baselineCommit": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+  "testedCommit": "1e7b27a05fc86e97df0219e2dda7253f51bf01b5",
+  "previewUrl": "http://ticket2.localhost:3130",
+  "backendUrl": "http://127.0.0.1:3230",
+  "sourceCleanAtTest": true,
+  "httpConflict": 409,
+  "draftPreserved": {
+    "notes": "QUOTE-003 retained draft",
+    "pax": 2,
+    "roomPrice": 5000,
+    "addon": "Transfer",
+    "addonPrice": 25
+  },
+  "latestReviewed": {
+    "departure": "2026-12-15",
+    "catalogPrice": 5500,
+    "retainedPrice": 5000
+  },
+  "persisted": {
+    "number": "1448H-0002",
+    "total": 10025,
+    "secondView": "saved quotation review",
+    "reload": true
+  },
+  "availabilityRecovery": {
+    "disabledRoom": "Quad",
+    "removedWithVisibleNotice": true,
+    "notesRetained": true
+  },
+  "cleanup": {
+    "deletedQuotations": 2,
+    "remainingQuotations": 0,
+    "packageRestored": true,
+    "seedClientAndPackageRetainedInPrivateDatabase": true,
+    "ownedProcessesStopped": true
+  },
+  "videoFile": "conflict-and-save.mp4",
+  "videoBranch": "evidence/quote003-selection",
+  "limitations": [
+    "Browser GitHub profile signed out. Video published on evidence branch with rendered PR screenshots.",
+    "Authentication findings remain assigned to independent owner.",
+    "Whole-package comparison conservatively conflicts for unselected child changes."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "instance": "ticket2",
+  "cloudUrl": "http://127.0.0.1:3230",
+  "siteUrl": "http://127.0.0.1:3231",
+  "webUrl": "http://127.0.0.1:3130",
+  "backendPid": null,
+  "webPid": null,
+  "stateFile": "/tmp/mkm-quote003-repair/instances/ticket2/instance.json",
+  "stopped": true,
+  "dataRetained": true
+}

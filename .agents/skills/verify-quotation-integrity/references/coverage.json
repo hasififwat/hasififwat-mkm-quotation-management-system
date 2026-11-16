@@ -1,6 +1,6 @@
 {
-  "lastSyncCommit": "3617fccfaf91ac0e91e81f7aac1b21a2670ab9a2",
-  "sourceWasUncommitted": true,
+  "lastSyncCommit": "1e7b27a05fc86e97df0219e2dda7253f51bf01b5",
+  "sourceWasUncommitted": false,
   "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
   "sourceSha256": "e03667d2eac206e364886f8cd89f63e7e1b317e3b6a73f739cfbd8416578efce",
@@ -55,7 +55,7 @@
     "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352",
     "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
-    "convex/packages.ts": "342d36b51d466cc7ae223d34a521658ff9de27b70def7a83c68b771fdb4ebd90",
+    "convex/packages.ts": "2dd88ff1a082f9951b3e6eb22350a10475eaf266adfdc29d2bf6a786fce87511",
     "src/features/quotation/QuotationBuilder.tsx": "bcb76361e7be86b7391206efe5ea9cb9d609163e7d8ad36c4abe836e11516ca3"
   }
 }
