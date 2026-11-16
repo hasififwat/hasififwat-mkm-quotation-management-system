@@ -25,7 +25,7 @@ async function plan(f, options) {
   return {saved, rows, plan: parsers.buildSyncPlan(rows, [], saved)};
 }
 async function apply(f, spec) {
-  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotels, rooms: spec.rooms});
+  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, expected_edit_token: spec.expected_edit_token, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotels, rooms: spec.rooms});
 }
 test('saved sync data includes room prices, labels and disabled state', async () => {
   const f = await fixture(); f.s.tables.package_rooms[0].enabled = false;
