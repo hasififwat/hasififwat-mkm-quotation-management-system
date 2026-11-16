@@ -1,0 +1,18 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Thirteen families with three revisions each span pages. Both timestamp sorts and directions return every current ID exactly once. Counts agree. Read handlers leave persisted source tables unchanged.",
+    "Saved package/client names survive live changes. Base/full reference and saved-label searches agree with counts. Package deep links filter current rows. Transitive canonical aliases group all thirteen families once without rewriting saved identity or items.",
+    "Replacing the current client/package moves operational client values and package status counts to the new association. Prior associations remain separately discoverable.",
+    "Unauthenticated operational/history readers and archive reject. Disabled release rejects archive with no writes. Archive logs once, hides only the family operationally, preserves the current pointer, exact old review content, all revision/item rows and ordered history, and rejects later append. Family revisions never enter deletable duplicate suggestions.",
+    "Missing and incomplete migration gates reject family archive without writes. The actual optional family index includes an ungrouped legacy row alongside indexed current family pointers."
+  ],
+  "runtime": {
+    "node": "v24.19.0",
+    "convex": "1.45.0",
+    "url": "http://127.0.0.1:13665"
+  },
+  "source": "b3d59e3b1e81af49a060982b7cfa5b6f2663532a",
+  "source_dirty": false,
+  "cleanup": "Isolated process stopped and temporary database removed in finally."
+}

@@ -23,3 +23,15 @@ Actual authenticated Chrome captures at `http://localhost:3520` used implementat
 The backend snapshot initially preceded the history validator addition. Updating only local backend product files corrected the fixture mismatch, and both package links were rerun. No product fix was required. The later archive migration guard and indexed-reader correction are backend-only. Their actual API persistence tests are separate from these captures. The full history route link belongs to #59 and was not exercised. The existing review rendering does not establish authoritative issued PDF bytes.
 
 The native window and T3 tab were closed. The isolated backend and web processes were stopped, and their synthetic database, storage and credentials were removed. The shared backend was untouched. Application-only images exclude browser bookmarks and credentials. [UI proof](current-family-ui-evidence.json) and [backend proof](current-family-backend-evidence.json) distinguish their tested commits.
+
+## Reproduce backend checks
+
+Run `node --test scripts/*.test.mjs`, `node_modules/.bin/tsc --noEmit`, and the explicit backend compiler with JSX and JSON imports enabled after the merged PDF dependency. Run the disposable transaction verifier as follows.
+
+```sh
+FAMILY_BACKEND_BINARY=/path/to/convex-local-backend CURRENT_FAMILY_EVIDENCE=/tmp/current-family.json node scripts/check-current-family-backend.mjs
+```
+
+The verifier owns ports 13665 and 13666 and cleans its entire backend process group. It uses actual PDF scheduling and renderer dependencies. Its mutation retry applies only to an explicit local `TooManyWrites` rejection and preserves the command and request key. Missing or incomplete migration must reject with the inactive-release error, so throttling cannot stand in for that guard.
+
+Clean source `b3d59e3b1e81af49a060982b7cfa5b6f2663532a` passed the real backend run, all 622 repository tests, application typecheck, and explicit backend typecheck. Fresh independent review passed 31 focused handler tests and found no remaining guard or indexed-reader defect. Its remaining history-summary cost is recorded above. The final evidence commit changes documentation and images only. Model configuration restricts review to Codex; no different-provider judge was used.
