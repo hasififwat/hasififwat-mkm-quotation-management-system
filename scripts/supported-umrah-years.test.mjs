@@ -126,7 +126,7 @@ test("alternate writers accept supported years and CSV update ignores unused yea
   assert.equal(s.tables.packages[0].year, "2026/2027");
   const result = await packages.syncPackageFromCsv._handler(s.ctx, csv("2025/2026"));
   assert.equal((await read(s, result.id)).year, "2025/2026");
-  await packages.syncPackageFromCsv._handler(s.ctx, {...csv("ignored"), db_id: result.id});
+  await packages.syncPackageFromCsv._handler(s.ctx, {...csv("ignored"), db_id: result.id, expected_edit_token: (await read(s, result.id)).editToken});
   assert.equal((await read(s, result.id)).year, "2025/2026");
 });
 test("catalog preserves the two offered choices and seven exact mappings", () => {
