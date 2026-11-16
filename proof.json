@@ -1,0 +1,23 @@
+{
+  "testedCodeSha": "1c49832525258005827a48f51e9eab2b0854bb8b",
+  "previewUrl": "http://ticket1.localhost:3120",
+  "backend": "http://127.0.0.1:3220",
+  "scope": "Isolated local Convex backend running real quotation handlers and real Password authentication",
+  "flow": [
+    "Login before recording",
+    "Authenticated empty listing",
+    "Create through actual builder",
+    "Select QUOTE-003 Test Client and QUOTE-003 Test Package",
+    "Select associated flight from 2026-12-10 through 2026-12-22",
+    "Select Quad at RM5000 with 2 pax",
+    "Save and verify listing reference 1448H-0001 and RM10000",
+    "Open actual review link and inspect rendered PDF",
+    "Reload full review URL and inspect same reference, client, flight, room and total"
+  ],
+  "persistence": "Confirmed second view and full reload",
+  "tests": "258 repository tests pass; typecheck passes after next typegen; 864 bounded actual-handler cases pass with zero adapter errors and four detected guard mutants",
+  "review": "Two independent local reviews found no blocking code defect. Coverage metadata corrections applied.",
+  "cleanup": "Deleted sole disposable quotation, its one room item and audit log; authenticated list then empty. Seed account/client/package retained for parent infrastructure cleanup.",
+  "media": "Linked repository MP4 plus embedded PNG; not a native GitHub attachment",
+  "baselineLint": "Two existing no-explicit-any errors and one unused variable warning reproduced on b95671a3 source; changed UI/proxy/test files lint clean"
+}

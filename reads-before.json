@@ -1,0 +1,16 @@
+{
+  "commit": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+  "anonymousCreate": "quotations:6",
+  "anonymousList": [
+    {
+      "id": "quotations:6",
+      "client_name": "Fixture Client",
+      "total_amount": 1200
+    }
+  ],
+  "anonymousDetails": {
+    "id": "quotations:6",
+    "client_name": "Fixture Client",
+    "total_amount": 1200
+  }
+}

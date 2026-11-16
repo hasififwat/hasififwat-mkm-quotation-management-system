@@ -1,0 +1,12 @@
+{
+  "disposableBackend": "ticket1",
+  "quotation": "m174r5k0ehywjtgbwhqqpjgfvd8janxk",
+  "deletion": {
+    "deletedItemsCount": 1,
+    "deletedLogsCount": 1,
+    "deletedQuotationId": "m174r5k0ehywjtgbwhqqpjgfvd8janxk",
+    "success": true
+  },
+  "quotationsAfter": 0,
+  "seedFixtures": "retained for parent-owned infrastructure cleanup"
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "quotations:list",
+    "rejected": true
+  },
+  {
+    "name": "quotations:getQuotationFullDetails",
+    "rejected": true
+  },
+  {
+    "name": "quotations:create",
+    "rejected": true
+  },
+  {
+    "route": "create",
+    "status": 401
+  },
+  {
+    "route": "update",
+    "status": 401
+  }
+]
