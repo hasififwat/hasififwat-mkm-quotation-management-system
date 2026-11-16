@@ -39,3 +39,11 @@ Independent review found legacy provenance lost on a second append and incomplet
 Run `pnpm typecheck`, `node --test scripts/*.test.mjs`, and `node .agents/skills/verify-quotation-integrity/scripts/check.mjs --self-test`. The checker covers 864 existing legacy cases plus 864 new create/append replacement cases. It requires positive authenticated witnesses, rejects unexpected adapter errors, and tests six actual guard mutants. It does not establish live auth token validation or unbounded correctness.
 
 Run `FAMILY_BACKEND_BINARY=/path/to/convex-local-backend REVISION_EVIDENCE=/tmp/revision.json node scripts/check-revision-backend.mjs`. This uses isolated ports 13465 and 13466, a temporary database, synthetic records, and the real public mutation with an admin test identity. Simultaneous saves bypass the HTTP client's queue. The fixture proves sequential revisions, unchanged save, receipt replay, conflicting payloads, distinct-request races, independent families, unavailable retention, and rollback after all save writes. It removes its process and database in `finally`. It never reads project credentials or touches shared deployments.
+
+## Recorded run
+
+The contract commit is `41438191bc23a1f1e3c4eb8c18cb920790994196`. The expanded verifier commit is `7d5d6e473a423b0004e4b566c30a334b58e706ab`. That source passed typecheck, all 601 repository tests, the 1,728-case combined handler checker with six detected guard mutants, and the real backend fixture. The backend runtime was Node v24.19.0 and Convex 1.45.0 at `http://127.0.0.1:13465`. Ports 13465 and 13466 and its temporary database were removed after the run.
+
+[Backend results](revision-backend-evidence.json), [handler results](revision-integrity-evidence.json), and [backend evidence image](revision-backend-evidence.png) record the run. Generate the image with `python3 scripts/render-revision-evidence.py`. The image displays the executable fixture's actual results. It is a report image, not a browser screenshot.
+
+The first attempt to save mutant reports directly under this documentation directory created temporary TypeScript sources that entered the repository typecheck. Those scratch files were removed, and typecheck and the full test suite passed again. Keep checker scratch output under `/tmp` when reproducing verification, then copy only the JSON report here.
