@@ -1045,14 +1045,7 @@ export default function QuotationBuilder({
 							</div>
 						</CardContent>
 
-						{saveError && (
-							<div role="alert" className="mx-6 rounded-md border border-destructive p-4 text-sm text-destructive">
-								<p>{saveError}</p>
-								<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block underline">
-									Check Quotations in a new tab
-								</Link>
-							</div>
-						)}
+
 						<CardFooter className="flex justify-between border-t p-6">
 							<Button
 								type="button"
