@@ -1,0 +1,36 @@
+✔ adds_ons form rejects whitespace description "" at its field (1.660583ms)
+✔ create rejects adds_ons description "" before any write (1.627625ms)
+✔ update rejects adds_ons description "" before any write (0.637ms)
+✔ adds_ons form rejects whitespace description "   " at its field (0.10775ms)
+✔ create rejects adds_ons description "   " before any write (0.170583ms)
+✔ update rejects adds_ons description "   " before any write (0.2325ms)
+✔ adds_ons form rejects whitespace description "\t\n" at its field (0.076792ms)
+✔ create rejects adds_ons description "\t\n" before any write (0.138208ms)
+✔ update rejects adds_ons description "\t\n" before any write (0.269875ms)
+✔ adds_ons form rejects whitespace description " " at its field (0.088875ms)
+✔ create rejects adds_ons description " " before any write (0.1695ms)
+✔ update rejects adds_ons description " " before any write (0.198625ms)
+✔ adds_ons described amount 0 survives create and update (0.504542ms)
+✔ adds_ons described amount 10.25 survives create and update (0.295334ms)
+✔ discounts form rejects whitespace description "" at its field (0.041583ms)
+✔ create rejects discounts description "" before any write (0.117625ms)
+✔ update rejects discounts description "" before any write (0.156792ms)
+✔ discounts form rejects whitespace description "   " at its field (0.046167ms)
+✔ create rejects discounts description "   " before any write (0.079083ms)
+✔ update rejects discounts description "   " before any write (0.133625ms)
+✔ discounts form rejects whitespace description "\t\n" at its field (0.056541ms)
+✔ create rejects discounts description "\t\n" before any write (0.076208ms)
+✔ update rejects discounts description "\t\n" before any write (0.130708ms)
+✔ discounts form rejects whitespace description " " at its field (0.035042ms)
+✔ create rejects discounts description " " before any write (0.063875ms)
+✔ update rejects discounts description " " before any write (0.148959ms)
+✔ discounts described amount 0 survives create and update (0.234291ms)
+✔ discounts described amount 10.25 survives create and update (0.192541ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 437.569042

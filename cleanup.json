@@ -1,0 +1,12 @@
+{
+  "ownedTabClosed": true,
+  "ownedServicesStopped": true,
+  "portsFree": {
+    "3417": true,
+    "3418": true,
+    "3419": true
+  },
+  "disposableDatabaseAndKeysRemoved": true,
+  "sharedBackendChanged": false,
+  "parentCheckoutTouched": false
+}

@@ -1,0 +1,428 @@
+✖ adds_ons form rejects whitespace description "" at its field (1.941292ms)
+✖ create rejects adds_ons description "" before any write (2.369291ms)
+✖ update rejects adds_ons description "" before any write (1.289333ms)
+✖ adds_ons form rejects whitespace description "   " at its field (0.285167ms)
+✖ create rejects adds_ons description "   " before any write (0.855792ms)
+✖ update rejects adds_ons description "   " before any write (1.420875ms)
+✖ adds_ons form rejects whitespace description "\t\n" at its field (0.394542ms)
+✖ create rejects adds_ons description "\t\n" before any write (0.649084ms)
+✖ update rejects adds_ons description "\t\n" before any write (1.040833ms)
+✖ adds_ons form rejects whitespace description " " at its field (0.253ms)
+✖ create rejects adds_ons description " " before any write (0.549958ms)
+✖ update rejects adds_ons description " " before any write (0.51875ms)
+✔ adds_ons described amount 0 survives create and update (1.121125ms)
+✔ adds_ons described amount 10.25 survives create and update (0.992959ms)
+✖ discounts form rejects whitespace description "" at its field (0.149708ms)
+✖ create rejects discounts description "" before any write (0.461ms)
+✖ update rejects discounts description "" before any write (0.417334ms)
+✖ discounts form rejects whitespace description "   " at its field (0.293291ms)
+✖ create rejects discounts description "   " before any write (0.323458ms)
+✖ update rejects discounts description "   " before any write (0.546083ms)
+✖ discounts form rejects whitespace description "\t\n" at its field (0.187958ms)
+✖ create rejects discounts description "\t\n" before any write (0.511417ms)
+✖ update rejects discounts description "\t\n" before any write (0.789583ms)
+✖ discounts form rejects whitespace description " " at its field (0.193792ms)
+✖ create rejects discounts description " " before any write (0.377791ms)
+✖ update rejects discounts description " " before any write (0.598917ms)
+✔ discounts described amount 0 survives create and update (0.533042ms)
+✔ discounts described amount 10.25 survives create and update (0.45675ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 4
+ℹ fail 24
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 398.521125
+
+✖ failing tests:
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ adds_ons form rejects whitespace description "" at its field (1.941292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects adds_ons description "" before any write (2.369291ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects adds_ons description "" before any write (1.289333ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ adds_ons form rejects whitespace description "   " at its field (0.285167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects adds_ons description "   " before any write (0.855792ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects adds_ons description "   " before any write (1.420875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ adds_ons form rejects whitespace description "\t\n" at its field (0.394542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects adds_ons description "\t\n" before any write (0.649084ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects adds_ons description "\t\n" before any write (1.040833ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ adds_ons form rejects whitespace description " " at its field (0.253ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects adds_ons description " " before any write (0.549958ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects adds_ons description " " before any write (0.51875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ discounts form rejects whitespace description "" at its field (0.149708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects discounts description "" before any write (0.461ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects discounts description "" before any write (0.417334ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ discounts form rejects whitespace description "   " at its field (0.293291ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects discounts description "   " before any write (0.323458ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects discounts description "   " before any write (0.546083ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ discounts form rejects whitespace description "\t\n" at its field (0.187958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects discounts description "\t\n" before any write (0.511417ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects discounts description "\t\n" before any write (0.789583ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:9:5
+✖ discounts form rejects whitespace description " " at its field (0.193792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:11:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ create rejects discounts description " " before any write (0.377791ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-descriptions.test.mjs:15:7
+✖ update rejects discounts description " " before any write (0.598917ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote003-extra-desc-fcfff7746dba0e29/scripts/quotation-descriptions.test.mjs:21:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /description/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }

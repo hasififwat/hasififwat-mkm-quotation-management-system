@@ -1,0 +1,32 @@
+{
+  "checker": "finite exhaustive execution of actual Convex handlers; in-memory database adapter",
+  "generatedAt": "2026-11-16T04:00:18.711Z",
+  "commit": "c1af0959cee2327548298891226885377f7d6bfa",
+  "source": "convex/quotations.ts",
+  "sourceSha256": "fbed2b99b72ee7a258f72258707861db572770749d94dacb687f726699157101",
+  "versions": {
+    "node": "v24.19.0",
+    "typescript": "5.9.3",
+    "convex": "1.45.0"
+  },
+  "baseline": {
+    "cases": 864,
+    "successfulCalls": 16,
+    "rejectedCalls": 848,
+    "positiveWitnesses": {
+      "create": 8,
+      "update": 8
+    },
+    "properties": {
+      "authenticated_writes": {
+        "failures": 0,
+        "firstCounterexample": null
+      },
+      "flight_matches_package": {
+        "failures": 0,
+        "firstCounterexample": null
+      }
+    },
+    "adapterErrors": []
+  }
+}

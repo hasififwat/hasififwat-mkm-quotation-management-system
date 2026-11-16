@@ -1,0 +1,8 @@
+{"writer":"create","section":"adds_ons","name":"","total":1250,"items":[{"description":"","price":50}]}
+{"writer":"create","section":"adds_ons","name":"   ","total":1250,"items":[{"description":"   ","price":50}]}
+{"writer":"create","section":"discounts","name":"","total":1150,"items":[{"description":"","price":-50}]}
+{"writer":"create","section":"discounts","name":"   ","total":1150,"items":[{"description":"   ","price":-50}]}
+{"writer":"update","section":"adds_ons","name":"","total":1250,"items":[{"description":"","price":50}]}
+{"writer":"update","section":"adds_ons","name":"   ","total":1250,"items":[{"description":"   ","price":50}]}
+{"writer":"update","section":"discounts","name":"","total":1150,"items":[{"description":"","price":-50}]}
+{"writer":"update","section":"discounts","name":"   ","total":1150,"items":[{"description":"   ","price":-50}]}
