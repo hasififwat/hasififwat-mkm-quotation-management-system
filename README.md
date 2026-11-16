@@ -3,7 +3,7 @@
 Staff can import recognized package and flight CSV rows while saved flights remain protected until staff confirm a complete named scope.
 
 Baseline `bab5e142207df4bac78e54956f44c12d389ec045`.
-Tested head `3844e30c3e3bba0fcc90f73b9e2c00409a77fe20`.
+Tested head `fa30682dea27b01000b34f5d4432fa07aa080085`.
 Final preview `http://sync45.localhost:3550/packages/sync`.
 The baseline captures used the owned origin `http://sync3550.localhost:3550/packages/sync`. One initial unsupported-file reproduction used localhost before the origin was isolated. The published baseline captures use the isolated origin.
 
@@ -33,7 +33,7 @@ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
 1 !== 0
 ```
 
-[Final focused suite](tests-after.tap) passes 12 tests. [Repository suite](tests-all-final.tap) passes all 518 tests. Run `node --test scripts/sync-schedule-safety.test.mjs` or `node --test scripts/*.test.mjs` from the checkout.
+[Final focused suite](tests-after.tap) passes 13 tests. [Repository suite](tests-all-final.tap) passes all 519 tests. Run `node --test scripts/sync-schedule-safety.test.mjs` or `node --test scripts/*.test.mjs` from the checkout.
 
 Installed Next type generation and `pnpm typecheck` pass. [Final production build](build-final.txt) passes at the tested head. [Changed-file lint](scoped-lint.txt) exits successfully with four pre-existing hook-dependency warnings. `git diff --check` passes.
 
@@ -43,7 +43,7 @@ Installed Next type generation and `pnpm typecheck` pass. [Final production buil
 
 [Full lint output](full-lint.txt) records the existing errors. No suppressions were added.
 
-The initial independent source review found a preamble diagnostic gap. Commit `3844e30c` fixes it and adds a regression. A fresh final source/test reviewer confirmed the correction and found no further blocker. The separate comment review resulted in one narration deletion and no suppression flags.
+The initial independent source review found a preamble diagnostic gap. Commit `3844e30c` fixes it and adds a regression. A later compatibility check found that ordinary column labels also needed to be accepted. Commit fa30682d accepts exact supported header labels. All final browser captures were repeated at that head with FLT/DATE/PACKAGE headings. A fresh final source/test reviewer confirmed both corrections and found no further blocker. The separate comment review resulted in one narration deletion and no suppression flags.
 
 ## Scope and integration
 
