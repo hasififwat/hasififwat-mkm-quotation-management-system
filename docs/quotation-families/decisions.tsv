@@ -1,0 +1,10 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T16:15:12.807681+00:00	design	Select indexed singleton backfill over staged manifest	Keep bounded reads and fewer persisted states; reject inferred history	docs/quotation-families/design-a.md	selected
+2026-11-16T16:15:12.807773+00:00	allocation	Retain receipt references in allocator	Deleted rows can leave issued references in receipts	convex/lib/quotationFamilyIdentity.ts	implemented
+2026-11-16T16:15:12.807774+00:00	safety	Keep a persistent freeze with no unlock endpoint	Partial membership must not coexist with legacy writes	convex/quotationFamilyMigration.ts	inactive by default
+2026-11-16T16:15:12.807776+00:00	verification	Exercise real disposable Convex transactions	Prove concurrency and rollback beyond an in-memory adapter	docs/quotation-families/backend-evidence.json	passed; database removed
+2026-11-16T16:18:55.658092+00:00	review	Fix dry-run pagination and use bounded indexed allocation	Independent review found cursor and read-budget defects	scripts/quotation-family-migration.test.mjs	23 focused tests pass
+2026-11-16T16:18:55.658218+00:00	safety	Remove inherited Convex deployment credentials from fixture subprocess	CLI credential precedence could override the local target	scripts/check-family-backend.mjs	dummy credential run stayed local
+2026-11-16T16:18:55.658219+00:00	verification	Add a failure after family insertion	Prevalidation rejection alone did not prove rollback	docs/quotation-families/backend-evidence.json	real rollback passed
+2026-11-16T16:18:55.658221+00:00	review	Accept fresh independent recheck	Verify prior findings against the corrected source	docs/quotation-families/review.md	no remaining concrete issues
+2026-11-16T16:18:55.658222+00:00	verification	Run all repository tests and current typecheck	Verify baseline protections as well as migration behavior	scripts/quotation-family-migration.test.mjs	596 tests pass; typecheck passes

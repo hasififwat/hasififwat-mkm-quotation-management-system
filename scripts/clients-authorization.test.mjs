@@ -7,6 +7,7 @@ const clients = typescriptLoader(path.resolve('.'))(path.resolve('convex/clients
 
 function fixture(authenticated = true) {
   const tables = {
+    quotation_family_migrations: [],
     clients: [
       {_id:'client:1',name:'Fixture Client',phone_number:'0123456789',created_at:'2026-01-01',updated_at:'2026-01-01'},
       {_id:'client:2',name:'Fixture Client',phone_number:'0123456789',created_at:'2026-01-02',updated_at:'2026-01-02'},
@@ -23,13 +24,14 @@ function fixture(authenticated = true) {
       const predicates = [];
       const q = {
         withIndex(name, callback) {
-          assert.equal(name,'by_client_id');
-          const index = {eq(field,value) { assert.equal(field,'client_id'); predicates.push([field,value]); return index; }};
+          assert.ok(['by_client_id','by_key'].includes(name));
+          const index = {eq(field,value) { assert.equal(field,name === 'by_key' ? 'key' : 'client_id'); predicates.push([field,value]); return index; }};
           callback(index);
           return q;
         },
         order(direction) { assert.equal(direction,'desc'); return q; },
         async collect() { return structuredClone(tables[table].filter(row => predicates.every(([key,value]) => row[key] === value))); },
+        async unique() { const rows = await q.collect(); assert.ok(rows.length <= 1); return rows[0] ?? null; },
         async paginate(options) { assert.equal(options.cursor,null); return {page:await q.collect(),isDone:true,continueCursor:''}; },
       };
       return q;

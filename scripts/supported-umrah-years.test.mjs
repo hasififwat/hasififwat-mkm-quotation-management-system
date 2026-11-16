@@ -12,7 +12,7 @@ const { normalizePackageMutationPayload: normalize } = load(path.join(repo, "src
 const { transformConvexPackage: transform } = load(path.join(repo, "src/features/packages/utils/transformConvexPackage.ts"));
 const { packageSchema, selectedPackageFormSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 function state(authenticated = true) {
-  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
@@ -21,15 +21,20 @@ function state(authenticated = true) {
       assert.ok(table in tables, `Unknown table ${table}`);
       operations.push(['query', table]);
       const predicates = [];
+      let direction='asc';
+      const fieldValue=(row,field)=>field.split('.').reduce((value,key)=>value?.[key],row);
       const q = {
         withIndex(name, callback) {
-          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year'};
+          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_key:'key', by_reference:table==='quotation_create_receipts'?'result.hijri_year':'hijri_year'};
           assert.ok(name in valid, `Unknown index ${name}`);
           const builder = { eq(field, value) { assert.equal(field, valid[name]); predicates.push([field,value]); return builder; } };
           callback(builder);
           return q;
         },
-        async collect() { return structuredClone(tables[table].filter(row => predicates.every(([k,v]) => row[k] === v))); },
+        order(value) { direction=value; return q; },
+        async take(count) { return (await q.collect()).sort((a,b)=>((a.sequence_num??a.result?.sequence_num)-(b.sequence_num??b.result?.sequence_num))*(direction==='desc'?-1:1)).slice(0,count); },
+        async unique() { const rows = await q.collect(); assert.ok(rows.length <= 1); return rows[0] ?? null; },
+        async collect() { return structuredClone(tables[table].filter(row => predicates.every(([k,v]) => fieldValue(row,k) === v))); },
       };
       return q;
     },

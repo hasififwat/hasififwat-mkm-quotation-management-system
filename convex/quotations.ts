@@ -1,3 +1,4 @@
+import { assertLegacyWritesAllowed, reserveBaseReference } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireDescriptions, requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
@@ -554,6 +555,7 @@ export const create = mutation({
 				return receipt.result;
 			}
 		}
+		await assertLegacyWritesAllowed(ctx);
 		validateQuotationLines(args.payload);
 		const now = new Date().toISOString();
 
@@ -569,12 +571,8 @@ export const create = mutation({
 		}
 		const hijriYear = getMappedHijriYear(selectedPackage.year);
 
-		const [hijriYearQuotations, allClients, allFlights, allPackageRooms, allPackageHotels, allPackageMeals] =
+		const [allClients, allFlights, allPackageRooms, allPackageHotels, allPackageMeals] =
 			await Promise.all([
-				ctx.db
-					.query("quotations")
-					.withIndex("by_hijri_year", (q) => q.eq("hijri_year", hijriYear))
-					.collect(),
 				ctx.db.query("clients").collect(),
 				ctx.db.query("package_flights").collect(),
 				ctx.db.query("package_rooms").collect(),
@@ -670,10 +668,6 @@ export const create = mutation({
 		}
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
-		const currentHijriYearMaxSeq = hijriYearQuotations
-			.reduce((max, quotation) => Math.max(max, quotation.sequence_num), 0);
-
-		const nextSequenceNum = currentHijriYearMaxSeq + 1;
 
 		const hotelsForPkg = allPackageHotels.filter(
 			(h) => String(h.package_id) === args.payload.package_id,
@@ -694,6 +688,7 @@ export const create = mutation({
 		const flight_snapshot = buildFlightSnapshot(selectedFlight);
 		const hotels_snapshot = buildHotelsSnapshot(hotelsForPkg, mealsByHotelId);
 
+		const nextSequenceNum = await reserveBaseReference(ctx, hijriYear);
 		const quotationId = await ctx.db.insert("quotations", {
 			hijri_year: hijriYear,
 			sequence_num: nextSequenceNum,
@@ -1150,6 +1145,7 @@ export const update = mutation({
 	},
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		validateQuotationLines(args.payload);
 		const quotation = await findQuotationByStringId(ctx, args.payload.id);
 		if (!quotation) {
@@ -1378,6 +1374,7 @@ export const refreshSnapshot = mutation({
 	args: { quotation_id: v.string() },
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		const quotation = await findQuotationByStringId(ctx, args.quotation_id);
 		if (!quotation) throw new Error("Quotation not found");
 
@@ -1453,6 +1450,7 @@ export const resequenceByCreatedAt = mutation({
 	},
 	handler: async (ctx, args) => {
 		await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		const dryRun = args.dryRun ?? false;
 		const quotations = await ctx.db.query("quotations").collect();
 
@@ -1535,6 +1533,7 @@ export const deleteById = mutation({
 	},
 	handler: async (ctx, { quotationId }) => {
 		await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		// Find the quotation
 		const quotation = await findQuotationByStringId(ctx, quotationId);
 		if (!quotation) {
@@ -1591,6 +1590,7 @@ export const repairStaleFlightIds = mutation({
 	},
 	handler: async (ctx, args) => {
 		await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		const dryRun = args.dryRun ?? false;
 
 		const [quotations, flights] = await Promise.all([
@@ -1666,6 +1666,7 @@ export const archiveQuotation = mutation({
 	args: { id: v.id("quotations") },
 	handler: async (ctx, args) => {
 		await requireQuotationActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		const quotation = await ctx.db.get(args.id);
 		if (!quotation) throw new Error("Quotation not found");
 		await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });

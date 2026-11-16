@@ -1,0 +1,10 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Eight concurrent allocations returned distinct retained base sequences.",
+    "Ungated backfill and frozen legacy writer rejected.",
+    "Backfill and full restart preserved exact content and item IDs. Second pass changed zero memberships.",
+    "Failure after family insertion rolled back the family, membership, and checkpoint.",
+    "Ambiguous batch rejected with unchanged persisted state and checkpoint."
+  ]
+}

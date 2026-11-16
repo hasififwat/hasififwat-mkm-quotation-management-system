@@ -15,6 +15,7 @@ import type * as http from "../http.js";
 import type * as packageFlights from "../packageFlights.js";
 import type * as packages from "../packages.js";
 import type * as profiles from "../profiles.js";
+import type * as quotationFamilyMigration from "../quotationFamilyMigration.js";
 import type * as quotations from "../quotations.js";
 
 import type {
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   packageFlights: typeof packageFlights;
   packages: typeof packages;
   profiles: typeof profiles;
+  quotationFamilyMigration: typeof quotationFamilyMigration;
   quotations: typeof quotations;
 }>;
 

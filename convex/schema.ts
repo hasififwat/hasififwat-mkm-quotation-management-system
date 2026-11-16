@@ -95,7 +95,34 @@ export default defineSchema({
     unit: v.optional(v.string()),
   }).index("by_email", ["email"]),
 
-quotations: defineTable({
+  quotation_families: defineTable({
+    hijri_year: v.string(),
+    sequence_num: v.number(),
+    current_revision_id: v.id("quotations"),
+    archived: v.boolean(),
+  })
+    .index("by_reference", ["hijri_year", "sequence_num"])
+    .index("by_archived", ["archived"]),
+
+  quotation_family_migrations: defineTable({
+    key: v.string(),
+    cursor: v.union(v.string(), v.null()),
+    done: v.boolean(),
+  }).index("by_key", ["key"]),
+
+  quotation_reference_counters: defineTable({
+    hijri_year: v.string(),
+    high_water: v.number(),
+  }).index("by_hijri_year", ["hijri_year"]),
+
+  quotations: defineTable({
+    family_id: v.optional(v.id("quotation_families")),
+    previous_revision_id: v.optional(v.id("quotations")),
+    saved_by: v.optional(v.string()),
+    issue_date: v.optional(v.string()),
+    document_schema_version: v.optional(v.number()),
+    legacy_provenance: v.optional(v.literal("legacy_unknown")),
+    snapshot_completeness: v.optional(v.union(v.literal("partial"), v.literal("unknown"))),
     // The link to our inquiry state machine
     inquiry_id: v.optional(v.union(v.id("inquiries"), v.string())),
 
@@ -164,7 +191,10 @@ quotations: defineTable({
     .index("by_package_id", ["package_id"])
     .index("by_hijri_year", ["hijri_year"])
     .index("by_updated_at", ["updated_at"])
-    .index("by_creator_id", ["creator_id"]),
+    .index("by_creator_id", ["creator_id"])
+    .index("by_reference", ["hijri_year", "sequence_num"])
+    .index("by_reference_revision", ["hijri_year", "sequence_num", "revision"])
+    .index("by_family_revision", ["family_id", "revision"]),
 
   quotation_create_receipts: defineTable({
     actor: v.string(),
@@ -182,7 +212,8 @@ quotations: defineTable({
         v.literal("rejected"), v.literal("revised"), v.literal("superseded"),
       ),
     }),
-  }).index("by_actor_request_key", ["actor", "request_key"]),
+  }).index("by_actor_request_key", ["actor", "request_key"])
+    .index("by_reference", ["result.hijri_year", "result.sequence_num"]),
 
   quotation_items: defineTable({
     quotation_id: v.string(),
