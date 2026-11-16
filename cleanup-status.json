@@ -1,4 +1,46 @@
 {
+  "completedAt": "2026-11-16T08:55:03.603Z",
+  "userApproval": "Explicit yes after the listed cleanup scope",
+  "privateDataRemoved": true,
+  "targets": [
+    {
+      "path": "/tmp/mkm-43-owned/convex_local_storage",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/db.sqlite",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/db.sqlite-shm",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/db.sqlite-wal",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/private-env.json",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/credentials.json",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/token",
+      "absent": true
+    },
+    {
+      "path": "/tmp/mkm-43-owned/.env.local",
+      "absent": true
+    },
+    {
+      "path": "/Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/.env.local",
+      "absent": true
+    }
+  ],
+  "evidenceRetained": true,
   "ports": [
     {
       "port": 3510,
@@ -12,7 +54,5 @@
       "port": 3521,
       "free": true
     }
-  ],
-  "privateDataRemoved": false,
-  "reason": "Deletion approval pending; blocked command not reissued"
+  ]
 }
