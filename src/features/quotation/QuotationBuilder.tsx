@@ -11,6 +11,7 @@ import {
 	useFormContext,
 } from "react-hook-form";
 import { useConvex, useQuery } from "convex/react";
+import { ConvexError } from "convex/values";
 import { api } from "convex/_generated/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -49,6 +50,7 @@ import { CreateClientModal } from "./components/CreateClientModal";
 import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
+import { SNAPSHOT_REFRESH_CONFLICT_MESSAGE, type SnapshotRefreshReview } from "../../domain/snapshot-refresh-review";
 import { STALE_FIELD_LABELS } from "./stale-labels";
 import { saveQuotation } from "./save-quotation";
 import { refreshQuotationSnapshot, type RefreshSnapshotResult, type RefreshSnapshotState } from "./refresh-snapshot";
@@ -581,6 +583,7 @@ export default function QuotationBuilder({
 	qid,
 	stale_fields = [],
 	snapshot_version_known = false,
+	snapshot_refresh_token,
 }: {
 	initialData: QuotationFormValues | null;
 	initialClientId?: string;
@@ -589,6 +592,7 @@ export default function QuotationBuilder({
 	qid?: string;
 	stale_fields?: string[];
 	snapshot_version_known?: boolean;
+	snapshot_refresh_token?: string;
 }) {
 	const router = useRouter();
 	const convex = useConvex();
@@ -599,16 +603,55 @@ export default function QuotationBuilder({
 	const [reviewNotice, setReviewNotice] = useState("");
 	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
 	const refreshRequest = useRef<Promise<RefreshSnapshotResult> | null>(null);
+	const loadedRefreshToken = useRef(snapshot_refresh_token);
+	const reviewPending = useRef(false);
+	const [refreshReview, setRefreshReview] = useState<SnapshotRefreshReview | null>(null);
+	const [refreshReviewState, setRefreshReviewState] = useState<"idle" | "pending" | "conflict" | "failure">("idle");
+
+	const reviewSnapshot = async (latest = false) => {
+		if (!qid || reviewPending.current || refreshRequest.current) return;
+		reviewPending.current = true;
+		setRefreshReviewState("pending");
+		setRefreshReview(null);
+		setRefreshState({ status: "idle" });
+		try {
+			let token = loadedRefreshToken.current;
+			if (latest) {
+				const saved = await convex.query(api.quotations.getQuotationForEdit, { target_quotation_id: qid });
+				token = saved?.snapshot_refresh_token;
+			}
+			if (!token) throw new Error("Missing saved quotation context");
+			const review = await convex.query(api.quotations.getSnapshotRefreshReview, { quotation_id: qid, expected_quotation_token: token });
+			setRefreshReview(review);
+			setRefreshReviewState("idle");
+		} catch (error) {
+			const code = error instanceof ConvexError && error.data && typeof error.data === "object" && "code" in error.data ? error.data.code : null;
+			setRefreshReviewState(code === "SNAPSHOT_REFRESH_CONFLICT" ? "conflict" : "failure");
+			setRefreshState({ status: "failure", message: code === "SNAPSHOT_REFRESH_CONFLICT"
+				? SNAPSHOT_REFRESH_CONFLICT_MESSAGE
+				: code === "SNAPSHOT_REFRESH_UNAVAILABLE"
+					? "The saved package or flight is no longer available for refresh. Review the saved quotation and select an available package and flight before refreshing. Your entries are kept on this page."
+					: "The snapshot review could not be loaded. No snapshots were written. Your entries are kept on this page. Check your connection and sign-in, then try again." });
+		} finally {
+			reviewPending.current = false;
+		}
+	};
 
 	const handleRefreshSnapshot = async () => {
-		if (!qid || refreshRequest.current) return;
-		const pending = refreshQuotationSnapshot(qid);
+		if (!qid || !refreshReview || refreshRequest.current) return;
+		const pending = refreshQuotationSnapshot(qid, fetch, refreshReview);
 		refreshRequest.current = pending;
 		setRefreshState({ status: "pending" });
 		try {
 			const result = await pending;
 			setRefreshState(result);
-			if (result.status === "success") router.refresh();
+			if (result.status === "success") {
+				setRefreshReview(null);
+				router.refresh();
+			} else {
+				setRefreshReview(null);
+				setRefreshReviewState("conflict");
+			}
 		} finally {
 			refreshRequest.current = null;
 		}
@@ -847,13 +890,39 @@ export default function QuotationBuilder({
 					<button
 						type="button"
 						className="shrink-0 rounded px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
-						disabled={refreshState.status === "pending"}
-						aria-busy={refreshState.status === "pending"}
-						onClick={handleRefreshSnapshot}
+						disabled={refreshState.status === "pending" || refreshReviewState === "pending"}
+						aria-busy={refreshReviewState === "pending"}
+						onClick={() => reviewSnapshot()}
 					>
-						{refreshState.status === "pending" ? "Refreshing snapshot..." : "Refresh snapshot"}
+						{refreshReviewState === "pending" ? "Loading review..." : "Refresh snapshot"}
 					</button>
 				</div>
+			)}
+
+			{qid && refreshReviewState === "pending" && <p role="status">Loading the saved quotation and current package for review. Your draft is kept.</p>}
+			{qid && refreshReviewState === "conflict" && (
+				<button type="button" className="rounded border px-3 py-2 text-sm" onClick={() => reviewSnapshot(true)} disabled={refreshState.status === "pending"}>
+					Review latest saved quotation
+				</button>
+			)}
+			{qid && refreshReviewState === "failure" && <button type="button" className="rounded border px-3 py-2 text-sm" onClick={() => reviewSnapshot()}>Try review again</button>}
+
+			{refreshReview && (
+				<section aria-label="Review snapshot changes" className="rounded-lg border bg-card p-4 space-y-4 text-sm">
+					<h3 className="font-semibold">Review snapshot changes</h3>
+					<p>Saved package: <strong>{refreshReview.saved_package}</strong><br />Saved flight: {refreshReview.saved_flight}</p>
+					<p>Current package: <strong>{refreshReview.current_package}</strong><br />Current flight: {refreshReview.current_flight}</p>
+					<p>Confirming saves these snapshots immediately to the saved quotation. Existing quoted prices, passenger counts, add-ons, discounts, and totals stay unchanged. Your unsaved draft is kept and is not saved by this action.</p>
+					{refreshReview.changes.length > 0 ? (
+						<div className="overflow-x-auto"><table className="w-full text-left"><thead><tr><th className="p-2">Detail</th><th className="p-2">Saved</th><th className="p-2">Current</th></tr></thead><tbody>
+							{refreshReview.changes.map(change => <tr key={change.label} className="border-t"><th scope="row" className="p-2 font-medium">{change.label}</th><td className="p-2 whitespace-pre-wrap">{change.saved}</td><td className="p-2 whitespace-pre-wrap">{change.current}</td></tr>)}
+						</tbody></table></div>
+					) : <p>No material snapshot changes were found.</p>}
+					<div className="flex gap-3">
+						<button type="button" className="rounded bg-primary text-primary-foreground px-3 py-2" disabled={refreshState.status === "pending"} onClick={handleRefreshSnapshot}>Confirm refresh</button>
+						<button type="button" className="rounded border px-3 py-2" disabled={refreshState.status === "pending"} onClick={() => setRefreshReview(null)}>Cancel</button>
+					</div>
+				</section>
 			)}
 
 			{qid && refreshState.status !== "idle" && (

@@ -39,7 +39,9 @@ test('session actor owns create and update audit records while PIC stays editabl
   assert.equal(reopened.total_amount, 1200);
   assert.equal(reopened.reference_number, '1448H-0001');
   assert.equal(reopened.selected_flight.departure_date, '2027-01-01');
-  await quotations.refreshSnapshot._handler(s.ctx, {quotation_id:saved.id});
+  const loaded = await quotations.getQuotationForEdit._handler(s.ctx, {target_quotation_id:saved.id});
+  const review = await quotations.getSnapshotRefreshReview._handler(s.ctx, {quotation_id:saved.id,expected_quotation_token:loaded.snapshot_refresh_token});
+  await quotations.refreshSnapshot._handler(s.ctx, {quotation_id:saved.id,expected_quotation_token:review.expected_quotation_token,source_context:review.source_context});
   assert.equal(s.tables.quotation_logs.at(-1).performed_by, 'second-staff');
   assert.equal(s.tables.quotation_logs.at(-1).action, 'snapshot_refreshed');
   assert.equal(row.total_amount, 1200);
