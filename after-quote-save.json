@@ -1,0 +1,139 @@
+{
+  "fixture": {
+    "packageId": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+    "flightId": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+    "quoteId": "m572jze3m2bwwb9ye9y209dm4x8jak44"
+  },
+  "edit": {
+    "adds_ons": [],
+    "branch": "Local",
+    "client_id": "jx74vkrxtntagccx7nv3p08xtx8jadm4",
+    "discounts": [],
+    "flight_id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+    "id": "m572jze3m2bwwb9ye9y209dm4x8jak44",
+    "notes": "",
+    "package_id": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+    "pic_name": "ISSUE-044 Test Agent",
+    "reference_number": "1448H-0001",
+    "selected_rooms": [
+      {
+        "pax": 1,
+        "price": 1200,
+        "room_type": "Quad"
+      }
+    ],
+    "snapshot_version_known": true,
+    "stale_fields": [
+      "flight"
+    ],
+    "status": "draft"
+  },
+  "details": {
+    "branch": "Local",
+    "client_name": "ISSUE-044 Test Client",
+    "created_at": "2026-11-16T08:42:03.845Z",
+    "hijri_year": "1448H",
+    "id": "m572jze3m2bwwb9ye9y209dm4x8jak44",
+    "items": {
+      "adds_ons": [],
+      "discounts": [],
+      "selected_rooms": [
+        {
+          "id": "kx7anyhh0hj5xcdqqdc4hhgqkx8jafb5",
+          "package_room_id": "kh70b18cbfm6pffdaa9mbwefe18jaa7k",
+          "pax": 1,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 1200
+        }
+      ]
+    },
+    "notes": "",
+    "package": {
+      "available_flights": [
+        {
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-MED",
+          "flight": "Malaysia Airlines",
+          "id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+          "month": "NOV",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL"
+        }
+      ],
+      "available_rooms": [
+        {
+          "enabled": true,
+          "id": "kh70b18cbfm6pffdaa9mbwefe18jaa7k",
+          "price": 1200,
+          "room_type": "Quad"
+        }
+      ],
+      "duration": "12 days",
+      "exclusions": "",
+      "hotels": [
+        {
+          "enabled": true,
+          "hotel_type": "OTHER",
+          "meals": [],
+          "name": "Test Hotel",
+          "placeholder": ""
+        }
+      ],
+      "id": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+      "inclusions": "",
+      "name": "MENARA JAM",
+      "package_code": "",
+      "transport": "",
+      "year": "2026/2027"
+    },
+    "pic_name": "ISSUE-044 Test Agent",
+    "reference_number": "1448H-0001",
+    "selected_flight": {
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-JED",
+      "flight": "Malaysia Airlines",
+      "id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+      "month": "NOV",
+      "return_date": "2026-11-20",
+      "return_sector": "JED-KUL"
+    },
+    "snapshot_version_known": true,
+    "stale_fields": [
+      "flight"
+    ],
+    "status": "draft",
+    "total_amount": 1200,
+    "updated_at": "2026-11-16T08:43:56.924Z"
+  },
+  "flights": [
+    {
+      "_id": "k5758q9fnkq4rdxwqtp0vv21ch8ja7n4",
+      "departure_date": "2026-12-10",
+      "departure_sector": "KUL-JED",
+      "flight": "TEST003",
+      "month": "December",
+      "package_id": "mh7avsegm43kbva0mp407mp9b98jbyd0",
+      "package_name": "ISSUE-044 Test Package",
+      "package_season": "2026/2027",
+      "return_date": "2026-12-22",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    },
+    {
+      "_id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-MED",
+      "flight": "Malaysia Airlines",
+      "month": "NOV",
+      "package_id": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+      "package_name": "MENARA JAM",
+      "package_season": "MS - NOV",
+      "return_date": "2026-11-20",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "sync"
+    }
+  ]
+}

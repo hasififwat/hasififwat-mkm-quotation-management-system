@@ -1,0 +1,972 @@
+{
+  "snapshot": {
+    "commit": "bab5e142207df4bac78e54956f44c12d389ec045",
+    "trackedFiles": 1330,
+    "mismatches": []
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "typescript": "5.9.3",
+    "convex": "1.45.0"
+  },
+  "method": "TypeScript loader executes current parser and actual Convex registered _handler functions. The actual handleApply function was extracted by TypeScript AST from the TSX page and transpiled unchanged, with React setters and mutation calls bound to in-memory adapters. Add failure is injected before the add handler, not a live network or Convex failure. All identities, IDs, records, and writes are fixtures. Validators, deployed endpoint reachability, transactions, concurrency, UI, and real CSV completeness are not tested.",
+  "applyFunctionSha256": "143c93676be13e6f0c3d4f774bdd50b56cd669b12533a69f97a9d32c0c1f30f1",
+  "failedEditedFlight": {
+    "mappingRows": [
+      {
+        "season_code": "MS - NOV",
+        "season_raw": "MID SEASON",
+        "season_start": "2026-11-01",
+        "season_end": "2026-11-24",
+        "canonical_name": "MENARA JAM",
+        "price_list_segment": "",
+        "qdp_price": 2500,
+        "tpl_price": null,
+        "dbl_price": null,
+        "sgl_price": null,
+        "duration": "12 days",
+        "flight": "",
+        "match_status": "MATCHED",
+        "db_id": "packages:1",
+        "db_name": "MENARA JAM",
+        "db_season": "MS - NOV",
+        "db_status": "unpublished",
+        "transport": "Bus",
+        "makkah_hotel": "Makkah Hotel",
+        "makkah_meals": "BREAKFAST",
+        "madinah_hotel": "",
+        "madinah_meals": "",
+        "aziziah_hotel": "",
+        "aziziah_meals": "",
+        "taif_hotel": "",
+        "taif_meals": ""
+      }
+    ],
+    "flightRows": [
+      {
+        "status": "edited",
+        "package_name": "MENARA JAM",
+        "season": "MS - NOV",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-MED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL",
+        "airline": "MH",
+        "dep_flight": "MH123",
+        "ret_flight": "MH456",
+        "db_package_id": "packages:1",
+        "db_flight_id": "package_flights:5",
+        "notes": "dep sector changed",
+        "db_airline": "Malaysia Airlines",
+        "db_dep_sector": "KUL-JED",
+        "db_ret_sector": "JED-KUL"
+      }
+    ],
+    "plan": {
+      "packagesToCreate": [],
+      "packagesToUpdate": [],
+      "packagesToPromote": [],
+      "flightsToAdd": [
+        {
+          "kind": "add",
+          "db_package_id": "packages:1",
+          "package_name": "MENARA JAM",
+          "season": "MS - NOV",
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-MED",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL",
+          "month": "NOV",
+          "needs_new_package": false,
+          "unresolvable": false,
+          "row": {
+            "status": "edited",
+            "package_name": "MENARA JAM",
+            "season": "MS - NOV",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "airline": "MH",
+            "dep_flight": "MH123",
+            "ret_flight": "MH456",
+            "db_package_id": "packages:1",
+            "db_flight_id": "package_flights:5",
+            "notes": "dep sector changed",
+            "db_airline": "Malaysia Airlines",
+            "db_dep_sector": "KUL-JED",
+            "db_ret_sector": "JED-KUL"
+          }
+        }
+      ],
+      "flightsToRemove": [
+        {
+          "kind": "remove",
+          "db_flight_id": "package_flights:5",
+          "package_name": "MENARA JAM",
+          "season": "MS - NOV",
+          "departure_date": "2026-11-10",
+          "return_date": "2026-11-20",
+          "row": {
+            "status": "edited",
+            "package_name": "MENARA JAM",
+            "season": "MS - NOV",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "airline": "MH",
+            "dep_flight": "MH123",
+            "ret_flight": "MH456",
+            "db_package_id": "packages:1",
+            "db_flight_id": "package_flights:5",
+            "notes": "dep sector changed",
+            "db_airline": "Malaysia Airlines",
+            "db_dep_sector": "KUL-JED",
+            "db_ret_sector": "JED-KUL"
+          }
+        }
+      ],
+      "flightsToPromote": []
+    },
+    "applied": {
+      "result": {
+        "created": 0,
+        "updated": 0,
+        "flightsAdded": 0,
+        "flightsRemoved": 1,
+        "errors": [
+          "Add flight MENARA JAM 2026-11-10: Error: Injected add failure before handler call"
+        ]
+      },
+      "calls": [
+        {
+          "method": "addFlight",
+          "args": {
+            "package_id": "packages:1",
+            "month": "NOV",
+            "dep_flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "sync"
+          }
+        },
+        {
+          "method": "deleteFlight",
+          "args": {
+            "id": "package_flights:5"
+          }
+        }
+      ],
+      "operations": [
+        [
+          "delete",
+          "package_flights:5"
+        ]
+      ]
+    },
+    "remainingFlights": [],
+    "reopened": {
+      "edit": {
+        "id": "quotations:6",
+        "reference_number": "1448H-0001",
+        "pic_name": "Fixture staff",
+        "branch": "Fixture",
+        "client_id": "client:1",
+        "notes": "",
+        "package_id": "packages:1",
+        "flight_id": "package_flights:5",
+        "selected_rooms": [
+          {
+            "room_type": "Quad",
+            "price": 1200,
+            "pax": 1
+          }
+        ],
+        "adds_ons": [],
+        "discounts": [],
+        "status": "draft",
+        "stale_fields": [
+          "flight.removed"
+        ],
+        "snapshot_version_known": true
+      },
+      "saveError": "Flight not found",
+      "storedFlightId": "package_flights:5",
+      "flightSnapshot": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-JED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL"
+      },
+      "detailsSelectedFlight": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "return_date": "2026-11-20",
+        "departure_sector": "KUL-JED",
+        "return_sector": "JED-KUL"
+      }
+    },
+    "manualReselection": null
+  },
+  "successfulEditedFlight": {
+    "mappingRows": [
+      {
+        "season_code": "MS - NOV",
+        "season_raw": "MID SEASON",
+        "season_start": "2026-11-01",
+        "season_end": "2026-11-24",
+        "canonical_name": "MENARA JAM",
+        "price_list_segment": "",
+        "qdp_price": 2500,
+        "tpl_price": null,
+        "dbl_price": null,
+        "sgl_price": null,
+        "duration": "12 days",
+        "flight": "",
+        "match_status": "MATCHED",
+        "db_id": "packages:1",
+        "db_name": "MENARA JAM",
+        "db_season": "MS - NOV",
+        "db_status": "unpublished",
+        "transport": "Bus",
+        "makkah_hotel": "Makkah Hotel",
+        "makkah_meals": "BREAKFAST",
+        "madinah_hotel": "",
+        "madinah_meals": "",
+        "aziziah_hotel": "",
+        "aziziah_meals": "",
+        "taif_hotel": "",
+        "taif_meals": ""
+      }
+    ],
+    "flightRows": [
+      {
+        "status": "edited",
+        "package_name": "MENARA JAM",
+        "season": "MS - NOV",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-MED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL",
+        "airline": "MH",
+        "dep_flight": "MH123",
+        "ret_flight": "MH456",
+        "db_package_id": "packages:1",
+        "db_flight_id": "package_flights:5",
+        "notes": "dep sector changed",
+        "db_airline": "Malaysia Airlines",
+        "db_dep_sector": "KUL-JED",
+        "db_ret_sector": "JED-KUL"
+      }
+    ],
+    "plan": {
+      "packagesToCreate": [],
+      "packagesToUpdate": [],
+      "packagesToPromote": [],
+      "flightsToAdd": [
+        {
+          "kind": "add",
+          "db_package_id": "packages:1",
+          "package_name": "MENARA JAM",
+          "season": "MS - NOV",
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-MED",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL",
+          "month": "NOV",
+          "needs_new_package": false,
+          "unresolvable": false,
+          "row": {
+            "status": "edited",
+            "package_name": "MENARA JAM",
+            "season": "MS - NOV",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "airline": "MH",
+            "dep_flight": "MH123",
+            "ret_flight": "MH456",
+            "db_package_id": "packages:1",
+            "db_flight_id": "package_flights:5",
+            "notes": "dep sector changed",
+            "db_airline": "Malaysia Airlines",
+            "db_dep_sector": "KUL-JED",
+            "db_ret_sector": "JED-KUL"
+          }
+        }
+      ],
+      "flightsToRemove": [
+        {
+          "kind": "remove",
+          "db_flight_id": "package_flights:5",
+          "package_name": "MENARA JAM",
+          "season": "MS - NOV",
+          "departure_date": "2026-11-10",
+          "return_date": "2026-11-20",
+          "row": {
+            "status": "edited",
+            "package_name": "MENARA JAM",
+            "season": "MS - NOV",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "airline": "MH",
+            "dep_flight": "MH123",
+            "ret_flight": "MH456",
+            "db_package_id": "packages:1",
+            "db_flight_id": "package_flights:5",
+            "notes": "dep sector changed",
+            "db_airline": "Malaysia Airlines",
+            "db_dep_sector": "KUL-JED",
+            "db_ret_sector": "JED-KUL"
+          }
+        }
+      ],
+      "flightsToPromote": []
+    },
+    "applied": {
+      "result": {
+        "created": 0,
+        "updated": 0,
+        "flightsAdded": 1,
+        "flightsRemoved": 1,
+        "errors": []
+      },
+      "calls": [
+        {
+          "method": "addFlight",
+          "args": {
+            "package_id": "packages:1",
+            "month": "NOV",
+            "dep_flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-MED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "sync"
+          }
+        },
+        {
+          "method": "deleteFlight",
+          "args": {
+            "id": "package_flights:5"
+          }
+        }
+      ],
+      "operations": [
+        [
+          "insert",
+          "package_flights",
+          "package_flights:9"
+        ],
+        [
+          "delete",
+          "package_flights:5"
+        ]
+      ]
+    },
+    "remainingFlights": [
+      {
+        "package_id": "packages:1",
+        "month": "NOV",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-MED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL",
+        "source": "sync",
+        "created_at": "2026-11-16T08:22:24.397Z",
+        "_id": "package_flights:9",
+        "_creationTime": 9
+      }
+    ],
+    "reopened": {
+      "edit": {
+        "id": "quotations:6",
+        "reference_number": "1448H-0001",
+        "pic_name": "Fixture staff",
+        "branch": "Fixture",
+        "client_id": "client:1",
+        "notes": "",
+        "package_id": "packages:1",
+        "flight_id": "package_flights:5",
+        "selected_rooms": [
+          {
+            "room_type": "Quad",
+            "price": 1200,
+            "pax": 1
+          }
+        ],
+        "adds_ons": [],
+        "discounts": [],
+        "status": "draft",
+        "stale_fields": [
+          "flight.removed"
+        ],
+        "snapshot_version_known": true
+      },
+      "saveError": "Flight not found",
+      "storedFlightId": "package_flights:5",
+      "flightSnapshot": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-JED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL"
+      },
+      "detailsSelectedFlight": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "return_date": "2026-11-20",
+        "departure_sector": "KUL-JED",
+        "return_sector": "JED-KUL"
+      }
+    },
+    "manualReselection": {
+      "newFlightId": "package_flights:9",
+      "storedFlightId": "package_flights:9",
+      "flightSnapshot": {
+        "id": "package_flights:9",
+        "month": "NOV",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-MED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL"
+      }
+    }
+  },
+  "changedRoomReference": {
+    "mappingRows": [
+      {
+        "season_code": "MS - NOV",
+        "season_raw": "MID SEASON",
+        "season_start": "2026-11-01",
+        "season_end": "2026-11-24",
+        "canonical_name": "MENARA JAM",
+        "price_list_segment": "",
+        "qdp_price": 2500,
+        "tpl_price": null,
+        "dbl_price": null,
+        "sgl_price": null,
+        "duration": "12 days",
+        "flight": "",
+        "match_status": "MATCHED",
+        "db_id": "packages:1",
+        "db_name": "MENARA JAM",
+        "db_season": "MS - NOV",
+        "db_status": "unpublished",
+        "transport": "Bus",
+        "makkah_hotel": "Makkah Hotel",
+        "makkah_meals": "BREAKFAST",
+        "madinah_hotel": "",
+        "madinah_meals": "",
+        "aziziah_hotel": "",
+        "aziziah_meals": "",
+        "taif_hotel": "",
+        "taif_meals": ""
+      }
+    ],
+    "plan": {
+      "packagesToCreate": [],
+      "packagesToUpdate": [
+        {
+          "kind": "update",
+          "db_id": "packages:1",
+          "db_name": "MENARA JAM",
+          "current_transport": "Bus",
+          "transport": "Bus",
+          "current_hotels": [
+            {
+              "hotel_type": "MAKKAH",
+              "name": "Makkah Hotel",
+              "meals": [
+                "BREAKFAST"
+              ]
+            },
+            {
+              "hotel_type": "OTHER",
+              "name": "Other Hotel",
+              "meals": []
+            }
+          ],
+          "hotels": [
+            {
+              "hotel_type": "MAKKAH",
+              "name": "Makkah Hotel",
+              "meals": [
+                "BREAKFAST"
+              ]
+            },
+            {
+              "hotel_type": "MADINAH",
+              "name": "",
+              "meals": []
+            }
+          ],
+          "rooms": [
+            {
+              "room_type": "QDP",
+              "price": 2500,
+              "enabled": true
+            }
+          ],
+          "row": {
+            "season_code": "MS - NOV",
+            "season_raw": "MID SEASON",
+            "season_start": "2026-11-01",
+            "season_end": "2026-11-24",
+            "canonical_name": "MENARA JAM",
+            "price_list_segment": "",
+            "qdp_price": 2500,
+            "tpl_price": null,
+            "dbl_price": null,
+            "sgl_price": null,
+            "duration": "12 days",
+            "flight": "",
+            "match_status": "MATCHED",
+            "db_id": "packages:1",
+            "db_name": "MENARA JAM",
+            "db_season": "MS - NOV",
+            "db_status": "unpublished",
+            "transport": "Bus",
+            "makkah_hotel": "Makkah Hotel",
+            "makkah_meals": "BREAKFAST",
+            "madinah_hotel": "",
+            "madinah_meals": "",
+            "aziziah_hotel": "",
+            "aziziah_meals": "",
+            "taif_hotel": "",
+            "taif_meals": ""
+          },
+          "changes": [
+            {
+              "field": "OTHER hotel",
+              "old": "Other Hotel",
+              "new": "—"
+            }
+          ]
+        }
+      ],
+      "packagesToPromote": [],
+      "flightsToAdd": [],
+      "flightsToRemove": [],
+      "flightsToPromote": []
+    },
+    "before": [
+      {
+        "package_id": "packages:1",
+        "room_type": "Quad",
+        "price": 1200,
+        "enabled": true,
+        "created_at": "2026-11-16T08:22:24.398Z",
+        "_id": "package_rooms:4",
+        "_creationTime": 4
+      }
+    ],
+    "after": [
+      {
+        "package_id": "packages:1",
+        "room_type": "QDP",
+        "price": 2500,
+        "enabled": true,
+        "created_at": "2026-11-16T08:22:24.398Z",
+        "_id": "package_rooms:13",
+        "_creationTime": 13
+      }
+    ],
+    "applied": {
+      "result": {
+        "created": 0,
+        "updated": 1,
+        "flightsAdded": 0,
+        "flightsRemoved": 0,
+        "errors": []
+      },
+      "calls": [
+        {
+          "method": "syncPackage",
+          "args": {
+            "db_id": "packages:1",
+            "name": "MENARA JAM",
+            "season": "MS - NOV",
+            "year": "2026/2027",
+            "duration": "12 days",
+            "transport": "Bus",
+            "hotels": [
+              {
+                "hotel_type": "MAKKAH",
+                "name": "Makkah Hotel",
+                "meals": [
+                  "BREAKFAST"
+                ]
+              },
+              {
+                "hotel_type": "MADINAH",
+                "name": "",
+                "meals": []
+              }
+            ],
+            "rooms": [
+              {
+                "room_type": "QDP",
+                "price": 2500,
+                "enabled": true
+              }
+            ]
+          }
+        }
+      ],
+      "operations": [
+        [
+          "get",
+          "packages:1"
+        ],
+        [
+          "patch",
+          "packages:1"
+        ],
+        [
+          "query",
+          "package_hotels"
+        ],
+        [
+          "query",
+          "package_meals"
+        ],
+        [
+          "delete",
+          "package_meals:3"
+        ],
+        [
+          "delete",
+          "package_hotels:2"
+        ],
+        [
+          "query",
+          "package_meals"
+        ],
+        [
+          "delete",
+          "package_hotels:6"
+        ],
+        [
+          "insert",
+          "package_hotels",
+          "package_hotels:10"
+        ],
+        [
+          "insert",
+          "package_meals",
+          "package_meals:11"
+        ],
+        [
+          "insert",
+          "package_hotels",
+          "package_hotels:12"
+        ],
+        [
+          "query",
+          "package_rooms"
+        ],
+        [
+          "delete",
+          "package_rooms:4"
+        ],
+        [
+          "insert",
+          "package_rooms",
+          "package_rooms:13"
+        ]
+      ]
+    },
+    "reopened": {
+      "edit": {
+        "id": "quotations:7",
+        "reference_number": "1448H-0001",
+        "pic_name": "Fixture staff",
+        "branch": "Fixture",
+        "client_id": "client:1",
+        "notes": "",
+        "package_id": "packages:1",
+        "flight_id": "package_flights:5",
+        "selected_rooms": [
+          {
+            "room_type": "Quad",
+            "price": 1200,
+            "pax": 1
+          }
+        ],
+        "adds_ons": [],
+        "discounts": [],
+        "status": "draft",
+        "stale_fields": [
+          "room_pricing",
+          "hotels"
+        ],
+        "snapshot_version_known": true
+      },
+      "saveError": "Room type 'Quad' does not exist in this package",
+      "storedFlightId": "package_flights:5",
+      "flightSnapshot": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "departure_sector": "KUL-JED",
+        "return_date": "2026-11-20",
+        "return_sector": "JED-KUL"
+      },
+      "detailsSelectedFlight": {
+        "id": "package_flights:5",
+        "month": "JAN",
+        "flight": "Malaysia Airlines",
+        "departure_date": "2026-11-10",
+        "return_date": "2026-11-20",
+        "departure_sector": "KUL-JED",
+        "return_sector": "JED-KUL"
+      }
+    }
+  },
+  "changedPriceOnly": {
+    "csvPrice": 2500,
+    "dbRoom": {
+      "package_id": "packages:1",
+      "room_type": "QDP",
+      "price": 1200,
+      "enabled": true,
+      "created_at": "2026-11-16T08:22:24.399Z",
+      "_id": "package_rooms:4",
+      "_creationTime": 4
+    },
+    "mappingRow": {
+      "season_code": "MS - NOV",
+      "season_raw": "MID SEASON",
+      "season_start": "2026-11-01",
+      "season_end": "2026-11-24",
+      "canonical_name": "MENARA JAM",
+      "price_list_segment": "",
+      "qdp_price": 2500,
+      "tpl_price": null,
+      "dbl_price": null,
+      "sgl_price": null,
+      "duration": "12 days",
+      "flight": "",
+      "match_status": "MATCHED",
+      "db_id": "packages:1",
+      "db_name": "MENARA JAM",
+      "db_season": "MS - NOV",
+      "db_status": "unpublished",
+      "transport": "Bus",
+      "makkah_hotel": "Makkah Hotel",
+      "makkah_meals": "BREAKFAST",
+      "madinah_hotel": "",
+      "madinah_meals": "",
+      "aziziah_hotel": "",
+      "aziziah_meals": "",
+      "taif_hotel": "",
+      "taif_meals": ""
+    },
+    "plan": {
+      "packagesToCreate": [],
+      "packagesToUpdate": [],
+      "packagesToPromote": [],
+      "flightsToAdd": [],
+      "flightsToRemove": [],
+      "flightsToPromote": []
+    },
+    "quotationPackageRoom": {
+      "package_id": "packages:1",
+      "room_type": "QDP",
+      "price": 1200,
+      "enabled": true,
+      "created_at": "2026-11-16T08:22:24.399Z",
+      "_id": "package_rooms:4",
+      "_creationTime": 4
+    }
+  },
+  "anonymousFlights": {
+    "flights": {
+      "listAll": {
+        "args": {},
+        "returned": [
+          {
+            "_id": "package_flights:fixture",
+            "package_id": "packages:fixture",
+            "package_name": "Fixture",
+            "package_season": "MS - NOV",
+            "month": "NOV",
+            "flight": "Malaysia Airlines",
+            "return_flight": "",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "manual"
+          }
+        ],
+        "authCalls": 0,
+        "operations": [
+          [
+            "query",
+            "package_flights"
+          ],
+          [
+            "query",
+            "packages"
+          ]
+        ],
+        "remainingFlights": [
+          {
+            "_id": "package_flights:fixture",
+            "package_id": "packages:fixture",
+            "month": "NOV",
+            "flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "manual"
+          }
+        ]
+      },
+      "addFlight": {
+        "args": {
+          "package_id": "packages:fixture",
+          "month": "NOV",
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-JED",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL",
+          "source": "sync"
+        },
+        "returned": "package_flights:1",
+        "authCalls": 0,
+        "operations": [
+          [
+            "insert",
+            "package_flights",
+            "package_flights:1"
+          ]
+        ],
+        "remainingFlights": [
+          {
+            "_id": "package_flights:fixture",
+            "package_id": "packages:fixture",
+            "month": "NOV",
+            "flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "manual"
+          },
+          {
+            "package_id": "packages:fixture",
+            "month": "NOV",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "sync",
+            "created_at": "2026-11-16T08:22:24.399Z",
+            "_id": "package_flights:1",
+            "_creationTime": 1
+          }
+        ]
+      },
+      "deleteFlight": {
+        "args": {
+          "id": "package_flights:fixture"
+        },
+        "returned": null,
+        "authCalls": 0,
+        "operations": [
+          [
+            "delete",
+            "package_flights:fixture"
+          ]
+        ],
+        "remainingFlights": []
+      },
+      "setSourceManual": {
+        "args": {},
+        "returned": 1,
+        "authCalls": 0,
+        "operations": [
+          [
+            "query",
+            "package_flights"
+          ],
+          [
+            "patch",
+            "package_flights:fixture"
+          ]
+        ],
+        "remainingFlights": [
+          {
+            "_id": "package_flights:fixture",
+            "package_id": "packages:fixture",
+            "month": "NOV",
+            "flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "manual"
+          }
+        ]
+      },
+      "promoteToSync": {
+        "args": {
+          "ids": [
+            "package_flights:fixture"
+          ]
+        },
+        "returned": null,
+        "authCalls": 0,
+        "operations": [
+          [
+            "get",
+            "package_flights:fixture"
+          ],
+          [
+            "patch",
+            "package_flights:fixture"
+          ]
+        ],
+        "remainingFlights": [
+          {
+            "_id": "package_flights:fixture",
+            "package_id": "packages:fixture",
+            "month": "NOV",
+            "flight": "Malaysia Airlines",
+            "departure_date": "2026-11-10",
+            "departure_sector": "KUL-JED",
+            "return_date": "2026-11-20",
+            "return_sector": "JED-KUL",
+            "source": "sync"
+          }
+        ]
+      }
+    },
+    "packageNegativeControl": {
+      "error": "Not authenticated",
+      "operations": []
+    }
+  }
+}

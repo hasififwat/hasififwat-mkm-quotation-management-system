@@ -1,0 +1,103 @@
+{
+  "head": "c6948fb6",
+  "fixture": {
+    "packageId": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+    "flightId": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+    "quoteId": "m572jze3m2bwwb9ye9y209dm4x8jak44"
+  },
+  "flight": {
+    "_id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+    "departure_date": "2026-11-10",
+    "departure_sector": "KUL-JED",
+    "flight": "Malaysia Airlines",
+    "month": "NOV",
+    "package_id": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+    "package_name": "MENARA JAM",
+    "package_season": "MS - NOV",
+    "return_date": "2026-11-20",
+    "return_flight": "",
+    "return_sector": "JED-KUL",
+    "source": "sync"
+  },
+  "before": {
+    "branch": "Local",
+    "client_name": "ISSUE-044 Test Client",
+    "created_at": "2026-11-16T08:42:03.845Z",
+    "hijri_year": "1448H",
+    "id": "m572jze3m2bwwb9ye9y209dm4x8jak44",
+    "items": {
+      "adds_ons": [],
+      "discounts": [],
+      "selected_rooms": [
+        {
+          "id": "kx7dfyt7x5je52tm7yhskdaxc98jayfd",
+          "package_room_id": "kh70b18cbfm6pffdaa9mbwefe18jaa7k",
+          "pax": 1,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 1200
+        }
+      ]
+    },
+    "notes": "",
+    "package": {
+      "available_flights": [
+        {
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-JED",
+          "flight": "Malaysia Airlines",
+          "id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+          "month": "NOV",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL"
+        }
+      ],
+      "available_rooms": [
+        {
+          "enabled": true,
+          "id": "kh70b18cbfm6pffdaa9mbwefe18jaa7k",
+          "price": 1200,
+          "room_type": "Quad"
+        }
+      ],
+      "duration": "12 days",
+      "exclusions": "",
+      "hotels": [
+        {
+          "enabled": true,
+          "hotel_type": "OTHER",
+          "meals": [],
+          "name": "Test Hotel",
+          "placeholder": ""
+        }
+      ],
+      "id": "mh725a04nwhbh6aphbyfqaj9yd8ja5bn",
+      "inclusions": "",
+      "name": "MENARA JAM",
+      "package_code": "",
+      "transport": "",
+      "year": "2026/2027"
+    },
+    "pic_name": "ISSUE-044 Test Agent",
+    "reference_number": "1448H-0001",
+    "selected_flight": {
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-JED",
+      "flight": "Malaysia Airlines",
+      "id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+      "month": "NOV",
+      "return_date": "2026-11-20",
+      "return_sector": "JED-KUL"
+    },
+    "snapshot_version_known": true,
+    "stale_fields": [],
+    "status": "draft",
+    "total_amount": 1200,
+    "updated_at": "2026-11-16T08:42:03.845Z"
+  },
+  "errors": {
+    "invalidUpdate": "[Request ID: 22021475cd4f9e78] Server Error\nUncaught Error: Flight: Choose a valid return date.\n    at requireFlightDates (../../src/domain/submission-validation.ts:47:0)\n    at handler (../convex/packageFlights.ts:57:19)\n",
+    "quotedDelete": "[Request ID: d355e437473d4643] Server Error\nUncaught ConvexError: {\"code\":\"PACKAGE_REFERENCE_CONFLICT\",\"message\":\"The package was not saved. 1448H-0001 (m572jze3m2bwwb9ye9y209dm4x8jak44) needs flight k570hmb3m0mbhc6eth1e2n6zas8ja5xw. Keep these flights and room types, or change the affected quotations before removing them. Your complete draft is still here.\"}\n    at requireQuotationReferencesPreserved (../../convex/lib/packageReferences.ts:39:6)\n    at async handler (../convex/packageFlights.ts:81:10)\n",
+    "anonymousUpdate": "[Request ID: 85246d7f34f3309d] Server Error\nUncaught Error: Not authenticated\n    at requireFlightAccess (../convex/packageFlights.ts:9:0)\n    at async handler (../convex/packageFlights.ts:57:4)\n"
+  }
+}

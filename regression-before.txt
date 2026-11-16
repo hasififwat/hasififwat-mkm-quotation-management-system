@@ -1,0 +1,112 @@
+✖ edited flight success preserves quotation selection (33.00575ms)
+✖ edited flight rejection preserves quotation selection (2.669917ms)
+✖ referenced genuine deletion rejects without writes (30.058042ms)
+✔ unreferenced genuine deletion succeeds (9.070417ms)
+✖ CSV room removal rejects before package, hotel or room writes (2.966625ms)
+✔ CSV same-type room ID churn preserves saved prices and permits quotation save (3.623791ms)
+✖ new flight update rejects anonymous access before database operations (0.585166ms)
+✖ flight update rejects package mismatch and invalid dates without writes (0.901959ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 2
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1903.916208
+
+✖ failing tests:
+
+test at scripts/sync-reference-integrity.test.mjs:36:35
+✖ edited flight success preserves quotation selection (33.00575ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'add',
+  +   'delete'
+  -   'update'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'add', 'delete' ],
+    expected: [ 'update' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-reference-integrity.test.mjs:36:35
+✖ edited flight rejection preserves quotation selection (2.669917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'add',
+  +   'delete'
+  -   'update'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'add', 'delete' ],
+    expected: [ 'update' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-reference-integrity.test.mjs:58:1
+✖ referenced genuine deletion rejects without writes (30.058042ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:60:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/sync-reference-integrity.test.mjs:67:1
+✖ CSV room removal rejects before package, hotel or room writes (2.966625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:69:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/sync-reference-integrity.test.mjs:80:1
+✖ new flight update rejects anonymous access before database operations (0.585166ms)
+  TypeError: Cannot read properties of undefined (reading '_handler')
+      at file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:82:49
+      at waitForActual (node:assert:632:21)
+      at strict.rejects (node:assert:769:31)
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:82:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/sync-reference-integrity.test.mjs:85:1
+✖ flight update rejects package mismatch and invalid dates without writes (0.901959ms)
+  TypeError: Cannot read properties of undefined (reading '_handler')
+      at file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:87:49
+      at waitForActual (node:assert:632:21)
+      at strict.rejects (node:assert:769:31)
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-44-sync-quotation-r-a38736835d133b48/scripts/sync-reference-integrity.test.mjs:87:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

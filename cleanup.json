@@ -1,0 +1,15 @@
+{
+  "ports": {
+    "3530": "closed",
+    "3540": "closed",
+    "3541": "closed"
+  },
+  "owned_preview_tab": "closed",
+  "instances": {
+    "sync44": "stopped, retained privately pending cleanup approval",
+    "sync44fresh": "stopped, retained privately pending cleanup approval"
+  },
+  "generated_credentials": "retained only in private instance directories; not uploaded",
+  "blocked_reset_command": "interrupted and not retried; no deletion performed",
+  "private_build_snapshot": "retained"
+}

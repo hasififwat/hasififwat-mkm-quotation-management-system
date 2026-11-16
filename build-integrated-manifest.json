@@ -1,0 +1,6 @@
+{
+  "commit": "c6948fb67f91634cf38d73dc9f09d471df90365c",
+  "snapshot": "/tmp/mkm44/build-integrated-snapshot",
+  "change": "turbopack.root=/ in snapshot only",
+  "localBackend": "http://127.0.0.1:3540"
+}

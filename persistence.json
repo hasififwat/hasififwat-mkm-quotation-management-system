@@ -1,0 +1,21 @@
+{
+  "head": "8a34203f020164c4662026745329066b9641675c",
+  "after_sync_unchanged": [
+    "quotation items",
+    "selected flight snapshot",
+    "total amount"
+  ],
+  "after_save_unchanged": [
+    "selected room type, price, pax, subtotal and package room ID",
+    "selected flight snapshot",
+    "total amount",
+    "quotation ID"
+  ],
+  "save_item_ids_recreated": true,
+  "flight_id": "k570hmb3m0mbhc6eth1e2n6zas8ja5xw",
+  "stale_fields": [
+    "flight"
+  ],
+  "assertions_passed": true,
+  "boundary": "package.available_flights is a live query projection and correctly shows KUL-MED. Selected flight snapshot remains KUL-JED."
+}
