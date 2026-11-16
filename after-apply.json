@@ -1,0 +1,139 @@
+{
+  "edit": {
+    "adds_ons": [],
+    "branch": "Local",
+    "client_id": "jx724trqt7ptbb33d17w1s7e618jbtq2",
+    "discounts": [],
+    "flight_id": "k579msxcmgxzxjgw29dkw3agts8jbase",
+    "id": "m573bbpmytn585zqv9vqk4cj798jahdt",
+    "notes": "",
+    "package_id": "mh7bxvckkgh23va8q4026rcyd18jbz9j",
+    "pic_name": "Price Sync Staff",
+    "reference_number": "1448H-0001",
+    "selected_rooms": [
+      {
+        "pax": 1,
+        "price": 1000,
+        "room_type": "Quad"
+      }
+    ],
+    "snapshot_version_known": true,
+    "stale_fields": [
+      "room_pricing",
+      "hotels"
+    ],
+    "status": "draft"
+  },
+  "full": {
+    "branch": "Local",
+    "client_name": "ISSUE-046 Test Client",
+    "created_at": "2026-11-16T08:49:05.402Z",
+    "hijri_year": "1448H",
+    "id": "m573bbpmytn585zqv9vqk4cj798jahdt",
+    "items": {
+      "adds_ons": [],
+      "discounts": [],
+      "selected_rooms": [
+        {
+          "id": "kx7bc6p1q380vd2mc19cxczx4d8jbs18",
+          "package_room_id": "kh76k5ca2gm4057wnb8jqr70kn8jaxyc",
+          "pax": 1,
+          "price": 1000,
+          "room_type": "Quad",
+          "subtotal": 1000
+        }
+      ]
+    },
+    "notes": "",
+    "package": {
+      "available_flights": [
+        {
+          "departure_date": "2026-11-10",
+          "departure_sector": "KUL-JED",
+          "flight": "MH123",
+          "id": "k579msxcmgxzxjgw29dkw3agts8jbase",
+          "month": "NOV",
+          "return_date": "2026-11-20",
+          "return_sector": "JED-KUL"
+        }
+      ],
+      "available_rooms": [
+        {
+          "enabled": true,
+          "id": "kh76k7gz08zbevpdncdqn8sgdd8jadqj",
+          "price": 1200,
+          "room_type": "Quad"
+        },
+        {
+          "enabled": false,
+          "id": "kh78dxfrk0469709f9t7atq67h8jatrx",
+          "price": 1500,
+          "room_type": "Triple"
+        },
+        {
+          "enabled": true,
+          "id": "kh727jc94bsm5p7fp00m7zwdnx8ja8m2",
+          "price": 1900,
+          "room_type": "Family"
+        }
+      ],
+      "duration": "12 days",
+      "exclusions": "",
+      "hotels": [],
+      "id": "mh7bxvckkgh23va8q4026rcyd18jbz9j",
+      "inclusions": "",
+      "name": "MENARA JAM",
+      "package_code": "",
+      "transport": "Bus",
+      "year": "2026/2027"
+    },
+    "pic_name": "Price Sync Staff",
+    "reference_number": "1448H-0001",
+    "selected_flight": {
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-JED",
+      "flight": "MH123",
+      "id": "k579msxcmgxzxjgw29dkw3agts8jbase",
+      "month": "NOV",
+      "return_date": "2026-11-20",
+      "return_sector": "JED-KUL"
+    },
+    "snapshot_version_known": true,
+    "stale_fields": [
+      "room_pricing",
+      "hotels"
+    ],
+    "status": "draft",
+    "total_amount": 1000,
+    "updated_at": "2026-11-16T08:49:05.402Z"
+  },
+  "rooms": [
+    {
+      "_creationTime": 1794819263967.4045,
+      "_id": "kh76k7gz08zbevpdncdqn8sgdd8jadqj",
+      "created_at": "2026-11-16T08:54:23.967Z",
+      "enabled": true,
+      "package_id": "mh7bxvckkgh23va8q4026rcyd18jbz9j",
+      "price": 1200,
+      "room_type": "Quad"
+    },
+    {
+      "_creationTime": 1794819263967.4048,
+      "_id": "kh78dxfrk0469709f9t7atq67h8jatrx",
+      "created_at": "2026-11-16T08:54:23.967Z",
+      "enabled": false,
+      "package_id": "mh7bxvckkgh23va8q4026rcyd18jbz9j",
+      "price": 1500,
+      "room_type": "Triple"
+    },
+    {
+      "_creationTime": 1794819263967.405,
+      "_id": "kh727jc94bsm5p7fp00m7zwdnx8ja8m2",
+      "created_at": "2026-11-16T08:54:23.967Z",
+      "enabled": true,
+      "package_id": "mh7bxvckkgh23va8q4026rcyd18jbz9j",
+      "price": 1900,
+      "room_type": "Family"
+    }
+  ]
+}

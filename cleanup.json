@@ -1,0 +1,11 @@
+{
+  "owned_tab_closed": true,
+  "owned_services_stopped": true,
+  "ports_closed": {
+    "3570": true,
+    "3580": true,
+    "3581": true
+  },
+  "disposable_instance_removed": true,
+  "generated_credentials_signing_keys_database_and_source_snapshots_removed": true
+}

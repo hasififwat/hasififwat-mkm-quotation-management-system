@@ -1,0 +1,9 @@
+{
+  "tested_commit": "2c69e5504d98b217808092687324eaf40391fbb9",
+  "preview_url": "http://sync46.localhost:3570",
+  "total_before": 1000,
+  "total_after_save": 1000,
+  "historical_selected_rooms_preserved": true,
+  "historical_selected_flight_preserved": true,
+  "no_op_preserved_room_records": true
+}

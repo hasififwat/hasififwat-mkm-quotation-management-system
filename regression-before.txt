@@ -1,0 +1,167 @@
+✖ saved sync data includes room prices, labels and disabled state (3.277625ms)
+✖ price-only upload plans old/new review and persists without changing historical quotation data (7.49275ms)
+✔ unchanged room prices plan no update (0.378625ms)
+✖ blank prices retain saved and custom rooms during another field update (0.246167ms)
+✔ disabled room prices remain untouched and do not plan a write (0.187708ms)
+✖ CSV aliases retain the exact saved QDP label (0.169167ms)
+✖ CSV aliases retain the exact saved Triple label (0.179375ms)
+✖ CSV aliases retain the exact saved Double label (0.134458ms)
+✖ CSV aliases retain the exact saved Single label (0.164209ms)
+✖ manual promotion and unsync exclusion retain their existing policies (0.219709ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 2
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 362.060542
+
+✖ failing tests:
+
+test at scripts/sync-room-prices.test.mjs:30:1
+✖ saved sync data includes room prices, labels and disabled state (3.277625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + undefined
+  - [
+  -   {
+  -     enabled: false,
+  -     price: 1200,
+  -     room_type: 'Quad'
+  -   }
+  - ]
+  
+      at equal (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:6:43)
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:33:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: [ { room_type: 'Quad', price: 1200, enabled: false } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:35:1
+✖ price-only upload plans old/new review and persists without changing historical quotation data (7.49275ms)
+  AssertionError [ERR_ASSERTION]: A price-only change must be reviewed
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:40:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:56:1
+✖ blank prices retain saved and custom rooms during another field update (0.246167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at plan (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:24:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:60:25)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:71:3
+✖ CSV aliases retain the exact saved QDP label (0.169167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:73:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:71:3
+✖ CSV aliases retain the exact saved Triple label (0.179375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:73:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:71:3
+✖ CSV aliases retain the exact saved Double label (0.134458ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:73:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:71:3
+✖ CSV aliases retain the exact saved Single label (0.164209ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at plan (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:24:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:72:56)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:77:1
+✖ manual promotion and unsync exclusion retain their existing policies (0.219709ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-46-sync-price-only--03de68e0faad9917/scripts/sync-room-prices.test.mjs:80:51)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

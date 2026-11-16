@@ -1,0 +1,202 @@
+✖ saved sync data includes room prices, labels and disabled state (5.086417ms)
+✖ price-only upload plans old/new review and persists without changing historical quotation data (10.878375ms)
+✔ unchanged room prices plan no update (0.450916ms)
+✖ blank prices retain saved and custom rooms during another field update (0.408ms)
+✔ disabled room prices remain untouched and do not plan a write (0.192166ms)
+✖ CSV aliases retain the exact saved QDP label (0.165791ms)
+✖ CSV aliases retain the exact saved Triple label (0.166542ms)
+✖ CSV aliases retain the exact saved Double label (0.148083ms)
+✖ CSV aliases retain the exact saved Single label (0.144958ms)
+✖ manual promotion and unsync exclusion retain their existing policies (0.214625ms)
+✖ changed-price apply retains custom and disabled rooms and adds absent types (0.174375ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 2
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 404.684
+
+✖ failing tests:
+
+test at scripts/sync-room-prices.test.mjs:30:1
+✖ saved sync data includes room prices, labels and disabled state (5.086417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + undefined
+  - [
+  -   {
+  -     enabled: false,
+  -     price: 1200,
+  -     room_type: 'Quad'
+  -   }
+  - ]
+  
+      at equal (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:6:43)
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:33:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: [ { room_type: 'Quad', price: 1200, enabled: false } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:35:1
+✖ price-only upload plans old/new review and persists without changing historical quotation data (10.878375ms)
+  AssertionError [ERR_ASSERTION]: A price-only change must be reviewed
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:40:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:56:1
+✖ blank prices retain saved and custom rooms during another field update (0.408ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      {
+        enabled: true,
+  -     price: 1200,
+  -     room_type: 'Quad'
+  -   },
+  -   {
+  -     enabled: true,
+  -     price: 3200,
+  -     room_type: 'Family'
+  -   },
+  -   {
+  -     enabled: true,
+        price: 1500,
+  +     room_type: 'TPL'
+  -     room_type: 'Triple'
+      }
+    ]
+  
+      at equal (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:6:43)
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:63:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { room_type: 'TPL', price: 1500, enabled: true } ],
+    expected: [ { room_type: 'Quad', price: 1200, enabled: true }, { room_type: 'Family', price: 3200, enabled: true }, { room_type: 'Triple', price: 1500, enabled: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:72:3
+✖ CSV aliases retain the exact saved QDP label (0.165791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:74:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:72:3
+✖ CSV aliases retain the exact saved Triple label (0.166542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:74:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:72:3
+✖ CSV aliases retain the exact saved Double label (0.148083ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:74:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:72:3
+✖ CSV aliases retain the exact saved Single label (0.144958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:74:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:78:1
+✖ manual promotion and unsync exclusion retain their existing policies (0.214625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:81:51)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/sync-room-prices.test.mjs:87:1
+✖ changed-price apply retains custom and disabled rooms and adds absent types (0.174375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///private/tmp/mkm46/regression-base/scripts/sync-room-prices.test.mjs:92:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

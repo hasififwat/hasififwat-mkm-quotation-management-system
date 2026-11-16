@@ -1,0 +1,43 @@
+✔ anonymous addFlight rejects before database access (0.680208ms)
+✔ addFlight propagates identity failures before database access (0.133417ms)
+✔ anonymous updateFlight rejects before database access (0.116667ms)
+✔ updateFlight propagates identity failures before database access (0.08775ms)
+✔ anonymous deleteFlight rejects before database access (0.094667ms)
+✔ deleteFlight propagates identity failures before database access (0.075208ms)
+✔ anonymous setSourceManual rejects before database access (0.088667ms)
+✔ setSourceManual propagates identity failures before database access (0.064291ms)
+✔ anonymous promoteToSync rejects before database access (0.093834ms)
+✔ promoteToSync propagates identity failures before database access (0.108167ms)
+✔ anonymous listAll rejects before database access (0.096417ms)
+✔ listAll propagates identity failures before database access (0.071833ms)
+✔ staff can list joined flights and preserve source defaults (0.180709ms)
+✔ staff can add manual and sync flights, read them, and delete only the selected flight (5.90675ms)
+✔ staff source maintenance changes only eligible flights and remains repeatable (0.172916ms)
+✔ staff can update an existing flight without replacing its ID (0.117292ms)
+✔ edited flight success preserves quotation selection (11.032292ms)
+✔ edited flight rejection preserves quotation selection (0.801292ms)
+✔ referenced genuine deletion rejects without writes (0.578041ms)
+✔ unreferenced genuine deletion succeeds (0.270209ms)
+✔ CSV room removal rejects before package, hotel or room writes (0.4965ms)
+✔ CSV same-type room ID churn preserves saved prices and permits quotation save (0.494416ms)
+✔ new flight update rejects anonymous access before database operations (0.069ms)
+✔ flight update rejects package mismatch and invalid dates without writes (0.320292ms)
+✔ saved sync data includes room prices, labels and disabled state (3.471125ms)
+✔ price-only upload plans old/new review and persists without changing historical quotation data (10.460125ms)
+✔ unchanged room prices plan no update (0.242958ms)
+✔ blank prices retain saved and custom rooms during another field update (0.363666ms)
+✔ disabled room prices remain untouched and do not plan a write (0.175209ms)
+✔ CSV aliases retain the exact saved QDP label (0.185792ms)
+✔ CSV aliases retain the exact saved Triple label (0.133042ms)
+✔ CSV aliases retain the exact saved Double label (0.141ms)
+✔ CSV aliases retain the exact saved Single label (0.22175ms)
+✔ manual promotion and unsync exclusion retain their existing policies (0.507875ms)
+✔ changed-price apply retains custom and disabled rooms and adds absent types (0.241583ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 501.062041
