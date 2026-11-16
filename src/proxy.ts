@@ -12,7 +12,7 @@ const isProtectedPage = createRouteMatcher([
 	"/packages(.*)",
 	"/quotations(.*)",
 ]);
-const isProtectedApi = createRouteMatcher(["/api/packages(.*)", "/api/quotations(.*)"]);
+const isProtectedApi = createRouteMatcher(["/api/packages(.*)", "/api/quotations(.*)", "/api/clients(.*)"]);
 
 export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
 	if (!isProtectedPage(request) && !isProtectedApi(request)) return;

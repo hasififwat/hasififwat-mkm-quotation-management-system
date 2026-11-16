@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
+import { useConvex, useConvexAuth } from "convex/react";
 import { PAGE_SIZE } from "convex/constants";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import ClientsListingPage, {
 
 // Port of the old clientLoader — runs client-side against Convex directly.
 export default function ClientsPage() {
+	const http = useConvex();
+	const { isAuthenticated } = useConvexAuth();
 	const searchParams = useSearchParams();
 	const searchTerm = searchParams.get("q") || "";
 	const picFilters = searchParams.getAll("pic");
@@ -30,8 +32,8 @@ export default function ClientsPage() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		if (!isAuthenticated) return;
 		let cancelled = false;
-		const http = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL ?? "");
 
 		const load = async () => {
 			setIsLoading(true);
@@ -93,7 +95,7 @@ export default function ClientsPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [searchTerm, picFilters.join(","), cursor, offset, isFiltered]);
+	}, [http, isAuthenticated, searchTerm, picFilters.join(","), cursor, offset, isFiltered]);
 
 	return (
 		<ClientsListingPage
