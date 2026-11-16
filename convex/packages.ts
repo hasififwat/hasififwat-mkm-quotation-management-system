@@ -1,3 +1,4 @@
+import { readCurrentQuotations } from "./lib/currentQuotations";
 import { packageEditToken, readPackageEditSnapshot, requireCurrentPackageEdit } from "./lib/packageEditSnapshot";
 import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
@@ -35,10 +36,17 @@ export const listWithQuotationCounts = query({
   args: {},
   handler: async (ctx) => {
     await requirePackageAccess(ctx);
-    const [packages, quotations] = await Promise.all([
+    const [packages, quotations, revisions] = await Promise.all([
       ctx.db.query("packages").collect(),
+      readCurrentQuotations(ctx),
       ctx.db.query("quotations").collect(),
     ]);
+    const currentIds = new Set(quotations.map(q => String(q._id)));
+    const historicalCounts = new Map<string, number>();
+    for (const revision of revisions) {
+      if (currentIds.has(String(revision._id))) continue;
+      historicalCounts.set(revision.package_id, (historicalCounts.get(revision.package_id) ?? 0) + 1);
+    }
 
     const quotationsByPackage = new Map<string, typeof quotations>();
     for (const q of quotations) {
@@ -60,6 +68,7 @@ export const listWithQuotationCounts = query({
           season: pkg.season ?? null,
           status: pkg.status,
           total: qs.length,
+          historical_total: historicalCounts.get(String(pkg._id)) ?? 0,
           by_status,
         };
       })

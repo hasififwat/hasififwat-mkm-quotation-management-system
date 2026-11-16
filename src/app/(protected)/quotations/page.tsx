@@ -2,12 +2,12 @@
 
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
-import { useConvex, useConvexAuth } from "convex/react";
+import { useQuery, useConvexAuth } from "convex/react";
 import { PAGE_SIZE } from "convex/constants";
 import { Loader2, Plus, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -21,10 +21,9 @@ import { COLUMN_LABELS } from "~/features/quotation/components/QuotationTable/co
 import QuotationListing from "~/features/quotation/QuotationListing";
 import { useDebouncedSearch } from "~/hooks/useDebounce";
 
-type QuotationRecord = Record<string, unknown>;
 
 export default function QuotationsPage() {
-	const http = useConvex();
+
 	const { isAuthenticated } = useConvexAuth();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -34,88 +33,23 @@ export default function QuotationsPage() {
 		| "updated_at"
 		| "created_at";
 	const dir = (searchParams.get("dir") ?? "desc") as "asc" | "desc";
-	// Deep-link filter from /packages/stats ("View quotations").
 	const packageId = searchParams.get("package_id");
-	// Cursor is stored directly in the URL — absence means first page (null).
 	const cursor = searchParams.get("cursor");
-	// Offset used only for search result pagination.
-	const offsetParam = Number.parseInt(searchParams.get("offset") ?? "0", 10);
-	const offset = Number.isNaN(offsetParam) || offsetParam < 0 ? 0 : offsetParam;
 
-	const [quotations, setQuotations] = useState<unknown[] | undefined>(undefined);
-	const [continueCursor, setContinueCursor] = useState<string | null>(null);
-	const [isDone, setIsDone] = useState(false);
-	const [searchTotal, setSearchTotal] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);
 
-	const safeSort = (sort ?? "updated_at") as "updated_at" | "created_at";
-	const safeDir = (dir ?? "desc") as "asc" | "desc";
-	const isSearching = !!searchTerm || !!packageId;
-	const isFirstPage = isSearching ? (offset ?? 0) === 0 : !cursor;
-
-	// Port of the old clientLoader — re-runs whenever the URL params change.
-	useEffect(() => {
-		if (!isAuthenticated) return;
-		let cancelled = false;
-
-		const load = async () => {
-			setIsLoading(true);
-			try {
-				if (searchTerm || packageId) {
-					const all = await http.query(api.quotations.list, {});
-					const filtered = (all as QuotationRecord[]).filter((q) => {
-						if (packageId && q.package_id !== packageId) {
-							return false;
-						}
-						const packageName =
-							(q.package as { name?: string } | undefined)?.name?.toLowerCase() ??
-							"";
-						const clientName =
-							(q.client_name as string | undefined)?.toLowerCase() ?? "";
-						return (
-							packageName.includes(searchTerm) ||
-							clientName.includes(searchTerm)
-						);
-					});
-					const sorted = [...filtered].sort((a, b) => {
-						const aVal = String(a[sort] ?? "");
-						const bVal = String(b[sort] ?? "");
-						const cmp = aVal.localeCompare(bVal);
-						return dir === "desc" ? -cmp : cmp;
-					});
-					if (cancelled) return;
-					setQuotations(sorted.slice(offset, offset + PAGE_SIZE));
-					setContinueCursor(null);
-					setIsDone(offset + PAGE_SIZE >= sorted.length);
-					setSearchTotal(sorted.length);
-				} else {
-					const result = (await http.query(api.quotations.listPaginated, {
-						paginationOpts: { cursor, numItems: PAGE_SIZE },
-						sortBy: sort,
-						sortDir: dir,
-					})) as {
-						page: unknown[];
-						isDone: boolean;
-						continueCursor?: string;
-					};
-					if (cancelled) return;
-					setQuotations(result.page);
-					setContinueCursor(
-						result.isDone ? null : (result.continueCursor ?? null),
-					);
-					setIsDone(result.isDone);
-					setSearchTotal(0);
-				}
-			} finally {
-				if (!cancelled) setIsLoading(false);
-			}
-		};
-
-		void load();
-		return () => {
-			cancelled = true;
-		};
-	}, [http, isAuthenticated, searchTerm, sort, dir, cursor, offset, packageId]);
+    const safeSort = sort === "created_at" ? "created_at" : "updated_at";
+    const safeDir = dir === "asc" ? "asc" : "desc";
+    const visibility = searchParams.get("visibility") === "history" ? "history" : searchParams.get("visibility") === "archived" ? "archived" : "current";
+    const result = useQuery(api.quotations.listPaginated, isAuthenticated ? {
+        paginationOpts: {cursor, numItems: PAGE_SIZE}, sortBy: safeSort, sortDir: safeDir,
+        searchTerm, package_id: packageId ?? undefined, visibility,
+    } : "skip");
+    const quotations = result?.page;
+    const continueCursor = result?.continueCursor ?? null;
+    const isDone = result?.isDone ?? true;
+    const isLoading = result === undefined;
+    const isSearching = !!searchTerm || !!packageId;
+    const isFirstPage = !cursor;
 
 	const navigate = useCallback(
 		(url: string) => {
@@ -136,7 +70,6 @@ export default function QuotationsPage() {
 	const allColumnIds = Object.keys(COLUMN_LABELS);
 
 
-	// In search mode the loader already sorted+sliced — just use as-is.
 	const displayQuotations = useMemo(() => {
 		return quotations ?? [];
 	}, [quotations]);
@@ -145,13 +78,12 @@ export default function QuotationsPage() {
 		targetCursor: string | null,
 		newSort?: string,
 		newDir?: string,
-		newOffset?: number,
 	) => {
 		const params = new URLSearchParams();
 		if (searchTerm) params.set("q", searchTerm);
 		if (packageId) params.set("package_id", packageId);
+        if (visibility !== "current") params.set("visibility", visibility);
 		if (targetCursor) params.set("cursor", targetCursor);
-		if (newOffset) params.set("offset", String(newOffset));
 		const s = newSort ?? safeSort;
 		const d = newDir ?? safeDir;
 		if (s !== "updated_at" || d !== "desc") {
@@ -162,31 +94,14 @@ export default function QuotationsPage() {
 		return `/quotations${qs ? `?${qs}` : ""}`;
 	};
 
-	const handlePreviousPage = () => {
-		if (isSearching) {
-			const prevOffset = Math.max(0, (offset ?? 0) - PAGE_SIZE);
-			navigate(buildUrl(null, undefined, undefined, prevOffset || undefined));
-		} else {
-			router.back();
-		}
-	};
-
-	const handleNextPage = () => {
-		if (isSearching) {
-			const nextOffset = (offset ?? 0) + PAGE_SIZE;
-			if (nextOffset < (searchTotal ?? 0)) {
-				navigate(buildUrl(null, undefined, undefined, nextOffset));
-			}
-		} else {
-			if (isDone || !continueCursor) return;
-			navigate(buildUrl(continueCursor));
-		}
-	};
+    const handlePreviousPage = () => router.back();
+    const handleNextPage = () => {
+        if (!isDone && continueCursor) navigate(buildUrl(continueCursor));
+    };
 
 	const handleSortChange = (newSorting: SortingState) => {
 		if (newSorting.length === 0) return;
 		const { id, desc } = newSorting[0];
-		// Sort change resets to first page (clears cursor and offset).
 		navigate(buildUrl(null, id, desc ? "desc" : "asc"));
 	};
 
@@ -198,7 +113,7 @@ export default function QuotationsPage() {
 						Travel Quotations
 					</h2>
 					<p className="text-slate-500 text-xs md:text-sm">
-						Manage your Umrah quotations and custom travel bundles.
+						Current quotation families and saved history.
 					</p>
 				</div>
 				<Button asChild className="w-full md:w-auto gap-2">
@@ -208,7 +123,11 @@ export default function QuotationsPage() {
 				</Button>
 			</div>
 
-			<Card className="overflow-hidden">
+			<div className="flex gap-4 text-sm">
+                <Link href="/quotations" aria-current={visibility === "current" ? "page" : undefined}>Current families</Link>
+                <Link href="/quotations?visibility=archived" aria-current={visibility === "archived" ? "page" : undefined}>Archived families</Link>
+            </div>
+            <Card className="overflow-hidden">
 				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100 space-y-2">
 					{/* Fields visibility button row */}
 					<div className="flex justify-start">
@@ -302,7 +221,7 @@ export default function QuotationsPage() {
 						)}
 						<Input
 							name="q"
-							placeholder="Search by client or package name..."
+							placeholder="Search by reference, client or package..."
 							className="pl-9 h-9"
 							{...searchProps}
 						/>
@@ -311,6 +230,7 @@ export default function QuotationsPage() {
 				<CardContent className="p-0">
 					<QuotationListing
 						data={displayQuotations}
+                        archived={visibility !== "current"}
 						isLoading={isTableLoading}
 						isDone={isDone}
 						isFirstPage={isFirstPage}

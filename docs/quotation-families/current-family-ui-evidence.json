@@ -1,0 +1,26 @@
+{
+  "tested_commit": "3b778621a285a90e52a918d3313ac136a1ac2425",
+  "url": "http://localhost:3520",
+  "backend": "http://127.0.0.1:13765",
+  "real_password_authentication": true,
+  "families": 13,
+  "revisions": 39,
+  "archived_families": 1,
+  "unchanged_quotation_and_item_rows": true,
+  "current_pointer_unchanged": true,
+  "ui_checks": [
+    "Ten current revisions on page one and three on page two",
+    "UI Archive family removed R2 immediately",
+    "Archived families reload retained R2 without inline Edit",
+    "Client second view12 current RM1278 and27 historical/archived revisions",
+    "Original revision exact review URL rendered original reference and survived reload",
+    "Package usage12 current and27 history, both deep links worked after local backend snapshot refresh",
+    "Base reference search returned one current R2"
+  ],
+  "fixture_snapshot_correction": "Backend was initially copied before history validator addition. Updated only local product backend files, retained fixture and reran historical/current package links.",
+  "limits": [
+    "Full history route is owned by59 and its link was not exercised",
+    "Existing old review renders saved content; this does not prove authoritative PDF artifact bytes"
+  ],
+  "cleanup": "Owned Chrome window and preview tab closed. Owned web3520/backend13765-13766 stopped. Synthetic database/storage/credentials removed. Shared backend untouched."
+}

@@ -1,0 +1,41 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import ts from 'typescript';
+import {load, state, create, form, reviewedQuote} from './helpers/submission-fixtures.mjs';
+
+test('copied quotation keeps its saved client name after canonical client association', async () => {
+  const s=state();
+  const pkg=await create(s,form());
+  const reviewed=await reviewedQuote(s,pkg,s.tables.package_flights[0]._id);
+  s.tables.quotation_revision_release.push({_id:'release',key:'revision-v1',enabled:true});
+  s.tables.quotation_family_migrations.push({_id:'migration',key:'family-v1',done:true,cursor:null});
+  const saves=load(path.resolve('convex/quotationRevisionSaves.ts'));
+  await saves.save._handler(s.ctx,{command:{operation:'create',request_key:crypto.randomUUID(),pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'replace',id:'client:1'},selection:{mode:'replace',package_id:pkg,flight_id:reviewed.flight_id,reviewed_context:reviewed.reviewed_context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}}});
+  const canonical=await s.ctx.db.insert('clients',{name:'Canonical Final',created_at:'2026-11-17',updated_at:'2026-11-17'});
+  const clients=load(path.resolve('convex/clients.ts'));
+  await clients.mergeClients._handler(s.ctx,{canonicalId:canonical,duplicateIds:['client:1']});
+  const [account]=await clients.listWithStats._handler(s.ctx,{});
+  assert.equal(account.name,'Canonical Final');
+  const q=account.quotations[0];
+  assert.equal(q.client_name,'Fixture Client');
+  const filename=path.resolve('src/features/clients/ClientsListingPage.tsx');
+  const compiled=ts.transpileModule(fs.readFileSync(filename,'utf8')+'\nexport {QuotationRow};',{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}});
+  const exports={}; let frame, copied;
+  const dummy=()=>null;
+  vm.runInNewContext(compiled.outputText,{exports,Date,Intl,performance:{now:()=>0},requestAnimationFrame:callback=>{frame=callback;return 1;},cancelAnimationFrame:dummy,navigator:{clipboard:{writeText:text=>{copied=text;return Promise.resolve();}}},require(id){
+    if(id==='react')return {useState:value=>[value,dummy],useRef:value=>({current:value}),useCallback:callback=>callback};
+    if(id==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
+    if(id==='sonner')return {toast:{success:dummy,error:dummy}};
+    return new Proxy({},{get:()=>dummy});
+  }},{filename});
+  const row=exports.QuotationRow({q});
+  row.props.onPointerDown({target:{closest:()=>null},preventDefault:dummy});
+  frame(1500);
+  assert.ok(copied.includes('Client: Fixture Client'));
+  assert.ok(!copied.includes('Canonical Final'));
+  assert.ok(copied.includes(`Quotation: ${q.quotation_number}`));
+  await Promise.resolve();
+});

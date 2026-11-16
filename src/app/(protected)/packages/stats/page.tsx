@@ -115,6 +115,7 @@ export default function PackageStatsPage() {
 											<span className={`font-semibold tabular-nums ${pkg.total === 0 ? "text-muted-foreground" : ""}`}>
 												{pkg.total}
 											</span>
+                                        <Link href={`/quotations?package_id=${pkg.id}&visibility=history`} className="block text-xs text-primary hover:underline">{pkg.historical_total} historical revisions</Link>
 										</TableCell>
 										<TableCell>
 											{pkg.total === 0 ? (

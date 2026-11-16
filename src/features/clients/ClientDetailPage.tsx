@@ -17,6 +17,9 @@ type ClientQuotation = {
 	branch: string;
 	created_at: string;
 	updated_at: string;
+	client_name: string;
+	archived: boolean;
+	current_revision_id: string | null;
 };
 
 type ClientDetail = {
@@ -26,6 +29,8 @@ type ClientDetail = {
 	created_at: string;
 	updated_at: string;
 	quotations: ClientQuotation[];
+	historical_quotations: ClientQuotation[];
+	total_quoted_value: number;
 };
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -50,7 +55,7 @@ function formatCurrency(amount: number) {
 }
 
 export default function ClientDetailPage({ client }: { client: ClientDetail }) {
-	const totalSpend = client.quotations.reduce((sum, q) => sum + q.total_amount, 0);
+	const totalQuotedValue = client.total_quoted_value;
 
 	return (
 		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
@@ -95,8 +100,8 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 							<p className="font-semibold">{client.quotations.length}</p>
 						</div>
 						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Total Spend</p>
-							<p className="font-semibold">{formatCurrency(totalSpend)}</p>
+							<p className="text-muted-foreground text-xs mb-0.5">Current Quoted Value</p>
+							<p className="font-semibold">{formatCurrency(totalQuotedValue)}</p>
 						</div>
 						<div>
 							<p className="text-muted-foreground text-xs mb-0.5">Client Since</p>
@@ -110,7 +115,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 			<Card className="overflow-hidden">
 				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100">
 					<CardTitle className="text-base">
-						Quotation History
+						Current Quotations
 						<span className="ml-2 text-sm font-normal text-muted-foreground">
 							({client.quotations.length})
 						</span>
@@ -119,7 +124,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 				<CardContent className="p-4 md:p-6">
 					{client.quotations.length === 0 ? (
 						<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
-							<p className="text-sm">No quotations yet for this client.</p>
+							<p className="text-sm">No current quotations for this client.</p>
 							<Button asChild size="sm" variant="outline">
 								<Link href={`/quotations/create?client_id=${client.id}`}>
 									Create first quotation
@@ -185,6 +190,28 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 								</li>
 							))}
 						</ol>
+					)}
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle className="text-base">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<p className="text-sm text-muted-foreground mb-4">Saved revisions associated with this client. These amounts are excluded from current quoted value.</p>
+					{client.historical_quotations.length === 0 ? <p className="text-sm text-muted-foreground">No historical revisions.</p> : (
+						<ul className="divide-y">
+							{client.historical_quotations.map(q => (
+								<li key={q.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+									<div className="space-y-1">
+										<Link href={`/quotations/review/${q.id}`} className="font-mono text-sm text-primary hover:underline">{q.quotation_number}</Link>
+										<p className="text-sm">{q.client_name} · {q.package_name}</p>
+										<p className="text-xs text-muted-foreground">{formatCurrency(q.total_amount)} · {formatDate(q.created_at)}{q.archived ? " · Family archived" : " · Historical revision"}</p>
+									</div>
+									<Button variant="outline" size="sm" asChild><Link href={`/quotations/review/${q.id}`}>View saved revision</Link></Button>
+								</li>
+							))}
+						</ul>
 					)}
 				</CardContent>
 			</Card>
