@@ -49,6 +49,7 @@ import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 import { STALE_FIELD_LABELS } from "./stale-labels";
+import { saveQuotation } from "./save-quotation";
 
 type Step = "basic" | "package" | "extras";
 
@@ -578,6 +579,7 @@ export default function QuotationBuilder({
 }) {
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [saveError, setSaveError] = useState<string | null>(null);
 	const profile = useQuery(api.profiles.getMyProfile);
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
 
@@ -674,21 +676,14 @@ export default function QuotationBuilder({
 		const payload = qid ? { ...basePayload, id: data.id ?? qid } : basePayload;
 
 		setIsSubmitting(true);
+		setSaveError(null);
 		try {
-			const res = await fetch(
-				qid ? "/api/quotations/update" : "/api/quotations/create",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
-				},
-			);
-			if (!res.ok) {
-				const body = (await res.json().catch(() => ({}))) as { error?: string };
-				console.error("Failed to save quotation:", body.error ?? res.status);
+			const result = await saveQuotation(payload, qid);
+			if (!result.ok) {
+				setSaveError(result.message);
 				return;
 			}
-			router.push("/quotations");
+			router.push(`/quotations/review/${encodeURIComponent(result.id)}`);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -989,6 +984,14 @@ export default function QuotationBuilder({
 							</div>
 						</CardContent>
 
+						{saveError && (
+							<div role="alert" className="mx-6 rounded-md border border-destructive p-4 text-sm text-destructive">
+								<p>{saveError}</p>
+								<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block underline">
+									Check Quotations in a new tab
+								</Link>
+							</div>
+						)}
 						<CardFooter className="flex justify-between border-t p-6">
 							<Button
 								type="button"
