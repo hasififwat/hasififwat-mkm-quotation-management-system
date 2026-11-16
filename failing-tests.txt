@@ -1,0 +1,60 @@
+✖ saved disabled room shows its quoted price, passenger count, charge, and removal control (62.203334ms)
+✔ removed unavailable rooms cannot be selected again (5.0785ms)
+✖ saved room absent from current options stays visible for an explicit decision (3.077417ms)
+✔ enabled room keeps its entered price when the package price changes (3.042458ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 638.109708
+
+✖ failing tests:
+
+test at scripts/quotation-rooms.test.mjs:46:1
+✖ saved disabled room shows its quoted price, passenger count, charge, and removal control (62.203334ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /room-Quad/. Input:
+  
+  '<fieldset class="col-span-full"><legend variant="label">Room Selection</legend><p>Select the room types to include in the quotation and their respective pax count.</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"><section tabindex="0" class="\n' +
+    '                relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all\n' +
+    '                border-primary bg-primary/5 ring-2 ring-primary/20\n' +
+    '              "><div class="flex items-start justify-between gap-2"><div class="flex items-center gap-3"><button id="room-Double" role="checkbox" aria-checked="true"></button><div><label for="room-Double" class="font-semibold cursor-pointer block">Double</label><span class="text-xs text-muted-foreground">RM 1,800</span></div></div></div><div class="pt-2 "><div data-invalid="false"><label for="pax-Double" class="text-xs">Pax Count</label><input id="pax-Double" type="number" min="1" class="h-8 bg-background" placeholder="Pax" aria-invalid="false" name="selected_rooms.1.pax" value="1"/></div></div></section></div></fieldset>'
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-unavailabl-4d48644ae08bbfd8/scripts/quotation-rooms.test.mjs:49:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<fieldset class="col-span-full"><legend variant="label">Room Selection</legend><p>Select the room types to include in the quotation and their respective pax count.</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"><section tabindex="0" class="\n                relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all\n                border-primary bg-primary/5 ring-2 ring-primary/20\n              "><div class="flex items-start justify-between gap-2"><div class="flex items-center gap-3"><button id="room-Double" role="checkbox" aria-checked="true"></button><div><label for="room-Double" class="font-semibold cursor-pointer block">Double</label><span class="text-xs text-muted-foreground">RM 1,800</span></div></div></div><div class="pt-2 "><div data-invalid="false"><label for="pax-Double" class="text-xs">Pax Count</label><input id="pax-Double" type="number" min="1" class="h-8 bg-background" placeholder="Pax" aria-invalid="false" name="selected_rooms.1.pax" value="1"/></div></div></section></div></fieldset>',
+    expected: /room-Quad/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-rooms.test.mjs:66:1
+✖ saved room absent from current options stays visible for an explicit decision (3.077417ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /room-Quad/. Input:
+  
+  '<fieldset class="col-span-full"><legend variant="label">Room Selection</legend><p>Select the room types to include in the quotation and their respective pax count.</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"><section tabindex="0" class="\n' +
+    '                relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all\n' +
+    '                border-muted hover:border-muted-foreground/50\n' +
+    '              "><div class="flex items-start justify-between gap-2"><div class="flex items-center gap-3"><button id="room-Double" role="checkbox" aria-checked="false"></button><div><label for="room-Double" class="font-semibold cursor-pointer block">Double</label><span class="text-xs text-muted-foreground">RM 1,800</span></div></div></div><div class="pt-2 "></div></section></div></fieldset>'
+  
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-unavailabl-4d48644ae08bbfd8/scripts/quotation-rooms.test.mjs:68:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<fieldset class="col-span-full"><legend variant="label">Room Selection</legend><p>Select the room types to include in the quotation and their respective pax count.</p><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"><section tabindex="0" class="\n                relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all\n                border-muted hover:border-muted-foreground/50\n              "><div class="flex items-start justify-between gap-2"><div class="flex items-center gap-3"><button id="room-Double" role="checkbox" aria-checked="false"></button><div><label for="room-Double" class="font-semibold cursor-pointer block">Double</label><span class="text-xs text-muted-foreground">RM 1,800</span></div></div></div><div class="pt-2 "></div></section></div></fieldset>',
+    expected: /room-Quad/,
+    operator: 'match',
+    diff: 'simple'
+  }

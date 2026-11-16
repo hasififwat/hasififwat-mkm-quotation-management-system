@@ -1,0 +1,12 @@
+✔ saved disabled room shows its quoted price, passenger count, charge, and removal control (39.51525ms)
+✔ removed unavailable rooms cannot be selected again (1.407709ms)
+✔ saved room absent from current options stays visible for an explicit decision (2.098375ms)
+✔ enabled room keeps its entered price when the package price changes (1.438584ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 265.918166

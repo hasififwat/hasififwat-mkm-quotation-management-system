@@ -1,0 +1,11 @@
+{
+  "instance": "q005-rooms",
+  "privateFixturesAndKeysDeleted": true,
+  "ownedBrowserTabClosed": true,
+  "portsFree": {
+    "3319": true,
+    "3410": true,
+    "3411": true
+  },
+  "otherWorktreesAndSharedBackendsUntouched": true
+}
