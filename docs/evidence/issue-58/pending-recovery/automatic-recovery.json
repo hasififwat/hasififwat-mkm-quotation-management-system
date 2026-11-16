@@ -1,0 +1,160 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Repeated real scheduled actions fail before claim. Each remains pending with zero attempts and an independent durable future mutation. Watchdogs converge automatically to one ready artifact and one fenced attempt without new revisions or manual retry."
+  ],
+  "preclaim": {
+    "injectedFailures": 2,
+    "snapshots": [
+      {
+        "artifact": {
+          "_creationTime": 1794849946285.4666,
+          "_id": "mh79qqph3rtgmh0ss56506g6g18jawfc",
+          "asset_version": "mkm-branding-v1",
+          "filename": "1448H-0001.pdf",
+          "input_sha256": "20b845992a00da6dfffc34665123a2fae8951112fb3b053cbf8a75351a9ed8aa",
+          "provenance": "issued_original",
+          "renderer_version": "mkm-quotation-v1",
+          "revision_id": "n5711zeq8kv4jhwq037fa6yj1s8jaw7s",
+          "state": {
+            "kind": "pending"
+          },
+          "terms_version": "mkm-payment-terms-v1"
+        },
+        "attempts": [],
+        "jobs": [
+          {
+            "_creationTime": 1794849946285.467,
+            "_id": "kc2a11wpehx9xpd9tzn9aj2qhh8jarf3",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "name": "quotationPdfArtifacts.js:reconcile",
+            "scheduledTime": 1794849961285,
+            "state": {
+              "kind": "pending"
+            }
+          },
+          {
+            "_creationTime": 1794849946285.4675,
+            "_id": "kc23ymdd4t0crnsb3z16q4ay298jb4zw",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "completedTime": 1794849946327.349,
+            "name": "quotationPdfWorker.js:run",
+            "scheduledTime": 1794849946285,
+            "state": {
+              "error": "Uncaught Error: Injected preclaim TooManyWrites\n    at handler (../convex/quotationPdfWorker.ts:11:80)\n",
+              "kind": "failed"
+            }
+          }
+        ]
+      },
+      {
+        "artifact": {
+          "_creationTime": 1794849946285.4666,
+          "_id": "mh79qqph3rtgmh0ss56506g6g18jawfc",
+          "asset_version": "mkm-branding-v1",
+          "filename": "1448H-0001.pdf",
+          "input_sha256": "20b845992a00da6dfffc34665123a2fae8951112fb3b053cbf8a75351a9ed8aa",
+          "provenance": "issued_original",
+          "renderer_version": "mkm-quotation-v1",
+          "revision_id": "n5711zeq8kv4jhwq037fa6yj1s8jaw7s",
+          "state": {
+            "kind": "pending"
+          },
+          "terms_version": "mkm-payment-terms-v1"
+        },
+        "attempts": [],
+        "jobs": [
+          {
+            "_creationTime": 1794849946285.467,
+            "_id": "kc2a11wpehx9xpd9tzn9aj2qhh8jarf3",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "completedTime": 1794849948620.606,
+            "name": "quotationPdfArtifacts.js:reconcile",
+            "scheduledTime": 1794849961285,
+            "state": {
+              "kind": "success"
+            }
+          },
+          {
+            "_creationTime": 1794849946285.4675,
+            "_id": "kc23ymdd4t0crnsb3z16q4ay298jb4zw",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "completedTime": 1794849946327.349,
+            "name": "quotationPdfWorker.js:run",
+            "scheduledTime": 1794849946285,
+            "state": {
+              "error": "Uncaught Error: Injected preclaim TooManyWrites\n    at handler (../convex/quotationPdfWorker.ts:11:80)\n",
+              "kind": "failed"
+            }
+          },
+          {
+            "_creationTime": 1794849961289.9673,
+            "_id": "kc24dpwkst5hnwy7wcd3ek9hp18jap1j",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "name": "quotationPdfArtifacts.js:reconcile",
+            "scheduledTime": 1794849976289,
+            "state": {
+              "kind": "pending"
+            }
+          },
+          {
+            "_creationTime": 1794849961289.9678,
+            "_id": "kc2d8m62y3vv5rwh8xtm094hdn8ja9g8",
+            "args": [
+              {
+                "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc"
+              }
+            ],
+            "completedTime": 1794849961309.018,
+            "name": "quotationPdfWorker.js:run",
+            "scheduledTime": 1794849961289,
+            "state": {
+              "error": "Uncaught Error: Injected preclaim TooManyWrites\n    at handler (../convex/quotationPdfWorker.ts:11:80)\n",
+              "kind": "failed"
+            }
+          }
+        ]
+      }
+    ],
+    "ready": {
+      "artifact_id": "mh79qqph3rtgmh0ss56506g6g18jawfc",
+      "state": {
+        "attempt_id": "mn76m9n0v5b097fmdwazezqjb58jb89p",
+        "input_sha256": "20b845992a00da6dfffc34665123a2fae8951112fb3b053cbf8a75351a9ed8aa",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "6166a108f30258429ba1dac97019e957b8b3e69968add4ebe2699fc42c2e08b4",
+        "size": 169262,
+        "storage_id": "kg29d84ta9njmc5kmy5055c83h8ja75x"
+      }
+    },
+    "manualRescueCalls": 0
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "convex": "1.45.0",
+    "url": "http://127.0.0.1:13485"
+  },
+  "source": "0e5db1232323b4340e97a31c9a7bdf88391f9179",
+  "cleanup": "Isolated process stopped and temporary database removed in finally."
+}

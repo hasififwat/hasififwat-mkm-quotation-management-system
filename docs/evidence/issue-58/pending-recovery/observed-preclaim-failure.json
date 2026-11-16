@@ -1,0 +1,38 @@
+{
+  "sourceCommit": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+  "pending": [
+    {
+      "_creationTime": 1794849480089.571,
+      "_id": "mh7a282p2wsxrvwycd8e076tfd8jbdqn",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0003.pdf",
+      "input_sha256": "bff46e2929356ed556e8ebb711dcf749e961480e94743d3f54419896fe368da0",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n577vd6nex3rb8jq6t820sbvmd8ja640",
+      "state": {
+        "kind": "pending"
+      },
+      "terms_version": "mkm-payment-terms-v1"
+    }
+  ],
+  "attempts": [],
+  "jobs": [
+    {
+      "_creationTime": 1794849480089.5715,
+      "_id": "kc23hfvp2788av55w60xw41htd8jakdz",
+      "args": [
+        {
+          "artifact_id": "mh7a282p2wsxrvwycd8e076tfd8jbdqn"
+        }
+      ],
+      "completedTime": 1794849480773.759,
+      "name": "quotationPdfWorker.js:run",
+      "scheduledTime": 1794849480089,
+      "state": {
+        "error": "Uncaught Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"}\n    at async handler (../convex/quotationPdfWorker.ts:11:14)\n",
+        "kind": "failed"
+      }
+    }
+  ]
+}

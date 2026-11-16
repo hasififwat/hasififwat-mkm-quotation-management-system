@@ -3,3 +3,4 @@ ts	phase	decision	why	evidence	result
 2026-11-16T16:47:36.789093+00:00	model	Use one artifact and separate attempt rows	Stale workers retain explicit upload ownership	../../../convex/lib/quotationPdfModel.ts	implemented
 2026-11-16T16:47:36.789095+00:00	render	Retain v1 layout and formatter with frozen assets and terms	Delayed work must not use the current template	../../../src/features/quotation/pdf/versions/QuotationDocumentV1.tsx	implemented
 2026-11-16T16:47:36.789096+00:00	review	Schedule candidate cleanup transactionally	A retired worker can crash before its finally block	../../../convex/quotationPdfArtifacts.ts	corrected after independent review
+2026-11-16T17:25:03.567704+00:00	recovery	Arm a mutation watchdog atomically at every pending dispatch	At-most-once worker failure before claim left no recovery job	pending-recovery/observed-preclaim-failure.json	reproduced and fixed
