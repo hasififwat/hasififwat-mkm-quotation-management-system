@@ -6,13 +6,14 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import type { ClientSummary } from "./types";
 
-type ExistingClient = { id: string; name: string; phone_number: string };
+type ExistingClient = ClientSummary & { phone_number: string };
 
 export function CreateClientForm({
 	onSuccess,
 }: {
-	onSuccess: (clientId: string) => void;
+	onSuccess: (client: ClientSummary) => void;
 }) {
 	const [existingClient, setExistingClient] = useState<ExistingClient | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,6 +21,7 @@ export function CreateClientForm({
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		event.stopPropagation();
 		if (isSubmitting) return;
 		const formData = new FormData(event.currentTarget);
 		formData.set("force", existingClient ? "true" : "false");
@@ -33,14 +35,20 @@ export function CreateClientForm({
 			});
 			const data = (await res.json()) as {
 				success?: boolean;
-				clientId?: string;
+				client?: ClientSummary;
 				alreadyExists?: boolean;
 				existing?: ExistingClient;
 				error?: string;
 			};
 
-			if (res.ok && data.success && typeof data.clientId === "string") {
-				onSuccess(data.clientId);
+			if (
+				res.ok &&
+				data.success &&
+				data.client &&
+				typeof data.client.id === "string" &&
+				typeof data.client.name === "string"
+			) {
+				onSuccess(data.client);
 				return;
 			}
 
@@ -69,6 +77,9 @@ export function CreateClientForm({
 	return (
 		<form
 			onSubmit={handleSubmit}
+			onKeyDown={(event) => {
+				if (event.key === "Enter") event.stopPropagation();
+			}}
 			onChange={() => setExistingClient(null)}
 			className="space-y-4"
 		>
@@ -99,7 +110,7 @@ export function CreateClientForm({
 								type="button"
 								size="sm"
 								variant="outline"
-								onClick={() => onSuccess(existingClient.id)}
+								onClick={() => onSuccess(existingClient)}
 							>
 								Use {existingClient.name}
 							</Button>

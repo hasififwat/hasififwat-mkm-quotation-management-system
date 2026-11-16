@@ -44,6 +44,7 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
+import type { ClientSummary } from "~/features/clients/types";
 import { CreateClientModal } from "./components/CreateClientModal";
 import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
@@ -586,6 +587,9 @@ export default function QuotationBuilder({
 	const [saveError, setSaveError] = useState<string | null>(null);
 	const profile = useQuery(api.profiles.getMyProfile);
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
+	const [inlineClients, setInlineClients] = useState<Record<string, ClientSummary>>(
+		{},
+	);
 
 	// Track selected package state
 	const [selectedPackage, setSelectedPackage] =
@@ -616,7 +620,13 @@ export default function QuotationBuilder({
 		season: pkg.season,
 	}));
 
-	const clientOptions = allClients.map((client) => ({
+	const clientsById = new Map<string, ClientSummary>(
+		allClients.map((client) => [client.id, client]),
+	);
+	for (const client of Object.values(inlineClients)) {
+		clientsById.set(client.id, client);
+	}
+	const clientOptions = Array.from(clientsById.values(), (client) => ({
 		id: client.id,
 		name: client.name || "Unnamed Client",
 		value: client.id,
@@ -869,8 +879,12 @@ export default function QuotationBuilder({
 											<div className="flex items-center justify-between">
 												<FieldLabel htmlFor="client_id">Client Name</FieldLabel>
 												<CreateClientModal
-													onSuccess={(clientId) => {
-														field.onChange(clientId);
+													onSuccess={(client) => {
+														setInlineClients((clients) => ({
+															...clients,
+															[client.id]: client,
+														}));
+														field.onChange(client.id);
 													}}
 												/>
 											</div>
