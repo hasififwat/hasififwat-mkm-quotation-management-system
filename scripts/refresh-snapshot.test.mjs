@@ -1,0 +1,89 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
+import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+import { test } from "node:test";
+import { typescriptLoader } from "./helpers/load-typescript.mjs";
+
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const { refreshQuotationSnapshot } = typescriptLoader(repo)(path.join(repo, "src/features/quotation/refresh-snapshot.ts"));
+const response = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
+
+test("refresh sends only the saved quotation ID and refresh intent", async () => {
+  const result = await refreshQuotationSnapshot("quote:1", async (url, init) => {
+    assert.equal(url, "/api/quotations/update");
+    assert.equal(init.method, "POST");
+    assert.equal(init.headers["Content-Type"], "application/json");
+    assert.deepEqual(JSON.parse(init.body), { _intent: "refresh_snapshot", quotation_id: "quote:1" });
+    return response(200, { success: true, refreshed: true });
+  });
+  assert.equal(result.status, "success");
+});
+
+for (const status of [400, 401, 403, 404, 409]) {
+  test(`HTTP ${status} rejects refresh without exposing the backend error`, async () => {
+    const result = await refreshQuotationSnapshot("quote:1", async () => response(status, { error: "secret backend details" }));
+    assert.equal(result.status, "failure");
+    assert.match(result.message, new RegExp(`HTTP ${status}`));
+    assert.doesNotMatch(result.message, /secret backend details/);
+    assert.match(result.message, /entries.*kept/i);
+  });
+}
+for (const status of [500, 502, 503]) {
+  test(`HTTP ${status} tells staff to verify a possible commit before retrying`, async () => {
+    const result = await refreshQuotationSnapshot("quote:1", async () => response(status, { error: "secret backend details" }));
+    assert.equal(result.status, "uncertain");
+    assert.match(result.message, new RegExp(`HTTP ${status}`));
+    assert.match(result.message, /saved quotation.*before.*again/i);
+    assert.doesNotMatch(result.message, /secret backend details/);
+  });
+}
+for (const body of [null, {}, { success: true }, { refreshed: true }, { success: false, refreshed: true }, { success: "true", refreshed: true }]) {
+  test(`unknown success response ${JSON.stringify(body)} remains uncertain`, async () => {
+    assert.equal((await refreshQuotationSnapshot("quote:1", async () => response(200, body))).status, "uncertain");
+  });
+}
+test("a rejected fetch remains uncertain and preserves safe recovery copy", async () => {
+  const result = await refreshQuotationSnapshot("quote:1", async () => { throw new Error("private network details"); });
+  assert.equal(result.status, "uncertain");
+  assert.match(result.message, /saved quotation.*before.*again/i);
+  assert.doesNotMatch(result.message, /private network details/);
+});
+test("a lost or malformed response after possible commit remains uncertain", async () => {
+  const result = await refreshQuotationSnapshot("quote:1", async () => ({ ok: true, status: 200, json: async () => { throw new Error("body lost"); } }));
+  assert.equal(result.status, "uncertain");
+});
+
+const ts = createRequire(path.join(repo, "package.json"))("typescript");
+const builder = fs.readFileSync(path.join(repo, "src/features/quotation/QuotationBuilder.tsx"), "utf8");
+const tree = ts.createSourceFile("QuotationBuilder.tsx", builder, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+let callback;
+function visit(node) {
+  if (ts.isVariableDeclaration(node) && node.name.getText(tree) === "handleRefreshSnapshot") callback = node.initializer.getText(tree);
+  ts.forEachChild(node, visit);
+}
+visit(tree);
+for (const outcome of ["success", "failure", "uncertain"]) {
+  test(`repeated refresh activation sends once while pending and revalidates only on ${outcome}`, async () => {
+    assert.ok(callback, "Builder must have a guarded refresh callback");
+    let finish, calls = 0, revalidations = 0;
+    const states = [];
+    const pending = new Promise(resolve => { finish = resolve; });
+    const js = ts.transpile(`const handler = ${callback}`, { target: ts.ScriptTarget.ES2022 });
+    const handler = vm.runInNewContext(`${js}; handler`, {
+      qid: "quote:1", refreshRequest: { current: null },
+      refreshQuotationSnapshot: () => { calls++; return pending; },
+      setRefreshState: state => states.push(state.status),
+      router: { refresh: () => { revalidations++; } },
+    });
+    const first = handler(); const second = handler();
+    assert.equal(calls, 1);
+    assert.deepEqual(states, ["pending"]);
+    finish({ status: outcome, message: "Safe recovery" });
+    await Promise.all([first, second]);
+    assert.deepEqual(states, ["pending", outcome]);
+    assert.equal(revalidations, outcome === "success" ? 1 : 0);
+  });
+}
