@@ -1,0 +1,18 @@
+{
+  "ports": [
+    {
+      "port": 3510,
+      "free": true
+    },
+    {
+      "port": 3520,
+      "free": true
+    },
+    {
+      "port": 3521,
+      "free": true
+    }
+  ],
+  "privateDataRemoved": false,
+  "reason": "Deletion approval pending; blocked command not reissued"
+}

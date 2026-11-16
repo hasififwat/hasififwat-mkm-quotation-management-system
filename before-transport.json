@@ -1,0 +1,47 @@
+{
+  "mode": "before",
+  "url": "http://127.0.0.1:3520",
+  "results": [
+    {
+      "name": "listAll",
+      "result": "allowed",
+      "value": [
+        {
+          "_id": "k573mkt13dcqzk7f4xq5xag05d8jb796",
+          "departure_date": "2026-12-10",
+          "departure_sector": "KUL-JED",
+          "flight": "PROOF43",
+          "month": "DEC",
+          "package_id": "mh7bjzb8pxe7vjhh7wpz0t203n8jbcps",
+          "package_name": "Flight access proof 43",
+          "package_season": "PS - DEC",
+          "return_date": "2026-12-22",
+          "return_flight": "",
+          "return_sector": "JED-KUL",
+          "source": "manual"
+        }
+      ]
+    },
+    {
+      "name": "addFlight",
+      "result": "allowed",
+      "value": "k57erwkrh3d2d61vswaabb2zv98jbyy2"
+    },
+    {
+      "name": "setSourceManual",
+      "result": "allowed",
+      "value": 0
+    },
+    {
+      "name": "promoteToSync",
+      "result": "allowed",
+      "value": null
+    },
+    {
+      "name": "deleteFlight",
+      "result": "allowed",
+      "value": null
+    }
+  ],
+  "staffCompatibility": "list/add/delete/source maintenance exercised"
+}

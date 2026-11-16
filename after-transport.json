@@ -1,0 +1,32 @@
+{
+  "mode": "after",
+  "url": "http://127.0.0.1:3520",
+  "results": [
+    {
+      "name": "listAll",
+      "result": "rejected",
+      "message": "Not authenticated"
+    },
+    {
+      "name": "addFlight",
+      "result": "rejected",
+      "message": "Not authenticated"
+    },
+    {
+      "name": "setSourceManual",
+      "result": "rejected",
+      "message": "Not authenticated"
+    },
+    {
+      "name": "promoteToSync",
+      "result": "rejected",
+      "message": "Not authenticated"
+    },
+    {
+      "name": "deleteFlight",
+      "result": "rejected",
+      "message": "Not authenticated"
+    }
+  ],
+  "staffCompatibility": "list/add/delete/source maintenance exercised"
+}

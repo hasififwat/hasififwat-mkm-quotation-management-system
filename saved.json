@@ -1,0 +1,33 @@
+{
+  "id": "k57e5p9bamsfbf7jbr99tvq6jh8jarm8",
+  "rows": [
+    {
+      "_id": "k57erwkrh3d2d61vswaabb2zv98jbyy2",
+      "departure_date": "2026-12-10",
+      "departure_sector": "KUL-JED",
+      "flight": "PROOF43",
+      "month": "DEC",
+      "package_id": "mh7bjzb8pxe7vjhh7wpz0t203n8jbcps",
+      "package_name": "Flight access proof 43",
+      "package_season": "PS - DEC",
+      "return_date": "2026-12-22",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    },
+    {
+      "_id": "k57e5p9bamsfbf7jbr99tvq6jh8jarm8",
+      "departure_date": "2026-12-11",
+      "departure_sector": "KUL-JED",
+      "flight": "STAFF43",
+      "month": "DEC",
+      "package_id": "mh7bjzb8pxe7vjhh7wpz0t203n8jbcps",
+      "package_name": "Flight access proof 43",
+      "package_season": "PS - DEC",
+      "return_date": "2026-12-23",
+      "return_flight": "RETURN43",
+      "return_sector": "JED-KUL",
+      "source": "sync"
+    }
+  ]
+}

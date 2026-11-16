@@ -1,0 +1,158 @@
+✖ anonymous addFlight rejects before database access (1.668542ms)
+✖ addFlight propagates identity failures before database access (0.135ms)
+✖ anonymous deleteFlight rejects before database access (0.123625ms)
+✖ deleteFlight propagates identity failures before database access (0.080542ms)
+✖ anonymous setSourceManual rejects before database access (0.182042ms)
+✖ setSourceManual propagates identity failures before database access (0.08625ms)
+✖ anonymous promoteToSync rejects before database access (0.095542ms)
+✖ promoteToSync propagates identity failures before database access (0.080916ms)
+✖ anonymous listAll rejects before database access (0.15825ms)
+✖ listAll propagates identity failures before database access (0.166167ms)
+✔ staff can list joined flights and preserve source defaults (0.138834ms)
+✔ staff can add manual and sync flights, read them, and delete only the selected flight (0.249417ms)
+✔ staff source maintenance changes only eligible flights and remains repeatable (0.110292ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 3
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 421.329084
+
+✖ failing tests:
+
+test at scripts/package-flights-authorization.test.mjs:29:3
+✖ anonymous addFlight rejects before database access (1.668542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:32:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /^Error: Not authenticated$/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:36:3
+✖ addFlight propagates identity failures before database access (0.135ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:41:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:29:3
+✖ anonymous deleteFlight rejects before database access (0.123625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:32:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /^Error: Not authenticated$/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:36:3
+✖ deleteFlight propagates identity failures before database access (0.080542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:41:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:29:3
+✖ anonymous setSourceManual rejects before database access (0.182042ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:32:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /^Error: Not authenticated$/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:36:3
+✖ setSourceManual propagates identity failures before database access (0.08625ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:41:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:29:3
+✖ anonymous promoteToSync rejects before database access (0.095542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:32:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /^Error: Not authenticated$/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:36:3
+✖ promoteToSync propagates identity failures before database access (0.080916ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:41:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:29:3
+✖ anonymous listAll rejects before database access (0.15825ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:32:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /^Error: Not authenticated$/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-flights-authorization.test.mjs:36:3
+✖ listAll propagates identity failures before database access (0.166167ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-43-flight-staff-ses-f6dfe9039647f2a6/scripts/package-flights-authorization.test.mjs:41:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
