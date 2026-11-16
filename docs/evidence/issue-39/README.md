@@ -2,6 +2,8 @@
 
 Staff need continuous quotation pricing rows when package names or prices wrap.
 
+## Initial pricing verification
+
 Tested product commit `27d74214270a3ccbcb751e1166173f2a8f6ea3c7`.
 Baseline commit `5d9745e0` with reproduction artifact commit `69590b0d`.
 
@@ -68,3 +70,39 @@ The implementation fixture manifest is `/private/tmp/mkm-issue39-fixture/run.jso
 After migration advanced to f8d8e2bc, the branch was rebased and all five
 component geometry cases and typecheck passed again on the recorded product commit.
 The product component is identical before and after that rebase.
+
+## Hide the section when both lists are empty
+
+The user requested hiding the entire inclusion/exclusion table when both columns
+are empty. Tested product commit `6ee52849e0025f6db3dd62aa5c318e7ddc3dc219`.
+Both renderers now check the normalized list lengths around the complete wrapper.
+This removes the headings, blank body, and section margin together. Either
+populated list keeps both columns visible. No placeholder or snapshot change
+was added.
+
+Actual HTML component fixtures at `http://localhost:3939/` passed whitespace-only
+and absent values, inclusions only, exclusions only, and both populated lists.
+Before, both empty headings remained above a 9px blank body. After, neither
+heading appears. One-sided and populated content remains intact. The viewport
+was 1402 × 876. All five original pricing geometry cases still pass.
+
+At `http://localhost:3939/sections`, the actual PDF blob was downloaded for empty
+and populated cases, rendered with macOS sips, and visually inspected. PDFKit
+text checks passed with these outputs:
+
+```text
+empty-after.pdf: sectionVisible=false, pages=1, total preserved
+populated-after.pdf: sectionVisible=true, pages=1, total preserved
+```
+
+Both PDFs retain RM4,200 totals. The populated PDF preserves both headings and
+list text. `inclusions-empty-before.png` and `inclusions-empty-after.png` show
+the HTML change. `inclusions-empty-pdf.png` and `inclusions-populated-pdf.png`
+show the downloaded PDFs. Fixture routes remain outside shipping source.
+This is component verification, not authentication or persistence proof.
+
+Parent typecheck, scoped ESLint, and diff checks passed. ESLint retains five
+existing warnings across the two renderers. Independent scoped source/comment
+review found no material issue. Deslop remains unavailable; the diff was manually
+inspected. The follow-up tab and owned port 3939 server were closed after
+verification. No cloud records were read or written.
