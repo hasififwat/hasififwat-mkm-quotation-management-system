@@ -1,10 +1,14 @@
 import { z } from "zod";
+import { priceError } from "../../domain/submission-validation";
 
 export const addsOnSchema = z.object({
 	id: z.string().optional(),
 	temp_id: z.string().optional(), // For frontend use
 	name: z.string(),
-	price: z.number().min(0),
+	price: z.number({ error: (issue) => priceError(issue.input) }).superRefine((value, ctx) => {
+		const error = priceError(value);
+		if (error) ctx.addIssue({ code: "custom", message: error });
+	}),
 	pax: z.number().min(1),
 });
 

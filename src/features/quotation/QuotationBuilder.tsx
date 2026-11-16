@@ -305,9 +305,11 @@ function AddOnSection() {
 										<Input
 											type="number"
 											min={0}
+											step={0.01}
 											{...field}
 											id={`addon-price-${index}`}
-											onChange={(e) => field.onChange(Number(e.target.value))}
+											value={Number.isNaN(field.value) ? "" : field.value}
+											onChange={(e) => field.onChange(e.currentTarget.valueAsNumber)}
 											aria-invalid={fieldState.invalid}
 										/>
 										{fieldState.invalid && (
@@ -447,9 +449,11 @@ function DiscountSection() {
 										<Input
 											type="number"
 											min={0}
+											step={0.01}
 											{...field}
 											id={`discount-price-${index}`}
-											onChange={(e) => field.onChange(Number(e.target.value))}
+											value={Number.isNaN(field.value) ? "" : field.value}
+											onChange={(e) => field.onChange(e.currentTarget.valueAsNumber)}
 											aria-invalid={fieldState.invalid}
 										/>
 										{fieldState.invalid && (
