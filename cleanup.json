@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-16T07:04:47.230372+00:00",
+  "ownedPorts": [
+    3410,
+    3420,
+    3421
+  ],
+  "listeners": false,
+  "instanceStorageRemoved": true,
+  "credentialsAndSigningKeysRemoved": true,
+  "tabsClosed": true,
+  "sharedBackendWrites": false,
+  "parentCheckoutModified": false
+}

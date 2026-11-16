@@ -1,0 +1,17 @@
+{
+  "command": "node .next/save-local/verify-retries.mjs",
+  "backend": "http://127.0.0.1:3420",
+  "instance": "mkm-save-recovery-own",
+  "deployedAt": "2026-11-16T06:56:16.592Z",
+  "commit": "8e760d42d2544011447f12913a6e33fd71f39527",
+  "sources": {
+    "convex/quotations.ts": "2e2e74702a3e6985672b7b3d4cdbd90f24deb734ed72ca66723f4390016006cc",
+    "convex/schema.ts": "8597d6ef149cb2900d0f4a098a71e27a2835a36ed554ac2397fc09f26b6c92d3"
+  },
+  "verifierSha256": "35a90e4a3efd84fd75bf5dbd108b043baa348110c91b7eae8c82a6af878a3a4c",
+  "ranAt": "2026-11-16T07:03:50.684Z",
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "PASS concurrent same-key requests return the same persisted result and create one quotation\nPASS repeat after an uncertain response returns the exact original result without writes\nPASS same key with a different payload is rejected without writes\nPASS concurrent different payloads produce one winner, one conflict, and one complete winning quotation\nPASS identical payload with a new key creates a distinct quotation\nPASS the same key is isolated between authenticated actors\nPASS anonymous replay is rejected without writes\nPASS rejected create leaves no quotation, item, log, or receipt\nPASS a key from a rejected create remains usable\nPASS replay returns the original result after its package context changes\nPASS a new attempt with stale package context is rejected without writes\nPASS replay after the original is deleted is rejected and does not recreate it\n{\"before\":{\"quotations\":3,\"quotation_items\":3,\"quotation_logs\":3,\"quotation_create_receipts\":5},\"afterProof\":{\"quotations\":7,\"quotation_items\":15,\"quotation_logs\":7,\"quotation_create_receipts\":10}}\n{\"cleanup\":\"Synthetic quotations removed; synthetic package archived\",\"retainedReceipts\":5,\"final\":{\"quotations\":3,\"quotation_items\":3,\"quotation_logs\":3,\"quotation_create_receipts\":10}}\n",
+  "stderr": ""
+}
