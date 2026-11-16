@@ -56,3 +56,18 @@ test("update keeps the existing record identity", async () => {
   assert.equal(result.ok, true);
   assert.equal(result.id, "existing-record");
 });
+
+test("selection conflict returns review metadata without retrying or changing the payload", async () => {
+  const draft = { notes: "Keep this draft", selected_rooms: [{ price: 1111.25, pax: 2 }] };
+  const before = structuredClone(draft);
+  let calls = 0;
+  const result = await saveQuotation(draft, undefined, async () => {
+    calls++;
+    return Response.json({ code: "QUOTATION_SELECTION_CONFLICT", error: "Review the latest package." }, { status: 409 });
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.message, "Review the latest package.");
+  assert.equal(result.selectionConflict, true);
+  assert.equal(calls, 1);
+  assert.deepEqual(draft, before);
+});

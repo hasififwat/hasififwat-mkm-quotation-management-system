@@ -1,6 +1,6 @@
 type SaveResult =
 	| { ok: true; id: string }
-	| { ok: false; message: string };
+	| { ok: false; message: string; selectionConflict?: true };
 
 const uncertainSave =
 	"We could not confirm whether your quotation was saved. Your entries are kept on this page. Check Quotations for the saved record before saving again to avoid a duplicate.";
@@ -20,6 +20,14 @@ export async function saveQuotation(
 			},
 		);
 		if (!response.ok) {
+			if (!qid && response.status === 409) {
+				const body: unknown = await response.json().catch(() => null);
+				if (body && typeof body === "object" && "code" in body &&
+					body.code === "QUOTATION_SELECTION_CONFLICT" && "error" in body &&
+					typeof body.error === "string") {
+					return { ok: false, message: body.error, selectionConflict: true };
+				}
+			}
 			return {
 				ok: false,
 				message: response.status >= 500

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {createRequire} from 'node:module';
 import {test} from 'node:test';
-import {packages,quotations,normalize,state,packageSchema,form as fixtureForm,create,read,transform,quotePayload,load} from './helpers/submission-fixtures.mjs';
+import {packages,quotations,normalize,state,packageSchema,form as fixtureForm,create,read,transform,reviewedQuote,load} from './helpers/submission-fixtures.mjs';
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
 const referenceConflict = load(require('node:path').resolve('src/domain/package-reference-conflict.ts'));
@@ -91,7 +91,7 @@ test('confirmed success renders the canonical saved-record link',async()=>{
 
 test('section import rejects removal through actual update handler and keeps draft correctable',async()=>{
   const database=state();const id=await create(database,fixtureForm());
-  await quotations.create._handler(database.ctx,{payload:quotePayload(id,database.tables.package_flights[0]._id)});
+  await quotations.create._handler(database.ctx,{payload:await reviewedQuote(database,id,database.tables.package_flights[0]._id)});
   const initial=transform(await read(database,id));let calls=0;
   const app=builder(async(_url,options)=>{
     calls++;

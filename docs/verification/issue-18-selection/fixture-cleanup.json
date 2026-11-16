@@ -1,0 +1,16 @@
+{
+  "initialRun": {
+    "deletedQuotations": 2,
+    "remainingQuotations": 0,
+    "seedClientAndPackageRetained": true
+  },
+  "combinedRun": {
+    "deletedQuotations": 1,
+    "remainingQuotations": 0,
+    "seedClientAndPackageRetained": true
+  },
+  "totalDeletedQuotations": 3,
+  "remainingQuotations": 0,
+  "seedPackageRestored": true,
+  "seedClientAndPackageRetainedInPrivateDatabase": true
+}

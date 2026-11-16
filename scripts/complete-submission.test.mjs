@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, quotePayload } from "./helpers/submission-fixtures.mjs";
+import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, reviewedQuote } from "./helpers/submission-fixtures.mjs";
 
 const badPrices = [-1, NaN, Infinity, -Infinity, 1.001];
 const badDates = ["", " ", "2027-02-30", "2027-13-01", "01/01/2027"];
@@ -62,7 +62,7 @@ for (const writer of ["create", "update"]) {
     for (const price of badPrices) {
       test(`quotation ${writer} rejects ${section} price ${String(price)} without changes`, async () => {
         const s = state(); const id = await create(s,form());
-        const payload = quotePayload(id,s.tables.package_flights[0]._id);
+        const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
         const initial = await quotations.create._handler(s.ctx,{payload});
         payload.id = initial.id;
         payload[section] = section === "selected_rooms" ? [{room_type:"Quad",price,pax:1}] : [{name:"Fixture",price,pax:1}];
@@ -71,13 +71,14 @@ for (const writer of ["create", "update"]) {
     }
   }
   test(`quotation ${writer} rejects incomplete historical flight`, async () => {
-    const s = state(); const id = await create(s,form()); const payload = quotePayload(id,s.tables.package_flights[0]._id);
+    const s = state(); const id = await create(s,form()); const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx,{payload})).id;
     s.tables.package_flights[0].return_date = "";
+    if (writer === "create") payload.reviewed_context = (await reviewedQuote(s, id, payload.flight_id)).reviewed_context;
     await unchanged(s, () => quotations[writer]._handler(s.ctx,{payload}), /date/i);
   });
   test(`quotation ${writer} rejects overflowing arithmetic`, async () => {
-    const s = state(); const id = await create(s,form()); const payload = quotePayload(id,s.tables.package_flights[0]._id);
+    const s = state(); const id = await create(s,form()); const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx,{payload})).id;
     payload.selected_rooms[0].pax = Infinity;
     await unchanged(s, () => quotations[writer]._handler(s.ctx,{payload}), /finite|amount|quantity/i);
@@ -98,7 +99,7 @@ for (const price of [0, 1234.56]) {
     const id = await create(s,data); const first = await read(s,id); assert.equal(first.rooms[0].price,price);
     const edited = transform(first); edited.name="Updated fixture"; await save(s,edited);
     const reopened = await read(s,id); assert.equal(reopened.rooms[0].price,price);
-    const payload = quotePayload(id,reopened.flights[0]._id,"Quad",price); payload.selected_rooms[0].pax=2;
+    const payload = await reviewedQuote(s,id,reopened.flights[0]._id,"Quad",price); payload.selected_rooms[0].pax=2;
     payload.adds_ons=[{name:"Fixture",price:10.25,pax:2}]; payload.discounts=[{name:"Fixture",price:0.25,pax:2}];
     const result = await quotations.create._handler(s.ctx,{payload}); assert.equal(s.tables.quotations.find(q=>q._id===result.id).total_amount,price*2+20);
     payload.id=result.id; await quotations.update._handler(s.ctx,{payload}); assert.equal(s.tables.quotations.find(q=>q._id===result.id).total_amount,price*2+20);
@@ -108,9 +109,10 @@ test("packages can be saved without any flight", async () => {const s=state();co
 
 for (const writer of ["create", "update"]) {
   test(`quotation ${writer} rejects invalid historical package prices before snapshot writes`, async () => {
-    const s = state(); const id = await create(s, form()); const payload = quotePayload(id, s.tables.package_flights[0]._id);
+    const s = state(); const id = await create(s, form()); const payload = await reviewedQuote(s,id, s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx, {payload})).id;
     s.tables.package_rooms[0].price = -10;
+    if (writer === "create") payload.reviewed_context = (await reviewedQuote(s, id, payload.flight_id)).reviewed_context;
     await unchanged(s, () => quotations[writer]._handler(s.ctx, {payload}), /price/i);
   });
 }

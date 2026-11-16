@@ -1,0 +1,54 @@
+{
+  "changedWhileOpen": {
+    "displayed": {
+      "roomPrice": 1200,
+      "departure": "2027-01-01"
+    },
+    "packageAtSave": {
+      "roomPrice": 1500,
+      "departure": "2027-01-05"
+    },
+    "review": {
+      "roomPrice": 1200,
+      "departure": "2027-01-05",
+      "total": 1220,
+      "addons": [
+        {
+          "id": "quotation_items:11",
+          "name": "Transfer",
+          "price": 10.25,
+          "pax": 2,
+          "subtotal": 20.5
+        }
+      ],
+      "discounts": [
+        {
+          "id": "quotation_items:12",
+          "name": "Promo",
+          "price": 0.25,
+          "pax": 2,
+          "subtotal": 0.5
+        }
+      ],
+      "staleFields": []
+    },
+    "list": {
+      "isStale": false,
+      "total": 1220
+    }
+  },
+  "disabled-room": {
+    "created": true,
+    "currentOptionCount": 1,
+    "currentRoomEnabled": false,
+    "savedRoom": "Quad",
+    "staleFields": []
+  },
+  "archived-package": {
+    "created": true,
+    "currentOptionCount": 0,
+    "currentRoomEnabled": null,
+    "savedRoom": "Quad",
+    "staleFields": []
+  }
+}

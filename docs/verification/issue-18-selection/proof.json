@@ -1,0 +1,54 @@
+{
+  "baselineCommit": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+  "testedCommit": "6a45177bb22dd28e33711636fad6e12e4f0373be",
+  "previewUrl": "http://ticket2.localhost:3130",
+  "backendUrl": "http://127.0.0.1:3230",
+  "sourceCleanAtTest": true,
+  "httpConflict": 409,
+  "draftPreserved": {
+    "notes": "QUOTE-003 final reviewed draft",
+    "pax": 2,
+    "roomPrice": 5000,
+    "addon": "Transfer",
+    "addonPrice": 25
+  },
+  "latestReviewed": {
+    "departure": "2026-12-15",
+    "catalogPrice": 5500,
+    "retainedPrice": 5000
+  },
+  "persisted": {
+    "number": "1448H-0001",
+    "total": 10025,
+    "secondView": "saved quotation review",
+    "reload": true,
+    "exactIdNavigation": "http://ticket2.localhost:3130/quotations/review/m177xnpbpgnbedv3ayn7wah6y58jawq2"
+  },
+  "availabilityRecovery": {
+    "disabledRoom": "Quad",
+    "removedWithVisibleNotice": true,
+    "notesRetained": true
+  },
+  "cleanup": {
+    "deletedQuotations": 3,
+    "remainingQuotations": 0,
+    "packageRestored": true,
+    "seedClientAndPackageRetainedInPrivateDatabase": true,
+    "ownedProcessesStopped": true
+  },
+  "videoFile": "conflict-and-save.mp4",
+  "videoBranch": "evidence/quote003-selection",
+  "limitations": [
+    "Browser GitHub profile signed out. Video published on evidence branch with rendered PR screenshots.",
+    "Authentication findings remain assigned to independent owner.",
+    "Whole-package comparison conservatively conflicts for unselected child changes."
+  ],
+  "priorTestedCommit": "1e7b27a05fc86e97df0219e2dda7253f51bf01b5",
+  "integratedTargetChanges": "one shared save path; typed409 metadata; uncertain-outcome guidance; exact saved-ID navigation",
+  "checks": {
+    "repositoryTests": 348,
+    "failed": 0,
+    "typecheck": "passed",
+    "mutationGuard": "detected and baseline restored"
+  }
+}

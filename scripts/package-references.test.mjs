@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {quotations, state, form, create, read, save, transform, quotePayload} from './helpers/submission-fixtures.mjs';
+import {quotations, state, form, create, read, save, transform, quotePayload, reviewedQuote} from './helpers/submission-fixtures.mjs';
 
 async function fixture() {
   const s=state(); const id=await create(s,form());
-  const quote=await quotations.create._handler(s.ctx,{payload:quotePayload(id,s.tables.package_flights[0]._id)});
+  const quote=await quotations.create._handler(s.ctx,{payload:await reviewedQuote(s,id,s.tables.package_flights[0]._id)});
   return {s,id,qid:quote.id,data:transform(await read(s,id))};
 }
 async function rejectsWithoutWrites(s, action, expected) {
@@ -61,7 +61,7 @@ test('snapshot-only rooms, addons and other-package quotations do not block remo
   await s.ctx.db.insert('package_rooms',{package_id:id,room_type:'Double',price:10,enabled:true});
   s.tables.quotations[0].package_snapshot.rooms.push({room_type:'Double',price:10,enabled:true});
   await s.ctx.db.insert('quotation_items',{quotation_id:qid,item_type:'addon',description:'Double',package_room_id:'',quantity:1,unit_price:10,created_at:''});
-  const other=await create(s,form());await quotations.create._handler(s.ctx,{payload:quotePayload(other,s.tables.package_flights.find(f=>f.package_id===other)._id)});
+  const other=await create(s,form());await quotations.create._handler(s.ctx,{payload:await reviewedQuote(s,other,s.tables.package_flights.find(f=>f.package_id===other)._id)});
   const data=transform(await read(s,id));data.rooms=data.rooms.filter(r=>r.name!=='Double');
   await save(s,data);assert.ok(!s.tables.package_rooms.some(r=>r.package_id===id&&r.room_type==='Double'));
 });
@@ -80,6 +80,6 @@ test('ordinary save does not correct or reject a preexisting description mismatc
   assert.equal(reopened.selected_rooms[0].room_type,'Historical type');
 });
 test('conflict lists a bounded set of references and the remaining affected count',async()=>{
-  const {s,id,data}=await fixture();for(let i=0;i<6;i++)await quotations.create._handler(s.ctx,{payload:quotePayload(id,s.tables.package_flights[0]._id)});
+  const {s,id,data}=await fixture();for(let i=0;i<6;i++)await quotations.create._handler(s.ctx,{payload:await reviewedQuote(s,id,s.tables.package_flights[0]._id)});
   data.flights=[];await rejectsWithoutWrites(s,()=>save(s,data),/Another 2 quotations/);
 });

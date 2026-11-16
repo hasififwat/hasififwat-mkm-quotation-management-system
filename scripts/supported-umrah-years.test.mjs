@@ -111,7 +111,9 @@ for (const [year, hijri] of mappings) {
     const reopened = await read(s, id);
     assert.equal(reopened.year, year);
     assert.equal(reopened.name, "Updated fixture");
-    const result = await quotations.create._handler(s.ctx, {payload: quotePayload(id, reopened.flights[0]._id)});
+    const displayed = (await packages.listWithRooms._handler(s.ctx, {})).find(pkg => pkg._id === id);
+    const payload = {...quotePayload(id, reopened.flights[0]._id), reviewed_context: displayed.creation_context};
+    const result = await quotations.create._handler(s.ctx, {payload});
     const stored = s.tables.quotations.find(q => q._id === result.id);
     assert.equal(stored.hijri_year, hijri);
     assert.equal(result.quotation_number, `${hijri}-0001`);

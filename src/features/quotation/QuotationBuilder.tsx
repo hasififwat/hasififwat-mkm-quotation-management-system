@@ -10,7 +10,7 @@ import {
 	useForm,
 	useFormContext,
 } from "react-hook-form";
-import { useQuery } from "convex/react";
+import { useConvex, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -91,7 +91,8 @@ function HotelSelection({
 }: {
 	selectedPackage: QuotationPackage | null;
 }) {
-	const { control } = useFormContext<QuotationFormValues>();
+	const { control, watch } = useFormContext<QuotationFormValues>();
+	const selectedRooms = watch("selected_rooms");
 	// We use useFieldArray to manage the selected_rooms array
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -180,6 +181,12 @@ function HotelSelection({
 										<span className="text-xs text-muted-foreground">
 											RM {room.price.toLocaleString("en-MY")}
 										</span>
+										{isSelected && selectedRooms?.[selectedIndex]?.price !== room.price && (
+											<p className="text-xs text-amber-700">
+												Entered price RM {selectedRooms?.[selectedIndex]?.price.toLocaleString("en-MY")} retained.
+												Remove and select this room again to use the current price.
+											</p>
+										)}
 									</div>
 								</div>
 							</div>
@@ -583,8 +590,13 @@ export default function QuotationBuilder({
 	snapshot_version_known?: boolean;
 }) {
 	const router = useRouter();
+	const convex = useConvex();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [saveError, setSaveError] = useState<string | null>(null);
+	const [isReviewing, setIsReviewing] = useState(false);
+	const [packageOptions, setPackageOptions] = useState(allPackages);
+	const [saveError, setSaveError] = useState<{ message: string; conflict: boolean } | null>(null);
+	const [reviewNotice, setReviewNotice] = useState("");
+
 	const profile = useQuery(api.profiles.getMyProfile);
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
 	const [inlineClients, setInlineClients] = useState<Record<string, ClientSummary>>(
@@ -613,7 +625,7 @@ export default function QuotationBuilder({
 
 	const { setValue, handleSubmit, trigger } = methods;
 
-	const option = allPackages.map((pkg) => ({
+	const option = packageOptions.map((pkg) => ({
 		id: String(pkg._id),
 		name: pkg.name,
 		value: String(pkg._id),
@@ -674,6 +686,36 @@ export default function QuotationBuilder({
 
 	const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
 
+	const reviewLatestPackage = async () => {
+		setIsReviewing(true);
+		try {
+			const latestPackages = await convex.query(api.packages.listWithRooms, {});
+			const latest = latestPackages.find((pkg) => String(pkg._id) === methods.getValues("package_id"));
+			setPackageOptions(latestPackages);
+			setSelectedPackage(latest ?? null);
+			setCurrentStep("package");
+			if (!latest) {
+				setValue("package_id", "");
+				setValue("flight_id", "");
+				setValue("selected_rooms", []);
+				setReviewNotice("The selected package is no longer available. Choose another package. Your client details, notes, add-ons, and discounts are retained.");
+			} else {
+				const rooms = methods.getValues("selected_rooms") ?? [];
+				const available = rooms.filter((room) => latest.rooms.some((option) => option.enabled && option.room_type === room.room_type));
+				const removedRooms = rooms.filter((room) => !available.includes(room)).map((room) => room.room_type);
+				setValue("selected_rooms", available);
+				const flightRemoved = !latest.flights.some((flight) => String(flight._id) === methods.getValues("flight_id"));
+				if (flightRemoved) setValue("flight_id", "");
+				setReviewNotice(`Review the latest itinerary and room prices below. Your entered prices and other draft details are retained.${removedRooms.length > 0 ? ` Unavailable rooms removed: ${removedRooms.join(", ")}. Select replacements before saving.` : ""}${flightRemoved ? " The selected flight is no longer available and has been cleared. Choose another flight." : ""}`);
+			}
+			setSaveError(null);
+		} catch {
+			setSaveError({ message: "Could not load the latest package. Your draft is retained. Try reviewing again.", conflict: true });
+		} finally {
+			setIsReviewing(false);
+		}
+	};
+
 	const onSubmit = async (data: QuotationFormValues) => {
 		const basePayload = {
 			pic_name: data.pic_name ?? "",
@@ -687,14 +729,17 @@ export default function QuotationBuilder({
 			adds_ons: sanitizeLineItems(data.adds_ons) ?? [],
 			discounts: sanitizeLineItems(data.discounts) ?? [],
 		};
-		const payload = qid ? { ...basePayload, id: data.id ?? qid } : basePayload;
+		const payload = qid ? { ...basePayload, id: data.id ?? qid } : {
+			...basePayload,
+			reviewed_context: selectedPackage?.creation_context,
+		};
 
 		setIsSubmitting(true);
 		setSaveError(null);
 		try {
 			const result = await saveQuotation(payload, qid);
 			if (!result.ok) {
-				setSaveError(result.message);
+				setSaveError({ message: result.message, conflict: !qid && result.selectionConflict === true });
 				return;
 			}
 			router.push(`/quotations/review/${encodeURIComponent(result.id)}`);
@@ -715,6 +760,23 @@ export default function QuotationBuilder({
 					{qid ? "Edit Quotation" : "Create Quotation"}
 				</h2>
 			</div>
+
+			{saveError && (
+				<div role="alert" className="space-y-3 rounded-lg border border-destructive bg-destructive/5 p-4 text-sm">
+					<p>{saveError.message}{saveError.conflict && " No quotation was saved. Your draft is retained."}</p>
+					{saveError.conflict && (
+						<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>
+							{isReviewing ? "Loading latest package..." : "Review latest package"}
+						</Button>
+					)}
+					{!saveError.conflict && (
+						<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="inline-block underline">
+							Check Quotations in a new tab
+						</Link>
+					)}
+				</div>
+			)}
+			{reviewNotice && <p role="status" className="rounded-lg border bg-muted p-4 text-sm">{reviewNotice}</p>}
 
 			{/* Step Navigation Header */}
 			<Card>
@@ -967,7 +1029,7 @@ export default function QuotationBuilder({
 													</div>
 												)}
 												handleSelect={(selectedId) => {
-													const selectedPkg = allPackages.find(
+													const selectedPkg = packageOptions.find(
 														(pkg) => String(pkg._id) === selectedId,
 													);
 
@@ -1002,14 +1064,7 @@ export default function QuotationBuilder({
 							</div>
 						</CardContent>
 
-						{saveError && (
-							<div role="alert" className="mx-6 rounded-md border border-destructive p-4 text-sm text-destructive">
-								<p>{saveError}</p>
-								<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block underline">
-									Check Quotations in a new tab
-								</Link>
-							</div>
-						)}
+
 						<CardFooter className="flex justify-between border-t p-6">
 							<Button
 								type="button"
