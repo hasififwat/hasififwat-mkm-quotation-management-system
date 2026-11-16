@@ -233,36 +233,37 @@ export default function PDFPreviewMobile({ details }: Props) {
 				</div>
 
 				{/* Package Inclusions and Exclusions */}
-				<div className="mt-3">
-					{/* Header */}
-					<div className="flex flex-row">
-						<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
-							PAKEJ TERMASUK
+				{(inclusionItems.length > 0 || exclusionItems.length > 0) && (
+					<div className="mt-3">
+						{/* Header */}
+						<div className="flex flex-row">
+							<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
+								PAKEJ TERMASUK
+							</div>
+							<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
+								PAKEJ TIDAK TERMASUK
+							</div>
 						</div>
-						<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
-							PAKEJ TIDAK TERMASUK
+						{/* Data */}
+						<div className="flex flex-row">
+							<div className="flex-1 p-1 border-l border-b border-black text-left ">
+								{inclusionItems.map((inc) => (
+									<div key={`inclusion-${inc}`} className="mb-2 leading-relaxed">
+										- {inc}
+									</div>
+								))}
+							</div>
+							<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
+								{exclusionItems.map((inc) => (
+									<div key={`exclusion-${inc}`} className="mb-2 leading-relaxed">
+										- {inc}
+									</div>
+								))}
+							</div>
 						</div>
-					</div>
-					{/* Data */}
-					<div className="flex flex-row">
-						<div className="flex-1 p-1 border-l border-b border-black text-left ">
-							{inclusionItems.map((inc) => (
-								<div key={`inclusion-${inc}`} className="mb-2 leading-relaxed">
-									- {inc}
-								</div>
-							))}
-						</div>
-						<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
-							{exclusionItems.map((inc) => (
-								<div key={`exclusion-${inc}`} className="mb-2 leading-relaxed">
-									- {inc}
-								</div>
-							))}
-						</div>
-					</div>
 
-					{/* Inclusions */}
-				</div>
+					</div>
+				)}
 
 				{/* Terms and Conditions */}
 				<div className="mt-3">

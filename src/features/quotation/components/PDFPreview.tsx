@@ -504,58 +504,59 @@ export default function PDFPreview({ details, fileName }: Props) {
 					</View>
 
 					{/* Package Inclusions and Exclusions */}
-					<View style={{ marginTop: 12 }}>
-						{/* Header */}
-						<View style={{ display: "flex", flexDirection: "row" }}>
-							<View
-								style={{
-									...styles.baseTableHeader,
-									flex: 1,
-								}}
-							>
-								<Text>PAKEJ TERMASUK</Text>
+					{(inclusionItems.length > 0 || exclusionItems.length > 0) && (
+						<View style={{ marginTop: 12 }}>
+							{/* Header */}
+							<View style={{ display: "flex", flexDirection: "row" }}>
+								<View
+									style={{
+										...styles.baseTableHeader,
+										flex: 1,
+									}}
+								>
+									<Text>PAKEJ TERMASUK</Text>
+								</View>
+								<View
+									style={{
+										...styles.baseTableHeader,
+										flex: 1,
+										borderRight: "1px solid black inset",
+									}}
+								>
+									<Text>PAKEJ TIDAK TERMASUK</Text>
+								</View>
 							</View>
-							<View
-								style={{
-									...styles.baseTableHeader,
-									flex: 1,
-									borderRight: "1px solid black inset",
-								}}
-							>
-								<Text>PAKEJ TIDAK TERMASUK</Text>
+							{/* Data */}
+							<View style={{ display: "flex", flexDirection: "row" }}>
+								<View
+									style={{
+										...styles.baseTableData,
+										textAlign: "left",
+										flex: 1,
+										lineHeight: 1.1,
+									}}
+								>
+									{inclusionItems.map((inclusion) => (
+										<Text key={`inclusion-${inclusion}`}>- {inclusion}</Text>
+									))}
+								</View>
+								<View
+									style={{
+										...styles.baseTableData,
+										flex: 1,
+										textAlign: "left",
+										lineHeight: 1.1,
+										borderRight: "1px solid black inset",
+									}}
+								>
+									{exclusionItems.map((exclusion) => (
+										<Text key={`exclusion-${exclusion}`}>- {exclusion}</Text>
+									))}
+								</View>
 							</View>
-						</View>
-						{/* Data */}
-						<View style={{ display: "flex", flexDirection: "row" }}>
-							<View
-								style={{
-									...styles.baseTableData,
-									textAlign: "left",
-									flex: 1,
-									lineHeight: 1.1,
-								}}
-							>
-								{inclusionItems.map((inclusion) => (
-									<Text key={`inclusion-${inclusion}`}>- {inclusion}</Text>
-								))}
-							</View>
-							<View
-								style={{
-									...styles.baseTableData,
-									flex: 1,
-									textAlign: "left",
-									lineHeight: 1.1,
-									borderRight: "1px solid black inset",
-								}}
-							>
-								{exclusionItems.map((exclusion) => (
-									<Text key={`exclusion-${exclusion}`}>- {exclusion}</Text>
-								))}
-							</View>
-						</View>
 
-						{/* Inclusions */}
-					</View>
+						</View>
+					)}
 
 					{/* Terms and Conditions */}
 					<View style={{ marginTop: 12 }}>
