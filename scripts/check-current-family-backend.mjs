@@ -83,19 +83,19 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const code=await new Promise(r=>deploy.on('exit',r));
   if(code!==0) throw new Error(`Local deployment failed. ${output.replaceAll(adminKey,'[redacted]')}`);
   const client = new ConvexHttpClient(url); client.setAdminAuth(adminKey);
-  const seed=await client.mutation('fixture:seed',{});
-
-  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
-  const key=()=>crypto.randomUUID();
-  const save = async command => {
+  const mutate = async (fn, args) => {
     for (let attempt = 0; ; attempt++) {
-      try { return await client.mutation('quotationRevisionSaves:save', {command}); }
+      try { return await client.mutation(fn, args); }
       catch (error) {
         if (attempt >= 8 || !String(error).includes('TooManyWrites')) throw error;
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
   };
+  const seed=await mutate('fixture:seed',{});
+  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
+  const key=()=>crypto.randomUUID();
+  const save = command => mutate('quotationRevisionSaves:save', {command});
   const create=()=>({operation:'create',request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}});
   const append=(base,changes={})=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'},...changes});
   const dump=()=>client.query('fixture:dump',{});
@@ -118,7 +118,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.equal(await client.query('quotations:count',{}),13);
   assert.deepEqual(await dump(),beforeReads);
   result.checks.push('Thirteen families with three revisions each span pages. Both timestamp sorts and directions return every current ID exactly once. Counts agree. Read handlers leave persisted source tables unchanged.');
-  await client.mutation('fixture:changeLive',{});
+  await mutate('fixture:changeLive',{});
   const list=await client.query('quotations:list',{});assert.equal(list.length,13);
   assert.ok(list.every(row=>row.package.name==='Disposable'&&row.client_name==='Disposable revision fixture'));
   for(const searchTerm of [list[0].quotation_number,list[0].quotation_number.replace(/-R\d+$/,''),'Disposable']){
@@ -127,17 +127,17 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   }
   const absent=await client.query('quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10},searchTerm:'Changed package'});assert.equal(absent.total,0);
   const packagePage=await client.query('quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10},package_id:seed.pkg});assert.equal(packagePage.total,13);
-  const canonical=await client.mutation('clients:create',{name:'Canonical fixture',phone_number:'fixture'});
-  const final=await client.mutation('clients:create',{name:'Final fixture',phone_number:'fixture'});
+  const canonical=await mutate('clients:create',{name:'Canonical fixture',phone_number:'fixture'});
+  const final=await mutate('clients:create',{name:'Final fixture',phone_number:'fixture'});
   const beforeMerge=await dump();
-  await client.mutation('clients:mergeClients',{canonicalId:canonical.id,duplicateIds:[seed.client]});
-  await client.mutation('clients:mergeClients',{canonicalId:final.id,duplicateIds:[canonical.id]});
+  await mutate('clients:mergeClients',{canonicalId:canonical.id,duplicateIds:[seed.client]});
+  await mutate('clients:mergeClients',{canonicalId:final.id,duplicateIds:[canonical.id]});
   const rows=await client.query('clients:listWithStats',{});assert.equal(rows.length,1);assert.equal(rows[0].quotation_count,13);assert.equal(rows[0].total_quoted_value,1300);
   const clientPage=await client.query('quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10},client_id:final.id});assert.equal(clientPage.total,13);assert.ok(clientPage.page.every(row=>row.client_id===final.id&&row.client_name==='Disposable revision fixture'));
   const associated=await client.query('clients:getWithQuotations',{client_id:seed.client});assert.equal(associated.id,final.id);assert.equal(associated.quotations.length,13);assert.equal(associated.historical_quotations.length,26);
   const merged=await dump();assert.deepEqual(merged.quotations,beforeMerge.quotations);assert.deepEqual(merged.quotation_items,beforeMerge.quotation_items);
   result.checks.push('Saved package/client names survive live changes. Base/full reference and saved-label searches agree with counts. Package deep links filter current rows. Transitive canonical aliases group all thirteen families once without rewriting saved identity or items.');
-  const second=await client.mutation('fixture:seed',{});
+  const second=await mutate('fixture:seed',{});
   const moved=await save(append(current[0],{client:{mode:'replace',id:second.client},selection:{mode:'replace',package_id:second.pkg,flight_id:second.flight,reviewed_context:second.context,rooms:[{room_type:'Quad',price:200,pax:1}]}}));
   const stats=await client.query('packages:listWithQuotationCounts',{});
   assert.equal(stats.find(row=>row.id===seed.pkg).total,12);assert.equal(stats.find(row=>row.id===second.pkg).total,1);assert.equal(stats.find(row=>row.id===seed.pkg).historical_total,27);
@@ -148,19 +148,19 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const beforeArchive=await dump();const family_id=moved.family_id;
   client.setAdminAuth(adminKey);
   for(const [fn,args]of [['quotations:list',{}],['quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10}}],['quotations:count',{}],['clients:listWithStats',{}],['packages:listWithQuotationCounts',{}],['quotationFamilies:history',{family_id}]])await assert.rejects(()=>client.query(fn,args));
-  await assert.rejects(()=>client.mutation('quotationFamilies:archive',{family_id}));assert.deepEqual(await dump(),beforeArchive);
+  await assert.rejects(()=>mutate('quotationFamilies:archive',{family_id}));assert.deepEqual(await dump(),beforeArchive);
   client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
-  await client.mutation('fixture:release',{enabled:false});const closed=await dump();
-  await assert.rejects(()=>client.mutation('quotationFamilies:archive',{family_id}));assert.deepEqual(await dump(),closed);
-  await client.mutation('fixture:release',{enabled:true});
+  await mutate('fixture:release',{enabled:false});const closed=await dump();
+  await assert.rejects(()=>mutate('quotationFamilies:archive',{family_id}));assert.deepEqual(await dump(),closed);
+  await mutate('fixture:release',{enabled:true});
   for (const state of ['missing', 'incomplete']) {
-    await client.mutation('fixture:migration', {state});
+    await mutate('fixture:migration', {state});
     const gated = await dump();
-    await assert.rejects(() => client.mutation('quotationFamilies:archive', {family_id}));
+    await assert.rejects(() => mutate('quotationFamilies:archive', {family_id}), /inactive/);
     assert.deepEqual(await dump(), gated);
   }
-  await client.mutation('fixture:migration', {state:'complete'});
-  await client.mutation('quotationFamilies:archive',{family_id});await client.mutation('quotationFamilies:archive',{family_id});
+  await mutate('fixture:migration', {state:'complete'});
+  await mutate('quotationFamilies:archive',{family_id});await mutate('quotationFamilies:archive',{family_id});
   assert.equal(await client.query('quotations:count',{}),12);
   const archived=await client.query('quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10},visibility:'archived'});assert.equal(archived.page[0].id,moved.id);
   const history=await client.query('quotationFamilies:history',{family_id});assert.equal(history.revisions.length,4);assert.equal(history.family.current_revision_id,moved.id);assert.equal(history.family.archived,true);
@@ -170,7 +170,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const afterArchive=await dump();assert.deepEqual(afterArchive.quotations,beforeArchive.quotations);assert.deepEqual(afterArchive.quotation_items,beforeArchive.quotation_items);assert.equal(afterArchive.quotation_logs.filter(row=>row.action==='family_archived').length,1);
   await assert.rejects(()=>save(append(moved)));assert.deepEqual(await dump(),afterArchive);
   result.checks.push('Unauthenticated operational/history readers and archive reject. Disabled release rejects archive with no writes. Archive logs once, hides only the family operationally, preserves the current pointer, exact old review content, all revision/item rows and ordered history, and rejects later append. Family revisions never enter deletable duplicate suggestions.');
-  const legacyId = await client.mutation('fixture:legacy', {id:moved.id});
+  const legacyId = await mutate('fixture:legacy', {id:moved.id});
   const legacyRows = await client.query('quotations:list', {});
   assert.equal(legacyRows.length, 13);
   assert.ok(legacyRows.some(row => row.id === legacyId && row.family_id === null));
