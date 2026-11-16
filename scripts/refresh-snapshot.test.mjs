@@ -73,7 +73,7 @@ for (const outcome of ["success", "failure", "uncertain"]) {
     const pending = new Promise(resolve => { finish = resolve; });
     const js = ts.transpile(`const handler = ${callback}`, { target: ts.ScriptTarget.ES2022 });
     const handler = vm.runInNewContext(`${js}; handler`, {
-      qid: "quote:1", refreshRequest: { current: null },
+      qid: "quote:1", refreshReview: {expected_quotation_token:"token",source_context:"context"}, fetch: async()=>{}, setRefreshReview:()=>{}, setRefreshReviewState:()=>{}, refreshRequest: { current: null },
       refreshQuotationSnapshot: () => { calls++; return pending; },
       setRefreshState: state => states.push(state.status),
       router: { refresh: () => { revalidations++; } },

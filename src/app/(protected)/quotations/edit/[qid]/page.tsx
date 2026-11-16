@@ -27,7 +27,7 @@ export default async function QuotationEditPage({ params }: Params) {
 		redirect("/quotations");
 	}
 
-	const { stale_fields, snapshot_version_known, ...formData } = initialData;
+	const { stale_fields, snapshot_version_known, snapshot_refresh_token, ...formData } = initialData;
 
 	return (
 		<QuotationBuilder
@@ -35,6 +35,7 @@ export default async function QuotationEditPage({ params }: Params) {
 			allPackages={allPackages}
 			allClients={allClients}
 			qid={qid}
+			snapshot_refresh_token={snapshot_refresh_token}
 			stale_fields={stale_fields ?? []}
 			snapshot_version_known={snapshot_version_known ?? false}
 		/>

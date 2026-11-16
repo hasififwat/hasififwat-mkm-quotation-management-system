@@ -16,7 +16,7 @@ export function typescriptLoader(repo) {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
     });
     vm.runInNewContext(compiled.outputText, {
-      exports,
+      exports, crypto: globalThis.crypto, TextEncoder,
       require(id) {
         if (id === "@convex-dev/auth/server") return authServer;
         if (id.startsWith(".")) {

@@ -1,3 +1,5 @@
+import { SNAPSHOT_REFRESH_CONFLICT_MESSAGE, type SnapshotRefreshReview } from "../../domain/snapshot-refresh-review";
+
 export type RefreshSnapshotResult =
 	| { status: "success" }
 	| { status: "failure"; message: string }
@@ -14,6 +16,7 @@ const uncertainRefresh =
 export async function refreshQuotationSnapshot(
 	quotationId: string,
 	request: typeof fetch = fetch,
+	review?: Pick<SnapshotRefreshReview, "expected_quotation_token" | "source_context">,
 ): Promise<RefreshSnapshotResult> {
 	try {
 		const response = await request("/api/quotations/update", {
@@ -22,8 +25,10 @@ export async function refreshQuotationSnapshot(
 			body: JSON.stringify({
 				_intent: "refresh_snapshot",
 				quotation_id: quotationId,
+				...review,
 			}),
 		});
+		if (response.status === 409) return { status: "failure", message: `Refresh was rejected (HTTP 409). ${SNAPSHOT_REFRESH_CONFLICT_MESSAGE}` };
 		if (!response.ok) {
 			return response.status >= 500
 				? {
