@@ -1,0 +1,18 @@
+{
+  "observed": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/create"
+    },
+    "value": {
+      "text": "1/\n1\nNext.js 16.3.4 (stale)\nTurbopack\nConsole Error\nA component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://react.dev/link/controlled-components\n\nsrc/components/ui/input.tsx (9:5) @ Input\n\n   7 | function Input({ className, type, ...props }: React.ComponentProps<\"input\">) {\n   8 |   return (\n>  9 |     <input\n     |     ^\n  10 |       type={type}\n  11 |       data-slot=\"input\"\n  12 |       className={cn(\n\nCall Stack\n56\n\nShow 51 ignore-listed frame(s)\ninput\n<anonymous>\nInput\nsrc/components/ui/input.tsx (9:5)\nObject.render\nsrc/features/quotation/QuotationBuilder.tsx (1115:12)\nQuotationBuilder\nsrc/features/quotation/QuotationBuilder.tsx (1106:9)\nQuotationCreatePage\nsrc/app/(protected)/quotations/create/page.tsx (54:4)\n\nWas this helpful?\n0\n1\nIssue",
+      "url": "http://127.0.0.1:3540/quotations/create"
+    }
+  },
+  "classification": "Pre-existing product form-initialization warning observed in development. It is not the resolved development-origin setup warning.",
+  "trigger": "Enter text into the initially undefined optional Notes field on the real create form.",
+  "baselineCommit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+  "baselineSource": "QuotationBuilder defaultValues omits notes; Notes Controller spreads field into Input. Both patterns are unchanged from baseline.",
+  "observedImpact": "Next development overlay shows1Issue. Actual R0 notes saved and oldR0 reopened unchanged in this run.",
+  "scope": "No unrelated form refactor. Original media retain the badge; no masking/cropping."
+}

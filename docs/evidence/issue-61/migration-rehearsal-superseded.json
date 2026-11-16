@@ -1,0 +1,16 @@
+{
+  "status": "SUPERSEDED. Not accepted release evidence.",
+  "sourceCommit": "fc0eba90a8226778246d94107cee249f2e82df2f",
+  "backendUrl": "http://127.0.0.1:13965",
+  "originalClaims": [
+    "Eight concurrent allocations returned distinct retained base sequences.",
+    "File-inclusive ZIP export restored with identical retained IDs, rows, items, pointers, checkpoint and counters on this disposable backend. Storage is empty in this legacy fixture; final PDF proof must cover nonempty storage."
+  ],
+  "corrections": [
+    "The original client queued the allocation mutations. It did not prove concurrency.",
+    "The original import used the unchanged source database. Equality did not prove restoration.",
+    "The initial read-only checker accepted missing modern-save records, wrong receipt reference text, and inconsistent ready attempt metadata."
+  ],
+  "replacement": "migration-rehearsal.json and scripts/revision-invariants.test.mjs",
+  "recordKind": "Summary of superseded observations, not the original raw report."
+}

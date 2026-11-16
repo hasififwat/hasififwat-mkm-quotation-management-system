@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "332074728a056fd08ed22fbf9d8fa2a144338e50",
+  "tests": {
+    "passed": 669,
+    "failed": 0,
+    "command": "node --test scripts/*.test.mjs",
+    "summary": "\u2139 tests 669\n\u2139 suites 0\n\u2139 pass 669\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 4489.629292"
+  },
+  "appTypecheck": "passed",
+  "backendTypecheck": "passed",
+  "productionBuild": "passed",
+  "finiteCases": 1728,
+  "guardMutantsDetected": 6,
+  "scope": "Actual command completions and logs observed on this committed source. Browser observations identify their separate tested source."
+}

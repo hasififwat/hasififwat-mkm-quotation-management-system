@@ -1,0 +1,22 @@
+{
+  "owner": "issue-61",
+  "sourceCommit": "332074728a056fd08ed22fbf9d8fa2a144338e50",
+  "runDir": "/private/tmp/mkm-issue61-run",
+  "backendGroup": 68091,
+  "webGroups": [
+    68682
+  ],
+  "ports": [
+    3540,
+    13965,
+    13966
+  ],
+  "privateFixtureRemoved": true,
+  "closedPortsVerified": true,
+  "groupsStopped": true,
+  "scope": "Only the owned local backend/web groups and exact private fixture directory. No user browser window or shared deployment was closed or changed.",
+  "ownedServerTabsClosed": true,
+  "previewSessionsRemaining": 0,
+  "remainingOwnedFixtureNodeOrBackendProcesses": [],
+  "nativeWindowScope": "No native user window was closed. The owned native fixture window may remain open to its now-stopped local service."
+}

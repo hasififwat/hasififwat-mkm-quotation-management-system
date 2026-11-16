@@ -1,0 +1,115 @@
+{
+  "sourceCommit": "79540a43",
+  "origin": "http://127.0.0.1:3540",
+  "r0": "n5783vp3a6b299w26evhcf5sjs8jaqhv",
+  "reference": "1448H-0006",
+  "steps": [],
+  "r1": "n571z7v1mn2j7h10t5g9vk01dn8jb1b9",
+  "r2": "n5731yw99ed2hmchcnqrbhndm98jbzpk",
+  "browser": {
+    "adapter": "T3 server runtime, own incognito tabs; normal DOM controls via preview_evaluate; built-in recording",
+    "tabIds": [
+      "tab_13_cbf2bf58-c799-44c8-b371-0ea9a6b99115",
+      "tab_16_cbf2bf58-c799-44c8-b371-0ea9a6b99115"
+    ],
+    "desktop": {
+      "width": 1402,
+      "height": 877
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844
+    },
+    "snapshotLimit": "Snapshot and input automation timed out. Native login succeeded but focus guard stopped when human focused unrelated personal window."
+  },
+  "stale": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/edit/n571z7v1mn2j7h10t5g9vk01dn8jb1b9"
+    },
+    "value": {
+      "notes": "Keep this losing draft.",
+      "scrollWidth": 390,
+      "text": "Toggle Sidebar\nEdit Quotation\n\nEditing 1448H-0006-R1. Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\nA newer revision exists. Your entries are kept on this page and were not saved. View the current revision before reconciling your draft.\n\nView current revision in a new tab\nOpen sign-in in a new tab\n1\n2\n3\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave new revision",
+      "url": "http://127.0.0.1:3540/quotations/edit/n571z7v1mn2j7h10t5g9vk01dn8jb1b9",
+      "width": 390
+    }
+  },
+  "history": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/n5731yw99ed2hmchcnqrbhndm98jbzpk/history"
+    },
+    "value": {
+      "links": [
+        {
+          "href": "/quotations/review/n5731yw99ed2hmchcnqrbhndm98jbzpk",
+          "text": "View current revision"
+        },
+        {
+          "href": "/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv",
+          "text": "1448H-0006"
+        },
+        {
+          "href": "/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv",
+          "text": "View saved details and issued PDF"
+        },
+        {
+          "href": "/quotations/review/n571z7v1mn2j7h10t5g9vk01dn8jb1b9",
+          "text": "1448H-0006-R1"
+        },
+        {
+          "href": "/quotations/review/n571z7v1mn2j7h10t5g9vk01dn8jb1b9",
+          "text": "View saved details and issued PDF"
+        },
+        {
+          "href": "/quotations/review/n5731yw99ed2hmchcnqrbhndm98jbzpk",
+          "text": "1448H-0006-R2"
+        },
+        {
+          "href": "/quotations/review/n5731yw99ed2hmchcnqrbhndm98jbzpk",
+          "text": "View saved details and issued PDF"
+        }
+      ],
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nRevision history\n\n1448H-0006 \u00b7 Current family\n\nEarliest retained quotation 17 Nov 2026, 1:28 am in Kuala Lumpur time. Each link opens its exact saved revision.\n\nView current revision\nEdit current revision\nQuotations\n1448H-0006\nHistorical revision\nSaved status\ndraft\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nTotal\nRM 1200.00\nSource revision\nInitial revision\nView saved details and issued PDF\n1448H-0006-R1\nHistorical revision\nSaved status\ndraft\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:29 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:29 am\nTotal\nRM 1200.00\nSource revision\n1448H-0006\nView saved details and issued PDF\n1448H-0006-R2\nCurrent revision\nSaved status\ndraft\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:30 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:30 am\nTotal\nRM 1200.00\nSource revision\n1448H-0006-R1\nView saved details and issued PDF",
+      "url": "http://127.0.0.1:3540/quotations/n5731yw99ed2hmchcnqrbhndm98jbzpk/history"
+    }
+  },
+  "oldBeforeReload": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv"
+    },
+    "value": {
+      "editLinks": 0,
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nHistorical revision \u00b7 Saved status draft\n\n1448H-0006\n\nThis is an exact saved revision. A newer revision exists. This view is read-only.\n\nQuotations\nRevision history\nView current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 \u00d7 1\nRM 1200.00\n\nTotal RM 1200.00\n\nIntegrated browser R0.\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://127.0.0.1:3540/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv"
+    }
+  },
+  "oldAfterReload": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv"
+    },
+    "value": {
+      "editLinks": 0,
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nHistorical revision \u00b7 Saved status draft\n\n1448H-0006\n\nThis is an exact saved revision. A newer revision exists. This view is read-only.\n\nQuotations\nRevision history\nView current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:28 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 \u00d7 1\nRM 1200.00\n\nTotal RM 1200.00\n\nIntegrated browser R0.\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://127.0.0.1:3540/quotations/review/n5783vp3a6b299w26evhcf5sjs8jaqhv"
+    }
+  },
+  "observed": [
+    "Actual password login, client and flight validation.",
+    "R0 create and R1 edit through actual builder controls.",
+    "Unchanged deliberate Save created distinct R2 ID.",
+    "Independent mobile editor retained losing notes and showed current link after stale save.",
+    "History linked exact R0, R1, R2. Second-view R0 and reload retained original notes and read-only state.",
+    "Actual backend UI family dump contains exactly three revisions and three receipts after stale attempt."
+  ],
+  "limits": [
+    "Backend save/PDF immutability, request replay and restoration have separate executable reports.",
+    "Gate UI and HTTP acceptance completed in gate-ui-proof.json and gate-http-proof.json.",
+    "Genuine failed-state UI retry and migrated missing-original checks completed in pdf-ui-proof.json.",
+    "UI origin is http://127.0.0.1:3540 for host cookie isolation. Separate HTTP scripts use http://localhost:3540 with explicit real JWT cookies.",
+    "Snapshot has allowedDevOrigins for127.0.0.1; config hash and exact allowed diff are recorded separately."
+  ]
+}

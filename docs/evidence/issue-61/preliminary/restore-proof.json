@@ -1,0 +1,104 @@
+{
+  "sourceCommit": "0f42ac5d17818b463a2a991c15f7908122bcf05f",
+  "sourceBackend": "http://127.0.0.1:13965",
+  "restoreBackend": "http://127.0.0.1:13985",
+  "independentEmptyTarget": true,
+  "restoredRowsIdentical": true,
+  "authenticatedPasswordLogin": true,
+  "counts": {
+    "quotations": 9,
+    "quotation_families": 6,
+    "quotation_items": 11,
+    "quotation_logs": 9,
+    "quotation_create_receipts": 1,
+    "quotation_save_receipts": 8,
+    "quotation_reference_counters": 1,
+    "quotation_pdf_artifacts": 8,
+    "quotation_pdf_attempts": 8
+  },
+  "storageInventory": {
+    "_storage/kg23dq6bn4wyd7112d7qsxk5ad8ja169.pdf": {
+      "sha256": "3c67f1d1f5e4463b5de9fa63603e004f604e6654f27705286a9d3dcdb9bcec0e",
+      "size": 169774
+    },
+    "_storage/kg27360y5yyr2zmx8zaq71mkx18jan9s.pdf": {
+      "sha256": "6b29c8932931a0b8883b36c8d49e3290a4eb5405e22cf97dadccc9712602fc46",
+      "size": 169777
+    },
+    "_storage/kg2840bjgh1by8dv0mt5csjn798jbw74.pdf": {
+      "sha256": "c93f2ba5fa919735d053d72e2751e70967fe6ec7925e4347b468773f0b0efea5",
+      "size": 169776
+    },
+    "_storage/kg288x2yyty688prcyza4ggwgd8ja91j.pdf": {
+      "sha256": "f76cbc9e3744c7376f0273ef65594c239f3ac9cc4791481ce10a496b6599e60f",
+      "size": 169784
+    },
+    "_storage/kg29x99s155nq3jhh9yy0fb06n8jbp9y.pdf": {
+      "sha256": "d4a0c0a98f3adeddf2af39111f4dbe1c35030e04768f6e81d84e9c21339d6432",
+      "size": 169777
+    },
+    "_storage/kg2ak1wym2mddkqtet8z5ckw6n8ja9m4.pdf": {
+      "sha256": "2e66f9ef3e5033dee0f0e975216939c55629000f20d675ba0158eb3144ac0fd4",
+      "size": 169777
+    },
+    "_storage/kg2b8acq51nnqqs5vnmg4kgbrd8jbr5j.pdf": {
+      "sha256": "cc7b30308d7bb0545518b85c90629fb8397d8d01c9153b226d83c0a3cee33219",
+      "size": 169784
+    },
+    "_storage/kg2f8fb56mhe5acqn9nqcbtx118jah5w.pdf": {
+      "sha256": "910661b240dd7fa7a4dddccc2a0c4ad0c4db53d5f6b95796c8aa535405e64558",
+      "size": 169784
+    }
+  },
+  "authenticatedDownloads": [
+    {
+      "revisionId": "n5770mw4q03th8dh2zhdwcxg1s8jadap",
+      "storageId": "kg29x99s155nq3jhh9yy0fb06n8jbp9y",
+      "sha256": "d4a0c0a98f3adeddf2af39111f4dbe1c35030e04768f6e81d84e9c21339d6432",
+      "size": 169777
+    },
+    {
+      "revisionId": "n57a9y3rhnkr9by98mr05y9gwx8jby4n",
+      "storageId": "kg2b8acq51nnqqs5vnmg4kgbrd8jbr5j",
+      "sha256": "cc7b30308d7bb0545518b85c90629fb8397d8d01c9153b226d83c0a3cee33219",
+      "size": 169784
+    },
+    {
+      "revisionId": "n576cha4atxa7hd6rjwc9x2qtn8jbpqr",
+      "storageId": "kg288x2yyty688prcyza4ggwgd8ja91j",
+      "sha256": "f76cbc9e3744c7376f0273ef65594c239f3ac9cc4791481ce10a496b6599e60f",
+      "size": 169784
+    },
+    {
+      "revisionId": "n5782vnh6187sj619fy1yaqae98jazqa",
+      "storageId": "kg2f8fb56mhe5acqn9nqcbtx118jah5w",
+      "sha256": "910661b240dd7fa7a4dddccc2a0c4ad0c4db53d5f6b95796c8aa535405e64558",
+      "size": 169784
+    },
+    {
+      "revisionId": "n576y33kcme135mmz97qnh53e98jbcwc",
+      "storageId": "kg2ak1wym2mddkqtet8z5ckw6n8ja9m4",
+      "sha256": "2e66f9ef3e5033dee0f0e975216939c55629000f20d675ba0158eb3144ac0fd4",
+      "size": 169777
+    },
+    {
+      "revisionId": "n5716gnjyx2w9frxqtt5ft8a658jafbx",
+      "storageId": "kg2840bjgh1by8dv0mt5csjn798jbw74",
+      "sha256": "c93f2ba5fa919735d053d72e2751e70967fe6ec7925e4347b468773f0b0efea5",
+      "size": 169776
+    },
+    {
+      "revisionId": "n572sfjk817wfd70ekf3nznp798ja3hp",
+      "storageId": "kg27360y5yyr2zmx8zaq71mkx18jan9s",
+      "sha256": "6b29c8932931a0b8883b36c8d49e3290a4eb5405e22cf97dadccc9712602fc46",
+      "size": 169777
+    },
+    {
+      "revisionId": "n575s5kh2kh19zvyam1520mpd58ja054",
+      "storageId": "kg23dq6bn4wyd7112d7qsxk5ad8ja169",
+      "sha256": "3c67f1d1f5e4463b5de9fa63603e004f604e6654f27705286a9d3dcdb9bcec0e",
+      "size": 169774
+    }
+  ],
+  "scope": "Real separate local backend and restored password account; public authenticated Convex download action. Next.js route proof is separate."
+}

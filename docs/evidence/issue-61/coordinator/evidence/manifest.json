@@ -1,0 +1,44 @@
+[
+  {
+    "file": "baseline-overwrite.json",
+    "sha256": "c0c14730b5c48b160f754e8a80d0db2dfefd72b669ff6519c329f894d6c36be0",
+    "source": ".next/mkm-revision-integration/baseline-overwrite.json"
+  },
+  {
+    "file": "browser-baseline-proof.json",
+    "sha256": "521544fb5d22b9b9b794ca7e2f1148cb57e5a52a9bba6cbfea77e2ea1b0a51fd",
+    "source": ".next/mkm-revision-integration/browser-baseline-proof.json"
+  },
+  {
+    "file": "baseline-list-app.png",
+    "sha256": "ca2ee36d782c9889c7a360500eb6b99ecb82bb98e440e19946138182cffba328",
+    "source": ".next/mkm-revision-integration/baseline-list-app.png"
+  },
+  {
+    "file": "baseline-edit-before-app.png",
+    "sha256": "884f7df97c52b06efd3fdf7892816c39355b996f42ca28b07d96b3f1d0e94e7d",
+    "source": ".next/mkm-revision-integration/baseline-edit-before-app.png"
+  },
+  {
+    "file": "baseline-same-reference-pdf-app.png",
+    "sha256": "83393df21f6a7873c4d62d725fc2b6f2c8388120110f95b814f04279fc0232d3",
+    "source": ".next/mkm-revision-integration/baseline-same-reference-pdf-app.png"
+  },
+  {
+    "file": "family-independent-proof.json",
+    "sha256": "906f67a8bdbb2f50d186895a24b0731a48f9425ea75860e94c80ed5ac960c47c",
+    "source": ".next/mkm-revision-integration/family-independent-proof.json"
+  },
+  {
+    "file": "pdf-action-probe-result.json",
+    "sha256": "87da2cc1f82038ff592ad8a737f2be66c0065c82b72b2dd5d02c119ae4763fc1",
+    "source": ".next/mkm-revision-integration/pdf-action-probe-result.json"
+  },
+  {
+    "file": "baseline-172-tests.txt",
+    "sha256": "403fa780147206b95dcc37f094ac16110f6edf67a83920c2004fcdf03c22a54b",
+    "source": "/var/folders/kz/7v60t07j1cx_rrw_3km16pq80000gn/T/mkm-revision-baseline-qw1euxjs/baseline-tests.txt",
+    "sourceCommit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+    "scope": "172 focused baseline tests passed, not new revision integration proof"
+  }
+]

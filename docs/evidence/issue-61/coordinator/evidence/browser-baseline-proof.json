@@ -1,0 +1,23 @@
+{
+  "sourceCommit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+  "url": "http://localhost:3500",
+  "backend": "http://127.0.0.1:3510",
+  "quotationId": "m5710taw15g2hskh5xv6fq0hgn8jb82k",
+  "reference": "1448H-0001",
+  "actions": [
+    "Signed into a synthetic staff account",
+    "Opened quotation list, one row",
+    "Edited notes through native Chrome controls and clicked Save",
+    "Review reopened the same record ID and reference",
+    "Opened list as a second view, then reopened edit",
+    "Reloaded edit and observed persisted changed notes"
+  ],
+  "result": "Existing quotation overwritten; no revision record created",
+  "media": [
+    "baseline-list-app.png",
+    "baseline-edit-before-app.png",
+    "baseline-same-reference-pdf-app.png"
+  ],
+  "mediaScope": "Images are actual app captures cropped only to remove browser chrome/bookmarks. Original captures retained. Reload persistence was verified in accessibility output; a later wrong-window capture was excluded.",
+  "fixtureCleanup": "Deferred until integrated comparison; only coordinator-owned local database and account are involved."
+}

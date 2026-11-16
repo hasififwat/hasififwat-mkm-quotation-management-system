@@ -1,0 +1,21 @@
+{
+  "sourceApiSha256": "f7adb000bdc143eca93ac5cf36bdbea2bd6804ebc9f49244db6afa07f8ef9e74",
+  "recovery": {
+    "httpStatus": 200,
+    "sameOriginalId": "n5716ypqgyvw02j3bq7jff911d8jap1e",
+    "noBusinessWrites": true
+  },
+  "sourceCommit": "497059d14710d43eb18a0cc9afd489d523471de6",
+  "backendUrl": "http://127.0.0.1:13965",
+  "httpOrigin": "http://localhost:3540",
+  "expiredSignedJWT": {
+    "backendDenied": true,
+    "httpStatus": 401
+  },
+  "actorConflict": {
+    "status": 409,
+    "code": "QUOTATION_ACTOR_CONFLICT"
+  },
+  "anonymousWriteStatus": 401,
+  "scope": "Real locally signed RS256 token with expired exp and original issuer/audience/subject. No admin identity substitution. No claim about immediate JWT revocation after sign-out."
+}

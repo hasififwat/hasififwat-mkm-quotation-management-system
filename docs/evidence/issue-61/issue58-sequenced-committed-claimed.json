@@ -1,0 +1,32 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Explicit claimed write-pressure injection reaches failed with no candidate. Exactly one authenticated public retry reaches the same ready artifact with a second attempt and unchanged revisions."
+  ],
+  "claimedPressure": {
+    "failure": "Injected claimed TooManyWrites before recordUpload",
+    "artifact_id": "mh713wrdaa6fh0hc2shn1vvvsn8jbze5",
+    "failed": {
+      "kind": "failed",
+      "reason": "PDF creation failed. Retry this saved revision."
+    },
+    "attemptsBeforeRetry": [
+      {
+        "_creationTime": 1794850964732.794,
+        "_id": "mn78yhaeyqvrp8r45wh3xr853s8jbf7v",
+        "artifact_id": "mh713wrdaa6fh0hc2shn1vvvsn8jbze5",
+        "retired": true
+      }
+    ],
+    "attemptsAfterRetry": 2,
+    "readySha256": "ff1d5c0fd88d67e04a9ac791691c3f1468fb56434a19990da189e10afd297978",
+    "publicRetryCalls": 1
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "convex": "1.45.0",
+    "url": "http://127.0.0.1:13485"
+  },
+  "source": "c2312386dacefdecb49013d73fa655daa539efa8",
+  "cleanup": "Isolated process stopped and temporary database removed in finally."
+}
