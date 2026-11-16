@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "01a16c7b12230841077b90c9247c295f5708e265",
+  "lastSyncCommit": "60145a9cf3b83d1f55b0d8697e8fa945a1c8b9ef",
   "sourceWasUncommitted": false,
   "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
-  "sourceSha256": "3b7832015c9f5445ee4ea134f14477961c2dde5119cb6a4b3f12e09072f4f6c6",
+  "sourceSha256": "5ae0cbdd00134f55d2f88b92a6617dcc9835d2491f3d5e19b65695ff41c6cf08",
   "functions": [
     "create",
     "update"
@@ -24,7 +24,8 @@
     "requireFlightDates",
     "flightDateErrors",
     "isCalendarDate",
-    "requireQuotationActor"
+    "requireQuotationActor",
+    "getAuthUserId"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",
@@ -52,7 +53,7 @@
   },
   "supportingSourceSha256": {
     "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
-    "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352",
+    "scripts/helpers/load-typescript.mjs": "b12566af0edae1366357256d5d4bc92e97a5c509e3288550ec1027c7052dff25",
     "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e"
   }
 }
