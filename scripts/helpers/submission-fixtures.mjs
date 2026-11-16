@@ -11,7 +11,7 @@ export const { transformConvexPackage: transform } = load(path.join(repo, "src/f
 export const { packageSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 import assert from "node:assert/strict";
 export function state(authenticated = true) {
-  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);

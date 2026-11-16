@@ -9,6 +9,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { typescriptLoader } from "../../../../scripts/helpers/load-typescript.mjs";
 
+const { verifyRevisionIntegrity } = await import("../../../../scripts/helpers/revision-integrity.mjs");
+
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 const require = createRequire(path.join(repo, "package.json"));
 const ts = require("typescript");
@@ -253,6 +255,7 @@ const report = {
   source: "convex/quotations.ts", sourceSha256: createHash("sha256").update(source).digest("hex"),
   versions: { node: process.version, typescript: ts.version, convex: require("convex/package.json").version },
   baseline: await check(source),
+  revisionSaves: await verifyRevisionIntegrity(args.includes("--self-test")),
 };
 if (args.includes("--self-test")) {
   report.mutationTests = [];
@@ -278,7 +281,7 @@ if (args.includes("--self-test")) {
 }
 fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
 const failures = Object.fromEntries(Object.entries(report.baseline.properties).map(([name, property]) => [name, property.failures]));
-console.log(JSON.stringify({ evidence: output, cases: report.baseline.cases, failures,
+console.log(JSON.stringify({ evidence: output, revisionSaves: report.revisionSaves, cases: report.baseline.cases, failures,
   adapterErrors: report.baseline.adapterErrors.length, mutationTests: report.mutationTests?.map(({ operation, detected }) => ({ operation, detected })),
   baselineRestored: report.baselineRestored ?? null }));
 if (report.baseline.adapterErrors.length) process.exitCode = 2;
