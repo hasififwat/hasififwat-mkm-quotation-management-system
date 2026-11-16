@@ -19,13 +19,13 @@ test('partial schedule preserves missing flights by default and still imports va
   assert.equal(rows(result).filter(r=>r.status==='added').length,1);
 });
 test('explicit scope authorizes only in-range synced missing flights', () => {
-  const saved=[flight('f1'),flight('f2','p2'),flight('old','p1','2025-11-10'),{...flight('manual'),source:'manual'}];
+  const saved=[flight('f1'),flight('f2','p2'),flight('old','p1','2025-11-10'),{...flight('manual','p1','2026-11-12'),source:'manual'}];
   const initial=parse(csv(line()),saved);
   const scope=initial.removalScopes.find(s=>s.package_id==='p1');
   const result=parse(csv(line()),saved,[scope.key]);
   assert.deepEqual(Array.from(result.rows.filter(r=>r.status==='removed'),r=>r.db_flight_id),['f1']);
 });
-for(const [name,invalid] of [['unknown alias',line('UNRECOGNIZED')],['unsupported year',line('UMJ','1-Nov-2028','22-Nov-2028')],['impossible date',line('UMJ','31-Nov-2026')],['unknown section','NEW SCHEDULE SECTION'],['malformed row','a,b,c']]) {
+for(const [name,invalid] of [['unknown alias',line('UNRECOGNIZED')],['object property alias',line('constructor')],['unsupported year',line('UMJ','1-Nov-2028','22-Nov-2028')],['impossible date',line('UMJ','31-Nov-2026')],['unknown section','NEW SCHEDULE SECTION'],['malformed row','a,b,c']]) {
   test(`${name} reports diagnostics and blocks removals even with authorization`,()=>{
     const initial=parse(csv(line()));
     const result=parse(csv(line(),invalid),undefined,initial.removalScopes.map(s=>s.key));

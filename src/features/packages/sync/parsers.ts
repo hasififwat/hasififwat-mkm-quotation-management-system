@@ -1,5 +1,8 @@
 import type {
   FieldChange,
+  MffDiagnostic,
+  MffParseResult,
+  MffRemovalScope,
   FlightAddSpec,
   FlightDiffRow,
   FlightRemoveSpec,
@@ -587,8 +590,10 @@ function parseMffDate(s: string): string | null {
   if (parts.length !== 3) return null;
   const [d, m, y] = parts;
   const month = MFF_MONTH_MAP[m.slice(0, 3).toUpperCase()];
-  if (!month) return null;
-  return `${y}-${month}-${d.padStart(2, "0")}`;
+  if (!month || !/^\d{1,2}$/.test(d) || !/^\d{4}$/.test(y)) return null;
+  const iso = `${y}-${month}-${d.padStart(2, "0")}`;
+  const date = new Date(`${iso}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === iso ? iso : null;
 }
 
 export function parseMffCsv(
@@ -596,7 +601,8 @@ export function parseMffCsv(
   mappingRows: PackageMappingRow[],
   dbPackages: ExistingPackage[],
   dbFlights: DbFlight[],
-): FlightDiffRow[] {
+  authorizedScopeKeys: string[] = [],
+): MffParseResult {
   // Build season ranges from mapping rows
   const seasonRanges: Array<{ code: string; start: string; end: string }> = [];
   const seenCodes = new Set<string>();
@@ -621,7 +627,18 @@ export function parseMffCsv(
     if (!pkgLookup.has(key)) pkgLookup.set(key, p);
   }
 
-  // Mutable copy — entries are deleted as they're matched so remainder = removed
+  const diagnostics: MffDiagnostic[] = [];
+  const removalScopes: MffRemovalScope[] = [];
+  for (const p of dbPackages) {
+    const mapping = mappingRows.find(r => r.canonical_name.trim().toUpperCase() === p.name.trim().toUpperCase() && r.season_code === p.season);
+    if (!mapping?.season_start || !mapping.season_end) continue;
+    removalScopes.push({
+      key: `${p._id}|${mapping.season_start}|${mapping.season_end}`,
+      package_id: p._id, package_name: p.name, season: mapping.season_code,
+      start: mapping.season_start, end: mapping.season_end,
+    });
+  }
+
   const dbFlightMap = new Map<string, DbFlight>();
   for (const f of dbFlights) {
     dbFlightMap.set(`${f.package_id}|${f.departure_date}|${f.return_date}`, f);
@@ -630,7 +647,7 @@ export function parseMffCsv(
   // Parse MFF rows
   const lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
   type MffRow = {
-    mff_package: string; canonical_name: string | null;
+    mff_package: string; canonical_name: string; season: string;
     departure_date: string; return_date: string;
     departure_sector: string; return_sector: string;
     dep_flight: string; ret_flight: string; airline: string;
@@ -640,9 +657,19 @@ export function parseMffCsv(
   let currentCode = "";
 
   for (let i = 0; i < lines.length; i++) {
-    if (i < 10) continue;
     const row = parseCSVLine(lines[i]);
     const get = (idx: number) => (row[idx] ?? "").trim();
+    if (i < 10) {
+      if (parseMffDate(get(9)) || Object.hasOwn(MFF_NAME_MAP, get(35).toUpperCase())) {
+        diagnostics.push({ row: i + 1, code: "unsupported_format", message: "Schedule data appears before the supported MFF data section." });
+      }
+      continue;
+    }
+    if (row.every(cell => !cell.trim())) continue;
+    if (row.length < 36 || (lines[i].match(/"/g)?.length ?? 0) % 2 !== 0) {
+      diagnostics.push({ row: i + 1, code: "unrecognized_row", message: "Row does not match the supported 36-column MFF layout." });
+      continue;
+    }
 
     if (get(1)) currentCode = get(1);
     const depFlt = get(8);
@@ -651,15 +678,28 @@ export function parseMffCsv(
       if (detected) currentCode = detected;
     }
 
-    const pkg     = get(35);
+    const pkg = get(35);
+    const canonicalName = Object.hasOwn(MFF_NAME_MAP, pkg.toUpperCase()) ? MFF_NAME_MAP[pkg.toUpperCase()] : null;
     const depDate = parseMffDate(get(9));
     const retDate = parseMffDate(get(15));
-    if (!depDate || !retDate) continue;
-    if (!pkg || MFF_SKIP_PATTERNS.some(p => p.test(pkg))) continue;
+    if (!pkg || MFF_SKIP_PATTERNS.some(p => p.test(pkg)) || !canonicalName) {
+      diagnostics.push({ row: i + 1, code: "unknown_package", message: `Unrecognized or excluded package/section: ${pkg || row.filter(Boolean).join(" ")}.` });
+      continue;
+    }
+    if (!depDate || !retDate || retDate < depDate) {
+      diagnostics.push({ row: i + 1, code: "invalid_date", message: "Departure and return must be valid day-Mon-year dates in chronological order." });
+      continue;
+    }
+    const season = getSeasonCode(depDate);
+    if (!season) {
+      diagnostics.push({ row: i + 1, code: "outside_supported_season", message: `Departure ${depDate} is outside the uploaded price list's supported seasons.` });
+      continue;
+    }
 
     mffRows.push({
-      mff_package:      pkg,
-      canonical_name:   MFF_NAME_MAP[pkg.toUpperCase()] ?? MFF_NAME_MAP[pkg] ?? null,
+      mff_package: pkg,
+      canonical_name: canonicalName,
+      season,
       departure_date:   depDate,
       return_date:      retDate,
       departure_sector: get(11),
@@ -674,10 +714,12 @@ export function parseMffCsv(
 
   const results: FlightDiffRow[] = [];
 
+  if (mffRows.length === 0) {
+    diagnostics.push({ row: null, code: "unsupported_format", message: "No supported MFF schedule rows were recognized. Check the export layout, package names, dates, and price-list seasons." });
+  }
+
   for (const row of mffRows) {
-    if (!row.canonical_name) continue;
-    const season = getSeasonCode(row.departure_date);
-    if (!season) continue;
+    const season = row.season;
 
     const dbPkg = pkgLookup.get(`${row.canonical_name.trim().toUpperCase()}|${season}`);
     if (!dbPkg) {
@@ -748,10 +790,18 @@ export function parseMffCsv(
     }
   }
 
-  // Remaining DB flights not matched by MFF = removed,
-  // but ONLY if they were originally created by the sync. Manual flights are never auto-removed.
+  const authorizedScopes = diagnostics.length === 0
+    ? removalScopes.filter(scope => authorizedScopeKeys.includes(scope.key))
+    : [];
+  let preservedMissingFlights = 0;
   for (const f of dbFlightMap.values()) {
     if (f.source !== "sync") continue;
+    const authorized = authorizedScopes.some(scope => scope.package_id === f.package_id &&
+      scope.season === f.package_season && f.departure_date >= scope.start && f.departure_date <= scope.end);
+    if (!authorized) {
+      preservedMissingFlights++;
+      continue;
+    }
     results.push({
       status: "removed",
       package_name: f.package_name, season: f.package_season,
@@ -762,5 +812,5 @@ export function parseMffCsv(
     });
   }
 
-  return results;
+  return { rows: results, diagnostics, removalScopes, preservedMissingFlights };
 }
