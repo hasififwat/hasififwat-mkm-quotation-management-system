@@ -9,7 +9,7 @@ function csv({qdp = '2500', tpl = '', dbl = '', sgl = ''} = {}) {
   const header = Array(33).fill('');
   header[1] = 'FINAL'; header[2] = 'MID SEASON';
   const row = Array(33).fill('');
-  row[2] = 'MENARA JAM'; row[5] = qdp; row[6] = tpl; row[7] = dbl; row[8] = sgl; row[13] = '12 days';
+  row[2] = 'MENARA JAM'; row[5] = qdp; row[6] = tpl; row[7] = dbl; row[9] = sgl; row[13] = '12 days';
   return `${header.join(',')}\n${row.join(',')}`;
 }
 async function fixture(roomType = 'Quad') {
@@ -56,8 +56,9 @@ test('unchanged room prices plan no update', async () => {
 test('blank prices retain saved and custom rooms during another field update', async () => {
   const f = await fixture();
   await f.s.ctx.db.insert('package_rooms', {package_id: f.id, room_type: 'Family', price: 3200, enabled: true});
+  await f.s.ctx.db.insert('package_rooms', {package_id: f.id, room_type: 'Triple', price: 1500, enabled: true});
   const before = f.s.tables.package_rooms.map(({room_type, price, enabled}) => ({room_type, price, enabled}));
-  const {saved, rows} = await plan(f, {qdp: ''}); rows[0].transport = 'Train';
+  const {saved, rows} = await plan(f, {qdp: '', tpl: '1500'}); rows[0].transport = 'Train';
   const spec = parsers.buildSyncPlan(rows, [], saved).packagesToUpdate[0];
   equal(spec.rooms, before); await apply(f, spec);
   equal(f.s.tables.package_rooms.map(({room_type, price, enabled}) => ({room_type, price, enabled})), before);
@@ -81,4 +82,21 @@ test('manual promotion and unsync exclusion retain their existing policies', asy
   await f.s.ctx.db.patch(f.id, {source: 'unsync'});
   const unsync = (await plan(f)).plan;
   equal(unsync.packagesToPromote, []); equal(unsync.packagesToUpdate, []);
+});
+
+test('changed-price apply retains custom and disabled rooms and adds absent types', async () => {
+  const f = await fixture();
+  await f.s.ctx.db.insert('package_rooms', {package_id: f.id, room_type: 'Triple', price: 1500, enabled: false});
+  await f.s.ctx.db.insert('package_rooms', {package_id: f.id, room_type: 'Family', price: 1900, enabled: true});
+  const {plan: p} = await plan(f, {tpl: '9999', dbl: '3000'});
+  assert.equal(p.packagesToUpdate.length, 1);
+  const expected = [
+    {room_type: 'Quad', price: 2500, enabled: true},
+    {room_type: 'Triple', price: 1500, enabled: false},
+    {room_type: 'Family', price: 1900, enabled: true},
+    {room_type: 'DBL', price: 3000, enabled: true},
+  ];
+  equal(p.packagesToUpdate[0].rooms, expected);
+  await apply(f, p.packagesToUpdate[0]);
+  equal(f.s.tables.package_rooms.map(({room_type, price, enabled}) => ({room_type, price, enabled})), expected);
 });

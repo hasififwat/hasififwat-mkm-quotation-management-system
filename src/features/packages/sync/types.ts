@@ -89,6 +89,7 @@ export type PackageUpdateSpec = {
   current_transport: string;
   transport: string;
   current_hotels: SyncHotel[];
+  current_rooms: SyncRoom[];
   hotels: SyncHotel[];
   rooms: SyncRoom[];
   changes: FieldChange[];
