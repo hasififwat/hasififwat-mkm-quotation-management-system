@@ -1,5 +1,5 @@
 {
-  "lastSyncCommit": "1e7b27a05fc86e97df0219e2dda7253f51bf01b5",
+  "lastSyncCommit": "6a45177bb22dd28e33711636fad6e12e4f0373be",
   "sourceWasUncommitted": false,
   "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
@@ -56,6 +56,6 @@
     "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
     "convex/packages.ts": "2dd88ff1a082f9951b3e6eb22350a10475eaf266adfdc29d2bf6a786fce87511",
-    "src/features/quotation/QuotationBuilder.tsx": "bcb76361e7be86b7391206efe5ea9cb9d609163e7d8ad36c4abe836e11516ca3"
+    "src/features/quotation/QuotationBuilder.tsx": "b17a923b7c4a7a7a59155294d4bf2544725bc7a755d5ce0b287468a7c262d648"
   }
 }

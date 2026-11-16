@@ -1,0 +1,34 @@
+{
+  "repositoryTests": {
+    "passed": 348,
+    "failed": 0,
+    "skipped": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "focusedLint": "passed",
+  "contextMutation": {
+    "detected": true,
+    "baselineRestored": true
+  },
+  "integrity": {
+    "evidence": "/tmp/mkm-quote003-owner/final-integrity.json",
+    "cases": 864,
+    "failures": {
+      "authenticated_writes": 16,
+      "flight_matches_package": 0
+    },
+    "adapterErrors": 0,
+    "mutationTests": [
+      {
+        "operation": "create",
+        "detected": true
+      },
+      {
+        "operation": "update",
+        "detected": true
+      }
+    ],
+    "baselineRestored": true
+  }
+}
