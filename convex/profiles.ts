@@ -1,4 +1,4 @@
-import { assertLegacyWritesAllowed } from "./lib/quotationFamilyIdentity";
+import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
@@ -114,6 +114,7 @@ export const setProfileEmail = mutation({
 export const migrateQuotationCreators = mutation({
 	args: {},
 	handler: async (ctx) => {
+		if (!await getAuthUserId(ctx)) throw new Error("Not authenticated");
 		await assertLegacyWritesAllowed(ctx);
 		const profiles = await ctx.db.query("profiles").collect();
 		const nameToId: Record<string, string> = {};
@@ -125,6 +126,7 @@ export const migrateQuotationCreators = mutation({
 		if (norsuhaira) nameToId["Sera"] = norsuhaira._id;
 
 		const quotations = await ctx.db.query("quotations").collect();
+		quotations.forEach(assertMutableLegacyQuotation);
 		let linked = 0;
 		let skipped = 0;
 
