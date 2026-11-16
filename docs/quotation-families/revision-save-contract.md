@@ -47,3 +47,5 @@ The contract commit is `41438191bc23a1f1e3c4eb8c18cb920790994196`. The expanded 
 [Backend results](revision-backend-evidence.json), [handler results](revision-integrity-evidence.json), and [backend evidence image](revision-backend-evidence.png) record the run. Generate the image with `python3 scripts/render-revision-evidence.py`. The image displays the executable fixture's actual results. It is a report image, not a browser screenshot.
 
 The first attempt to save mutant reports directly under this documentation directory created temporary TypeScript sources that entered the repository typecheck. Those scratch files were removed, and typecheck and the full test suite passed again. Keep checker scratch output under `/tmp` when reproducing verification, then copy only the JSON report here.
+
+The updated foundation `bf01ba867f3c9dad14f932f5e87eab48e6f19b27` was merged without changing renderer files. Combined source `120893837e29a27fccfbd1a9676d9b7fd25df4ad` passed the same typecheck, all 601 tests, 1,728 handler cases, six guard mutants, and disposable transaction fixture. The attached reports and image now record that combined source.

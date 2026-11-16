@@ -1,7 +1,7 @@
 {
   "checker": "finite exhaustive execution of actual Convex handlers; in-memory database adapter",
-  "generatedAt": "2026-11-16T16:31:22.080Z",
-  "commit": "7d5d6e473a423b0004e4b566c30a334b58e706ab",
+  "generatedAt": "2026-11-16T16:32:49.094Z",
+  "commit": "120893837e29a27fccfbd1a9676d9b7fd25df4ad",
   "source": "convex/quotations.ts",
   "sourceSha256": "52700eee15babad0b6444cfcfa4033e1c355ab42553bf7998ce459e4de2c13ea",
   "versions": {
@@ -275,5 +275,5 @@
     }
   ],
   "baselineRestored": true,
-  "scratchCleanup": "Temporary mutant sources removed after verification."
+  "scratchCleanup": "Temporary mutant sources remain outside the repository under /tmp."
 }
