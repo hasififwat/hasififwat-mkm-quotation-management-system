@@ -1,9 +1,9 @@
 import { renderToBuffer } from "@react-pdf/renderer";
-import { QuotationDocument } from "./QuotationDocument";
-import { QUOTATION_RENDER_VERSION, type QuotationRenderInput } from "./render-input";
+import { QuotationDocument } from "./versions/QuotationDocumentV1";
+import { type QuotationRenderInput } from "./render-input";
 
 export async function renderQuotationPdf(input: QuotationRenderInput): Promise<Buffer> {
-	if (input.renderVersion !== QUOTATION_RENDER_VERSION) {
+	if (input.renderVersion !== "mkm-quotation-v1") {
 		throw new Error(`Unsupported quotation renderer ${input.renderVersion}`);
 	}
 	if (input.datePolicy !== "Asia/Kuala_Lumpur") {

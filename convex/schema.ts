@@ -1,3 +1,4 @@
+import { pdfState, pdfMetadata } from "./lib/quotationPdfModel";
 import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
@@ -257,6 +258,18 @@ export default defineSchema({
     created_at: v.string(),
     snapshot_data: v.optional(v.string()),
   }).index("by_quotation_id", ["quotation_id"]),
+
+  quotation_pdf_artifacts: defineTable({
+    revision_id: v.id("quotations"), input_json: v.string(), input_sha256: v.string(), filename: v.string(),
+    renderer_version: v.string(), asset_version: v.string(), terms_version: v.string(),
+    provenance: v.union(v.literal("issued_original"), v.literal("legacy_reconstruction")),
+    state: pdfState,
+  }).index("by_revision", ["revision_id"]),
+  quotation_pdf_attempts: defineTable({
+    artifact_id: v.id("quotation_pdf_artifacts"),
+    candidate: v.optional(v.object(pdfMetadata)),
+    retired: v.boolean(),
+  }).index("by_artifact", ["artifact_id"]),
 
   room_templates: defineTable({
     name: v.string(),

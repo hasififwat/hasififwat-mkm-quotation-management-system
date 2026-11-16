@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as quotationPdfArtifacts from "../quotationPdfArtifacts.js";
+import type * as quotationPdfWorker from "../quotationPdfWorker.js";
 import type * as auth from "../auth.js";
 import type * as clients from "../clients.js";
 import type * as constants from "../constants.js";
@@ -27,6 +29,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  quotationPdfArtifacts: typeof quotationPdfArtifacts;
+  quotationPdfWorker: typeof quotationPdfWorker;
   auth: typeof auth;
   clients: typeof clients;
   constants: typeof constants;

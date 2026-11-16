@@ -7,7 +7,7 @@ type DeepReadonly<T> = {
 	readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];
 };
 
-type DisplayDetails = Pick<QuotationFullDetails,
+export type DisplayDetails = Pick<QuotationFullDetails,
 	"reference_number" | "client_name" | "pic_name" | "branch" | "total_amount" | "items"
 > & {
 	package: Pick<QuotationFullDetails["package"],
@@ -43,8 +43,10 @@ function freeze<T extends object>(value: T): T {
 	return Object.freeze(value);
 }
 
+type DatedDisplayDetails = DisplayDetails & { created_at: string; selected_flight: (NonNullable<DisplayDetails["selected_flight"]> & { departure_date?: string; return_date?: string }) | null };
+
 export function createQuotationRenderInput(
-	details: QuotationFullDetails,
+	details: DatedDisplayDetails,
 	context: RenderContext,
 ): QuotationRenderInput {
 	const pkg = details.package;
@@ -72,7 +74,7 @@ export function createQuotationRenderInput(
 }
 
 export function freezeQuotationForServer(
-	details: QuotationFullDetails,
+	details: DatedDisplayDetails,
 	context: Pick<RenderContext, "assets" | "terms" | "termsVersion" | "title">,
 ): QuotationRenderInput {
 	const date = (value: string) => {
