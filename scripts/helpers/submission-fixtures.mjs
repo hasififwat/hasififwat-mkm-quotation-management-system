@@ -11,7 +11,7 @@ export const { transformConvexPackage: transform } = load(path.join(repo, "src/f
 export const { packageSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 import assert from "node:assert/strict";
 export function state(authenticated = true) {
-  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_pdf_artifacts: [], quotation_pdf_attempts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
@@ -60,7 +60,7 @@ export function state(authenticated = true) {
     async patch(id, patch) { const row = locate(id); assert.ok(row, `Missing patch ${id}`); for (const [key,value] of Object.entries(patch)) { if (value === undefined) delete row[key]; else row[key] = structuredClone(value); } operations.push(['patch',id]); },
     async delete(id) { const rows = Object.values(tables).find(rows => rows.some(row => row._id === id)); assert.ok(rows, `Missing delete ${id}`); rows.splice(rows.findIndex(row => row._id === id),1); operations.push(['delete',id]); },
   };
-  const ctx = { db, auth: { async getUserIdentity() { return authenticated ? {subject:'fixture-staff'} : null; } } };
+  const ctx = {scheduler: {runAfter: async (...args) => {operations.push(['schedule', ...args]);return 'schedule:1';}}, db, auth: { async getUserIdentity() { return authenticated ? {subject:'fixture-staff'} : null; } } };
   return {ctx,tables,operations};
 }
 export function form(year='2026/2027') {
