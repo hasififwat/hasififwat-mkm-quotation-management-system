@@ -1,0 +1,13 @@
+{
+  "instance": "ticket4",
+  "cloudUrl": "http://127.0.0.1:3250",
+  "siteUrl": "http://127.0.0.1:3251",
+  "webUrl": "http://127.0.0.1:3150",
+  "backendPid": null,
+  "webPid": null,
+  "credentialsFile": "/tmp/mkm-quote003-repair/instances/ticket4/credentials.json",
+  "browserEnvFile": "/tmp/mkm-quote003-repair/instances/ticket4/browser.env",
+  "stateFile": "/tmp/mkm-quote003-repair/instances/ticket4/instance.json",
+  "stopped": true,
+  "dataRetained": true
+}

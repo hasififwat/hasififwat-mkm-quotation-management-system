@@ -1,0 +1,7 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T03:22:00Z	reproduce	Intercept only quotation create with HTTP409 and click real Save	Prove the missing feedback in the authenticated builder before editing	before.mp4	One call, no backend write, no visible error
+2026-11-16T03:23:00Z	design	Use a save result with either an ID or a recovery message	Model the Domain keeps failed outcomes from navigating to a saved record	src/features/quotation/save-quotation.ts	implemented
+2026-11-16T03:23:00Z	design	Keep one alert and no retry or autosave	Laziness Protocol keeps this bounded to failed save recovery	8e70113abda56748179becca47874fa23887dfc7	implemented
+2026-11-16T03:24:00Z	verify	Use ticket4.localhost with the assigned local backend	Host-scoped cookies must not collide across verification ports	proof.json	verified
+2026-11-16T03:25:00Z	verify	Reopen the returned ID and reload its editor	Prove It Works requires stored values beyond a save response	after.mp4	Description and RM10 retained
+2026-11-16T03:27:00Z	cleanup	Delete only the quotation created for this run	Keep seeded infrastructure fixtures available to the parent	cleanup.json	Zero quotations after deletion

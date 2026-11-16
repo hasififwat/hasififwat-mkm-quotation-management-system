@@ -1,0 +1,40 @@
+{
+  "baseline": {
+    "sha": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+    "url": "http://127.0.0.1:3452/quotations/create",
+    "calls": 1,
+    "visibleAlerts": 0,
+    "saveEnabled": true,
+    "controlledFailure": "HTTP409, no backend write"
+  },
+  "head": "8e70113abda56748179becca47874fa23887dfc7",
+  "preview": "http://ticket4.localhost:3150/quotations/create",
+  "network": {
+    "alert": [
+      "We could not confirm whether your quotation was saved. Your entries are kept on this page. Check Quotations for the saved record before saving again to avoid a duplicate.Check Quotations in a new tab"
+    ],
+    "calls": 1,
+    "price": "10"
+  },
+  "success": {
+    "calls": 1,
+    "id": "m172sqv58pcby1nm42zzbqk3198jajf9",
+    "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nQ\nQUOTE-003 Test Agent\n\nticket4@quote003.invalid\n\nSign Out\nToggle Sidebar\nDownload PDF",
+    "url": "http://ticket4.localhost:3150/quotations/review/m172sqv58pcby1nm42zzbqk3198jajf9"
+  },
+  "reload": {
+    "description": "Recovery proof add-on",
+    "price": "10",
+    "url": "http://ticket4.localhost:3150/quotations/edit/m172sqv58pcby1nm42zzbqk3198jajf9"
+  },
+  "checks": {
+    "behaviorTests": "138 passed, including 11 new save outcome tests",
+    "typecheck": "next typegen then tsc --noEmit passed",
+    "lint": "three changed application files passed"
+  },
+  "principles": {
+    "Model the Domain": "SaveResult separates confirmed record identity from recoverable failures.",
+    "Laziness Protocol": "One alert and one request helper; no autosave or retries.",
+    "Prove It Works": "Real UI Save followed by record review, editor reopen and reload."
+  }
+}

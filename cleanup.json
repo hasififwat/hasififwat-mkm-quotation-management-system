@@ -1,0 +1,11 @@
+{
+  "before": 1,
+  "after": 0,
+  "result": {
+    "deletedItemsCount": 2,
+    "deletedLogsCount": 1,
+    "deletedQuotationId": "m172sqv58pcby1nm42zzbqk3198jajf9",
+    "success": true
+  },
+  "seedFixtures": "Preserved infrastructure client, package, flight, rooms, and agent for parent ownership."
+}
