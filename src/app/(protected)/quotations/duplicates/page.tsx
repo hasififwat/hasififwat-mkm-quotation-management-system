@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
+import { useConvex, useConvexAuth } from "convex/react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ type Duplicate = {
 };
 
 export default function DuplicatesPage() {
+	const http = useConvex();
+	const { isAuthenticated } = useConvexAuth();
 	const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -37,13 +39,11 @@ export default function DuplicatesPage() {
 	} | null>(null);
 
 	useEffect(() => {
+		if (!isAuthenticated) return;
 		let cancelled = false;
 		const load = async () => {
 			setIsLoading(true);
 			try {
-				const http = new ConvexHttpClient(
-					process.env.NEXT_PUBLIC_CONVEX_URL ?? "",
-				);
 				const result = await http.query(api.quotations.findDuplicates, {});
 				if (!cancelled) setDuplicates(result as Duplicate[]);
 			} finally {
@@ -54,16 +54,13 @@ export default function DuplicatesPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, []);
+	}, [http, isAuthenticated]);
 
 	const handleDelete = async (quotationId: string) => {
 		try {
 			setConfirmId(null);
 			setIsDeleting(quotationId);
-			const client = new ConvexHttpClient(
-				process.env.NEXT_PUBLIC_CONVEX_URL ?? "",
-			);
-			await client.mutation(api.quotations.deleteById, {
+			await http.mutation(api.quotations.deleteById, {
 				quotationId,
 			});
 			setDeleteResult({

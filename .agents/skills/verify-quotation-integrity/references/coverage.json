@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "6a45177bb22dd28e33711636fad6e12e4f0373be",
+  "lastSyncCommit": "9215b8319f9f51e689e3509d3eab2bdff2a9e226",
   "sourceWasUncommitted": false,
   "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
-  "sourceSha256": "e03667d2eac206e364886f8cd89f63e7e1b317e3b6a73f739cfbd8416578efce",
+  "sourceSha256": "646ae1739c1da7c2783f3f1ed78c03d82a9509e20e85ef239189b6a38e1e5e24",
   "functions": [
     "create",
     "update"
@@ -24,6 +24,8 @@
     "requireFlightDates",
     "flightDateErrors",
     "isCalendarDate",
+    "requireQuotationActor",
+    "getAuthUserId",
     "quotationSelectionContext"
   ],
   "supportingFilesToReviewOnChange": [
@@ -36,6 +38,9 @@
     "src/domain/umrah-years.ts",
     "scripts/helpers/load-typescript.mjs",
     "src/domain/submission-validation.ts",
+    "src/proxy.ts",
+    "src/app/(protected)/quotations/page.tsx",
+    "src/app/(protected)/quotations/duplicates/page.tsx",
     "src/domain/quotation-selection-context.ts",
     "convex/packages.ts",
     "src/features/quotation/QuotationBuilder.tsx"
@@ -47,15 +52,15 @@
   },
   "finiteCases": 864,
   "properties": {
-    "authenticated_writes": "fails: 16 bounded counterexamples; no identity check in either handler",
+    "authenticated_writes": "passes; removing either session guard is detected",
     "flight_matches_package": "passes; removing either real guard is detected"
   },
   "supportingSourceSha256": {
     "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
-    "scripts/helpers/load-typescript.mjs": "c49a4d315a46eba794f9f78a0dbc1332230e05d51edd9c7d4f8d7cb7aeb53352",
+    "scripts/helpers/load-typescript.mjs": "b12566af0edae1366357256d5d4bc92e97a5c509e3288550ec1027c7052dff25",
     "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
     "convex/packages.ts": "2dd88ff1a082f9951b3e6eb22350a10475eaf266adfdc29d2bf6a786fce87511",
-    "src/features/quotation/QuotationBuilder.tsx": "b17a923b7c4a7a7a59155294d4bf2544725bc7a755d5ce0b287468a7c262d648"
+    "src/features/quotation/QuotationBuilder.tsx": "a8278ddff769f6b4aa7a58029c441b1b23748f3d43ea1a9048135c76d51551e6"
   }
 }

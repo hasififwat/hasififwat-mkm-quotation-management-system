@@ -44,7 +44,7 @@ tool performs **bounded exhaustive execution**, not an unbounded mathematical
 proof. It transpiles `convex/quotations.ts`, obtains the actual registered
 `create._handler` and `update._handler`, and executes each against an in-memory
 adapter for exactly the database operations those paths currently use.
-Shared TypeScript dependencies resolve through `scripts/helpers/load-typescript.mjs`. The checker
+The real auth SDK loads through its ESM export. Shared TypeScript dependencies resolve through `scripts/helpers/load-typescript.mjs`. The checker
 compiles each original or mutant quotation source separately, so dependency
 loading does not replace the source under test.
 
@@ -87,12 +87,12 @@ package, flight, client, room, quantity, price, returned result, and attempted
 writes. For a thrown call, unexpected errors on a valid authenticated fixture
 are reported as adapter errors rather than counted as a safe rejection.
 
-At generation, `flight_matches_package` passed all cases.
-`authenticated_writes` failed in **16 cases**, eight for each operation. Example:
-an absent identity submits client `c1`, package `p1`, flight `f1`, and room `quad`;
-`create` successfully inserts a quotation, its line item, and its audit log.
-The current `update` path likewise patches the quotation and writes its items/log.
-These are findings about the current code, not a reason to weaken the property.
+The repaired baseline passes both properties. The pre-fix run at
+`b95671a373f7ca65c7ff571d66ce4648986c7b5b` had 16 anonymous-write
+counterexamples, eight per operation, with zero adapter errors. The current
+handlers require a session before database access and derive the audit actor
+with the auth SDK user ID helper. This establishes local handler behavior, not live endpoint
+reachability.
 
 Report issues using the repository's required issue table. Distinguish local
 handler reproduction from a live deployment test. Do not edit product code as
@@ -104,19 +104,16 @@ part of maintaining this verification unless the user requests that fix.
 node .agents/skills/verify-quotation-integrity/scripts/check.mjs --self-test
 ```
 
-This writes scratch copies of the **actual source**, removing the
-`selectedFlight.package_id` guard from `create` and then `update` separately.
-It executes all 864 cases against each scratch variant and requires new
-`flight_matches_package` failures. It then reruns the untouched original source
-and requires an identical baseline. Scratch source and counterexamples remain
-beside the evidence JSON. Product files are never patched by this self-test.
+This writes scratch copies of the actual source, removing each operation's
+flight association guard and session guard separately. Every mutant must
+produce new failures for its corresponding property. It reruns the untouched
+source and requires the baseline to be identical. Scratch source and
+counterexamples remain beside the evidence JSON. Product files are never
+patched by this self-test.
 
-The current run still exits `1` because the original authentication finding
-remains. Inspect `mutationTests[*].detected: true` and `baselineRestored: true`;
-do not interpret that exit as a failed mutation test or silently suppress it.
-The authentication property already has real counterexamples in the current
-code; after adding a guard in a separately authorized fix, add a scratch mutant
-that removes that guard and confirm that the authentication check fails again.
+The repaired baseline exits `0`. Inspect all four `mutationTests` entries for
+`detected: true` and require `baselineRestored: true`. An adapter error or a
+missing authenticated success witness invalidates the check.
 
 ## Coverage and synchronization
 

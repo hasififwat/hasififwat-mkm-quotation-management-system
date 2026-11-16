@@ -1,3 +1,4 @@
+import * as authServer from "@convex-dev/auth/server";
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
@@ -17,6 +18,7 @@ export function typescriptLoader(repo) {
     vm.runInNewContext(compiled.outputText, {
       exports,
       require(id) {
+        if (id === "@convex-dev/auth/server") return authServer;
         if (id.startsWith(".")) {
           const resolved = path.resolve(path.dirname(filename), id);
           if (fs.existsSync(`${resolved}.ts`)) return load(`${resolved}.ts`);

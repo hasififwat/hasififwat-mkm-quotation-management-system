@@ -1,10 +1,17 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+
+async function requireQuotationActor(ctx: Pick<QueryCtx, "auth">): Promise<string> {
+	const userId = await getAuthUserId(ctx);
+	if (!userId) throw new Error("Not authenticated");
+	return userId;
+}
 
 function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: number) {
 	const paddedSequence = String(sequenceNum).padStart(4, "0");
@@ -212,6 +219,7 @@ function computeStaleFields(
 export const list = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireQuotationActor(ctx);
 		const [quotations, packages, packageFlights, packageRooms] = await Promise.all([
 			ctx.db.query("quotations").collect(),
 			ctx.db.query("packages").collect(),
@@ -302,6 +310,7 @@ export const count = query({
 		searchTerm: v.optional(v.string()),
 	},
 	handler: async (ctx, { searchTerm }) => {
+		await requireQuotationActor(ctx);
 		const normalizedSearch = searchTerm?.trim().toLowerCase() ?? "";
 		const [allQuotations, allPackages] = await Promise.all([
 			ctx.db.query("quotations").collect(),
@@ -333,6 +342,7 @@ export const count = query({
 export const findDuplicates = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireQuotationActor(ctx);
 		const allQuotations = await ctx.db.query("quotations").collect();
 
 		// Group by (client_name, package_id, flight_id, total_amount)
@@ -377,6 +387,7 @@ export const listPaginated = query({
 		sortDir: v.optional(v.union(v.literal("asc"), v.literal("desc"))),
 	},
 	handler: async (ctx, { paginationOpts, sortBy, sortDir }) => {
+		await requireQuotationActor(ctx);
 		const order = sortDir ?? "desc";
 		const result =
 			(sortBy ?? "updated_at") === "created_at"
@@ -521,6 +532,7 @@ export const create = mutation({
 		}),
 	},
 	handler: async (ctx, args) => {
+		const actor = await requireQuotationActor(ctx);
 		validateQuotationPrices(args.payload);
 		const now = new Date().toISOString();
 
@@ -672,7 +684,7 @@ export const create = mutation({
 			notes: args.payload.notes ?? "",
 			created_at: now,
 			updated_at: now,
-			created_by: args.payload.created_by ?? args.payload.pic_name,
+			created_by: actor,
 			pic_name: args.payload.pic_name,
 			branch: args.payload.branch,
 			flight_id: args.payload.flight_id,
@@ -726,7 +738,7 @@ export const create = mutation({
 			quotation_id: String(quotationId),
 			action: "created",
 			description: `Quotation ${quotationNumber} created`,
-			performed_by: args.payload.created_by ?? args.payload.pic_name,
+			performed_by: actor,
 			created_at: now,
 			snapshot_data: JSON.stringify({
 				status: args.payload.status ?? "draft",
@@ -751,6 +763,7 @@ export const getQuotationForEdit = query({
 		target_quotation_id: v.string(),
 	},
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		const quotation = await findQuotationByStringId(ctx, args.target_quotation_id);
 		if (!quotation) {
 			return null;
@@ -851,6 +864,7 @@ export const getQuotationFullDetails = query({
 		target_quotation_id: v.string(),
 	},
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		const quotation = await findQuotationByStringId(ctx, args.target_quotation_id);
 		if (!quotation) {
 			return null;
@@ -1107,6 +1121,7 @@ export const update = mutation({
 		}),
 	},
 	handler: async (ctx, args) => {
+		const actor = await requireQuotationActor(ctx);
 		validateQuotationPrices(args.payload);
 		const quotation = await findQuotationByStringId(ctx, args.payload.id);
 		if (!quotation) {
@@ -1247,7 +1262,6 @@ export const update = mutation({
 			total_amount: totalAmount,
 			notes: args.payload.notes ?? "",
 			updated_at: now,
-			created_by: args.payload.created_by ?? args.payload.pic_name,
 			pic_name: args.payload.pic_name,
 			branch: args.payload.branch,
 			flight_id: args.payload.flight_id,
@@ -1315,7 +1329,7 @@ export const update = mutation({
 			quotation_id: String(quotation._id),
 			action: "updated",
 			description: `Quotation ${quotationNumber} updated`,
-			performed_by: args.payload.created_by ?? args.payload.pic_name,
+			performed_by: actor,
 			created_at: now,
 			snapshot_data: JSON.stringify({
 				status: args.payload.status ?? quotation.status,
@@ -1335,6 +1349,7 @@ export const update = mutation({
 export const refreshSnapshot = mutation({
 	args: { quotation_id: v.string() },
 	handler: async (ctx, args) => {
+		const actor = await requireQuotationActor(ctx);
 		const quotation = await findQuotationByStringId(ctx, args.quotation_id);
 		if (!quotation) throw new Error("Quotation not found");
 
@@ -1395,7 +1410,7 @@ export const refreshSnapshot = mutation({
 			quotation_id: String(quotation._id),
 			action: "snapshot_refreshed",
 			description: `Snapshot for ${quotationNumber} refreshed to package version ${selectedPackage.updated_at}`,
-			performed_by: "system",
+			performed_by: actor,
 			created_at: now,
 			snapshot_data: JSON.stringify({ package_updated_at: selectedPackage.updated_at }),
 		});
@@ -1409,6 +1424,7 @@ export const resequenceByCreatedAt = mutation({
 		dryRun: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		const dryRun = args.dryRun ?? false;
 		const quotations = await ctx.db.query("quotations").collect();
 
@@ -1490,6 +1506,7 @@ export const deleteById = mutation({
 		quotationId: v.string(),
 	},
 	handler: async (ctx, { quotationId }) => {
+		await requireQuotationActor(ctx);
 		// Find the quotation
 		const quotation = await findQuotationByStringId(ctx, quotationId);
 		if (!quotation) {
@@ -1545,6 +1562,7 @@ export const repairStaleFlightIds = mutation({
 		dryRun: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		const dryRun = args.dryRun ?? false;
 
 		const [quotations, flights] = await Promise.all([
@@ -1619,6 +1637,7 @@ export const repairStaleFlightIds = mutation({
 export const archiveQuotation = mutation({
 	args: { id: v.id("quotations") },
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		const quotation = await ctx.db.get(args.id);
 		if (!quotation) throw new Error("Quotation not found");
 		await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
@@ -1629,6 +1648,7 @@ export const archiveQuotation = mutation({
 export const getItemsByQuotationId = query({
 	args: { id: v.string() },
 	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
 		return await ctx.db
 			.query("quotation_items")
 			.withIndex("by_quotation_id", (q) => q.eq("quotation_id", args.id))

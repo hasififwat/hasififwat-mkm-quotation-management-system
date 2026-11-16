@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import * as authServer from "@convex-dev/auth/server";
 import fs from "node:fs";
 import Module, { createRequire } from "node:module";
 import path from "node:path";
@@ -28,6 +29,7 @@ function createHandler(text) {
   mod.paths = Module._nodeModulePaths(path.dirname(sourcePath));
   const nodeRequire = mod.require.bind(mod);
   mod.require = id => {
+    if (id === "@convex-dev/auth/server") return authServer;
     const filename = path.resolve(path.dirname(sourcePath), `${id}.ts`);
     return id.startsWith(".") && fs.existsSync(filename) ? load(filename) : nodeRequire(id);
   };
