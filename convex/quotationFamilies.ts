@@ -19,7 +19,8 @@ export const archive = mutation({
     const actor = await getAuthUserId(ctx);
     if (!actor) throw new Error("Not authenticated");
     const release = await ctx.db.query("quotation_revision_release").withIndex("by_key", q => q.eq("key", "revision-v1")).unique();
-    if (!release?.enabled) throw new Error("Quotation revisions are not enabled");
+    const migration = await ctx.db.query("quotation_family_migrations").withIndex("by_key", q => q.eq("key", "family-v1")).unique();
+    if (!release?.enabled || !migration?.done) throw new Error("Quotation revision release is inactive");
     const family = await ctx.db.get(family_id);
     if (!family) throw new Error("Quotation family not found");
     if (family.archived) return {family_id, archived: true};

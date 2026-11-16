@@ -20,14 +20,15 @@ function fixture(authenticated = true) {
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
   const db = {
+    async get(id) { return structuredClone(locate(id) ?? null); },
     query(table) {
       assert.ok(table in tables, `Unknown table ${table}`);
       operations.push(['query',table]);
       const predicates = [];
       const q = {
         withIndex(name, callback) {
-          assert.ok(['by_client_id','by_key','by_alias_client_id'].includes(name));
-          const index = {eq(field,value) { assert.equal(field,name === 'by_key' ? 'key' : name === 'by_alias_client_id' ? 'alias_client_id' : 'client_id'); predicates.push([field,value]); return index; }};
+          assert.ok(['by_client_id','by_key','by_alias_client_id','by_archived','by_family_revision'].includes(name));
+          const index = {eq(field,value) { assert.equal(field,name === 'by_key' ? 'key' : name === 'by_alias_client_id' ? 'alias_client_id' : name === 'by_archived' ? 'archived' : name === 'by_family_revision' ? 'family_id' : 'client_id'); predicates.push([field,value]); return index; }};
           callback(index);
           return q;
         },

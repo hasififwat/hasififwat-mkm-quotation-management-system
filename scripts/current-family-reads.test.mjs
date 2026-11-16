@@ -203,3 +203,32 @@ test('family visibility owns archive state and invalid current pointers never pr
   assert.equal((await page(s)).page.length, 0);
   assert.equal(await quotations.count._handler(s.ctx, {}), 0);
 });
+
+ test('archive rejects absent or incomplete migration despite enabled release without any writes', async () => {
+  for (const migrationState of ['missing', 'incomplete']) {
+    const {s,current} = await fixture(1);
+    if (migrationState === 'missing') s.tables.quotation_family_migrations.length = 0;
+    else s.tables.quotation_family_migrations[0].done = false;
+    const before = plain(s.tables);
+    await assert.rejects(() => families().archive._handler(s.ctx,{family_id:current[0].family_id}), /inactive/i);
+    assert.deepEqual(plain(s.tables),before);
+  }
+});
+
+test('current reader loads indexed legacy rows and exact pointers without collecting history', async () => {
+  const {s,current} = await fixture(2);
+  const query = s.ctx.db.query.bind(s.ctx.db);
+  const selections = [];
+  s.ctx.db.query = table => {
+    const builder = query(table);
+    if (table !== 'quotations') return builder;
+    const index = builder.withIndex.bind(builder);
+    const collect = builder.collect.bind(builder);
+    let indexed = false;
+    builder.withIndex = (name, callback) => { selections.push(name); indexed = true; return index(name,callback); };
+    builder.collect = () => { assert.equal(indexed,true,'current reads must not collect revision history'); return collect(); };
+    return builder;
+  };
+  assert.equal((await page(s)).page.length,current.length);
+  assert.deepEqual(selections,['by_family_revision']);
+});

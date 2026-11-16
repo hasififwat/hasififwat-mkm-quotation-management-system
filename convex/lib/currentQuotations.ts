@@ -2,16 +2,18 @@ import type { Doc } from "../_generated/dataModel";
 import type { QueryCtx } from "../_generated/server";
 
 export async function readCurrentQuotations(ctx: Pick<QueryCtx, "db">, archived = false): Promise<Doc<"quotations">[]> {
-  const [revisions, families] = await Promise.all([
-    ctx.db.query("quotations").collect(),
-    ctx.db.query("quotation_families").collect(),
+  const [families, legacy] = await Promise.all([
+    ctx.db.query("quotation_families").withIndex("by_archived", q => q.eq("archived", archived)).collect(),
+    ctx.db.query("quotations").withIndex("by_family_revision", q => q.eq("family_id", undefined)).collect(),
   ]);
-  const byId = new Map(families.map(family => [family._id, family]));
-  return revisions.filter(revision => {
-    if (!revision.family_id) return Boolean(revision.archived) === archived;
-    const family = byId.get(revision.family_id);
-    return family !== undefined && family.archived === archived && family.current_revision_id === revision._id;
-  });
+  const current = await Promise.all(families.map(async family => {
+    const revision = await ctx.db.get(family.current_revision_id);
+    return revision?.family_id === family._id ? revision : null;
+  }));
+  return [
+    ...current.filter((revision): revision is Doc<"quotations"> => revision !== null),
+    ...legacy.filter(revision => Boolean(revision.archived) === archived),
+  ];
 }
 
 export function quotationReference(quotation: Doc<"quotations">) {
