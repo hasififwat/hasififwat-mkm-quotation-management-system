@@ -77,6 +77,9 @@ export function CreateClientForm({
 	return (
 		<form
 			onSubmit={handleSubmit}
+			onKeyDown={(event) => {
+				if (event.key === "Enter") event.stopPropagation();
+			}}
 			onChange={() => setExistingClient(null)}
 			className="space-y-4"
 		>

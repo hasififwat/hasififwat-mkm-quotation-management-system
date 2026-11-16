@@ -104,3 +104,14 @@ test("duplicate reuse forwards the existing name rather than the candidate name"
   reuseButton.props.onClick();
   assert.deepEqual(results, [existing]);
 });
+
+test("Enter stays inside the client form without cancelling native submission", () => {
+  const { render } = formHarness({});
+  const events = [];
+  render().props.onKeyDown({
+    key: "Enter",
+    stopPropagation: () => events.push("contained"),
+    preventDefault: () => events.push("cancelled"),
+  });
+  assert.deepEqual(events, ["contained"]);
+});
