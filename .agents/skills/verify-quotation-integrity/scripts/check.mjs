@@ -215,6 +215,15 @@ function removeFlightGuard(source, operation) {
   throw new Error(`Cannot find the actual ${operation} mutation`);
 }
 
+function removeAuthGuard(source, operation) {
+  const start = source.indexOf(`export const ${operation} = mutation(`);
+  assert.ok(start >= 0);
+  const guard = "const actor = await requireQuotationActor(ctx);";
+  const at = source.indexOf(guard, start);
+  assert.ok(at >= 0 && at < source.indexOf("\nexport const ", start + 1));
+  return source.slice(0, at) + 'const actor = "anonymous-mutant";' + source.slice(at + guard.length);
+}
+
 fs.mkdirSync(path.dirname(output), { recursive: true });
 const source = fs.readFileSync(sourcePath, "utf8");
 const report = {
@@ -234,6 +243,14 @@ if (args.includes("--self-test")) {
     const detected = mutant.properties.flight_matches_package.failures > report.baseline.properties.flight_matches_package.failures;
     report.mutationTests.push({ operation, scratch, detected, result: mutant });
     assert.ok(detected, `Checker missed the broken ${operation} flight association guard`);
+  }
+  for (const operation of ["create", "update"]) {
+    const scratch = path.join(path.dirname(output), `${operation}-without-auth-guard.ts`);
+    fs.writeFileSync(scratch, removeAuthGuard(source, operation));
+    const mutant = await check(fs.readFileSync(scratch, "utf8"));
+    const detected = mutant.properties.authenticated_writes.failures > report.baseline.properties.authenticated_writes.failures;
+    report.mutationTests.push({ operation, property: "authenticated_writes", scratch, detected, result: mutant });
+    assert.ok(detected, `Checker missed the broken ${operation} authentication guard`);
   }
   const restored = await check(fs.readFileSync(sourcePath, "utf8"));
   assert.deepEqual(restored, report.baseline, "Baseline changed after scratch mutation tests");

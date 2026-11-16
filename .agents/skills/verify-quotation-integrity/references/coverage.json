@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "47a6f3c2ccf41abe11885544aff53d50089b6d47",
+  "lastSyncCommit": "01a16c7b12230841077b90c9247c295f5708e265",
   "sourceWasUncommitted": false,
-  "checkedAt": "2026-11-11",
+  "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
-  "sourceSha256": "019af509f675c7021533d084f568e0317f0b1351a400454169f97f9887b65863",
+  "sourceSha256": "3b7832015c9f5445ee4ea134f14477961c2dde5119cb6a4b3f12e09072f4f6c6",
   "functions": [
     "create",
     "update"
@@ -23,7 +23,8 @@
     "priceError",
     "requireFlightDates",
     "flightDateErrors",
-    "isCalendarDate"
+    "isCalendarDate",
+    "requireQuotationActor"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",
@@ -34,16 +35,19 @@
     "src/app/(protected)/layout.tsx",
     "src/domain/umrah-years.ts",
     "scripts/helpers/load-typescript.mjs",
-    "src/domain/submission-validation.ts"
+    "src/domain/submission-validation.ts",
+    "src/proxy.ts",
+    "src/app/(protected)/quotations/page.tsx",
+    "src/app/(protected)/quotations/duplicates/page.tsx"
   ],
   "versions": {
-    "node": "26.11.1",
+    "node": "24.19.0",
     "typescript": "5.9.3",
     "convex": "1.45.0"
   },
   "finiteCases": 864,
   "properties": {
-    "authenticated_writes": "fails: 16 bounded counterexamples; no identity check in either handler",
+    "authenticated_writes": "passes; removing either session guard is detected",
     "flight_matches_package": "passes; removing either real guard is detected"
   },
   "supportingSourceSha256": {
