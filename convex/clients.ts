@@ -1,4 +1,6 @@
-import { assertLegacyWritesAllowed } from "./lib/quotationFamilyIdentity";
+import { associateClients } from "./lib/clientCanonical";
+import type { Id } from "./_generated/dataModel";
+import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
@@ -65,12 +67,13 @@ export const listWithStats = query({
 					total_spend,
 					last_quotation_at: sorted[0]?.created_at ?? null,
 					quotations: sorted.map((q) => {
-						const pkg = packagesById.get(q.package_id);
+						const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
 						return {
 							id: String(q._id),
 							quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
 							status: q.status,
 							total_amount: q.total_amount,
+							package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
 							package_name: pkg?.name ?? "Unknown Package",
 							package_year: pkg?.year ?? null,
 							pic_name: q.pic_name,
@@ -126,12 +129,13 @@ export const listWithStatsPaginated = query({
 					quotation_count: qs.length,
 					last_quotation_at: sorted[0]?.created_at ?? null,
 					quotations: sorted.map((q) => {
-						const pkg = packagesById.get(q.package_id);
+						const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
 						return {
 							id: String(q._id),
 							quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
 							status: q.status,
 							total_amount: q.total_amount,
+							package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
 							package_name: pkg?.name ?? "Unknown Package",
 							package_year: pkg?.year ?? null,
 							pic_name: q.pic_name,
@@ -171,13 +175,14 @@ export const getWithQuotations = query({
 			quotations: quotations
 				.sort((a, b) => b.created_at.localeCompare(a.created_at))
 				.map((q) => {
-					const pkg = packagesById.get(q.package_id);
+					const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
 					return {
 						id: String(q._id),
 						quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
 						status: q.status,
 						total_amount: q.total_amount,
-						package_name: pkg?.name ?? "Unknown Package",
+						package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
+							package_name: pkg?.name ?? "Unknown Package",
 						package_year: pkg?.year ?? null,
 						pic_name: q.pic_name,
 						branch: q.branch,
@@ -292,7 +297,16 @@ export const mergeClients = mutation({
 		duplicateIds: v.array(v.string()),
 	},
 	handler: async (ctx, args) => {
-		await requireClientActor(ctx);
+		const actor = await requireClientActor(ctx);
+		const migration = await ctx.db.query("quotation_family_migrations").withIndex("by_key", q => q.eq("key", "family-v1")).unique();
+		const savedQuotations = await ctx.db.query("quotations").collect();
+		if (migration && !migration.done) await assertLegacyWritesAllowed(ctx);
+		if (migration || savedQuotations.some(q => q.family_id || q.frozen_document)) {
+		  const canonical = ctx.db.normalizeId("clients", args.canonicalId);
+		  const duplicates = args.duplicateIds.map(id => ctx.db.normalizeId("clients", id));
+		  if (!canonical || duplicates.some(id => !id)) throw new Error("Invalid client identity");
+		  return associateClients(ctx, actor, canonical, duplicates as Id<"clients">[]);
+		}
 		await assertLegacyWritesAllowed(ctx);
 		const canonical = await ctx.db
 			.query("clients")
@@ -304,6 +318,7 @@ export const mergeClients = mutation({
 		}
 
 		const quotations = await ctx.db.query("quotations").collect();
+		quotations.forEach(assertMutableLegacyQuotation);
 		const now = new Date().toISOString();
 
 		let relinkedQuotations = 0;
