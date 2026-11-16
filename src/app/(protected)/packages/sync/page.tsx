@@ -1387,7 +1387,7 @@ export default function PackageSyncPage() {
             </Card>
           )}
 
-          {plan && totalChanges === 0 && !applying && !result && (
+          {plan && plan.errors.length === 0 && totalChanges === 0 && !applying && !result && (
             <div className="text-center py-10 text-muted-foreground">
               <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
               <p className="text-sm">Nothing to sync — all packages and flights are up to date.</p>
