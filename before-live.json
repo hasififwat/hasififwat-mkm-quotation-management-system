@@ -1,0 +1,22 @@
+{
+  "phase": "before",
+  "concurrent": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "action": "created",
+        "id": "mh72c2xvcqjs0emk8q8f32mvxd8ja4cn"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "action": "created",
+        "id": "mh7bv3e3myy7sqhwx6sb8vmc6s8jbvfq"
+      }
+    }
+  ],
+  "count": 4,
+  "stale": "accepted",
+  "price": 1200
+}
