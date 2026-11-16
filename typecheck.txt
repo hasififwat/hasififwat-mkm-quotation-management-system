@@ -1,0 +1,4 @@
+src/features/quotation/components/PDFPreview.tsx(131,24): error TS2339: Property 'src' does not exist on type 'string'.
+src/features/quotation/components/PDFPreview.tsx(600,24): error TS2339: Property 'src' does not exist on type 'string'.
+src/features/quotation/components/PDFPreviewMobile.tsx(69,17): error TS2339: Property 'src' does not exist on type 'string'.
+src/features/quotation/components/PDFPreviewMobile.tsx(294,18): error TS2339: Property 'src' does not exist on type 'string'.

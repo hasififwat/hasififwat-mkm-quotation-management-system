@@ -1,0 +1,23 @@
+{
+  "issue": 19,
+  "testedHead": "ea0fef8c46650a1dfbd94b08631029629a75fe7d",
+  "baselineHead": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+  "baselineUrl": "http://127.0.0.1:3123/quotations/create",
+  "previewUrl": "http://ticket3.localhost:3140/quotations/create",
+  "before": [
+    {"id":"addon-price-0","value":"10.25","step":null,"valid":false,"stepMismatch":true},
+    {"id":"discount-price-0","value":"0.25","step":null,"valid":false,"stepMismatch":true}
+  ],
+  "after": [
+    {"id":"addon-price-0","value":"10.25","step":"0.01","valid":true,"stepMismatch":false},
+    {"id":"discount-price-0","value":"0.25","step":"0.01","valid":true,"stepMismatch":false}
+  ],
+  "blankFeedback": "Enter a finite price. Use 0 for an intentional zero price.",
+  "nativeInvalidChecks": {"negative":-1,"overprecision":0.255,"bothRejected":true},
+  "savedQuotation": "1448H-0001",
+  "reviewUrl": "http://ticket3.localhost:3140/quotations/review/m170ky98355w5r1w9d3befnp2d8ja7tt",
+  "reviewAndReload": {"room":5000,"addOn":10.25,"intentionalZero":0,"discount":0.25,"total":5010,"evidence":"reloaded-review.png"},
+  "cleanup": "Both owned browser tabs closed. ticket3 and cents web/backend processes stopped. Disposable fixture data remains only in stopped local instance directories. No shared cloud data modified.",
+  "checks": {"regressionAndSubmissionTests":"161 passed","lint":"0 errors, 1 existing warning","typecheck":"4 existing PDF .src errors, unchanged from baseline"},
+  "review": "Independent gpt-6.1-sol review found no code issues. It identified the original decision-log evidence pointer as insufficient; this proof and before video supersede it. Cross-family audit unavailable under project model configuration."
+}
