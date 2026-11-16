@@ -1,0 +1,7 @@
+{
+  "sourceCommit": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+  "matchedProductFiles": 180,
+  "excludedGeneratedFixtureTypes": true,
+  "extraFixtureSource": "convex/issue59Fixture.ts",
+  "lostResponseHookRemoved": true
+}

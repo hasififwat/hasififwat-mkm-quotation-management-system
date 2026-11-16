@@ -1,0 +1,71 @@
+{
+  "sourceCommit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+  "backend": "http://127.0.0.1:3510",
+  "method": "Real Convex mutation and separate persisted queries against an owned disposable backend",
+  "sameQuotationId": true,
+  "sameReference": true,
+  "listCount": 1,
+  "originalNotes": "Baseline saved before immutable revisions.",
+  "reopenedNotes": "Baseline edit replaced the previously saved notes.",
+  "revisionReference": "1448H-0001",
+  "originalItems": {
+    "adds_ons": [
+      {
+        "id": "kx7a08r5nmxyt3vw3mqhke3pd58jb1wp",
+        "name": "Airport transfer",
+        "pax": 4,
+        "price": 100,
+        "subtotal": 400
+      }
+    ],
+    "discounts": [
+      {
+        "id": "kx78fdpdmj53dva0qm94585v6s8jb85k",
+        "name": "Group discount",
+        "pax": 4,
+        "price": 50,
+        "subtotal": 200
+      }
+    ],
+    "selected_rooms": [
+      {
+        "id": "kx72cwhdsfp117svamzaa1ma5n8jbfg4",
+        "package_room_id": "kh79v7t9p95h0hhczfzcrk75x18jagqc",
+        "pax": 4,
+        "price": 1200,
+        "room_type": "Quad",
+        "subtotal": 4800
+      }
+    ]
+  },
+  "reopenedItems": {
+    "adds_ons": [
+      {
+        "id": "kx7enjjggjsg6v2yj4zytq4rex8jb4rr",
+        "name": "Airport transfer",
+        "pax": 4,
+        "price": 100,
+        "subtotal": 400
+      }
+    ],
+    "discounts": [
+      {
+        "id": "kx7dcrcqteyc51r6z460rsyzqd8ja8f1",
+        "name": "Group discount",
+        "pax": 4,
+        "price": 50,
+        "subtotal": 200
+      }
+    ],
+    "selected_rooms": [
+      {
+        "id": "kx76rfkyz9eajntnhkyks1wbp18jbfd3",
+        "package_room_id": "kh79v7t9p95h0hhczfzcrk75x18jagqc",
+        "pax": 4,
+        "price": 1200,
+        "room_type": "Quad",
+        "subtotal": 4800
+      }
+    ]
+  }
+}

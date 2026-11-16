@@ -1,0 +1,114 @@
+[
+  {
+    "file": "baseline-edit-before-app.png",
+    "bytes": 355128,
+    "sha256": "884f7df97c52b06efd3fdf7892816c39355b996f42ca28b07d96b3f1d0e94e7d",
+    "productSource": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+    "origin": "coordinator baseline browser capture"
+  },
+  {
+    "file": "baseline-same-reference-pdf-app.png",
+    "bytes": 718483,
+    "sha256": "83393df21f6a7873c4d62d725fc2b6f2c8388120110f95b814f04279fc0232d3",
+    "productSource": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+    "origin": "coordinator baseline browser capture"
+  },
+  {
+    "file": "history-mobile.mp4",
+    "bytes": 496392,
+    "sha256": "30c0ad23cc98baa69115d106e462a76594d654cdf2477726a1aa3c193f2499e9",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual browser recording"
+  },
+  {
+    "file": "history-mobile.png",
+    "bytes": 276704,
+    "sha256": "188d6e5958be6690ca7ddcee9bb71dfeb882c968355eee36cc9d2b28c6325c5b",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "lost-response-retry.mp4",
+    "bytes": 575090,
+    "sha256": "e21392216e85a5b4ee2026f7d53220312a4751874a485dd9cadd0c7d0bed8c92",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual browser recording"
+  },
+  {
+    "file": "lost-response-retry.png",
+    "bytes": 706023,
+    "sha256": "2621ffd95a293d9cd901cc3cd1735391b7ad4dcc88334b3ffe431f868784ad9d",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "missing-original-desktop.mp4",
+    "bytes": 208945,
+    "sha256": "10c2a1aef3508eead8715778dd027da63c510819c420411a8d551fcbdfd31edb",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual browser recording"
+  },
+  {
+    "file": "missing-original-desktop.png",
+    "bytes": 557563,
+    "sha256": "fa9442c48a690305eb8157cd50a8d4912eddb1a2dcd235fdba3dd467de65beaf",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "pdf-states.mp4",
+    "bytes": 309944,
+    "sha256": "fd7f28e216b5635677113c1430efe9bcb4daf763ac5f449dc1b951ea077697af",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual browser recording"
+  },
+  {
+    "file": "pdf-states.png",
+    "bytes": 625645,
+    "sha256": "672f64f8dbc4c3ede19f20818755fd79272673ad3c44f865d4d57c99256f605c",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "r0-issued.pdf",
+    "bytes": 169756,
+    "sha256": "89965b450108030d59ef8bc7fe1cfab1e2fea0fb37c6166d23d3989c75859160",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual issued browser download"
+  },
+  {
+    "file": "revision-r1-desktop.png",
+    "bytes": 598005,
+    "sha256": "9130fd20dd7bcc4f05e4573c2fd5e4b78c71078a1ff36c675e61701ef46ef9e8",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "stale-editor-mobile.png",
+    "bytes": 235086,
+    "sha256": "0d35682d103112a508ebb68e68e0d9b5124ddef0ba50840860a4ae8f8b8318bd",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "validation-desktop.png",
+    "bytes": 430420,
+    "sha256": "fcd199b63aea6005b7e2fb9ba2bff220d20524e60fda19c352e01634af6fb0fd",
+    "productSource": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+    "origin": "actual T3 browser recording frame"
+  },
+  {
+    "file": "validation-mobile.mp4",
+    "bytes": 445131,
+    "sha256": "1d8dd0a9547e06a1b378bfb8ce526b5d71f245a17beea32a1f447bd35ad853f7",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual browser recording"
+  },
+  {
+    "file": "validation-mobile.png",
+    "bytes": 234662,
+    "sha256": "326cf8295202c516ed66bbf511f6906a5e3ee10deb3b35b9e245f265336ca58e",
+    "productSource": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+    "origin": "actual T3 browser recording frame"
+  }
+]

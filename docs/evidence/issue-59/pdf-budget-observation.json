@@ -1,0 +1,953 @@
+{
+  "clone2": {
+    "id": "mh7d583rtkk02nx20bb477z7sx8jaxpw",
+    "omitted_input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484"
+  },
+  "clone2final": {
+    "_creationTime": 1794850519830.676,
+    "_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw",
+    "asset_version": "mkm-branding-v1",
+    "filename": "1448H-0001-R5.pdf",
+    "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+    "provenance": "issued_original",
+    "renderer_version": "mkm-quotation-v1",
+    "revision_id": "n57dczzm8bnepsepykrp1b76vs8jbff8",
+    "state": {
+      "attempt_id": "mn7e95zgsq0yh9jd3e3bxxkmed8jayak",
+      "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+      "kind": "ready",
+      "mime": "application/pdf",
+      "sha256": "cf6ea92cb889604ef9def7eee18689e3f5bcdad0efabf5cef4e7787cd2a3db7d",
+      "size": 169267,
+      "storage_id": "kg29tcqsfmswcxvfq34apzeksd8jb043"
+    },
+    "terms_version": "mkm-payment-terms-v1",
+    "omitted_input_json_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484"
+  },
+  "dump": {
+    "artifacts": [
+      {
+        "_creationTime": 1794850518386.0105,
+        "_id": "mh7ab4qrvtav30n09m4001968n8jb8mw",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001.pdf",
+        "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n578009kfj4hdcke6rtk8qvfhh8jane2",
+        "state": {
+          "attempt_id": "mn782x07kzfpd3whtq8hhabygs8jbn1b",
+          "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "06ff6d87ca78a8df47eccca788f57a61c912a0754c5df266055a8bffe7d00885",
+          "size": 169262,
+          "storage_id": "kg2e4beefxad7j8wbz5mxd75w98jawbb"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971"
+      },
+      {
+        "_creationTime": 1794850518404.3179,
+        "_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R1.pdf",
+        "input_sha256": "571f6f781b00c99cab0e8ba96ba799c0cd25d6daf1aaa6e8d77e6425a4a39b11",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n57bkbgzjxybnsaymbmhncmr9h8jafpd",
+        "state": {
+          "attempt_id": "mn7910yzm1j0e7yhj10sfky7zd8jakr3",
+          "input_sha256": "571f6f781b00c99cab0e8ba96ba799c0cd25d6daf1aaa6e8d77e6425a4a39b11",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "4dc5752dfbfb27ca4b9a5eda6c678bebb74b5fef166021826bcd89831c44417b",
+          "size": 169267,
+          "storage_id": "kg20e9adp94h1n5ng21fb38dmx8japyn"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "571f6f781b00c99cab0e8ba96ba799c0cd25d6daf1aaa6e8d77e6425a4a39b11"
+      },
+      {
+        "_creationTime": 1794850518465.864,
+        "_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R2.pdf",
+        "input_sha256": "dc050b39c34d29220df877c74eb3d9bce14ca92da1e70b9ac28f9e91314b39f7",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n57ezhbnwwfwnpp4thb3svdhy18jby4m",
+        "state": {
+          "attempt_id": "mn77m6dgykgdv6kw33z2pnx9ks8jamqe",
+          "input_sha256": "dc050b39c34d29220df877c74eb3d9bce14ca92da1e70b9ac28f9e91314b39f7",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "47ebfbfb3cff36a708568fb3451281376f2ed4f6ff87f9854fc8b11ecad6990a",
+          "size": 169267,
+          "storage_id": "kg26w0kj0g6txhshsyxg9eh2118ja8fn"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "dc050b39c34d29220df877c74eb3d9bce14ca92da1e70b9ac28f9e91314b39f7"
+      },
+      {
+        "_creationTime": 1794850518487.348,
+        "_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R3.pdf",
+        "input_sha256": "81fd73a8d8a215f738a0d986757ae525735d82cc779134168540e53723d68f61",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n579xa5eew6yhfs2g4v5p2tpgd8jb90p",
+        "state": {
+          "attempt_id": "mn70kj1v2gt87j834rzj9dfedd8jb8ty",
+          "input_sha256": "81fd73a8d8a215f738a0d986757ae525735d82cc779134168540e53723d68f61",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "09479ceefd745cbe2107be71a5f02de6a4de8f6e21ea0a5cbbfddd3ad9141e48",
+          "size": 169267,
+          "storage_id": "kg28gn62gyndxrvkced360zm1d8jajyh"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "81fd73a8d8a215f738a0d986757ae525735d82cc779134168540e53723d68f61"
+      },
+      {
+        "_creationTime": 1794850518588.5981,
+        "_id": "mh7egq535t5wkqnafwbh31hs998ja2ed",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0002.pdf",
+        "input_sha256": "82cb5438c1afa97bac079738746f931793db770fb0648e2dc4d44cdebcc0e529",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n5703pj36g6apegyp6mnrttdfd8jbdt1",
+        "state": {
+          "kind": "failed",
+          "reason": "PDF creation failed. Retry this saved revision."
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "82cb5438c1afa97bac079738746f931793db770fb0648e2dc4d44cdebcc0e529"
+      },
+      {
+        "_creationTime": 1794850518597.885,
+        "_id": "mh708tx09cskc8h6wqkx29h4ah8jbbmt",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R4.pdf",
+        "input_sha256": "61b114f4db6f89f668f0dd3b22506c596e162ef5e0520e50d91e3ce26465fc54",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n573bvrdy9z927caxr5p8zdhyx8jbj3p",
+        "state": {
+          "kind": "pending"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "61b114f4db6f89f668f0dd3b22506c596e162ef5e0520e50d91e3ce26465fc54"
+      },
+      {
+        "_creationTime": 1794850518598.1619,
+        "_id": "mh74s1ekbak05tq861kwh0eaz98jb17a",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0002-R1.pdf",
+        "input_sha256": "c2399093d4fe5bc0e402a2a7c5f2dc806e2323e3e652c14bcda889220f801cfc",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n57bqktpd6ytrkxh51hkce0zkd8jbmpy",
+        "state": {
+          "kind": "pending"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "c2399093d4fe5bc0e402a2a7c5f2dc806e2323e3e652c14bcda889220f801cfc"
+      },
+      {
+        "_creationTime": 1794850519482.757,
+        "_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R5.pdf",
+        "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n57dczzm8bnepsepykrp1b76vs8jbff8",
+        "state": {
+          "attempt_id": "mn75eykv3tzb167shjhsj64an58jbscm",
+          "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "035af2c4d7bec53c15571f2cab77741209a67dae88801df0d2f036d74c08cc89",
+          "size": 169267,
+          "storage_id": "kg28n5918h8m55txf2tgfjkfcn8jbws7"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484"
+      },
+      {
+        "_creationTime": 1794850519527.656,
+        "_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001.pdf",
+        "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n578009kfj4hdcke6rtk8qvfhh8jane2",
+        "state": {
+          "attempt_id": "mn7fkt97r28vhrsme7neqq21hh8jb0bj",
+          "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "1689b51257e75a130a802999ea131c270d662eb1d27053795a4ba93aac74f27d",
+          "size": 169262,
+          "storage_id": "kg25g2pa4cvksdkkq1ednhf4jh8jab60"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971"
+      },
+      {
+        "_creationTime": 1794850519830.676,
+        "_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw",
+        "asset_version": "mkm-branding-v1",
+        "filename": "1448H-0001-R5.pdf",
+        "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+        "provenance": "issued_original",
+        "renderer_version": "mkm-quotation-v1",
+        "revision_id": "n57dczzm8bnepsepykrp1b76vs8jbff8",
+        "state": {
+          "attempt_id": "mn7e95zgsq0yh9jd3e3bxxkmed8jayak",
+          "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+          "kind": "ready",
+          "mime": "application/pdf",
+          "sha256": "cf6ea92cb889604ef9def7eee18689e3f5bcdad0efabf5cef4e7787cd2a3db7d",
+          "size": 169267,
+          "storage_id": "kg29tcqsfmswcxvfq34apzeksd8jb043"
+        },
+        "terms_version": "mkm-payment-terms-v1",
+        "omitted_input_json_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484"
+      }
+    ],
+    "attempts": [
+      {
+        "_creationTime": 1794850518429.449,
+        "_id": "mn7910yzm1j0e7yhj10sfky7zd8jakr3",
+        "artifact_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq",
+        "candidate": {
+          "input_sha256": "571f6f781b00c99cab0e8ba96ba799c0cd25d6daf1aaa6e8d77e6425a4a39b11",
+          "mime": "application/pdf",
+          "sha256": "4dc5752dfbfb27ca4b9a5eda6c678bebb74b5fef166021826bcd89831c44417b",
+          "size": 169267,
+          "storage_id": "kg20e9adp94h1n5ng21fb38dmx8japyn"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850518429.531,
+        "_id": "mn782x07kzfpd3whtq8hhabygs8jbn1b",
+        "artifact_id": "mh7ab4qrvtav30n09m4001968n8jb8mw",
+        "candidate": {
+          "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+          "mime": "application/pdf",
+          "sha256": "06ff6d87ca78a8df47eccca788f57a61c912a0754c5df266055a8bffe7d00885",
+          "size": 169262,
+          "storage_id": "kg2e4beefxad7j8wbz5mxd75w98jawbb"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850518497.755,
+        "_id": "mn77m6dgykgdv6kw33z2pnx9ks8jamqe",
+        "artifact_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp",
+        "candidate": {
+          "input_sha256": "dc050b39c34d29220df877c74eb3d9bce14ca92da1e70b9ac28f9e91314b39f7",
+          "mime": "application/pdf",
+          "sha256": "47ebfbfb3cff36a708568fb3451281376f2ed4f6ff87f9854fc8b11ecad6990a",
+          "size": 169267,
+          "storage_id": "kg26w0kj0g6txhshsyxg9eh2118ja8fn"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850518498.064,
+        "_id": "mn70kj1v2gt87j834rzj9dfedd8jb8ty",
+        "artifact_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5",
+        "candidate": {
+          "input_sha256": "81fd73a8d8a215f738a0d986757ae525735d82cc779134168540e53723d68f61",
+          "mime": "application/pdf",
+          "sha256": "09479ceefd745cbe2107be71a5f02de6a4de8f6e21ea0a5cbbfddd3ad9141e48",
+          "size": 169267,
+          "storage_id": "kg28gn62gyndxrvkced360zm1d8jajyh"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850518599.687,
+        "_id": "mn76a0kzyj1qyfqr42n0zd48zh8jb358",
+        "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed",
+        "retired": true
+      },
+      {
+        "_creationTime": 1794850519491.607,
+        "_id": "mn75eykv3tzb167shjhsj64an58jbscm",
+        "artifact_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8",
+        "candidate": {
+          "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+          "mime": "application/pdf",
+          "sha256": "035af2c4d7bec53c15571f2cab77741209a67dae88801df0d2f036d74c08cc89",
+          "size": 169267,
+          "storage_id": "kg28n5918h8m55txf2tgfjkfcn8jbws7"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850519536.351,
+        "_id": "mn73p9qec273fp2na9gaj8h6118jbdaf",
+        "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh",
+        "retired": true
+      },
+      {
+        "_creationTime": 1794850519587.381,
+        "_id": "mn7fkt97r28vhrsme7neqq21hh8jb0bj",
+        "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh",
+        "candidate": {
+          "input_sha256": "c6c7d538fc28cb6591c97c90a855e49895abae1bf945d15b3d95dc3aa55d6971",
+          "mime": "application/pdf",
+          "sha256": "1689b51257e75a130a802999ea131c270d662eb1d27053795a4ba93aac74f27d",
+          "size": 169262,
+          "storage_id": "kg25g2pa4cvksdkkq1ednhf4jh8jab60"
+        },
+        "retired": false
+      },
+      {
+        "_creationTime": 1794850519844.708,
+        "_id": "mn7788zj8armsf53vqpz2kv61s8ja3kb",
+        "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw",
+        "retired": true
+      },
+      {
+        "_creationTime": 1794850519893.249,
+        "_id": "mn7e95zgsq0yh9jd3e3bxxkmed8jayak",
+        "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw",
+        "candidate": {
+          "input_sha256": "fdf474d5f4c6a6ba778cf1b896af7d874b3c785a2aaed6b110b93a26060bb484",
+          "mime": "application/pdf",
+          "sha256": "cf6ea92cb889604ef9def7eee18689e3f5bcdad0efabf5cef4e7787cd2a3db7d",
+          "size": 169267,
+          "storage_id": "kg29tcqsfmswcxvfq34apzeksd8jb043"
+        },
+        "retired": false
+      }
+    ],
+    "errors": [
+      {
+        "_creationTime": 1794850519495.432,
+        "_id": "nn72dc27c1s4se26y4m0xnb4bd8jasch",
+        "created_at": "2026-11-16T17:35:19.495Z",
+        "enabled": true,
+        "name": "mh7egq535t5wkqnafwbh31hs998ja2ed | Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"} | Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"}\n    at performAsyncSyscall (convex:/user/_deps/node/I75GB6AS.js:985:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async runMutation (convex:/user/_deps/node/I75GB6AS.js:1057:15)\n    at async handler (convex:/user/quotationPdfWorker.js:678:5)\n    at async invokeFunction (convex:/user/_deps/node/I75GB6AS.js:1334:9)\n    at async invokeAction (convex:/user/_deps/node/I75GB6AS.js:1395:10)\n    at bundledFunctions.js:65226:21\n    at async runWithEnvironmentVariables (bundledFunctions.js:65041:12)\n    at async executeInner (bundledFunctions.js:65199:10)\n    at async execute (bundledFunctions.js:65159:21)",
+        "price": 0,
+        "sort_order": 0
+      },
+      {
+        "_creationTime": 1794850519851.806,
+        "_id": "nn7br4kpneqtf8t4y1ycxkkshn8jbavw",
+        "created_at": "2026-11-16T17:35:19.851Z",
+        "enabled": true,
+        "name": "mh7d583rtkk02nx20bb477z7sx8jaxpw | SyntaxError: Unexpected token 'i', \"invalid JSON\" is not valid JSON | Error: Unexpected token 'i', \"invalid JSON\" is not valid JSON\n    at parse (<unknown location>)\n    at handler (convex:/user/quotationPdfWorker.js:677:18)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async invokeFunction (convex:/user/_deps/node/I75GB6AS.js:1334:9)\n    at async invokeAction (convex:/user/_deps/node/I75GB6AS.js:1395:10)\n    at bundledFunctions.js:65226:21\n    at async runWithEnvironmentVariables (bundledFunctions.js:65041:12)\n    at async executeInner (bundledFunctions.js:65199:10)\n    at async execute (bundledFunctions.js:65159:21)\n    at bundledFunctions.js:65108:21",
+        "price": 0,
+        "sort_order": 0
+      }
+    ],
+    "jobs": [
+      {
+        "_creationTime": 1794850518386.011,
+        "_id": "kc22903mtv85d7nx8d2dbbz64s8jb6wh",
+        "args": [
+          {
+            "artifact_id": "mh7ab4qrvtav30n09m4001968n8jb8mw"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533386,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518386.0115,
+        "_id": "kc23h4h2s8ep4gycwsyfa0xyj18ja0c2",
+        "args": [
+          {
+            "artifact_id": "mh7ab4qrvtav30n09m4001968n8jb8mw"
+          }
+        ],
+        "completedTime": 1794850518547.804,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518386,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518404.3184,
+        "_id": "kc27ap7cx7edxr2ypc93g01ty98jbp1j",
+        "args": [
+          {
+            "artifact_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533404,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518404.3188,
+        "_id": "kc272xxpanb7st6zzw0cn470r98jb76c",
+        "args": [
+          {
+            "artifact_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq"
+          }
+        ],
+        "completedTime": 1794850518552.66,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518404,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518429.4495,
+        "_id": "kc27e10waymkz5x5zn6fh8yyx58jbmgj",
+        "args": [
+          {
+            "artifact_id": "mh7awq2j2q0e9ezah3w8f49dzs8jbsaq"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850638429,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518429.5315,
+        "_id": "kc23z9a9f7gez60ag85j69tb8d8jb4d5",
+        "args": [
+          {
+            "artifact_id": "mh7ab4qrvtav30n09m4001968n8jb8mw"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850638429,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518465.8645,
+        "_id": "kc2dk3qzes2rgnxhestx8y82x98jbtkm",
+        "args": [
+          {
+            "artifact_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533465,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518465.865,
+        "_id": "kc2dpwtb2a4zq8z1q23rxrkwps8jba8z",
+        "args": [
+          {
+            "artifact_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp"
+          }
+        ],
+        "completedTime": 1794850518559.175,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518465,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518487.3484,
+        "_id": "kc2c7dxdtxa0anys7tbfb8xhbx8ja621",
+        "args": [
+          {
+            "artifact_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533487,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518487.3489,
+        "_id": "kc27hkzcqvcfp93jj6h50msdbx8jbmds",
+        "args": [
+          {
+            "artifact_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5"
+          }
+        ],
+        "completedTime": 1794850518559.175,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518487,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518497.7554,
+        "_id": "kc2446hzg12292njtaj4zrqdtd8jaev8",
+        "args": [
+          {
+            "artifact_id": "mh71n401zh1b8y1tke3yy7rkzn8jbxzp"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850638497,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518498.0645,
+        "_id": "kc2ewj4dgwb788adv5rtxz42t58jb7qq",
+        "args": [
+          {
+            "artifact_id": "mh77b2k2q3g6fj0tqcfk1zgnwh8jbar5"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850638498,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518518.5542,
+        "_id": "kc23jz415yz1dx5k1ger49ne058jaxck",
+        "args": [
+          {
+            "attempt_id": "mn782x07kzfpd3whtq8hhabygs8jbn1b"
+          }
+        ],
+        "completedTime": 1794850518520.545,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850518518,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518531.8003,
+        "_id": "kc22rdc2edee7wnprd2t1cjdrd8jbf2w",
+        "args": [
+          {
+            "attempt_id": "mn7910yzm1j0e7yhj10sfky7zd8jakr3"
+          }
+        ],
+        "completedTime": 1794850518542.325,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850518531,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518546.2693,
+        "_id": "kc246jjjsbvtgerv72ge6mj3458ja95x",
+        "args": [
+          {
+            "attempt_id": "mn70kj1v2gt87j834rzj9dfedd8jb8ty"
+          }
+        ],
+        "completedTime": 1794850518549.658,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850518546,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518546.2903,
+        "_id": "kc27r4z0sc0gjcqgz02jb28cvs8ja438",
+        "args": [
+          {
+            "attempt_id": "mn77m6dgykgdv6kw33z2pnx9ks8jamqe"
+          }
+        ],
+        "completedTime": 1794850518549.658,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850518546,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518588.5986,
+        "_id": "kc27ny4qanv76krqy0zr2d63zx8jat2p",
+        "args": [
+          {
+            "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533588,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518588.599,
+        "_id": "kc2dsfq9xk9wp9vqgbp9x8shsx8javvq",
+        "args": [
+          {
+            "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed"
+          }
+        ],
+        "completedTime": 1794850519517.879,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518588,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850518597.8855,
+        "_id": "kc2ev2t5ybrv50m6y3rnsgywn98jbx9e",
+        "args": [
+          {
+            "artifact_id": "mh708tx09cskc8h6wqkx29h4ah8jbbmt"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533597,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518597.886,
+        "_id": "kc23v86fwjzpkm24nnbam5bj5n8jagkr",
+        "args": [
+          {
+            "artifact_id": "mh708tx09cskc8h6wqkx29h4ah8jbbmt"
+          }
+        ],
+        "completedTime": 1794850518935.877,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518597,
+        "state": {
+          "error": "Uncaught Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"}\n    at async handler (../convex/quotationPdfWorker.ts:11:14)\n",
+          "kind": "failed"
+        }
+      },
+      {
+        "_creationTime": 1794850518598.1624,
+        "_id": "kc276295g1jdksdxnadck370yh8jb0gw",
+        "args": [
+          {
+            "artifact_id": "mh74s1ekbak05tq861kwh0eaz98jb17a"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850533598,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850518598.1628,
+        "_id": "kc255dzhrmjrt9jspcf2yzd8618japm6",
+        "args": [
+          {
+            "artifact_id": "mh74s1ekbak05tq861kwh0eaz98jb17a"
+          }
+        ],
+        "completedTime": 1794850518623.724,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850518598,
+        "state": {
+          "error": "Uncaught Error: {\"code\":\"TooManyWrites\",\"message\":\"Too many writes per second. Your deployment is limited to 4 MiB bytes written per second. Reduce your write rate or upgrade to a larger deployment.\"}\n    at async handler (../convex/quotationPdfWorker.ts:11:14)\n",
+          "kind": "failed"
+        }
+      },
+      {
+        "_creationTime": 1794850518599.6875,
+        "_id": "kc27r30a5fdpmntythvhwcg0bs8jbhaf",
+        "args": [
+          {
+            "artifact_id": "mh7egq535t5wkqnafwbh31hs998ja2ed"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850638599,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519482.7576,
+        "_id": "kc29rvh6pvea022pmp78zwhbw98jb5kb",
+        "args": [
+          {
+            "artifact_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850534482,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519482.758,
+        "_id": "kc2cgvbpm746rf3hq1jfv9fre98jatn3",
+        "args": [
+          {
+            "artifact_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8"
+          }
+        ],
+        "completedTime": 1794850519538.275,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850519482,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850519491.6074,
+        "_id": "kc22qmgh39dsj1q3e3y5vbt9ph8jb3vt",
+        "args": [
+          {
+            "artifact_id": "mh72ys5fd7f8wf5ewyv4xscymd8jayg8"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850639491,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519517.7222,
+        "_id": "kc273984ps66408my6sp081hq58jbdq2",
+        "args": [
+          {
+            "attempt_id": "mn75eykv3tzb167shjhsj64an58jbscm"
+          }
+        ],
+        "completedTime": 1794850519521.67,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850519517,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850519536.3516,
+        "_id": "kc22x15wq9cvf3mggkf4868dhx8jbhgm",
+        "args": [
+          {
+            "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850639536,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519580.6472,
+        "_id": "kc2093qfxfav8v1entrcefaw0s8jat5f",
+        "args": [
+          {
+            "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850534580,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519580.6477,
+        "_id": "kc21jcsy7fs5fj5ktb3n9e7b4s8jan60",
+        "args": [
+          {
+            "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh"
+          }
+        ],
+        "completedTime": 1794850519627.765,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850519580,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850519587.3816,
+        "_id": "kc2fjqqw7aefej01hpx0f98an58ja947",
+        "args": [
+          {
+            "artifact_id": "mh74neaagpd2bhs059r15cg2sx8ja3sh"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850639587,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519616.2402,
+        "_id": "kc27s9nhsdv56bdab4gg2tjwhh8ja80r",
+        "args": [
+          {
+            "attempt_id": "mn7fkt97r28vhrsme7neqq21hh8jb0bj"
+          }
+        ],
+        "completedTime": 1794850519618.059,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850519616,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850519844.7085,
+        "_id": "kc2626zgkgwdrvx0kr8zy3gztd8jbvj8",
+        "args": [
+          {
+            "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850639844,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519885.4172,
+        "_id": "kc297j4an68vzkvpnce2qh4mbn8jbqwg",
+        "args": [
+          {
+            "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850534885,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519885.4177,
+        "_id": "kc21cq3jkn0spvcnc7cz4kq7mn8jaypj",
+        "args": [
+          {
+            "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw"
+          }
+        ],
+        "completedTime": 1794850519934.985,
+        "name": "quotationPdfWorker.js:run",
+        "scheduledTime": 1794850519885,
+        "state": {
+          "kind": "success"
+        }
+      },
+      {
+        "_creationTime": 1794850519893.2495,
+        "_id": "kc2apak1xh41avcg853pjnz07h8jbxag",
+        "args": [
+          {
+            "artifact_id": "mh7d583rtkk02nx20bb477z7sx8jaxpw"
+          }
+        ],
+        "name": "quotationPdfArtifacts.js:reconcile",
+        "scheduledTime": 1794850639893,
+        "state": {
+          "kind": "pending"
+        }
+      },
+      {
+        "_creationTime": 1794850519924.9583,
+        "_id": "kc26pd38vh7mfddjvnh5apt57x8jat6a",
+        "args": [
+          {
+            "attempt_id": "mn7e95zgsq0yh9jd3e3bxxkmed8jayak"
+          }
+        ],
+        "completedTime": 1794850519926.676,
+        "name": "quotationPdfArtifacts.js:cleanup",
+        "scheduledTime": 1794850519924,
+        "state": {
+          "kind": "success"
+        }
+      }
+    ],
+    "storage": [
+      {
+        "_creationTime": 1794850518499.337,
+        "_id": "kg2e4beefxad7j8wbz5mxd75w98jawbb",
+        "contentType": "application/pdf",
+        "sha256": "Bv9th8p4qN9H7MyniPV6YckSoHVMXfJmBVqL/+fQCIU=",
+        "size": 169262
+      },
+      {
+        "_creationTime": 1794850518502.726,
+        "_id": "kg20e9adp94h1n5ng21fb38dmx8japyn",
+        "contentType": "application/pdf",
+        "sha256": "TcV1Lfv7J8pLml7abGeL67dLX+8WYCGCa82JgxxEQXs=",
+        "size": 169267
+      },
+      {
+        "_creationTime": 1794850518537.713,
+        "_id": "kg28gn62gyndxrvkced360zm1d8jajyh",
+        "contentType": "application/pdf",
+        "sha256": "CUec7v10XL4hB75xpfAt5qTej24h6gpcu/3dOtkUHkg=",
+        "size": 169267
+      },
+      {
+        "_creationTime": 1794850518541.649,
+        "_id": "kg26w0kj0g6txhshsyxg9eh2118ja8fn",
+        "contentType": "application/pdf",
+        "sha256": "R+v7+zz/NqcIVo+zRRKBN28u1Pb/h/mFT8ixHsrWmQo=",
+        "size": 169267
+      },
+      {
+        "_creationTime": 1794850518623.64,
+        "_id": "kg265snrwy8fkgh9qyca203t498ja18m",
+        "contentType": "application/pdf",
+        "sha256": "H5HGNFqxMRl35+bHf/1MmalqjDIFVwA6ZYYlacQW6yw=",
+        "size": 169263
+      },
+      {
+        "_creationTime": 1794850519513.837,
+        "_id": "kg28n5918h8m55txf2tgfjkfcn8jbws7",
+        "contentType": "application/pdf",
+        "sha256": "A1ryxNe+xTwVVx8sq3d0Egmmfa6IgB3w0vA210wIzIk=",
+        "size": 169267
+      },
+      {
+        "_creationTime": 1794850519613.023,
+        "_id": "kg25g2pa4cvksdkkq1ednhf4jh8jab60",
+        "contentType": "application/pdf",
+        "sha256": "Fom1ElfnWhMKgCmZ6hMcJw1mLrHScFN5WkupOqx08n0=",
+        "size": 169262
+      },
+      {
+        "_creationTime": 1794850519921.112,
+        "_id": "kg29tcqsfmswcxvfq34apzeksd8jb043",
+        "contentType": "application/pdf",
+        "sha256": "z26pLLiJYE753vfu4YaJ4/W82tDvq/XO9Od4fNKj230=",
+        "size": 169267
+      }
+    ]
+  },
+  "projection": "Embedded synthetic PDF input JSON omitted. Actual worker exception and attempts retained."
+}
