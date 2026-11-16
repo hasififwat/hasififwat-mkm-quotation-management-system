@@ -44,7 +44,7 @@ tool performs **bounded exhaustive execution**, not an unbounded mathematical
 proof. It transpiles `convex/quotations.ts`, obtains the actual registered
 `create._handler` and `update._handler`, and executes each against an in-memory
 adapter for exactly the database operations those paths currently use.
-Shared TypeScript dependencies resolve through `scripts/helpers/load-typescript.mjs`. The checker
+The real auth SDK loads through its ESM export. Shared TypeScript dependencies resolve through `scripts/helpers/load-typescript.mjs`. The checker
 compiles each original or mutant quotation source separately, so dependency
 loading does not replace the source under test.
 
@@ -83,7 +83,7 @@ The repaired baseline passes both properties. The pre-fix run at
 `b95671a373f7ca65c7ff571d66ce4648986c7b5b` had 16 anonymous-write
 counterexamples, eight per operation, with zero adapter errors. The current
 handlers require a session before database access and derive the audit actor
-from its subject. This establishes local handler behavior, not live endpoint
+with the auth SDK user ID helper. This establishes local handler behavior, not live endpoint
 reachability.
 
 Report issues using the repository's required issue table. Distinguish local

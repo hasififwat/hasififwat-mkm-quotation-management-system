@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { paginationOptsValidator } from "convex/server";
@@ -6,9 +7,9 @@ import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
 async function requireQuotationActor(ctx: Pick<QueryCtx, "auth">): Promise<string> {
-	const identity = await ctx.auth.getUserIdentity();
-	if (!identity) throw new Error("Not authenticated");
-	return identity.subject;
+	const userId = await getAuthUserId(ctx);
+	if (!userId) throw new Error("Not authenticated");
+	return userId;
 }
 
 function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: number) {

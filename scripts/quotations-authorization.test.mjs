@@ -16,6 +16,7 @@ for (const [name, operation] of Object.entries(quotations)) {
 
 test('session actor owns create and update audit records while PIC stays editable', async () => {
   const s = state();
+  s.ctx.auth.getUserIdentity = async () => ({subject:'fixture-staff|session-one'});
   const packageId = await create(s, form());
   const payload = {...quotePayload(packageId, s.tables.package_flights[0]._id), created_by:'Spoofed actor'};
   const saved = await quotations.create._handler(s.ctx, {payload});
@@ -23,7 +24,7 @@ test('session actor owns create and update audit records while PIC stays editabl
   assert.equal(row.created_by, 'fixture-staff');
   assert.equal(row.pic_name, 'Fixture staff');
   assert.equal(s.tables.quotation_logs[0].performed_by, 'fixture-staff');
-  s.ctx.auth.getUserIdentity = async () => ({subject:'second-staff'});
+  s.ctx.auth.getUserIdentity = async () => ({subject:'second-staff|session-two'});
   await quotations.update._handler(s.ctx, {payload:{...payload,id:saved.id,pic_name:'New PIC'}});
   assert.equal(row.created_by, 'fixture-staff');
   assert.equal(row.pic_name, 'New PIC');

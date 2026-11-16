@@ -12,6 +12,7 @@ import { typescriptLoader } from "../../../../scripts/helpers/load-typescript.mj
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 const require = createRequire(path.join(repo, "package.json"));
 const ts = require("typescript");
+const authServer = await import("@convex-dev/auth/server");
 const sourcePath = path.join(repo, "convex/quotations.ts");
 const args = process.argv.slice(2);
 const outIndex = args.indexOf("--out");
@@ -36,6 +37,7 @@ function loadActualHandlers(source) {
   const load = typescriptLoader(repo);
   const nodeRequire = mod.require.bind(mod);
   mod.require = (id) => {
+    if (id === "@convex-dev/auth/server") return authServer;
     const filename = path.resolve(path.dirname(sourcePath), `${id}.ts`);
     if (id.startsWith(".") && fs.existsSync(filename)) return load(filename);
     return nodeRequire(id);
