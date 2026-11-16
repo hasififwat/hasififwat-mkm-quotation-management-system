@@ -1,0 +1,10 @@
+{
+  "port": 3104,
+  "url": "http://127.0.0.1:3104",
+  "startedAt": "2026-11-11T07:21:16.956Z",
+  "commit": "63c57f0c3e370f2659c48bbe260a296e22a092f6",
+  "nextVersion": "16.3.4",
+  "sourceDigest": "4f5438150e7f4a7e154f2251db6d5fac1984b0d02b5f6f9a0bb999e36e25e4af",
+  "backendIsolation": "Shared configured Convex deployment; anonymous UI only until disposable fixtures are supplied",
+  "bundler": "turbopack"
+}

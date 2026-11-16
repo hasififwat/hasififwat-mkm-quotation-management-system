@@ -1,0 +1,88 @@
+✖ referenced flight removal rejects before every write (3.017917ms)
+✖ referenced room removal rejects before every write (0.465958ms)
+✖ referenced both removal rejects before every write (0.36325ms)
+✖ archived revised quotations still protect their selections (0.325708ms)
+✔ room ID churn permits reopening and saving a quotation with unchanged type (0.730375ms)
+✖ description fallback protects the type after earlier room ID churn (0.355542ms)
+✔ unreferenced flight and room removal succeeds despite snapshot copies (0.282417ms)
+✔ preexisting missing selections do not block ordinary package edits (0.229625ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 3
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 339.46
+
+✖ failing tests:
+
+test at scripts/package-references.test.mjs:19:47
+✖ referenced flight removal rejects before every write (3.017917ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejectsWithoutWrites (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:12:3)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:23:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-references.test.mjs:19:47
+✖ referenced room removal rejects before every write (0.465958ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejectsWithoutWrites (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:12:3)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:23:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-references.test.mjs:19:47
+✖ referenced both removal rejects before every write (0.36325ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejectsWithoutWrites (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:12:3)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:23:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-references.test.mjs:25:1
+✖ archived revised quotations still protect their selections (0.325708ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejectsWithoutWrites (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:12:3)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:27:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at scripts/package-references.test.mjs:39:1
+✖ description fallback protects the type after earlier room ID churn (0.355542ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async rejectsWithoutWrites (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:12:3)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/Documents/personal/mkm-protect-references/scripts/package-references.test.mjs:41:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
