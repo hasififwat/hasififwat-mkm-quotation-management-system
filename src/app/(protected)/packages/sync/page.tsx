@@ -836,7 +836,7 @@ function FlightDiffStep({
           <h3 className="text-sm font-semibold flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-blue-600" />
             {edited.length} flights with airline or sector changes
-            <span className="text-xs font-normal text-muted-foreground">— old flight will be replaced with new</span>
+            <span className="text-xs font-normal text-muted-foreground">— existing flight will be updated in place</span>
           </h3>
           {groupByPackage(edited).map(group => (
             <Collapsible key={group.name + group.season} defaultOpen>
