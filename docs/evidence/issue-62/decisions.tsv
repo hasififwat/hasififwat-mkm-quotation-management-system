@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T16:12:15Z	start	Bounded server PDF prerequisite for immutable issued revisions	Keep family storage and issuance jobs with later owners	https://github.com/hasififwat/hasififwat-mkm-quotation-management-system/issues/62	open
+2026-11-16T16:12:15Z	design	Share the actual document through a narrow frozen input and thin legacy browser adapter	One template prevents browser and server layout drift	src/features/quotation/components/PDFPreview.tsx	open
+2026-11-16T16:12:15Z	runtime	Prove local Node rendering and explicitly retain the Convex deployment gate	Node dependency resolution does not prove Convex bundling or hosted execution	https://docs.convex.dev/functions/runtimes	open
+2026-11-16T16:16:57Z	verification	Rendered and inspected actual one-page Node and browser PDFs	Check bytes and layout with actual branding rather than a mock	docs/evidence/issue-62/server-page.png	passed
+2026-11-16T16:17:27Z	review	Accepted the bounded renderer after independent review and actual browser generation	The review reran PDF and typecheck checks and found no blocking defects	docs/evidence/issue-62/README.md	passed
