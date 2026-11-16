@@ -166,3 +166,25 @@ export type ApplyResult = {
   flightsRemoved: number;
   errors: string[];
 };
+
+export type MffDiagnostic = {
+  row: number | null;
+  code: "unsupported_format" | "invalid_date" | "unknown_package" | "outside_supported_season" | "unrecognized_row";
+  message: string;
+};
+
+export type MffRemovalScope = {
+  key: string;
+  package_id: string;
+  package_name: string;
+  season: string;
+  start: string;
+  end: string;
+};
+
+export type MffParseResult = {
+  rows: FlightDiffRow[];
+  diagnostics: MffDiagnostic[];
+  removalScopes: MffRemovalScope[];
+  preservedMissingFlights: number;
+};
