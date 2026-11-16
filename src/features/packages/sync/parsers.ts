@@ -1,3 +1,4 @@
+import { packageSyncKey } from "../../../domain/package-sync-intent";
 import type {
   FieldChange,
   MffDiagnostic,
@@ -186,6 +187,7 @@ export function parseFlightDiffCsv(text: string): FlightDiffRow[] {
 
 type DbHotel = { hotel_type: string; name: string; meals: string[] };
 type ExistingPackage = {
+  editToken?: string;
   _id: string;
   name: string;
   season?: string | null;
@@ -279,6 +281,14 @@ export function buildSyncPlan(
   flightRows: FlightDiffRow[],
   existingPackages: ExistingPackage[],
 ): SyncPlan {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+  for (const row of mappingRows) {
+    if (row.match_status === "ORPHAN" || EXCLUDED_FROM_SYNC.has(row.canonical_name.trim().toUpperCase())) continue;
+    const key = packageSyncKey(row.canonical_name, row.season_code);
+    if (seen.has(key)) errors.push(`Duplicate package in CSV: ${row.canonical_name} (${row.season_code}). Remove duplicate rows and upload the corrected file.`);
+    seen.add(key);
+  }
   const packagesToCreate: PackageCreateSpec[] = [];
   const packagesToUpdate: PackageUpdateSpec[] = [];
   const packagesToPromote: string[] = [];
@@ -326,6 +336,7 @@ export function buildSyncPlan(
       const spec = {
         kind: "update" as const,
         db_id: row.db_id,
+        expected_edit_token: dbPkg?.editToken ?? "",
         db_name: row.db_name || row.canonical_name,
         current_transport: (dbPkg?.transport ?? "").trim(),
         transport: row.transport,
@@ -417,7 +428,7 @@ export function buildSyncPlan(
     }
   }
 
-  return { packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToUpdate, flightsToRemove, flightsToPromote };
+  return { errors, packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToUpdate, flightsToRemove, flightsToPromote };
 }
 
 // ─── Price list parser ────────────────────────────────────────────────────────

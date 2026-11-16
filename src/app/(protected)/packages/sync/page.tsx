@@ -57,7 +57,11 @@ import type {
 } from "~/features/packages/sync/types";
 
 function syncErrorMessage(error: unknown): string {
-  if (error instanceof ConvexError && isPackageReferenceConflict(error.data)) return error.data.message;
+  if (error instanceof ConvexError) {
+    if (isPackageReferenceConflict(error.data)) return error.data.message;
+    const data = error.data;
+    if (data && typeof data === "object" && data.code === "PACKAGE_SYNC_CONFLICT" && typeof data.message === "string") return data.message;
+  }
   return String(error);
 }
 
@@ -1164,10 +1168,16 @@ export default function PackageSyncPage() {
   );
   const flightRows = useMemo(() => mffResult?.rows ?? [], [mffResult]);
 
-  const plan = useMemo<SyncPlan | null>(
-    () => (step >= 3 ? buildSyncPlan(mappingRows, flightRows, existingPackages) : null),
-    [mappingRows, flightRows, existingPackages, step],
-  );
+  const [plan, setPlan] = useState<SyncPlan | null>(null);
+  const [reviewedSchedule, setReviewedSchedule] = useState<{ result: MffParseResult | null; fileName: string | null; scopes: string[]; complete: boolean } | null>(null);
+
+  function reviewCurrentFiles() {
+    setPlan(buildSyncPlan(mappingRows, flightRows, existingPackages));
+    setReviewedSchedule({ result: mffResult, fileName: mffFileName, scopes: [...removalReview.scopes], complete: removalReview.complete });
+    setProgress(null);
+    setResult(null);
+    setStep(3);
+  }
 
   const totalChanges = plan
     ? plan.packagesToCreate.length + plan.packagesToUpdate.length +
@@ -1177,7 +1187,7 @@ export default function PackageSyncPage() {
   const applying = progress !== null && progress.phase !== "done";
 
   async function handleApply() {
-    if (!plan) return;
+    if (!plan || plan.errors.length > 0) return;
     setResult(null);
 
     const total =
@@ -1202,7 +1212,12 @@ export default function PackageSyncPage() {
         });
         newPackageIdMap.set(`${spec.name.trim().toUpperCase()}|${spec.season.trim().toUpperCase()}`, res.id);
         created++;
-      } catch (e) { errors.push(`Create ${spec.name} (${spec.season}): ${syncErrorMessage(e)}`); }
+      } catch (e) {
+        errors.push(`Create ${spec.name} (${spec.season}): ${syncErrorMessage(e)}`);
+        setProgress({ phase: "done", done, total, current: "Stopped" });
+        setResult({ created, updated, flightsAdded, flightsUpdated, flightsRemoved, errors });
+        return;
+      }
       done++;
     }
 
@@ -1211,13 +1226,19 @@ export default function PackageSyncPage() {
       try {
         await syncPackage({
           db_id: spec.db_id as Id<"packages">,
+          expected_edit_token: spec.expected_edit_token,
           name: spec.row.canonical_name, season: spec.row.season_code,
           year: spec.row.season_start.substring(0, 4) + "/" + (parseInt(spec.row.season_start.substring(0, 4), 10) + 1),
           duration: spec.row.duration, transport: spec.transport,
           hotels: spec.hotels, rooms: spec.rooms,
         });
         updated++;
-      } catch (e) { errors.push(`Update ${spec.db_name}: ${syncErrorMessage(e)}`); }
+      } catch (e) {
+        errors.push(`Update ${spec.db_name}: ${syncErrorMessage(e)}`);
+        setProgress({ phase: "done", done, total, current: "Stopped" });
+        setResult({ created, updated, flightsAdded, flightsUpdated, flightsRemoved, errors });
+        return;
+      }
       done++;
     }
 
@@ -1291,7 +1312,7 @@ export default function PackageSyncPage() {
     setPriceListText(null); setPriceListFileName(null);
     setMffText(null); setMffFileName(null);
     setRemovalReview({ scopes: [], complete: false });
-    setProgress(null); setResult(null);
+    setProgress(null); setResult(null); setPlan(null); setReviewedSchedule(null);
     setStep(0);
   }
 
@@ -1391,7 +1412,7 @@ export default function PackageSyncPage() {
           <FlightDiffStep
             rows={flightRows}
             onBack={() => setStep(1)}
-            onContinue={() => setStep(3)}
+            onContinue={reviewCurrentFiles}
           />
         </div>
       )}
@@ -1399,13 +1420,13 @@ export default function PackageSyncPage() {
       {/* ── Step 3: Review & Apply ── */}
       {step === 3 && (
         <div className="space-y-4">
-          {!result && <MffDiagnostics result={mffResult} />}
-          {!result && mffResult && removalReview.complete && mffResult.diagnostics.length === 0 && (
+          {!result && <MffDiagnostics result={reviewedSchedule?.result ?? null} />}
+          {!result && reviewedSchedule?.result && reviewedSchedule.complete && reviewedSchedule.result.diagnostics.length === 0 && (
             <Card>
               <CardContent className="pt-4 text-sm space-y-1">
                 <p className="font-medium">Confirmed complete schedule for removal</p>
-                <p className="break-all">File: {mffFileName}</p>
-                {mffResult.removalScopes.filter(scope => removalReview.scopes.includes(scope.key)).map(scope => (
+                <p className="break-all">File: {reviewedSchedule.fileName}</p>
+                {reviewedSchedule.result.removalScopes.filter(scope => reviewedSchedule.scopes.includes(scope.key)).map(scope => (
                   <p key={scope.key}>{scope.package_name} · {scope.season} · {scope.start} to {scope.end}</p>
                 ))}
                 <p>Only the missing sync flights listed below will be removed.</p>
@@ -1466,12 +1487,21 @@ export default function PackageSyncPage() {
             </Card>
           )}
 
+          {plan && plan.errors.length > 0 && !applying && !result && (
+            <Card className="border-amber-400">
+              <CardContent className="pt-4 space-y-2" role="alert">
+                {plan.errors.map((error, index) => <p key={index} className="text-sm text-amber-700">{error}</p>)}
+                <Button variant="outline" onClick={() => setStep(0)}>Back to retained files</Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Review */}
           {plan && totalChanges > 0 && !applying && !result && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-base">Review {totalChanges} changes</CardTitle>
-                <Button onClick={handleApply}>Apply {totalChanges} changes</Button>
+                <Button onClick={handleApply} disabled={plan.errors.length > 0}>Apply {totalChanges} changes</Button>
               </CardHeader>
               <div className="px-6 pb-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border-b">
                 <div className="rounded-lg border bg-green-50 dark:bg-green-950/20 p-3 text-center">
@@ -1508,7 +1538,7 @@ export default function PackageSyncPage() {
             </Card>
           )}
 
-          {plan && totalChanges === 0 && !applying && !result && (
+          {plan && plan.errors.length === 0 && totalChanges === 0 && !applying && !result && (
             <div className="text-center py-10 text-muted-foreground">
               <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
               <p className="text-sm">No changes selected. Missing saved flights are preserved unless removal is authorized.</p>
@@ -1517,7 +1547,7 @@ export default function PackageSyncPage() {
 
           {plan && totalChanges > 5 && !applying && !result && (
             <div className="flex justify-end">
-              <Button onClick={handleApply} size="lg">Apply {totalChanges} changes</Button>
+              <Button onClick={handleApply} size="lg" disabled={plan.errors.length > 0}>Apply {totalChanges} changes</Button>
             </div>
           )}
 

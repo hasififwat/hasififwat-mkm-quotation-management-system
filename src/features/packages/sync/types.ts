@@ -1,3 +1,5 @@
+import type { ReviewedPackageApplyIntent } from "../../../domain/package-sync-intent";
+
 export type MatchStatus = "MATCHED" | "NEW" | "ORPHAN";
 export type FlightDiffStatus = "added" | "removed" | "unchanged" | "edited" | "no_db_package";
 
@@ -82,9 +84,8 @@ export type FieldChange = {
   new: string;
 };
 
-export type PackageUpdateSpec = {
+export type PackageUpdateSpec = ReviewedPackageApplyIntent & {
   kind: "update";
-  db_id: string;
   db_name: string;
   current_transport: string;
   transport: string;
@@ -142,6 +143,7 @@ export type DbFlight = {
 };
 
 export type SyncPlan = {
+  errors: string[];
   packagesToCreate: PackageCreateSpec[];
   packagesToUpdate: PackageUpdateSpec[];
   packagesToPromote: string[]; // DB package IDs to mark source: "sync"

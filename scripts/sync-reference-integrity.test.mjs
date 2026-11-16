@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
-import {load, packages, quotations, flights, state, form, create, quotePayload, reviewedQuote} from './helpers/submission-fixtures.mjs';
+import {load, packages, quotations, flights, state, form, create, quotePayload, reviewedQuote, read} from './helpers/submission-fixtures.mjs';
 
 const parsers = load(path.resolve('src/features/packages/sync/parsers.ts'));
 const page = ts.createSourceFile('page.tsx',fs.readFileSync('src/app/(protected)/packages/sync/page.tsx','utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
@@ -24,8 +24,8 @@ async function fixture() {
 function editedRow(f) {
   return {status:'edited',package_name:'Fixture Package',season:'MS - NOV',departure_date:'2027-01-01',return_date:'2027-01-12',departure_sector:'KUL-MED',return_sector:'JED-KUL',airline:'MH',dep_flight:'MH123',ret_flight:'MH456',db_package_id:f.id,db_flight_id:f.fid,notes:''};
 }
-function syncArgs(f, rooms=[{room_type:'Quad',price:2300,enabled:true}]) {
-  return {db_id:f.id,name:'Fixture Package',season:'MS - NOV',year:'2026/2027',duration:'12 days',transport:'Changed transport',hotels:[],rooms};
+async function syncArgs(f, rooms=[{room_type:'Quad',price:2300,enabled:true}]) {
+  return {db_id:f.id,expected_edit_token:(await read(f.s,f.id)).editToken,name:'Fixture Package',season:'MS - NOV',year:'2026/2027',duration:'12 days',transport:'Changed transport',hotels:[],rooms};
 }
 async function reopenAndSave(f) {
   const edit=await quotations.getQuotationForEdit._handler(f.s.ctx,{target_quotation_id:f.qid});
@@ -66,13 +66,14 @@ test('unreferenced genuine deletion succeeds',async()=>{
 });
 test('CSV room removal rejects before package, hotel or room writes',async()=>{
   const f=await fixture();const before=structuredClone(f.s.tables);f.s.operations.length=0;
-  await assert.rejects(()=>packages.syncPackageFromCsv._handler(f.s.ctx,syncArgs(f,[])),e=>e.data?.code==='PACKAGE_REFERENCE_CONFLICT');
+  const args=await syncArgs(f,[]);
+  await assert.rejects(()=>packages.syncPackageFromCsv._handler(f.s.ctx,args),e=>e.data?.code==='PACKAGE_REFERENCE_CONFLICT');
   assert.deepEqual(f.s.tables,before);
   assert.deepEqual(f.s.operations.filter(([op])=>['patch','insert','delete'].includes(op)),[]);
 });
 test('CSV same-type room ID churn preserves saved prices and permits quotation save',async()=>{
   const f=await fixture();const oldRoom=f.s.tables.package_rooms[0]._id;const before=structuredClone(f.s.tables.quotations[0]);const items=structuredClone(f.s.tables.quotation_items);
-  await packages.syncPackageFromCsv._handler(f.s.ctx,syncArgs(f));
+  await packages.syncPackageFromCsv._handler(f.s.ctx,await syncArgs(f));
   assert.notEqual(f.s.tables.package_rooms[0]._id,oldRoom);
   assert.deepEqual(f.s.tables.quotations[0],before);assert.deepEqual(f.s.tables.quotation_items,items);
   await reopenAndSave(f);assert.equal(f.s.tables.quotations[0].total_amount,1200);
