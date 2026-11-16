@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, Plus, Save, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
 	Controller,
 	FormProvider,
@@ -51,6 +51,7 @@ import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 import { STALE_FIELD_LABELS } from "./stale-labels";
 import { saveQuotation } from "./save-quotation";
+import { refreshQuotationSnapshot, type RefreshSnapshotResult, type RefreshSnapshotState } from "./refresh-snapshot";
 
 type Step = "basic" | "package" | "extras";
 
@@ -609,6 +610,22 @@ export default function QuotationBuilder({
 	const [packageOptions, setPackageOptions] = useState(allPackages);
 	const [saveError, setSaveError] = useState<{ message: string; conflict: boolean } | null>(null);
 	const [reviewNotice, setReviewNotice] = useState("");
+	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
+	const refreshRequest = useRef<Promise<RefreshSnapshotResult> | null>(null);
+
+	const handleRefreshSnapshot = async () => {
+		if (!qid || refreshRequest.current) return;
+		const pending = refreshQuotationSnapshot(qid);
+		refreshRequest.current = pending;
+		setRefreshState({ status: "pending" });
+		try {
+			const result = await pending;
+			setRefreshState(result);
+			if (result.status === "success") router.refresh();
+		} finally {
+			refreshRequest.current = null;
+		}
+	};
 
 	const profile = useQuery(api.profiles.getMyProfile);
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
@@ -843,19 +860,35 @@ export default function QuotationBuilder({
 					<button
 						type="button"
 						className="shrink-0 rounded px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
-						onClick={() => {
-							fetch("/api/quotations/update", {
-								method: "POST",
-								headers: { "Content-Type": "application/json" },
-								body: JSON.stringify({
-									_intent: "refresh_snapshot",
-									quotation_id: qid,
-								}),
-							}).then(() => router.refresh());
-						}}
+						disabled={refreshState.status === "pending"}
+						aria-busy={refreshState.status === "pending"}
+						onClick={handleRefreshSnapshot}
 					>
-						Refresh snapshot
+						{refreshState.status === "pending" ? "Refreshing snapshot..." : "Refresh snapshot"}
 					</button>
+				</div>
+			)}
+
+			{qid && refreshState.status !== "idle" && (
+				<div
+					role={refreshState.status === "failure" || refreshState.status === "uncertain" ? "alert" : "status"}
+					className="rounded-lg border bg-muted p-4 text-sm space-y-2"
+				>
+					<p>
+						{refreshState.status === "pending"
+							? "Refreshing the saved snapshot. Your entries are kept on this page."
+							: refreshState.status === "success"
+								? "Snapshot refreshed. Existing quoted prices, passenger counts, add-ons, discounts, and totals were kept."
+								: refreshState.message}
+					</p>
+					{refreshState.status !== "pending" && (
+						<p>
+							<Link href={`/quotations/review/${qid}`} target="_blank" rel="noopener noreferrer" className="underline font-medium">
+								View saved quotation (opens in a new tab)
+							</Link>
+							{" "}to verify its details. Unsaved entries on this page are not included.
+						</p>
+					)}
 				</div>
 			)}
 
