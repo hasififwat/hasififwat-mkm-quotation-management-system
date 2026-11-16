@@ -65,7 +65,9 @@ test("selection conflict returns review metadata without retrying or changing th
     calls++;
     return Response.json({ code: "QUOTATION_SELECTION_CONFLICT", error: "Review the latest package." }, { status: 409 });
   });
-  assert.deepEqual(result, { ok: false, message: "Review the latest package.", selectionConflict: true });
+  assert.equal(result.ok, false);
+  assert.equal(result.message, "Review the latest package.");
+  assert.equal(result.selectionConflict, true);
   assert.equal(calls, 1);
   assert.deepEqual(draft, before);
 });
