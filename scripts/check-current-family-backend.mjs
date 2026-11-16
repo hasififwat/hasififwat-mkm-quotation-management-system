@@ -66,8 +66,10 @@ for(const row of await ctx.db.query('profiles').collect())await ctx.db.patch(row
 }});
 export const review=internalQuery({args:{pkg:v.id('packages')},handler:async(ctx,{pkg})=>quotationSelectionContext(await ctx.db.get(pkg),await ctx.db.query('package_rooms').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_flights').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_hotels').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_meals').collect())});
 export const missingGate=internalMutation({args:{},handler:async(ctx)=>{for(const row of await ctx.db.query('quotation_family_migrations').collect())await ctx.db.delete(row._id);}});
+export const migration=internalMutation({args:{state:v.union(v.literal('missing'),v.literal('incomplete'),v.literal('complete'))},handler:async(ctx,{state})=>{const gate=await ctx.db.query('quotation_family_migrations').unique();if(state==='missing'){if(gate)await ctx.db.delete(gate._id);}else if(gate)await ctx.db.patch(gate._id,{done:state==='complete'});else await ctx.db.insert('quotation_family_migrations',{key:'family-v1',done:state==='complete',cursor:null});}});
+export const legacy=internalMutation({args:{id:v.id('quotations')},handler:async(ctx,{id})=>{const row=await ctx.db.get(id);const {_id,_creationTime,family_id,previous_revision_id,frozen_document,document_schema_version,...legacy}=row;return await ctx.db.insert('quotations',{...legacy,sequence_num:900,revision:0,archived:false});}});
 export const release=internalMutation({args:{enabled:v.boolean()},handler:async(ctx,{enabled})=>{const gate=await ctx.db.query('quotation_revision_release').unique();await ctx.db.patch(gate._id,{enabled});}});
-export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','client_aliases','clients','profiles','quotation_revision_release'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
+export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','client_aliases','clients','profiles','quotation_revision_release','quotation_family_migrations'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
 `);
   let ready = false;
   for (let i = 0; i < 100; i++) {
@@ -151,6 +153,13 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   await client.mutation('fixture:release',{enabled:false});const closed=await dump();
   await assert.rejects(()=>client.mutation('quotationFamilies:archive',{family_id}));assert.deepEqual(await dump(),closed);
   await client.mutation('fixture:release',{enabled:true});
+  for (const state of ['missing', 'incomplete']) {
+    await client.mutation('fixture:migration', {state});
+    const gated = await dump();
+    await assert.rejects(() => client.mutation('quotationFamilies:archive', {family_id}));
+    assert.deepEqual(await dump(), gated);
+  }
+  await client.mutation('fixture:migration', {state:'complete'});
   await client.mutation('quotationFamilies:archive',{family_id});await client.mutation('quotationFamilies:archive',{family_id});
   assert.equal(await client.query('quotations:count',{}),12);
   const archived=await client.query('quotations:listPaginated',{paginationOpts:{cursor:null,numItems:10},visibility:'archived'});assert.equal(archived.page[0].id,moved.id);
@@ -161,6 +170,12 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const afterArchive=await dump();assert.deepEqual(afterArchive.quotations,beforeArchive.quotations);assert.deepEqual(afterArchive.quotation_items,beforeArchive.quotation_items);assert.equal(afterArchive.quotation_logs.filter(row=>row.action==='family_archived').length,1);
   await assert.rejects(()=>save(append(moved)));assert.deepEqual(await dump(),afterArchive);
   result.checks.push('Unauthenticated operational/history readers and archive reject. Disabled release rejects archive with no writes. Archive logs once, hides only the family operationally, preserves the current pointer, exact old review content, all revision/item rows and ordered history, and rejects later append. Family revisions never enter deletable duplicate suggestions.');
+  const legacyId = await client.mutation('fixture:legacy', {id:moved.id});
+  const legacyRows = await client.query('quotations:list', {});
+  assert.equal(legacyRows.length, 13);
+  assert.ok(legacyRows.some(row => row.id === legacyId && row.family_id === null));
+  assert.equal(await client.query('quotations:count', {}), 13);
+  result.checks.push('Missing and incomplete migration gates reject family archive without writes. The actual optional family index includes an ungrouped legacy row alongside indexed current family pointers.');
   result.runtime={node:process.version,convex:'1.45.0',url};
   result.source=execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();
   result.source_dirty=execFileSync('git',['status','--porcelain'],{cwd:repo,encoding:'utf8'}).trim().length>0;
