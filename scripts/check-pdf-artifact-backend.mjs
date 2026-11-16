@@ -7,6 +7,8 @@ import assert from 'node:assert/strict';
 import { ConvexHttpClient } from 'convex/browser';
 
 const repo = process.cwd();
+const preclaimFailures = Number(process.env.PDF_PRECLAIM_FAILURES || 0);
+assert.ok(Number.isSafeInteger(preclaimFailures) && preclaimFailures >= 0 && preclaimFailures <= 5);
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'revision-backend-'));
 const binary = process.env.FAMILY_BACKEND_BINARY;
 if (!binary) throw new Error('Set FAMILY_BACKEND_BINARY to a convex-local-backend executable');
@@ -34,6 +36,7 @@ import { quotationSelectionContext } from '../src/domain/quotation-selection-con
 import { v } from 'convex/values';
 export const seed = internalMutation({args:{},handler:async(ctx)=>{
 const now='2026-11-17';
+if(${preclaimFailures}>0)await ctx.db.insert('room_templates',{name:'preclaim-fault',price:${preclaimFailures},enabled:true,sort_order:0,created_at:now});
 await ctx.db.insert('quotation_revision_release',{key:'revision-v1',enabled:true});
 await ctx.db.insert('quotation_family_migrations',{key:'family-v1',done:true,cursor:null});
 const client=await ctx.db.insert('clients',{name:'Disposable revision fixture',phone_number:'fixture-phone',created_at:now,updated_at:now});
@@ -42,6 +45,12 @@ const flight=await ctx.db.insert('package_flights',{package_id:pkg,month:'Nov',f
 await ctx.db.insert('package_rooms',{package_id:pkg,room_type:'Quad',price:100.1,enabled:true,created_at:now});
 const context=quotationSelectionContext(await ctx.db.get(pkg),await ctx.db.query('package_rooms').collect(),await ctx.db.query('package_flights').collect(),[],[]);
 return {client,pkg,flight,context};}});
+export const consumePreclaimFailure=internalMutation({args:{artifact_id:v.id('quotation_pdf_artifacts')},handler:async(ctx)=>{
+const fault=(await ctx.db.query('room_templates').collect()).find(row=>row.name==='preclaim-fault');
+if(!fault||fault.price===0)return false;
+await ctx.db.patch(fault._id,{price:fault.price-1});return true;
+}});
+export const recoveryState=internalQuery({args:{},handler:async(ctx)=>({artifacts:await ctx.db.query('quotation_pdf_artifacts').collect(),attempts:await ctx.db.query('quotation_pdf_attempts').collect(),jobs:await ctx.db.system.query('_scheduled_functions').collect()})});
 export const rollback = internalMutation({args:{command:saveCommand},handler:async(ctx,{command})=>{await saveRevision(ctx,'fixture-actor',command);throw new Error('Injected failure after complete save');}});
 export const removeCatalog = internalMutation({args:{},handler:async(ctx)=>{for(const table of ['clients','packages','package_flights','package_rooms'] as const)for(const row of await ctx.db.query(table).collect())await ctx.db.delete(row._id);}});
 export const artifact=internalMutation({args:{id:v.id('quotation_pdf_artifacts'),mode:v.string(),input:v.optional(v.string())},handler:async(ctx,{id,mode,input})=>{
@@ -67,6 +76,12 @@ import { createHash } from 'node:crypto';
 import { v } from 'convex/values';
 export const upload=internalAction({args:{bytes:v.bytes()},handler:async(ctx,{bytes})=>({storage_id:await ctx.storage.store(new Blob([bytes],{type:'application/pdf'})),size:bytes.byteLength,sha256:createHash('sha256').update(new Uint8Array(bytes)).digest('hex'),mime:'application/pdf'})});
 `);
+  if(preclaimFailures) {
+    const workerPath=path.join(root,'convex/quotationPdfWorker.ts');
+    const source=await fs.readFile(workerPath,'utf8');
+    const injection="  if (await ctx.runMutation(internal.fixture.consumePreclaimFailure, args)) throw new Error('Injected preclaim TooManyWrites');\n";
+    await fs.writeFile(workerPath,source.replace('  const claim =',injection+'  const claim ='));
+  }
   for(let i=0;i<100;i++) { try { if((await fetch(`${url}/version`)).ok) break; } catch {} await new Promise(r=>setTimeout(r,100)); }
   const deploy = spawn(path.join(repo,'node_modules/.bin/convex'),['dev','--once','--typecheck','disable','--codegen','disable'],{cwd:root,env:{...Object.fromEntries(Object.entries(process.env).filter(([key])=>!key.startsWith('CONVEX_'))),CONVEX_SELF_HOSTED_URL:url,CONVEX_SELF_HOSTED_ADMIN_KEY:adminKey},stdio:['ignore','pipe','pipe']});
   let output=''; deploy.stdout.on('data',d=>output+=d);deploy.stderr.on('data',d=>output+=d);
@@ -93,6 +108,43 @@ export const upload=internalAction({args:{bytes:v.bytes()},handler:async(ctx,{by
   const zero=await save(create);
   assert.equal(zero.revision,0);
   assert.deepEqual(await save(create),zero);
+  if(preclaimFailures) {
+    const saved=await dump();
+    const snapshots=[];
+    let failedCount=0;
+    let ready;
+    for(let n=0;n<240;n++) {
+      const snapshot=await client.query('fixture:recoveryState',{});
+      assert.equal(snapshot.artifacts.length,1);
+      const artifact=snapshot.artifacts[0];
+      assert.equal(artifact.revision_id,zero.id);
+      const jobs=snapshot.jobs.filter(job=>job.args[0]?.artifact_id===artifact._id);
+      const failures=jobs.filter(job=>job.name.includes('quotationPdfWorker')&&job.state.kind==='failed');
+      if(failures.length>failedCount) {
+        assert.equal(artifact.state.kind,'pending');
+        assert.equal(snapshot.attempts.length,0);
+        assert.ok(failures.every(job=>job.state.error.includes('Injected preclaim TooManyWrites')));
+        assert.ok(jobs.some(job=>job.name.includes('reconcile')&&job.state.kind==='pending'),'failed action retains a durable future mutation');
+        failedCount=failures.length;
+        const {input_json,...metadata}=artifact;
+        snapshots.push({artifact:metadata,attempts:snapshot.attempts,jobs});
+      }
+      if(artifact.state.kind==='ready'){ready=artifact;assert.equal(snapshot.attempts.length,1);break;}
+      assert.notEqual(artifact.state.kind,'failed');
+      await new Promise(r=>setTimeout(r,250));
+    }
+    assert.ok(ready,'automatic watchdogs converge without manual rescue');
+    assert.equal(failedCount,preclaimFailures);
+    assert.deepEqual(await dump(),saved);
+    assert.deepEqual(await save(create),zero);
+    const first=await client.action('quotationPdfWorker:download',{revision_id:zero.id});
+    const second=await client.action('quotationPdfWorker:download',{revision_id:zero.id});
+    assert.deepEqual(first.bytes,second.bytes);
+    assert.equal((await import('node:crypto')).createHash('sha256').update(new Uint8Array(first.bytes)).digest('hex'),ready.state.sha256);
+    result.preclaim={injectedFailures:preclaimFailures,snapshots,ready:{artifact_id:ready._id,state:ready.state},manualRescueCalls:0};
+    result.checks.push('Repeated real scheduled actions fail before claim. Each remains pending with zero attempts and an independent durable future mutation. Watchdogs converge automatically to one ready artifact and one fenced attempt without new revisions or manual retry.');
+    result.runtime={node:process.version,convex:'1.45.0',url};
+  } else {
   const first=await dump();
   assert.equal(first.quotations[0].total_amount,300.5);
   const append=(base,notes='one')=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes,client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'}});
@@ -246,6 +298,7 @@ export const upload=internalAction({args:{bytes:v.bytes()},handler:async(ctx,{by
   await fs.mkdir(path.join(repo,'output/pdf/issue-58'),{recursive:true});
   await fs.writeFile(path.join(repo,'output/pdf/issue-58/stored.pdf'),new Uint8Array(pdf.bytes));
   result.checks.push('Actual scheduled Node renderer stored and authenticated downloads return identical SHA-256. Anonymous retrieval rejects. Ready retry preserves all revisions.');
+  }
   result.source=execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();
   result.cleanup='Isolated process stopped and temporary database removed in finally.';
   console.log(JSON.stringify(result,null,2));
