@@ -13,11 +13,12 @@ import {
 	DialogTrigger,
 } from "~/components/ui/dialog";
 import { CreateClientForm } from "~/features/clients/CreateClientForm";
+import type { ClientSummary } from "~/features/clients/types";
 
 export function CreateClientModal({
 	onSuccess,
 }: {
-	onSuccess?: (clientId: string) => void;
+	onSuccess?: (client: ClientSummary) => void;
 }) {
 	const [open, setOpen] = useState(false);
 	return (
@@ -45,9 +46,9 @@ export function CreateClientModal({
 				</DialogHeader>
 				{open && (
 					<CreateClientForm
-						onSuccess={(clientId) => {
+						onSuccess={(client) => {
 							setOpen(false);
-							onSuccess?.(clientId);
+							onSuccess?.(client);
 						}}
 					/>
 				)}

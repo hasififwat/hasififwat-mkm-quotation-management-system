@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-11T06:28:48Z	ground	Confirmed PR13 base and reproduced accidental and repeated requests	Use observed UI behavior before implementation	31e16e9c	regressions fail before fix
+2026-11-11T06:37:48Z	design	Selected explicit unknown outcome without automatic retry	Preserve drafts and block duplicate dispatch using the current backend	docs/verification/issue-11-recoverable-save.md	implemented
+2026-11-11T06:37:48Z	verify	Fixed React ref rendering diagnostics and reran checks	Outcome rendering belongs in state while immediate admission uses a ref	3cf606c4	7 save checks and 223 existing checks pass
+2026-11-11T06:42:43Z	review	Added direct export and real-resolver assertions after review	State-only tests did not establish recovery output or validation wiring	scripts/recoverable-save.test.mjs	233 tests pass
+2026-11-11T06:42:43Z	browser	Verified live create edit reload and archived the sole fixture	Success must persist through another view and owned data must be cleaned up	docs/verification/issue-11-recoverable-save/list-persistence.png	fixture archived and helpers stopped

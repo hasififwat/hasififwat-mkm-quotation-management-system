@@ -1,0 +1,35 @@
+[
+  {
+    "id": "m177xnpbpgnbedv3ayn7wah6y58jawq2",
+    "total": 10025,
+    "notes": "QUOTE-003 final reviewed draft",
+    "flight": {
+      "departure_date": "2026-12-15",
+      "departure_sector": "KUL-JED",
+      "flight": "TEST003",
+      "id": "k574vyhy1skh1ngpsztk6hg05x8jbfsn",
+      "month": "December",
+      "return_date": "2026-12-22",
+      "return_sector": "JED-KUL"
+    },
+    "rooms": [
+      {
+        "id": "ks71mhpqbxcxvv2y8xk11kt1bd8jb80k",
+        "package_room_id": "kh79srx8y53tyvha3tvs3dvyah8jbxf4",
+        "pax": 2,
+        "price": 5000,
+        "room_type": "Quad",
+        "subtotal": 10000
+      }
+    ],
+    "addons": [
+      {
+        "id": "ks73ejrqccg5sd52cf3h850hqn8jam1x",
+        "name": "Transfer",
+        "pax": 1,
+        "price": 25,
+        "subtotal": 25
+      }
+    ]
+  }
+]

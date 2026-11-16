@@ -1,4 +1,7 @@
+import { packageEditToken, readPackageEditSnapshot, requireCurrentPackageEdit } from "./lib/packageEditSnapshot";
+import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
+import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
@@ -133,6 +136,7 @@ export const listWithRooms = query({
 
     return packages.map((pkg) => ({
       ...pkg,
+      creation_context: quotationSelectionContext(pkg, packageRooms, packageFlights, packageHotels, packageMeals),
       rooms: dedupeById(roomsByPackageId.get(pkg._id) ?? []),
       flights: dedupeById(flightsByPackageId.get(pkg._id) ?? []),
       hotels: dedupeById(hotelsByPackageId.get(pkg._id) ?? []).map((hotel) => ({
@@ -150,27 +154,9 @@ export const getById = query({
   },
   handler: async (ctx, args) => {
     await requirePackageAccess(ctx);
-    const pkg = await ctx.db.get(args.id);
-    if (!pkg) {
-      return null;
-    }
-
-    const packageRooms = await ctx.db
-      .query("package_rooms")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageFlights = await ctx.db
-      .query("package_flights")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageHotels = await ctx.db
-      .query("package_hotels")
-      .withIndex("by_package_id", (q) => q.eq("package_id", pkg._id))
-      .collect();
-
-    const packageMeals = await ctx.db.query("package_meals").collect();
+    const snapshot = await readPackageEditSnapshot(ctx, args.id);
+    if (!snapshot) return null;
+    const { package: pkg, rooms: packageRooms, flights: packageFlights, hotels: packageHotels, meals: packageMeals } = snapshot;
     const mealsByPackageHotelId = new Map<(typeof packageMeals)[number]["package_hotel_id"], (typeof packageMeals)[number][]>();
 
     for (const meal of packageMeals) {
@@ -185,6 +171,7 @@ export const getById = query({
 
     return {
       ...pkg,
+      editToken: packageEditToken(snapshot),
       rooms: dedupeById(packageRooms),
       flights: dedupeById(packageFlights),
       hotels: dedupeById(packageHotels).map((hotel) => ({
@@ -362,6 +349,7 @@ export const createPackage = mutation({
 export const updatePackage = mutation({
   args: {
     id: v.id("packages"),
+    expectedEditToken: v.optional(v.string()),
     payload: v.object({
       name: v.string(),
       duration: v.string(),
@@ -413,6 +401,10 @@ export const updatePackage = mutation({
       throw new Error("Package not found");
     }
 
+    const snapshot = await readPackageEditSnapshot(ctx, args.id);
+    if (!snapshot) throw new Error("Package not found");
+    requireCurrentPackageEdit(args.expectedEditToken, snapshot);
+
     const now = new Date().toISOString();
     const nextSeason =
       args.payload.season?.trim() || existingPackage.season || args.payload.year;
@@ -444,6 +436,23 @@ export const updatePackage = mutation({
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
       .collect();
     const allExistingRooms = dedupeById(existingRooms);
+
+    const existingFlights = await ctx.db
+      .query("package_flights")
+      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
+      .collect();
+    const dedupedExistingFlights = dedupeById(existingFlights);
+    const existingFlightIdSet = new Set(dedupedExistingFlights.map((f) => String(f._id)));
+    const incomingFlightIdSet = new Set(
+      args.payload.flights.filter((f) => f._id).map((f) => f._id as string),
+    );
+    await requireQuotationReferencesPreserved(
+      ctx,
+      existingPackage._id,
+      allExistingRooms,
+      new Set(dedupedExistingFlights.filter(f => !incomingFlightIdSet.has(String(f._id))).map(f => String(f._id))),
+      new Set(args.payload.rooms.map(room => room.room_type)),
+    );
 
     // Detect whether any sync-managed field (transport, hotels, rooms) actually changed.
     // Inclusions/exclusions are NOT sync-managed — editing only those should not unsync the package.
@@ -509,15 +518,6 @@ export const updatePackage = mutation({
       await ctx.db.delete(room._id);
     }
 
-    const existingFlights = await ctx.db
-      .query("package_flights")
-      .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
-      .collect();
-    const dedupedExistingFlights = dedupeById(existingFlights);
-    const existingFlightIdSet = new Set(dedupedExistingFlights.map((f) => String(f._id)));
-    const incomingFlightIdSet = new Set(
-      args.payload.flights.filter((f) => f._id).map((f) => f._id as string),
-    );
     // Delete flights that were removed from the payload
     for (const flight of dedupedExistingFlights) {
       if (!incomingFlightIdSet.has(String(flight._id))) {

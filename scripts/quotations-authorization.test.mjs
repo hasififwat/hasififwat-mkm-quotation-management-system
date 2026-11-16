@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { quotations, state, create, form, quotePayload } from './helpers/submission-fixtures.mjs';
+import { quotations, packages, state, create, form, quotePayload } from './helpers/submission-fixtures.mjs';
 
 for (const [name, operation] of Object.entries(quotations)) {
   if (!operation?._handler) continue;
@@ -19,6 +19,7 @@ test('session actor owns create and update audit records while PIC stays editabl
   s.ctx.auth.getUserIdentity = async () => ({subject:'fixture-staff|session-one'});
   const packageId = await create(s, form());
   const payload = {...quotePayload(packageId, s.tables.package_flights[0]._id), created_by:'Spoofed actor'};
+  payload.reviewed_context = (await packages.listWithRooms._handler(s.ctx, {})).find(p => p._id === packageId).creation_context;
   const saved = await quotations.create._handler(s.ctx, {payload});
   const row = s.tables.quotations.find(q => q._id === saved.id);
   assert.equal(row.created_by, 'fixture-staff');

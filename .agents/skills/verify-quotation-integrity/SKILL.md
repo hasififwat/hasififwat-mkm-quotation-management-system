@@ -60,6 +60,14 @@ database state:
 - quantity: `1`, `2`;
 - unit price: `0`, `100`.
 
+Creation cases submit the current package content version through `reviewed_context`.
+The adapter derives it from the same explicit package and child fixture rows.
+This keeps the original domain valid after creation requires reviewed context.
+Stale context and availability have focused checks in
+`scripts/quotation-selection.test.mjs`. Run
+`node scripts/check-quotation-selection-mutation.mjs` to verify that removing the
+actual creation-context comparison permits the original mixed snapshot failure.
+
 Each database has two packages/flights/rooms, one client, and one existing draft
 quotation. Rejected calls are treated as rolled-back transactions. Successful
 calls expose the real handler's stored quotation and write trace. Positive

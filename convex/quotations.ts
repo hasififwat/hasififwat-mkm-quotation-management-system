@@ -1,8 +1,9 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
+import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { paginationOptsValidator } from "convex/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
@@ -490,6 +491,7 @@ export const create = mutation({
 			client_id: v.string(),
 			package_id: v.string(),
 			flight_id: v.string(),
+			reviewed_context: v.optional(v.string()),
 			notes: v.optional(v.string()),
 			status: v.optional(
 				v.union(
@@ -539,7 +541,10 @@ export const create = mutation({
 			(candidate) => String(candidate._id) === args.payload.package_id,
 		);
 		if (!selectedPackage) {
-			throw new Error("Package not found");
+			throw new ConvexError({ code: "QUOTATION_SELECTION_CONFLICT", message: "This package is no longer available. Review the latest package before saving." });
+		}
+		if (selectedPackage.archived) {
+			throw new ConvexError({ code: "QUOTATION_SELECTION_CONFLICT", message: "This package has been archived. Choose an available package before saving." });
 		}
 		const hijriYear = getMappedHijriYear(selectedPackage.year);
 
@@ -555,6 +560,12 @@ export const create = mutation({
 				ctx.db.query("package_hotels").collect(),
 				ctx.db.query("package_meals").collect(),
 			]);
+
+		if (args.payload.reviewed_context !== quotationSelectionContext(
+			selectedPackage, allPackageRooms, allFlights, allPackageHotels, allPackageMeals,
+		)) {
+			throw new ConvexError({ code: "QUOTATION_SELECTION_CONFLICT", message: "The package, rooms, or itinerary changed. Review the latest package before saving." });
+		}
 
 		const client = allClients.find(
 			(candidate) => String(candidate._id) === args.payload.client_id,
@@ -595,6 +606,9 @@ export const create = mutation({
 
 			if (!packageRoom) {
 				throw new Error(`Room type '${item.room_type}' does not exist in this package`);
+			}
+			if (!packageRoom.enabled) {
+				throw new ConvexError({ code: "QUOTATION_SELECTION_CONFLICT", message: `Room type '${item.room_type}' is no longer available. Review the latest package before saving.` });
 			}
 
 			return {
