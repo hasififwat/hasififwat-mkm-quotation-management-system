@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "c2002ce5a9a54d3bd1b3f959e32f985c4df8f6ac",
+  "lastSyncCommit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
   "sourceWasUncommitted": true,
-  "checkedAt": "2026-11-16",
+  "checkedAt": "2026-11-17",
   "source": "convex/quotations.ts",
-  "sourceSha256": "2e2e74702a3e6985672b7b3d4cdbd90f24deb734ed72ca66723f4390016006cc",
+  "sourceSha256": "52700eee15babad0b6444cfcfa4033e1c355ab42553bf7998ce459e4de2c13ea",
   "functions": [
     "create",
     "update"
@@ -26,7 +26,9 @@
     "isCalendarDate",
     "requireQuotationActor",
     "getAuthUserId",
-    "quotationSelectionContext"
+    "quotationSelectionContext",
+    "assertLegacyWritesAllowed",
+    "reserveBaseReference"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",
@@ -44,7 +46,8 @@
     "src/domain/quotation-selection-context.ts",
     "convex/packages.ts",
     "src/features/quotation/QuotationBuilder.tsx",
-    "src/features/quotation/save-quotation.ts"
+    "src/features/quotation/save-quotation.ts",
+    "convex/lib/quotationFamilyIdentity.ts"
   ],
   "versions": {
     "node": "24.19.0",
@@ -61,11 +64,12 @@
     "scripts/helpers/load-typescript.mjs": "b12566af0edae1366357256d5d4bc92e97a5c509e3288550ec1027c7052dff25",
     "src/domain/submission-validation.ts": "b43b0415610203823c2bd842a537588b3a616dd2dc9916d98ff593bd89683360",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
-    "convex/packages.ts": "2dd88ff1a082f9951b3e6eb22350a10475eaf266adfdc29d2bf6a786fce87511",
+    "convex/packages.ts": "b648baea0bb4b64785cabc8c51e22076c36354c2b97a6fe9f4b21c441f73dd3c",
     "src/features/quotation/QuotationBuilder.tsx": "bd8d05724d069b3ed9f873631810e619bb6f4ead05749f0aab9dabb4ebdf3653",
-    "convex/schema.ts": "8597d6ef149cb2900d0f4a098a71e27a2835a36ed554ac2397fc09f26b6c92d3",
+    "convex/schema.ts": "5d7675433877de203cd2b512c6736973756e89a88875333f514e25e4b5e40e5c",
     "src/app/api/quotations/create/route.ts": "0ed6f42ddbab9c39a45145159ab909737ff056293a9db9619fe321d03fdec6db",
-    "src/features/quotation/save-quotation.ts": "d6ecebdbf925d9f4a0dde04c866edc568f6f64cfbaae3ccb5884d23b550406f3"
+    "src/features/quotation/save-quotation.ts": "d6ecebdbf925d9f4a0dde04c866edc568f6f64cfbaae3ccb5884d23b550406f3",
+    "convex/lib/quotationFamilyIdentity.ts": "53fdc6b2cd4078fc499963aadc58e978931cb5cf82db8ac5c8804f1ac57d83c7"
   },
   "additionalVerification": {
     "createRetries": "scripts/quotation-create-retry.test.mjs executes actual handlers with a sequential in-memory adapter. Actual Convex concurrency is outside this checker."

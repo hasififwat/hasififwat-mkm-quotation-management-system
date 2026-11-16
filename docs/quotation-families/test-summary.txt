@@ -1,0 +1,7 @@
+ℹ tests 596
+ℹ suites 0
+ℹ pass 596
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0

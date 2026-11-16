@@ -1,0 +1,261 @@
+{
+  "checker": "finite exhaustive execution of actual Convex handlers; in-memory database adapter",
+  "generatedAt": "2026-11-16T16:17:25.150Z",
+  "commit": "3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da",
+  "source": "convex/quotations.ts",
+  "sourceSha256": "52700eee15babad0b6444cfcfa4033e1c355ab42553bf7998ce459e4de2c13ea",
+  "versions": {
+    "node": "v24.19.0",
+    "typescript": "5.9.3",
+    "convex": "1.45.0"
+  },
+  "baseline": {
+    "cases": 864,
+    "successfulCalls": 16,
+    "rejectedCalls": 848,
+    "positiveWitnesses": {
+      "create": 8,
+      "update": 8
+    },
+    "properties": {
+      "authenticated_writes": {
+        "failures": 0,
+        "firstCounterexample": null
+      },
+      "flight_matches_package": {
+        "failures": 0,
+        "firstCounterexample": null
+      }
+    },
+    "adapterErrors": []
+  },
+  "mutationTests": [
+    {
+      "operation": "create",
+      "scratch": "/tmp/family-integrity/create-without-flight-guard.ts",
+      "detected": true,
+      "result": {
+        "cases": 864,
+        "successfulCalls": 24,
+        "rejectedCalls": 840,
+        "positiveWitnesses": {
+          "create": 8,
+          "update": 8
+        },
+        "properties": {
+          "authenticated_writes": {
+            "failures": 0,
+            "firstCounterexample": null
+          },
+          "flight_matches_package": {
+            "failures": 8,
+            "firstCounterexample": {
+              "input": {
+                "operation": "create",
+                "authenticated": true,
+                "package_id": "p1",
+                "flight_id": "f2",
+                "client_id": "c1",
+                "room_type": "quad",
+                "pax": 1,
+                "price": 0
+              },
+              "detail": {
+                "message": "A successful mutation stored a quotation with a flight from another package or an absent flight.",
+                "stored": {
+                  "package_id": "p1",
+                  "flight_id": "f2"
+                },
+                "flightPackage": "p2"
+              }
+            }
+          }
+        },
+        "adapterErrors": []
+      }
+    },
+    {
+      "operation": "update",
+      "scratch": "/tmp/family-integrity/update-without-flight-guard.ts",
+      "detected": true,
+      "result": {
+        "cases": 864,
+        "successfulCalls": 24,
+        "rejectedCalls": 840,
+        "positiveWitnesses": {
+          "create": 8,
+          "update": 8
+        },
+        "properties": {
+          "authenticated_writes": {
+            "failures": 0,
+            "firstCounterexample": null
+          },
+          "flight_matches_package": {
+            "failures": 8,
+            "firstCounterexample": {
+              "input": {
+                "operation": "update",
+                "authenticated": true,
+                "package_id": "p1",
+                "flight_id": "f2",
+                "client_id": "c1",
+                "room_type": "quad",
+                "pax": 1,
+                "price": 0
+              },
+              "detail": {
+                "message": "A successful mutation stored a quotation with a flight from another package or an absent flight.",
+                "stored": {
+                  "package_id": "p1",
+                  "flight_id": "f2"
+                },
+                "flightPackage": "p2"
+              }
+            }
+          }
+        },
+        "adapterErrors": []
+      }
+    },
+    {
+      "operation": "create",
+      "property": "authenticated_writes",
+      "scratch": "/tmp/family-integrity/create-without-auth-guard.ts",
+      "detected": true,
+      "result": {
+        "cases": 864,
+        "successfulCalls": 24,
+        "rejectedCalls": 840,
+        "positiveWitnesses": {
+          "create": 8,
+          "update": 8
+        },
+        "properties": {
+          "authenticated_writes": {
+            "failures": 8,
+            "firstCounterexample": {
+              "input": {
+                "operation": "create",
+                "authenticated": false,
+                "package_id": "p1",
+                "flight_id": "f1",
+                "client_id": "c1",
+                "room_type": "quad",
+                "pax": 1,
+                "price": 0
+              },
+              "detail": {
+                "message": "The actual mutation returned successfully with no identity and would commit writes.",
+                "response": {
+                  "id": "quotations:verification:2",
+                  "quotation_number": "1448H-0002",
+                  "hijri_year": "1448H",
+                  "sequence_num": 2,
+                  "revision": 0,
+                  "total_amount": 0,
+                  "status": "draft"
+                },
+                "writes": [
+                  {
+                    "operation": "insert",
+                    "table": "quotation_reference_counters",
+                    "id": "quotation_reference_counters:verification:1"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotations",
+                    "id": "quotations:verification:2"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotation_items",
+                    "id": "quotation_items:verification:3"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotation_logs",
+                    "id": "quotation_logs:verification:4"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotation_create_receipts",
+                    "id": "quotation_create_receipts:verification:5"
+                  }
+                ]
+              }
+            }
+          },
+          "flight_matches_package": {
+            "failures": 0,
+            "firstCounterexample": null
+          }
+        },
+        "adapterErrors": []
+      }
+    },
+    {
+      "operation": "update",
+      "property": "authenticated_writes",
+      "scratch": "/tmp/family-integrity/update-without-auth-guard.ts",
+      "detected": true,
+      "result": {
+        "cases": 864,
+        "successfulCalls": 24,
+        "rejectedCalls": 840,
+        "positiveWitnesses": {
+          "create": 8,
+          "update": 8
+        },
+        "properties": {
+          "authenticated_writes": {
+            "failures": 8,
+            "firstCounterexample": {
+              "input": {
+                "operation": "update",
+                "authenticated": false,
+                "package_id": "p1",
+                "flight_id": "f1",
+                "client_id": "c1",
+                "room_type": "quad",
+                "pax": 1,
+                "price": 0
+              },
+              "detail": {
+                "message": "The actual mutation returned successfully with no identity and would commit writes.",
+                "response": {
+                  "id": "q1",
+                  "quotation_number": "1448H-0001",
+                  "total_amount": 0,
+                  "status": "draft"
+                },
+                "writes": [
+                  {
+                    "operation": "patch",
+                    "id": "q1"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotation_items",
+                    "id": "quotation_items:verification:1"
+                  },
+                  {
+                    "operation": "insert",
+                    "table": "quotation_logs",
+                    "id": "quotation_logs:verification:2"
+                  }
+                ]
+              }
+            }
+          },
+          "flight_matches_package": {
+            "failures": 0,
+            "firstCounterexample": null
+          }
+        },
+        "adapterErrors": []
+      }
+    }
+  ],
+  "baselineRestored": true
+}

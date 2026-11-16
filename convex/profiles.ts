@@ -1,3 +1,4 @@
+import { assertLegacyWritesAllowed } from "./lib/quotationFamilyIdentity";
 import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
@@ -113,6 +114,7 @@ export const setProfileEmail = mutation({
 export const migrateQuotationCreators = mutation({
 	args: {},
 	handler: async (ctx) => {
+		await assertLegacyWritesAllowed(ctx);
 		const profiles = await ctx.db.query("profiles").collect();
 		const nameToId: Record<string, string> = {};
 		for (const p of profiles) {

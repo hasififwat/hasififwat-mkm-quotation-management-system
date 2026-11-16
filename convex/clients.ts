@@ -1,3 +1,4 @@
+import { assertLegacyWritesAllowed } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
@@ -292,6 +293,7 @@ export const mergeClients = mutation({
 	},
 	handler: async (ctx, args) => {
 		await requireClientActor(ctx);
+		await assertLegacyWritesAllowed(ctx);
 		const canonical = await ctx.db
 			.query("clients")
 			.collect()

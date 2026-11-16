@@ -1,0 +1,82 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { spawn, execFileSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
+import assert from 'node:assert/strict';
+import { ConvexHttpClient } from 'convex/browser';
+
+const repo = process.cwd();
+const root = await fs.mkdtemp(path.join(os.tmpdir(), 'family-backend-'));
+const binary = process.env.FAMILY_BACKEND_BINARY;
+if (!binary) throw new Error('Set FAMILY_BACKEND_BINARY to a convex-local-backend executable');
+const port = 13455;
+const url = `http://127.0.0.1:${port}`;
+const secret = randomBytes(32).toString('hex');
+const name = 'family-fixture';
+const adminKey = execFileSync(binary, ['keygen','admin-key','--instance-name',name,'--instance-secret',secret], {encoding:'utf8'}).trim();
+const backend = spawn(binary, ['--interface','127.0.0.1','--port',String(port),'--site-proxy-port',String(port+1),'--instance-name',name,'--instance-secret',secret,'--disable-beacon',path.join(root,'fixture.sqlite3')], {cwd:root,stdio:'ignore'});
+const result = { surface:'Disposable real Convex backend. Backend fixtures, not UI proof.', checks:[] };
+try {
+  await fs.mkdir(path.join(root,'convex/lib'), {recursive:true});
+  await fs.mkdir(path.join(root,'convex/_generated'));
+  await fs.symlink(path.join(repo,'node_modules'),path.join(root,'node_modules'));
+  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0'}}));
+  await fs.writeFile(path.join(root,'convex.json'), '{}');
+  for (const file of ['schema.ts','quotationFamilyMigration.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  await fs.writeFile(path.join(root,'convex/fixture.ts'), `
+import { internalMutation, internalQuery } from './_generated/server';
+import { reserveBaseReference, assertLegacyWritesAllowed } from './lib/quotationFamilyIdentity';
+import { v } from 'convex/values';
+export const seed = internalMutation({args:{collision:v.boolean(),year:v.optional(v.string())},handler:async(ctx,args)=>{
+const row={hijri_year:args.year??'1448H',sequence_num:9,revision:3,client_name:'Disposable',package_id:'missing',flight_id:'missing',client_id:'missing',status:'draft' as const,total_amount:1,created_at:'2026-01-01',updated_at:'2026-01-01',created_by:'legacy',pic_name:'Fixture',branch:'Fixture',archived:true};
+const id=await ctx.db.insert('quotations',row);
+await ctx.db.insert('quotation_items',{quotation_id:id,item_type:'room',description:'Saved label',package_room_id:'missing',quantity:1,unit_price:1,created_at:'2026-01-01'});
+if(args.collision) await ctx.db.insert('quotations',row);
+return id;}});
+export const corrupt=internalMutation({args:{},handler:async(ctx)=>{await ctx.db.insert('quotation_reference_counters',{hijri_year:'1449H',high_water:99});await ctx.db.insert('quotation_reference_counters',{hijri_year:'1449H',high_water:100});}});
+export const allocate=internalMutation({args:{},handler:async(ctx)=>reserveBaseReference(ctx,'1448H')});
+export const guarded=internalMutation({args:{},handler:async(ctx)=>{await assertLegacyWritesAllowed(ctx); return await ctx.db.insert('clients',{name:'Must rollback',created_at:'x',updated_at:'x'});}});
+export const dump=internalQuery({args:{},handler:async(ctx)=>({quotes:await ctx.db.query('quotations').collect(),families:await ctx.db.query('quotation_families').collect(),items:await ctx.db.query('quotation_items').collect(),runs:await ctx.db.query('quotation_family_migrations').collect()})});
+`);
+  for(let i=0;i<100;i++) { try { if((await fetch(`${url}/version`)).ok) break; } catch {} await new Promise(r=>setTimeout(r,100)); }
+  const deploy = spawn(path.join(repo,'node_modules/.bin/convex'),['dev','--once','--typecheck','disable','--codegen','disable'],{cwd:root,env:{...Object.fromEntries(Object.entries(process.env).filter(([key])=>!key.startsWith('CONVEX_'))),CONVEX_SELF_HOSTED_URL:url,CONVEX_SELF_HOSTED_ADMIN_KEY:adminKey},stdio:['ignore','pipe','pipe']});
+  let output=''; deploy.stdout.on('data',d=>output+=d);deploy.stderr.on('data',d=>output+=d);
+  const code=await new Promise(r=>deploy.on('exit',r));
+  if(code!==0) throw new Error(`Local deployment failed. ${output.replaceAll(adminKey,'[redacted]')}`);
+  const client = new ConvexHttpClient(url); client.setAdminAuth(adminKey);
+  await client.mutation('fixture:seed',{collision:false});
+  const before=await client.query('fixture:dump',{});
+  const allocations=await Promise.all(Array.from({length:8},()=>client.mutation('fixture:allocate',{})));
+  assert.equal(new Set(allocations).size,8); assert.equal(Math.min(...allocations),10);
+  result.checks.push('Eight concurrent allocations returned distinct retained base sequences.');
+  await assert.rejects(()=>client.mutation('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false}));
+  await client.mutation('quotationFamilyMigration:freeze',{acknowledgement:'Reviewed cutover write freeze'});
+  await assert.rejects(()=>client.mutation('fixture:guarded',{}));
+  result.checks.push('Ungated backfill and frozen legacy writer rejected.');
+  const first=await client.mutation('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false});
+  const second=await client.mutation('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false,restart:true});
+  assert.equal(first.changed,1);assert.equal(second.changed,0);
+  const after=await client.query('fixture:dump',{});
+  assert.equal(after.families.length,1);assert.deepEqual(before.items,after.items);
+  const clean=({...after.quotes[0]});for(const key of ['family_id','legacy_provenance','document_schema_version','snapshot_completeness']) delete clean[key];
+  assert.deepEqual(clean,before.quotes[0]);
+  result.checks.push('Backfill and full restart preserved exact content and item IDs. Second pass changed zero memberships.');
+  await client.mutation('fixture:seed',{collision:false,year:'1449H'});
+  await client.mutation('fixture:corrupt',{});
+  const preRollback=await client.query('fixture:dump',{});
+  await assert.rejects(()=>client.mutation('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false,restart:true}));
+  assert.deepEqual(await client.query('fixture:dump',{}),preRollback);
+  result.checks.push('Failure after family insertion rolled back the family, membership, and checkpoint.');
+  await client.mutation('fixture:seed',{collision:true});
+  const preFailure=await client.query('fixture:dump',{});
+  await assert.rejects(()=>client.mutation('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false,restart:true}));
+  assert.deepEqual(await client.query('fixture:dump',{}),preFailure);
+  result.checks.push('Ambiguous batch rejected with unchanged persisted state and checkpoint.');
+  console.log(JSON.stringify(result,null,2));
+  if(process.env.FAMILY_EVIDENCE) await fs.writeFile(process.env.FAMILY_EVIDENCE,JSON.stringify(result,null,2)+'\n');
+} finally {
+  backend.kill('SIGTERM');
+  await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));
+  await fs.rm(root,{recursive:true,force:true});
+}

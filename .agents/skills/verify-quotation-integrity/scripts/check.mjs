@@ -66,7 +66,7 @@ function createDatabase() {
     package_rooms: ["p1", "p2"].map((package_id, index) => ({
       _id: `r${index + 1}`, package_id, room_type: "quad", price: 100, enabled: true,
     })),
-    package_hotels: [], package_meals: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [],
+    package_hotels: [], package_meals: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [],
     quotations: [{
       _id: "q1", hijri_year: "1448H", sequence_num: 1, revision: 0,
       client_id: "c1", client_name: "Verification client", package_id: "p1", flight_id: "f1",
@@ -81,6 +81,8 @@ function createDatabase() {
     query(table) {
       assert.ok(table in tables, `Adapter does not implement table ${table}`);
       const predicates = [];
+      let direction='asc';
+      const fieldValue=(row,field)=>field.split('.').reduce((value,key)=>value?.[key],row);
       const query = {
         withIndex(_name, callback) {
           const builder = { eq(field, value) { predicates.push([field, value]); return builder; } };
@@ -88,8 +90,10 @@ function createDatabase() {
           return query;
         },
         async collect() {
-          return structuredClone(tables[table].filter((row) => predicates.every(([field, value]) => row[field] === value)));
+          return structuredClone(tables[table].filter((row) => predicates.every(([field, value]) => fieldValue(row,field) === value)));
         },
+        order(value) { direction=value; return query; },
+        async take(count) { return (await query.collect()).sort((a,b)=>((a.sequence_num??a.result?.sequence_num)-(b.sequence_num??b.result?.sequence_num))*(direction==='desc'?-1:1)).slice(0,count); },
         async unique() { const rows = await query.collect(); assert.ok(rows.length <= 1); return rows[0] ?? null; },
       };
       return query;
