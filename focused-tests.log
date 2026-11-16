@@ -1,0 +1,40 @@
+✔ package name: all quotation readers agree and charges survive refresh (282.315208ms)
+✔ package year: all quotation readers agree and charges survive refresh (7.3715ms)
+✔ package duration: all quotation readers agree and charges survive refresh (21.155667ms)
+✔ package inclusions: all quotation readers agree and charges survive refresh (159.977666ms)
+✔ package exclusions: all quotation readers agree and charges survive refresh (261.294333ms)
+✔ flight departure_date: all quotation readers agree and charges survive refresh (405.65175ms)
+✔ flight return_date: all quotation readers agree and charges survive refresh (134.312709ms)
+✔ flight departure_sector: all quotation readers agree and charges survive refresh (144.651542ms)
+✔ flight return_sector: all quotation readers agree and charges survive refresh (21.273792ms)
+✔ meal: all quotation readers agree and charges survive refresh (14.615542ms)
+✔ airline: all quotation readers agree and charges survive refresh (17.63525ms)
+✔ month: all quotation readers agree and charges survive refresh (23.535417ms)
+✔ hotel name: all quotation readers agree and charges survive refresh (22.233834ms)
+✔ hotel placeholder: all quotation readers agree and charges survive refresh (9.907334ms)
+✔ hotel disabled: all quotation readers agree and charges survive refresh (9.022583ms)
+✔ last hotel removed: all quotation readers agree and charges survive refresh (8.732375ms)
+✔ hotel added: all quotation readers agree and charges survive refresh (8.026667ms)
+✔ room disabled: all quotation readers agree and charges survive refresh (239.282333ms)
+✔ last room removed: all quotation readers agree and charges survive refresh (6.914125ms)
+✔ room added: all quotation readers agree and charges survive refresh (46.412125ms)
+✔ room price: all quotation readers agree and charges survive refresh (238.234792ms)
+✔ optional package field added: all quotation readers agree and charges survive refresh (8.503792ms)
+✔ optional package field removed: all quotation readers agree and charges survive refresh (96.169417ms)
+✔ missing flight: all quotation readers agree and charges survive refresh (43.790875ms)
+✔ legacy missing package_snapshot explicitly requires verification (21.294958ms)
+✔ legacy missing flight_snapshot explicitly requires verification (2.796209ms)
+✔ legacy missing hotels_snapshot explicitly requires verification (2.443625ms)
+✔ legacy missing rooms explicitly requires verification (5.603459ms)
+✔ collection enumeration and meal ordering do not produce changes (7.082208ms)
+✔ known empty hotel and room collections detect subsequent additions (4.59075ms)
+✔ legacy timestamp absence does not invent an absent optional value (4.836292ms)
+✔ removing one member of a nonempty collection is detected (3.8255ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23813.221959

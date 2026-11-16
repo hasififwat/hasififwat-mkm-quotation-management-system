@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-16T05:19:32.759069+00:00",
+  "ports_free": [
+    3420,
+    3421,
+    3322
+  ],
+  "owned_instance_data_auth_keys_credentials_snapshots_removed": true,
+  "owned_preview_tab_closed": true,
+  "shared_backend_touched": false,
+  "proof_preserved": true
+}

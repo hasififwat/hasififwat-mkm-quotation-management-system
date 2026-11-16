@@ -1,0 +1,8 @@
+{
+  "baseline": "fae2c23d738bce0cbadd2882634aab7f9b6f36e1",
+  "head": "48fcc9cd693ec700914e943a952bb6b65434ad51",
+  "baseline_errors": 20,
+  "head_errors": 20,
+  "all_baseline_error_source_lines_unchanged": true,
+  "scoped_ui_test_lint_exit": 0
+}

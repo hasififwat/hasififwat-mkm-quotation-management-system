@@ -1,0 +1,371 @@
+✖ meal: all quotation readers agree and charges survive refresh (4.7765ms)
+✖ airline: all quotation readers agree and charges survive refresh (0.951917ms)
+✖ month: all quotation readers agree and charges survive refresh (0.701583ms)
+✖ hotel name: all quotation readers agree and charges survive refresh (0.682041ms)
+✖ hotel placeholder: all quotation readers agree and charges survive refresh (0.733667ms)
+✖ hotel disabled: all quotation readers agree and charges survive refresh (0.483834ms)
+✖ last hotel removed: all quotation readers agree and charges survive refresh (0.505125ms)
+✖ hotel added: all quotation readers agree and charges survive refresh (0.771375ms)
+✖ room disabled: all quotation readers agree and charges survive refresh (1.725541ms)
+✖ last room removed: all quotation readers agree and charges survive refresh (2.352958ms)
+✔ room added: all quotation readers agree and charges survive refresh (3.591958ms)
+✔ room price: all quotation readers agree and charges survive refresh (1.206333ms)
+✖ optional package field added: all quotation readers agree and charges survive refresh (0.733708ms)
+✔ optional package field removed: all quotation readers agree and charges survive refresh (0.823209ms)
+✔ missing flight: all quotation readers agree and charges survive refresh (0.589833ms)
+✖ legacy missing package_snapshot explicitly requires verification (0.425458ms)
+✖ legacy missing flight_snapshot explicitly requires verification (0.347417ms)
+✖ legacy missing hotels_snapshot explicitly requires verification (0.559625ms)
+✖ legacy missing rooms explicitly requires verification (0.385667ms)
+✔ collection enumeration and meal ordering do not produce changes (0.418917ms)
+✖ known empty hotel and room collections detect subsequent additions (0.652583ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 5
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 424.665583
+
+✖ failing tests:
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ meal: all quotation readers agree and charges survive refresh (4.7765ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'hotels'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'hotels' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ airline: all quotation readers agree and charges survive refresh (0.951917ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'flight'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'flight' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ month: all quotation readers agree and charges survive refresh (0.701583ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'flight'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'flight' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ hotel name: all quotation readers agree and charges survive refresh (0.682041ms)
+  AssertionError [ERR_ASSERTION]: filtered-list input warning
+  
+  false !== true
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:30:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ hotel placeholder: all quotation readers agree and charges survive refresh (0.733667ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'hotels'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'hotels' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ hotel disabled: all quotation readers agree and charges survive refresh (0.483834ms)
+  AssertionError [ERR_ASSERTION]: filtered-list input warning
+  
+  false !== true
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:30:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ last hotel removed: all quotation readers agree and charges survive refresh (0.505125ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'hotels'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'hotels' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ hotel added: all quotation readers agree and charges survive refresh (0.771375ms)
+  AssertionError [ERR_ASSERTION]: filtered-list input warning
+  
+  false !== true
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:30:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ room disabled: all quotation readers agree and charges survive refresh (1.725541ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'room_pricing'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'room_pricing' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ last room removed: all quotation readers agree and charges survive refresh (2.352958ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'room_pricing'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'room_pricing' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:54:3
+✖ optional package field added: all quotation readers agree and charges survive refresh (0.733708ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'package.code'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:60:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'package.code' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:73:3
+✖ legacy missing package_snapshot explicitly requires verification (0.425458ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'snapshot.incomplete'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:77:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'snapshot.incomplete' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:73:3
+✖ legacy missing flight_snapshot explicitly requires verification (0.347417ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'snapshot.incomplete'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:77:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'snapshot.incomplete' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:73:3
+✖ legacy missing hotels_snapshot explicitly requires verification (0.559625ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+  + []
+  - [
+  -   'snapshot.incomplete'
+  - ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:77:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'snapshot.incomplete' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:73:3
+✖ legacy missing rooms explicitly requires verification (0.385667ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+    [
+  +   'room_pricing'
+  -   'snapshot.incomplete'
+    ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:77:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'room_pricing' ],
+    expected: [ 'snapshot.incomplete' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/quotation-stale-snapshots.test.mjs:93:1
+✖ known empty hotel and room collections detect subsequent additions (0.652583ms)
+  AssertionError [ERR_ASSERTION]: edit warnings
+  + actual - expected
+  
+    [
+      'room_pricing',
+  -   'hotels'
+    ]
+  
+      at expectWarning (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:28:10)
+      at async TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/fix-quote005-stale-warn-ebd3f27f7c80049b/scripts/quotation-stale-snapshots.test.mjs:101:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'room_pricing' ],
+    expected: [ 'room_pricing', 'hotels' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

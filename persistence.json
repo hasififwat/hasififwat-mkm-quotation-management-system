@@ -1,0 +1,16 @@
+{
+  "head": "48fcc9cd693ec700914e943a952bb6b65434ad51",
+  "preview": "http://q005-warnings.localhost:3322",
+  "refresh_preserved_item_rows_exactly": true,
+  "save_preserved_item_values": true,
+  "total": 10050,
+  "review_after_reload": {
+    "airline": "SAUDIA",
+    "hotel": "UPDATED TEST MAKKAH HOTEL",
+    "meals": "FULL_BOARD",
+    "room_price": 5000,
+    "pax": 2,
+    "addon": 100,
+    "discount": 50
+  }
+}

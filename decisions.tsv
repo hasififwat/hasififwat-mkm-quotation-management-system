@@ -1,0 +1,9 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T05:12:10.978894+00:00	base	Use required migration base	Main lacks required repairs	fae2c23d738bce0cbadd2882634aab7f9b6f36e1	verified
+2026-11-16T05:12:11.099736+00:00	environment	Use web port 3322	3320 occupied by unrelated local Convex	decisions.md	isolated
+2026-11-16T05:12:11.099766+00:00	browser	Recover T3 after transport outage	Required original browser reproduction precedes coding	before.png	reproduced
+2026-11-16T05:12:11.099770+00:00	auth	Use q005-warnings.localhost	Cookies share hosts across ports	http://q005-warnings.localhost:3322	protected edit and reload passed
+2026-11-16T05:12:11.099773+00:00	model	Keep snapshots distinct from saved quotation items	Model the Domain keeps comparison separate from quoted charges	convex/quotations.ts	mutations unchanged
+2026-11-16T05:12:11.099777+00:00	tests	Commit failing handler tests before fix	Sequence Verifiable Units makes regression reproducible	96435f91	16 of 21 failed before fix
+2026-11-16T05:12:11.099779+00:00	fix	Expand comparator and shared inputs	Fix Root Causes addresses missing comparisons in all readers	convex/quotations.ts	32 focused checks passed
+2026-11-16T05:12:11.099782+00:00	copy	Use verification wording for unknown legacy values	Do not assert unavailable historical values changed	src/features/quotation/stale-labels.ts	implemented
