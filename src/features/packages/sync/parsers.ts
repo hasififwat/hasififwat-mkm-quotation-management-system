@@ -3,6 +3,7 @@ import type {
   FlightAddSpec,
   FlightDiffRow,
   FlightRemoveSpec,
+  FlightUpdateSpec,
   PackageCreateSpec,
   PackageMappingRow,
   PackageUpdateSpec,
@@ -308,6 +309,7 @@ export function buildSyncPlan(
   }
 
   const flightsToAdd: FlightAddSpec[] = [];
+  const flightsToUpdate: FlightUpdateSpec[] = [];
   const flightsToRemove: FlightRemoveSpec[] = [];
   const flightsToPromote: string[] = [];
 
@@ -317,16 +319,21 @@ export function buildSyncPlan(
 
   for (const row of flightRows) {
     if (row.status === "added" || row.status === "edited") {
-      if (row.status === "edited" && row.db_flight_id) {
-        flightsToRemove.push({
-          kind: "remove",
+      if (row.status === "edited") {
+        flightsToUpdate.push({
+          kind: "update",
           db_flight_id: row.db_flight_id,
+          db_package_id: row.db_package_id,
           package_name: row.package_name,
           season: row.season,
           departure_date: row.departure_date,
+          departure_sector: row.departure_sector,
           return_date: row.return_date,
+          return_sector: row.return_sector,
+          month: deriveMonth(row.departure_date),
           row,
         });
+        continue;
       }
       flightsToAdd.push({
         kind: "add",
@@ -375,7 +382,7 @@ export function buildSyncPlan(
     }
   }
 
-  return { packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToRemove, flightsToPromote };
+  return { packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToUpdate, flightsToRemove, flightsToPromote };
 }
 
 // ─── Price list parser ────────────────────────────────────────────────────────

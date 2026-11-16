@@ -1,5 +1,6 @@
 import { requireFlightDates } from "../src/domain/submission-validation";
 import type { Id } from "./_generated/dataModel";
+import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -40,10 +41,47 @@ export const addFlight = mutation({
   },
 });
 
+export const updateFlight = mutation({
+  args: {
+    id: v.id("package_flights"),
+    package_id: v.id("packages"),
+    month: v.string(),
+    dep_flight: v.optional(v.string()),
+    departure_date: v.string(),
+    departure_sector: v.string(),
+    return_date: v.string(),
+    return_sector: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await requireFlightAccess(ctx);
+    requireFlightDates(args);
+    const flight = await ctx.db.get(args.id);
+    if (!flight || flight.package_id !== args.package_id) {
+      throw new Error("Flight does not belong to this package");
+    }
+    await ctx.db.patch(args.id, {
+      month: args.month,
+      flight: args.dep_flight || undefined,
+      departure_date: args.departure_date,
+      departure_sector: args.departure_sector,
+      return_date: args.return_date,
+      return_sector: args.return_sector,
+      source: "sync",
+    });
+  },
+});
+
 export const deleteFlight = mutation({
   args: { id: v.id("package_flights") },
   handler: async (ctx, args) => {
     await requireFlightAccess(ctx);
+    const flight = await ctx.db.get(args.id);
+    if (!flight) return;
+    const rooms = await ctx.db.query("package_rooms")
+      .withIndex("by_package_id", q => q.eq("package_id", flight.package_id)).collect();
+    await requireQuotationReferencesPreserved(ctx, flight.package_id as Id<"packages">, rooms,
+      new Set([String(args.id)]), new Set(rooms.map(room => room.room_type)));
+
     await ctx.db.delete(args.id);
   },
 });

@@ -4,6 +4,7 @@ import { flights, state } from "./helpers/submission-fixtures.mjs";
 
 const args = {
   addFlight: { package_id: "package:1", month: "JAN", departure_date: "2027-01-01", departure_sector: "KUL-JED", return_date: "2027-01-12", return_sector: "JED-KUL" },
+  updateFlight: { id: "flight:1", package_id: "package:1", month: "JAN", departure_date: "2027-01-01", departure_sector: "KUL-MED", return_date: "2027-01-12", return_sector: "JED-KUL", dep_flight: "Updated Airline" },
   deleteFlight: { id: "flight:1" },
   setSourceManual: {},
   promoteToSync: { ids: ["flight:1"] },
@@ -75,4 +76,16 @@ test("staff source maintenance changes only eligible flights and remains repeata
   await flights.promoteToSync._handler(s.ctx, { ids: ["flight:1", "flight:2", "missing"] });
   await flights.promoteToSync._handler(s.ctx, { ids: ["flight:1"] });
   assert.deepEqual(s.tables.package_flights.map(row => row.source), ["sync", "sync", "manual"]);
+});
+
+test("staff can update an existing flight without replacing its ID", async () => {
+  const s = fixture();
+  const others = structuredClone(s.tables.package_flights.slice(1));
+  await flights.updateFlight._handler(s.ctx, args.updateFlight);
+  const rows = await flights.listAll._handler(s.ctx, {});
+  assert.equal(rows.length, 3);
+  assert.equal(rows[0]._id, "flight:1");
+  assert.equal(rows[0].departure_sector, "KUL-MED");
+  assert.equal(rows[0].flight, "Updated Airline");
+  assert.deepEqual(s.tables.package_flights.slice(1), others);
 });

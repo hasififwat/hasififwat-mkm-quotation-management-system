@@ -997,6 +997,11 @@ export const syncPackageFromCsv = mutation({
       const pkg = await ctx.db.get(args.db_id);
       if (!pkg) throw new Error(`Package ${args.db_id} not found`);
 
+      const existingRooms = await ctx.db.query("package_rooms")
+        .withIndex("by_package_id", q => q.eq("package_id", args.db_id!)).collect();
+      await requireQuotationReferencesPreserved(ctx, args.db_id, existingRooms,
+        new Set(), new Set(args.rooms.map(room => room.room_type)));
+
       await ctx.db.patch(args.db_id, { transport: args.transport, updated_at: now });
 
       const existingHotels = await ctx.db
@@ -1025,10 +1030,6 @@ export const syncPackageFromCsv = mutation({
         }
       }
 
-      const existingRooms = await ctx.db
-        .query("package_rooms")
-        .withIndex("by_package_id", (q) => q.eq("package_id", args.db_id!))
-        .collect();
       for (const r of existingRooms) await ctx.db.delete(r._id);
       for (const room of args.rooms) {
         await ctx.db.insert("package_rooms", {

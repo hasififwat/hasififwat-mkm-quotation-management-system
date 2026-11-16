@@ -110,6 +110,11 @@ export type FlightAddSpec = {
   row: FlightDiffRow;
 };
 
+export type FlightUpdateSpec = Omit<FlightAddSpec, "kind" | "needs_new_package" | "unresolvable"> & {
+  kind: "update";
+  db_flight_id: string;
+};
+
 export type FlightRemoveSpec = {
   kind: "remove";
   db_flight_id: string;
@@ -140,6 +145,7 @@ export type SyncPlan = {
   packagesToUpdate: PackageUpdateSpec[];
   packagesToPromote: string[]; // DB package IDs to mark source: "sync"
   flightsToAdd: FlightAddSpec[];
+  flightsToUpdate: FlightUpdateSpec[];
   flightsToRemove: FlightRemoveSpec[];
   flightsToPromote: string[]; // DB flight IDs to mark source: "sync"
 };
@@ -155,6 +161,7 @@ export type ApplyResult = {
   created: number;
   updated: number;
   flightsAdded: number;
+  flightsUpdated: number;
   flightsRemoved: number;
   errors: string[];
 };
