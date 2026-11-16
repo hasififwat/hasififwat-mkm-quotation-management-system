@@ -1,0 +1,43 @@
+export const quotationPdfFixture = {
+  id: "synthetic-quotation-revision-2",
+  reference_number: "MKM/1448H/0062/R02",
+  status: "draft",
+  client_name: "Synthetic verification client",
+  pic_name: "Test Agent",
+  branch: "Shah Alam",
+  notes: "Synthetic fixture only. No customer record.",
+  total_amount: 26420.50,
+  created_at: "2026-11-16T16:30:00.000Z",
+  updated_at: "2026-11-16T16:30:00.000Z",
+  hijri_year: "1448H",
+  package: {
+    id: "synthetic-package",
+    name: "Umrah verification",
+    year: "2026/2027",
+    duration: "12 HARI 10 MALAM",
+    transport: "Bas persiaran",
+    inclusions: "Visa umrah\nBagasi 30kg\nLawatan ziarah",
+    exclusions: "Perbelanjaan peribadi\nInsurans tambahan",
+    package_code: "VERIFY",
+    hotels: [
+      { hotel_type: "Makkah", name: "Synthetic Makkah Hotel", placeholder: "", enabled: true, meals: ["Breakfast", "Lunch", "Dinner"] },
+      { hotel_type: "Madinah", name: "Synthetic Madinah Hotel", placeholder: "", enabled: true, meals: ["Breakfast", "Dinner"] },
+      { hotel_type: "Disabled", name: "Must not appear hotel", placeholder: "", enabled: false, meals: [] },
+    ],
+    available_rooms: [],
+    available_flights: [],
+  },
+  selected_flight: {
+    id: "synthetic-flight", month: "December", flight: "SAUDIA SV835",
+    departure_date: "2026-12-01", return_date: "2026-12-12",
+    departure_sector: "KUL-JED", return_sector: "MED-KUL",
+  },
+  items: {
+    selected_rooms: [
+      { id: "room-quad", package_room_id: "quad", room_type: "Quad", price: 5000.25, pax: 2, subtotal: 10000.50 },
+      { id: "room-double", package_room_id: "double", room_type: "Double", price: 8000, pax: 2, subtotal: 16000 },
+    ],
+    adds_ons: [{ id: "addon", name: "Ziarah tambahan", price: 125.25, pax: 4, subtotal: 501 }],
+    discounts: [{ id: "discount", name: "Diskaun fixture", price: 20.25, pax: 4, subtotal: 81 }],
+  },
+};
