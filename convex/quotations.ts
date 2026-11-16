@@ -1,4 +1,6 @@
-import { assertLegacyWritesAllowed, reserveBaseReference } from "./lib/quotationFamilyIdentity";
+import { readSavedQuotation, revisionContext } from "./lib/savedQuotation";
+import { saveCommand, saveRevision } from "./quotationRevisionSaves";
+import { assertLegacyWritesAllowed, assertMutableLegacyQuotation, reserveBaseReference } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireDescriptions, requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
@@ -243,6 +245,8 @@ export const list = query({
 			.map((quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
+				const displayPackage = quotation.package_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedPackage);
+				const displayFlight = quotation.flight_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedFlight);
 				const liveRooms = roomsByPackageId.get(quotation.package_id) ?? [];
 
 				const { stale_fields } = computeStaleFields(
@@ -275,20 +279,21 @@ export const list = query({
 					updated_at: quotation.updated_at,
 					is_stale,
 					package: {
-						id: selectedPackage ? String(selectedPackage._id) : null,
-						name: selectedPackage?.name ?? "Unknown Package",
-						year: selectedPackage?.year ?? null,
-						duration: selectedPackage?.duration ?? null,
+						id: quotation.package_id,
+						name: displayPackage?.name ?? "Unknown Package",
+						year: displayPackage?.year ?? null,
+						duration: displayPackage?.duration ?? null,
 					},
-					selected_flight: selectedFlight
+					package_provenance: quotation.package_snapshot ? "saved" as const : quotation.family_id || quotation.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
+					selected_flight: displayFlight
 						? {
-							id: String(selectedFlight._id),
-							month: selectedFlight.month,
-							flight: selectedFlight.flight ?? "",
-							return_date: selectedFlight.return_date,
-							return_sector: selectedFlight.return_sector,
-							departure_date: selectedFlight.departure_date,
-							departure_sector: selectedFlight.departure_sector,
+							id: quotation.flight_id,
+							month: displayFlight.month,
+							flight: displayFlight.flight ?? "",
+							return_date: displayFlight.return_date,
+							return_sector: displayFlight.return_sector,
+							departure_date: displayFlight.departure_date,
+							departure_sector: displayFlight.departure_sector,
 						}
 						: null,
 					flight_snapshot: quotation.flight_snapshot ?? null,
@@ -425,6 +430,8 @@ export const listPaginated = query({
 			page: result.page.map((quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
+				const displayPackage = quotation.package_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedPackage);
+				const displayFlight = quotation.flight_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedFlight);
 				const liveRooms = roomsByPackageId.get(quotation.package_id) ?? [];
 
 				const { stale_fields: rowStaleFields } = computeStaleFields(
@@ -457,20 +464,21 @@ export const listPaginated = query({
 					updated_at: quotation.updated_at,
 					is_stale,
 					package: {
-						id: selectedPackage ? String(selectedPackage._id) : null,
-						name: selectedPackage?.name ?? "Unknown Package",
-						year: selectedPackage?.year ?? null,
-						duration: selectedPackage?.duration ?? null,
+						id: quotation.package_id,
+						name: displayPackage?.name ?? "Unknown Package",
+						year: displayPackage?.year ?? null,
+						duration: displayPackage?.duration ?? null,
 					},
-					selected_flight: selectedFlight
+					package_provenance: quotation.package_snapshot ? "saved" as const : quotation.family_id || quotation.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
+					selected_flight: displayFlight
 						? {
-								id: String(selectedFlight._id),
-								month: selectedFlight.month,
-								flight: selectedFlight.flight ?? "",
-								return_date: selectedFlight.return_date,
-								return_sector: selectedFlight.return_sector,
-								departure_date: selectedFlight.departure_date,
-								departure_sector: selectedFlight.departure_sector,
+								id: quotation.flight_id,
+								month: displayFlight.month,
+								flight: displayFlight.flight ?? "",
+								return_date: displayFlight.return_date,
+								return_sector: displayFlight.return_sector,
+								departure_date: displayFlight.departure_date,
+								departure_sector: displayFlight.departure_sector,
 							}
 						: null,
 					flight_snapshot: quotation.flight_snapshot ?? null,
@@ -803,17 +811,12 @@ export const getQuotationForEdit = query({
 			ctx.db.query("package_meals").collect(),
 		]);
 
-		const packageRoomById = new Map<string, (typeof packageRooms)[number]>();
-		for (const room of packageRooms) {
-			packageRoomById.set(String(room._id), room);
-		}
-
 		const selected_rooms = items
 			.filter((item) => item.item_type === "room")
 			.map((item) => {
-				const packageRoom = packageRoomById.get(item.package_room_id);
 				return {
-					room_type: packageRoom?.room_type ?? item.description,
+					source_item_id: item._id,
+					room_type: item.description,
 					price: item.original_price ?? item.unit_price,
 					pax: item.quantity,
 				};
@@ -859,23 +862,28 @@ export const getQuotationForEdit = query({
 			quotation.hotels_snapshot,
 		);
 
+		const saved_document = readSavedQuotation(quotation, items);
+		const revision_context = await revisionContext(ctx, quotation);
+
 		return {
+			saved_document,
+			revision_context,
 			id: String(quotation._id),
 			reference_number: buildQuotationNumber(
 				quotation.hijri_year,
 				quotation.sequence_num,
 				quotation.revision,
 			),
-			pic_name: quotation.pic_name,
-			branch: quotation.branch,
-			client_id: quotation.client_id,
-			notes: quotation.notes ?? "",
-			package_id: quotation.package_id,
-			flight_id: quotation.flight_id,
+			pic_name: saved_document.pic_name,
+			branch: saved_document.branch,
+			client_id: saved_document.client_id,
+			notes: saved_document.notes ?? "",
+			package_id: saved_document.package_id,
+			flight_id: saved_document.flight_id,
 			selected_rooms,
 			adds_ons,
 			discounts,
-			status: quotation.status,
+			status: saved_document.status,
 			stale_fields,
 			snapshot_version_known,
 		};
@@ -908,6 +916,9 @@ export const getQuotationFullDetails = query({
 					.collect(),
 			]);
 
+		const saved_document = readSavedQuotation(quotation, items);
+		const revision_context = await revisionContext(ctx, quotation);
+
 		const selectedPackage = packages.find(
 			(item) => String(item._id) === quotation.package_id,
 		);
@@ -922,31 +933,14 @@ export const getQuotationFullDetails = query({
 			(room) => String(room.package_id) === quotation.package_id,
 		);
 
-		const mealsByHotelId = new Map<string, (typeof packageMeals)[number][]>();
-		for (const meal of packageMeals) {
-			const key = String(meal.package_hotel_id);
-			const existing = mealsByHotelId.get(key);
-			if (existing) {
-				existing.push(meal);
-			} else {
-				mealsByHotelId.set(key, [meal]);
-			}
-		}
-
-		const roomById = new Map<string, (typeof availableRooms)[number]>();
-		for (const room of availableRooms) {
-			roomById.set(String(room._id), room);
-		}
-
 		const selectedRooms = items
 			.filter((item) => item.item_type === "room")
 			.map((item) => {
-				const linkedRoom = roomById.get(item.package_room_id);
 				const price = item.original_price ?? item.unit_price;
 				return {
 					id: String(item._id),
 					package_room_id: item.package_room_id,
-					room_type: linkedRoom?.room_type ?? item.description,
+					room_type: item.description,
 					price,
 					pax: item.quantity,
 					subtotal: buildLineTotal(price, item.quantity),
@@ -979,15 +973,9 @@ export const getQuotationFullDetails = query({
 				};
 			});
 
-		// Prefer snapshots (written at save time) over live package/flight data.
-		// Falls back to live queries for quotations created before snapshots were introduced.
-		const pkgSnap = quotation.package_snapshot;
-		const flightSnap = quotation.flight_snapshot;
-		const hotelSnap = quotation.hotels_snapshot;
-
-		if (!pkgSnap && !selectedPackage) {
-			throw new Error("Package not found and no snapshot available");
-		}
+		const pkgSnap = saved_document.package_snapshot;
+		const flightSnap = saved_document.flight_snapshot;
+		const hotelSnap = saved_document.hotels_snapshot;
 
 		const liveFlight = availableFlights.find(
 			(flight) => String(flight._id) === quotation.flight_id,
@@ -1003,33 +991,17 @@ export const getQuotationFullDetails = query({
 				departure_sector: flightSnap.departure_sector,
 				return_sector: flightSnap.return_sector,
 			}
-			: liveFlight
-				? {
-					id: String(liveFlight._id),
-					month: liveFlight.month,
-					flight: liveFlight.flight ?? "",
-					departure_date: liveFlight.departure_date,
-					return_date: liveFlight.return_date,
-					departure_sector: liveFlight.departure_sector,
-					return_sector: liveFlight.return_sector,
-				}
-				: null;
+			: null;
 
 		const hotels = hotelSnap
-			? hotelSnap.map((h: any) => ({
+			? hotelSnap.map((h) => ({
 				hotel_type: h.hotel_type,
 				name: h.name ?? h.placeholder,
 				placeholder: h.placeholder,
 				enabled: h.enabled,
 				meals: h.meals,
 			}))
-			: availableHotels.map((hotel) => ({
-				hotel_type: hotel.hotel_type,
-				name: hotel.name ?? hotel.placeholder,
-				placeholder: hotel.placeholder,
-				enabled: hotel.enabled,
-				meals: (mealsByHotelId.get(String(hotel._id)) ?? []).map((meal) => meal.meal_type),
-			}));
+			: [];
 
 		const { stale_fields, snapshot_version_known } = computeStaleFields(
 			pkgSnap,
@@ -1042,18 +1014,16 @@ export const getQuotationFullDetails = query({
 		);
 
 		return {
+			saved_document,
+			revision_context,
 			id: String(quotation._id),
-			reference_number: buildQuotationNumber(
-				quotation.hijri_year,
-				quotation.sequence_num,
-				quotation.revision,
-			),
-			status: quotation.status,
-			client_name: quotation.client_name,
-			pic_name: quotation.pic_name,
-			branch: quotation.branch,
-			notes: quotation.notes ?? "",
-			total_amount: quotation.total_amount,
+			reference_number: saved_document.quotation_number,
+			status: saved_document.status,
+			client_name: saved_document.client_name,
+			pic_name: saved_document.pic_name,
+			branch: saved_document.branch,
+			notes: saved_document.notes ?? "",
+			total_amount: saved_document.total_amount,
 			created_at: quotation.created_at,
 			updated_at: quotation.updated_at,
 			hijri_year: quotation.hijri_year,
@@ -1061,14 +1031,18 @@ export const getQuotationFullDetails = query({
 			snapshot_version_known,
 			package: {
 				id: quotation.package_id,
-				name: pkgSnap?.name ?? selectedPackage?.name ?? "",
-				year: pkgSnap?.year ?? selectedPackage?.year ?? "",
-				duration: pkgSnap?.duration ?? selectedPackage?.duration ?? "",
-				transport: pkgSnap?.transport ?? selectedPackage?.transport ?? "",
-				inclusions: pkgSnap?.inclusions ?? selectedPackage?.inclusions ?? "",
-				exclusions: pkgSnap?.exclusions ?? selectedPackage?.exclusions ?? "",
-				package_code: pkgSnap?.package_code ?? selectedPackage?.package_code ?? "",
+				name: pkgSnap?.name ?? "",
+				year: pkgSnap?.year ?? "",
+				duration: pkgSnap?.duration ?? "",
+				transport: pkgSnap?.transport ?? "",
+				inclusions: pkgSnap?.inclusions ?? "",
+				exclusions: pkgSnap?.exclusions ?? "",
+				package_code: pkgSnap?.package_code ?? "",
 				hotels,
+				available_rooms: [],
+				available_flights: [],
+			},
+			replacement_catalog: {
 				available_rooms: availableRooms.map((room) => ({
 					id: String(room._id),
 					room_type: room.room_type,
@@ -1151,6 +1125,7 @@ export const update = mutation({
 		if (!quotation) {
 			throw new Error("Quotation not found");
 		}
+		assertMutableLegacyQuotation(quotation);
 
 		const now = new Date().toISOString();
 
@@ -1371,12 +1346,19 @@ export const update = mutation({
 });
 
 export const refreshSnapshot = mutation({
-	args: { quotation_id: v.string() },
+	args: { quotation_id: v.string(), command: v.optional(saveCommand) },
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
+		if (args.command) {
+		  if (args.command.operation !== "append" || args.command.selection.mode !== "replace" || args.command.source_revision_id !== args.quotation_id) {
+			throw new Error("Refresh requires an append command with a reviewed replacement selection");
+		  }
+		  return saveRevision(ctx, actor, args.command);
+		}
 		await assertLegacyWritesAllowed(ctx);
 		const quotation = await findQuotationByStringId(ctx, args.quotation_id);
 		if (!quotation) throw new Error("Quotation not found");
+		assertMutableLegacyQuotation(quotation);
 
 		const now = new Date().toISOString();
 
@@ -1453,6 +1435,7 @@ export const resequenceByCreatedAt = mutation({
 		await assertLegacyWritesAllowed(ctx);
 		const dryRun = args.dryRun ?? false;
 		const quotations = await ctx.db.query("quotations").collect();
+		quotations.forEach(assertMutableLegacyQuotation);
 
 		const groupedByHijriYear = new Map<string, (typeof quotations)[number][]>();
 		for (const quotation of quotations) {
@@ -1539,6 +1522,7 @@ export const deleteById = mutation({
 		if (!quotation) {
 			throw new Error(`Quotation ${quotationId} not found`);
 		}
+		assertMutableLegacyQuotation(quotation);
 
 		// Delete all quotation items for this quotation
 		const items = await ctx.db
@@ -1597,6 +1581,8 @@ export const repairStaleFlightIds = mutation({
 			ctx.db.query("quotations").collect(),
 			ctx.db.query("package_flights").collect(),
 		]);
+
+		quotations.forEach(assertMutableLegacyQuotation);
 
 		const validFlightIds = new Set(flights.map((f) => String(f._id)));
 
@@ -1669,6 +1655,7 @@ export const archiveQuotation = mutation({
 		await assertLegacyWritesAllowed(ctx);
 		const quotation = await ctx.db.get(args.id);
 		if (!quotation) throw new Error("Quotation not found");
+		assertMutableLegacyQuotation(quotation);
 		await ctx.db.patch(args.id, { archived: true, updated_at: new Date().toISOString() });
 		return { id: args.id };
 	},

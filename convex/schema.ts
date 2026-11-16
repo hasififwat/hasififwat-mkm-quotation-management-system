@@ -27,6 +27,13 @@ export default defineSchema({
   })
     .index("by_phone_number", ["phone_number"]),
 
+  client_aliases: defineTable({
+    alias_client_id: v.id("clients"),
+    canonical_client_id: v.id("clients"),
+    updated_by: v.string(),
+    updated_at: v.string(),
+  }).index("by_alias_client_id", ["alias_client_id"]),
+
   hotel_templates: defineTable({
     hotel_type: v.string(),
     name: v.optional(v.string()),
