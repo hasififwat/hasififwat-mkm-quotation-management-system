@@ -4,7 +4,7 @@ import path from "node:path";
 import vm from "node:vm";
 import { createRequire } from "node:module";
 
-export function typescriptLoader(repo) {
+export function typescriptLoader(repo, overrides = new Map()) {
   const localRequire = createRequire(path.join(repo, "package.json"));
   const ts = localRequire("typescript");
   const cache = new Map();
@@ -12,7 +12,7 @@ export function typescriptLoader(repo) {
     if (cache.has(filename)) return cache.get(filename);
     const exports = {};
     cache.set(filename, exports);
-    const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
+    const compiled = ts.transpileModule(overrides.get(filename) ?? fs.readFileSync(filename, "utf8"), {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
     });
     vm.runInNewContext(compiled.outputText, {

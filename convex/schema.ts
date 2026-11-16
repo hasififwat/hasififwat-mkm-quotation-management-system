@@ -104,6 +104,21 @@ export default defineSchema({
     .index("by_reference", ["hijri_year", "sequence_num"])
     .index("by_archived", ["archived"]),
 
+  quotation_revision_release: defineTable({
+    key: v.literal("revision-v1"),
+    enabled: v.boolean(),
+  }).index("by_key", ["key"]),
+
+  quotation_save_receipts: defineTable({
+    actor: v.string(),
+    request_key: v.string(),
+    content: v.string(),
+    result: v.object({
+      id: v.id("quotations"), family_id: v.id("quotation_families"),
+      quotation_number: v.string(), revision: v.number(),
+    }),
+  }).index("by_actor_request_key", ["actor", "request_key"]),
+
   quotation_family_migrations: defineTable({
     key: v.string(),
     cursor: v.union(v.string(), v.null()),
@@ -118,6 +133,7 @@ export default defineSchema({
   quotations: defineTable({
     family_id: v.optional(v.id("quotation_families")),
     previous_revision_id: v.optional(v.id("quotations")),
+    frozen_document: v.optional(v.string()),
     saved_by: v.optional(v.string()),
     issue_date: v.optional(v.string()),
     document_schema_version: v.optional(v.number()),
