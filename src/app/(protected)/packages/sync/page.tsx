@@ -303,21 +303,28 @@ function PackageUpdateCard({ spec }: { spec: PackageUpdateSpec }) {
               </TableRow>
             );
           })}
-          {spec.rooms.length > 0 && (
-            <TableRow className="border-t">
-              <TableCell className="text-xs font-medium text-muted-foreground py-1.5">Rooms</TableCell>
-              <TableCell colSpan={3} className="text-xs py-1.5">
-                <span className="flex flex-wrap gap-x-4 gap-y-0.5">
-                  {spec.rooms.map((r) => (
-                    <span key={r.room_type}>
-                      <span className="font-medium">{r.room_type}</span>
-                      <span className="ml-1 text-muted-foreground">RM {r.price.toLocaleString()}</span>
-                    </span>
-                  ))}
-                </span>
-              </TableCell>
-            </TableRow>
-          )}
+          {spec.rooms.map((room) => {
+            const current = spec.current_rooms.find(saved => saved.room_type === room.room_type);
+            const changed = changedFields.has(`${room.room_type} price`);
+            return (
+              <TableRow key={room.room_type} className={changed ? "bg-amber-50 dark:bg-amber-950/20" : ""}>
+                <TableCell className="text-xs font-medium text-muted-foreground py-1.5">
+                  {room.room_type} price{!room.enabled && " (disabled)"}
+                </TableCell>
+                <TableCell className="text-xs py-1.5">
+                  <span className={changed ? "line-through text-red-500/80" : ""}>
+                    {current ? `RM ${current.price.toLocaleString("en-MY")}` : "—"}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center text-muted-foreground text-xs py-1.5">→</TableCell>
+                <TableCell className="text-xs py-1.5">
+                  <span className={changed ? "text-green-600 font-medium" : ""}>
+                    RM {room.price.toLocaleString("en-MY")}
+                  </span>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
@@ -1277,7 +1284,8 @@ export default function PackageSyncPage() {
           <CardHeader>
             <CardTitle className="text-base">Upload source files</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Export both files from Excel as CSV, then drop them here.
+              Export both files from Excel as CSV, then drop them here. Blank prices retain saved rooms and prices. Disabled rooms keep their saved prices and stay disabled.
+              Custom room types are retained. Manual packages become sync-managed; unsync packages are skipped.
             </p>
           </CardHeader>
           <CardContent className="space-y-3">

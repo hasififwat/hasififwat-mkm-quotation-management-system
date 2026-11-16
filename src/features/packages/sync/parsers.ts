@@ -190,7 +190,26 @@ type ExistingPackage = {
   source?: "sync" | "manual" | "unsync";
   transport?: string;
   hotels?: DbHotel[];
+  rooms?: SyncRoom[];
 };
+
+function canonicalRoomType(roomType: string): string {
+  const name = roomType.trim().toUpperCase();
+  const aliases: Record<string, string> = { QUAD: "QDP", TRIPLE: "TPL", DOUBLE: "DBL", SINGLE: "SGL" };
+  return aliases[name] ?? name;
+}
+
+function mergeRoomPrices(current: SyncRoom[], incoming: SyncRoom[]): SyncRoom[] {
+  const incomingByType = new Map(incoming.map(room => [canonicalRoomType(room.room_type), room]));
+  const savedTypes = new Set(current.map(room => canonicalRoomType(room.room_type)));
+  return [
+    ...current.map(room => {
+      const price = incomingByType.get(canonicalRoomType(room.room_type))?.price;
+      return { ...room, price: room.enabled && price != null ? price : room.price };
+    }),
+    ...incoming.filter(room => !savedTypes.has(canonicalRoomType(room.room_type))),
+  ];
+}
 
 function mealsLabel(meals: string[]): string {
   const sorted = [...meals].sort().join("+");
@@ -230,6 +249,18 @@ function computeChanges(spec: Omit<PackageUpdateSpec, "changes">, dbPkg: Existin
     const newMeals = mealsLabel(newHotel?.meals ?? []);
     if (oldMeals !== newMeals) {
       changes.push({ field: `${type} meals`, old: oldMeals, new: newMeals });
+    }
+  }
+
+  const currentRooms = new Map(spec.current_rooms.map(room => [room.room_type, room]));
+  for (const room of spec.rooms) {
+    const current = currentRooms.get(room.room_type);
+    if (!current || current.price !== room.price) {
+      changes.push({
+        field: `${room.room_type} price`,
+        old: current ? `RM ${current.price.toLocaleString("en-MY")}` : "—",
+        new: `RM ${room.price.toLocaleString("en-MY")}`,
+      });
     }
   }
 
@@ -296,8 +327,9 @@ export function buildSyncPlan(
         current_transport: (dbPkg?.transport ?? "").trim(),
         transport: row.transport,
         current_hotels,
+        current_rooms: dbPkg?.rooms ?? [],
         hotels,
-        rooms,
+        rooms: mergeRoomPrices(dbPkg?.rooms ?? [], rooms),
         row,
       };
       // "unsync" packages were manually edited after sync — skip overwriting them
