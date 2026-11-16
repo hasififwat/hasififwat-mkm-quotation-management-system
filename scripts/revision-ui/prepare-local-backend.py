@@ -10,7 +10,9 @@ import time
 import urllib.request
 
 root = Path(__file__).resolve().parents[2]
-run_dir = Path(os.environ.get('REVISION_UI_RUN_DIR', str(root / '.next' / 'mkm-issue59')))
+run_dir = Path(os.environ['REVISION_UI_RUN_DIR']).resolve()
+if '.next' in run_dir.parts:
+    raise SystemExit('REVISION_UI_RUN_DIR must be outside .next')
 backend_port = int(os.environ.get('REVISION_UI_BACKEND_PORT', '13865'))
 site_port = backend_port + 1
 source_dir = run_dir / 'source'

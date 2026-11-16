@@ -7,7 +7,9 @@ import { setTimeout } from 'node:timers/promises';
 import { ConvexHttpClient } from 'convex/browser';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR || path.join(root, '.next/mkm-issue59'));
+if (!process.env.REVISION_UI_RUN_DIR) throw new Error('Set REVISION_UI_RUN_DIR to an owned external fixture directory');
+const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR);
+if (runDir.split(path.sep).includes('.next')) throw new Error('REVISION_UI_RUN_DIR must be outside .next');
 const run = JSON.parse(await readFile(path.join(runDir, 'run.json'), 'utf8'));
 if (run.owner !== 'quotation-revisions-59' || !/^http:\/\/127\.0\.0\.1:[0-9]+$/.test(run.url)) throw new Error('Unexpected disposable backend');
 const env = Object.fromEntries((await readFile(path.join(run.sourceDir, '.env.local'), 'utf8')).split('\n').filter(Boolean).map(line => {

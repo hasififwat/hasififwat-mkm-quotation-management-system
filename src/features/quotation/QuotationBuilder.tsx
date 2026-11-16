@@ -866,7 +866,7 @@ export default function QuotationBuilder({
 				{revisionSession.kind === "uncertain" && <Button type="button" onClick={() => { if (revisionSession.kind === "uncertain") void commitRevision(revisionSession.attempt, true); }}>Retry this save</Button>}
 				{revisionSession.kind === "rejected" && revisionSession.conflict === "selection" && <Button type="button" variant="outline" onClick={reviewLatestPackage}>Review latest package</Button>}
 				{revisionSession.kind === "rejected" && revisionSession.conflict === "stale" && qid && <Link className="block underline" target="_blank" rel="noopener noreferrer" href={staleCurrentId ? `/quotations/review/${staleCurrentId}` : `/quotations/${qid}/history`}>View current revision in a new tab</Link>}
-				<Link className="block underline" target="_blank" rel="noopener noreferrer" href="/login">Open sign-in in a new tab</Link>
+				<Link className="block underline" target="_blank" rel="noopener noreferrer" href="/">Open sign-in in a new tab</Link>
 			</div> : null}
 			{catalogReview && <section aria-label="Review catalog replacement" className="space-y-4 rounded-lg border p-4">
 				<h3 className="font-semibold">Review catalog replacement</h3><p className="text-sm">The saved selection is retained until you explicitly use a reviewed selection.</p>

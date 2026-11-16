@@ -5,7 +5,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR || path.join(root, '.next/mkm-issue59'));
+if (!process.env.REVISION_UI_RUN_DIR) throw new Error('Set REVISION_UI_RUN_DIR to an owned external fixture directory');
+const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR);
+if (runDir.split(path.sep).includes('.next')) throw new Error('REVISION_UI_RUN_DIR must be outside .next');
 const manifest = JSON.parse(await readFile(path.join(runDir, 'run.json'), 'utf8'));
 if (!/^http:\/\/127\.0\.0\.1:[0-9]+$/.test(manifest.url) || manifest.owner !== 'quotation-revisions-59') throw new Error('Unexpected verification backend');
 const authRoot = await realpath(path.join(root, 'node_modules/@convex-dev/auth'));

@@ -18,7 +18,7 @@ export function SavedRevisionReview({details, saved, source}: {details: Quotatio
     <p className="text-sm">Source revision {source.id ? <Link className="underline" href={`/quotations/review/${source.id}`}>{source.reference}</Link> : doc.provenance === "legacy_unknown" ? "Not recorded" : "Initial revision"}</p></header>
     <dl className="grid grid-cols-1 gap-4 rounded-lg border p-4 sm:grid-cols-2">
       {[["Client", doc.client_name], ["PIC", doc.pic_name], ["Branch", doc.branch], ["Saved by", doc.saved_by ?? "Not recorded"],
-        ["Revision issued (Kuala Lumpur)", revisionDate(context.revision_issue_date)], ["Family created (Kuala Lumpur)", revisionDate(context.family_created_at)],
+        ["Revision issued (Kuala Lumpur)", revisionDate(context.revision_issue_date)], ["Earliest retained quotation (Kuala Lumpur)", revisionDate(context.family_created_at)],
         ["Package", doc.package_snapshot?.name || "Not recorded"], ["Flight", doc.flight_snapshot ? `${doc.flight_snapshot.departure_date} ${doc.flight_snapshot.departure_sector} to ${doc.flight_snapshot.return_date} ${doc.flight_snapshot.return_sector}` : "Not recorded"]].map(([label,value]) => <div key={label} className="min-w-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="break-words">{value}</dd></div>)}
     </dl>
     {doc.provenance === "legacy_unknown" && <p className="rounded border bg-muted p-3 text-sm">Legacy provenance is unknown. This retained history does not establish a complete history before migration. Missing values remain not recorded.</p>}

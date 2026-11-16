@@ -9,6 +9,7 @@ export async function saveRevisionResponse(payload: unknown, operation: "create"
   const client = await getServerConvexClient();
   const availability = await client.query(api.quotationRevisionUi.availability, {});
   if (!payload || typeof payload !== "object" || !("command" in payload)) {
+    if (operation === "create" && payload && typeof payload === "object" && "request_key" in payload && typeof payload.request_key === "string") return null;
     return availability.mode === "legacy" ? null : Response.json({error: "Quotation saves are unavailable during revision maintenance."}, {status: 409});
   }
   if (!("expected_actor" in payload) || payload.expected_actor !== availability.actor) {

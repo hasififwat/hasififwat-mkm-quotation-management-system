@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json({ success: true, id: quotation.id });
 	} catch (error) {
+		if (error instanceof Error && error.message.includes("Quotation writes are frozen for family migration")) {
+			return NextResponse.json({ error: "Quotation saves are unavailable during revision maintenance." }, { status: 409 });
+		}
 		if (error instanceof ConvexError && error.data && typeof error.data === "object" &&
 			(error.data.code === "QUOTATION_SELECTION_CONFLICT" || error.data.code === "QUOTATION_ATTEMPT_CONFLICT")) {
 			return NextResponse.json(
