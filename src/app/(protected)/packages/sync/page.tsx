@@ -49,6 +49,7 @@ import type {
   FlightAddSpec,
   FlightRemoveSpec,
   FlightUpdateSpec,
+  MffParseResult,
   PackageCreateSpec,
   PackageMappingRow,
   PackageUpdateSpec,
@@ -303,21 +304,28 @@ function PackageUpdateCard({ spec }: { spec: PackageUpdateSpec }) {
               </TableRow>
             );
           })}
-          {spec.rooms.length > 0 && (
-            <TableRow className="border-t">
-              <TableCell className="text-xs font-medium text-muted-foreground py-1.5">Rooms</TableCell>
-              <TableCell colSpan={3} className="text-xs py-1.5">
-                <span className="flex flex-wrap gap-x-4 gap-y-0.5">
-                  {spec.rooms.map((r) => (
-                    <span key={r.room_type}>
-                      <span className="font-medium">{r.room_type}</span>
-                      <span className="ml-1 text-muted-foreground">RM {r.price.toLocaleString()}</span>
-                    </span>
-                  ))}
-                </span>
-              </TableCell>
-            </TableRow>
-          )}
+          {spec.rooms.map((room) => {
+            const current = spec.current_rooms.find(saved => saved.room_type === room.room_type);
+            const changed = changedFields.has(`${room.room_type} price`);
+            return (
+              <TableRow key={room.room_type} className={changed ? "bg-amber-50 dark:bg-amber-950/20" : ""}>
+                <TableCell className="text-xs font-medium text-muted-foreground py-1.5">
+                  {room.room_type} price{!room.enabled && " (disabled)"}
+                </TableCell>
+                <TableCell className="text-xs py-1.5">
+                  <span className={changed ? "line-through text-red-500/80" : ""}>
+                    {current ? `RM ${current.price.toLocaleString("en-MY")}` : "—"}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center text-muted-foreground text-xs py-1.5">→</TableCell>
+                <TableCell className="text-xs py-1.5">
+                  <span className={changed ? "text-green-600 font-medium" : ""}>
+                    RM {room.price.toLocaleString("en-MY")}
+                  </span>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
@@ -931,7 +939,7 @@ function FlightDiffStep({
       {added.length === 0 && edited.length === 0 && willRemove.length === 0 && noDbPkg.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
-          <p className="text-sm">All {unchanged.length} flights are already up to date.</p>
+          <p className="text-sm">No changes to the {unchanged.length} recognized flight matches. Missing saved flights are preserved unless removal is authorized.</p>
         </div>
       )}
 
@@ -1091,6 +1099,29 @@ function MappingStep({
   );
 }
 
+function MffDiagnostics({ result }: { result: MffParseResult | null }) {
+  return (
+    <Card className={result?.diagnostics.length ? "border-amber-400" : ""}>
+      <CardContent className="pt-4 space-y-2 text-sm">
+        {result === null ? <p>No flight schedule uploaded. Saved flights will be preserved.</p> : <>
+          <p>{result.rows.filter(row => row.status !== "removed").length} supported schedule rows recognized.
+            {" "}{result.preservedMissingFlights} missing saved sync flights preserved.</p>
+          {result.diagnostics.length > 0 && <>
+            <p className="font-medium text-amber-800 dark:text-amber-300">
+              Schedule needs review. Missing-flight removals are disabled. Only recognized rows can be imported.
+            </p>
+            <ul className="list-disc pl-5 space-y-1 max-h-52 overflow-y-auto">
+              {result.diagnostics.map((diagnostic, index) => (
+                <li key={index}>{diagnostic.row === null ? "File" : `Row ${diagnostic.row}`}: {diagnostic.message}</li>
+              ))}
+            </ul>
+          </>}
+        </>}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function PackageSyncPage() {
@@ -1108,6 +1139,7 @@ export default function PackageSyncPage() {
   const [priceListFileName, setPriceListFileName] = useState<string | null>(null);
   const [mffText, setMffText] = useState<string | null>(null);
   const [mffFileName, setMffFileName] = useState<string | null>(null);
+  const [removalReview, setRemovalReview] = useState({ scopes: [] as string[], complete: false });
   const [progress, setProgress] = useState<ApplyProgress | null>(null);
   const [result, setResult] = useState<ApplyResult | null>(null);
 
@@ -1125,10 +1157,12 @@ export default function PackageSyncPage() {
     [priceListText, existingPackages],
   );
 
-  const flightRows = useMemo(
-    () => (mffText ? parseMffCsv(mffText, mappingRows, existingPackages, dbFlights) : []),
-    [mffText, mappingRows, existingPackages, dbFlights],
+  const mffResult = useMemo<MffParseResult | null>(
+    () => mffText === null ? null : parseMffCsv(mffText, mappingRows, existingPackages, dbFlights,
+      removalReview.complete ? removalReview.scopes : []),
+    [mffText, mappingRows, existingPackages, dbFlights, removalReview],
   );
+  const flightRows = useMemo(() => mffResult?.rows ?? [], [mffResult]);
 
   const plan = useMemo<SyncPlan | null>(
     () => (step >= 3 ? buildSyncPlan(mappingRows, flightRows, existingPackages) : null),
@@ -1256,6 +1290,7 @@ export default function PackageSyncPage() {
   function resetUpload() {
     setPriceListText(null); setPriceListFileName(null);
     setMffText(null); setMffFileName(null);
+    setRemovalReview({ scopes: [], complete: false });
     setProgress(null); setResult(null);
     setStep(0);
   }
@@ -1277,7 +1312,8 @@ export default function PackageSyncPage() {
           <CardHeader>
             <CardTitle className="text-base">Upload source files</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Export both files from Excel as CSV, then drop them here.
+              Export both files from Excel as CSV, then drop them here. Blank prices retain saved rooms and prices. Disabled rooms keep their saved prices and stay disabled.
+              Custom room types are retained. Manual packages become sync-managed; unsync packages are skipped.
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -1285,15 +1321,15 @@ export default function PackageSyncPage() {
               label="Master Price List CSV"
               description="MASTER PRICE LIST 2026_2027.csv — exported from Excel"
               fileName={priceListFileName}
-              onFile={async (f) => { setPriceListFileName(f.name); setPriceListText(await readFile(f)); }}
-              onClear={() => { setPriceListText(null); setPriceListFileName(null); }}
+              onFile={async (f) => { setRemovalReview({ scopes: [], complete: false }); setPriceListFileName(f.name); setPriceListText(await readFile(f)); }}
+              onClear={() => { setRemovalReview({ scopes: [], complete: false }); setPriceListText(null); setPriceListFileName(null); }}
             />
             <DropZone
               label="MFF Flight Schedule CSV"
               description="UPDATED MFF 2026_2027 - MFF VERSION X.csv — exported from Excel"
               fileName={mffFileName}
-              onFile={async (f) => { setMffFileName(f.name); setMffText(await readFile(f)); }}
-              onClear={() => { setMffText(null); setMffFileName(null); }}
+              onFile={async (f) => { setRemovalReview({ scopes: [], complete: false }); setMffFileName(f.name); setMffText(await readFile(f)); }}
+              onClear={() => { setRemovalReview({ scopes: [], complete: false }); setMffText(null); setMffFileName(null); }}
             />
             <div className="flex justify-end pt-2">
               <Button
@@ -1318,16 +1354,64 @@ export default function PackageSyncPage() {
 
       {/* ── Step 2: Flight diff verification ── */}
       {step === 2 && (
-        <FlightDiffStep
-          rows={flightRows}
-          onBack={() => setStep(1)}
-          onContinue={() => setStep(3)}
-        />
+        <div className="space-y-4">
+          <MffDiagnostics result={mffResult} />
+          {mffResult && mffResult.diagnostics.length === 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Remove missing flights only for a complete schedule</CardTitle>
+                <p className="text-sm font-medium break-all">File: {mffFileName}</p>
+                <p className="text-sm text-muted-foreground">
+                  Leave these controls unchecked for partial files. Select only the packages and dates this file fully replaces.
+                  Flights outside the selected scopes and manually added flights stay saved.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <fieldset className="space-y-2">
+                  <legend className="text-sm font-medium mb-2">Authoritative schedule scopes</legend>
+                  {mffResult.removalScopes.map(scope => (
+                    <label key={scope.key} className="flex items-start gap-2 text-sm">
+                      <input type="checkbox" className="mt-1" checked={removalReview.scopes.includes(scope.key)}
+                        onChange={event => setRemovalReview(current => ({ complete: false,
+                          scopes: event.target.checked ? [...current.scopes, scope.key] : current.scopes.filter(key => key !== scope.key),
+                        }))} />
+                      <span>{scope.package_name} · {scope.season} · {scope.start} to {scope.end}</span>
+                    </label>
+                  ))}
+                </fieldset>
+                <label className="flex items-start gap-2 text-sm font-medium">
+                  <input type="checkbox" className="mt-1" disabled={removalReview.scopes.length === 0}
+                    checked={removalReview.complete}
+                    onChange={event => setRemovalReview(current => ({ ...current, complete: event.target.checked }))} />
+                  <span>I confirm this file is complete for every selected scope. Remove saved sync flights missing from those scopes.</span>
+                </label>
+              </CardContent>
+            </Card>
+          )}
+          <FlightDiffStep
+            rows={flightRows}
+            onBack={() => setStep(1)}
+            onContinue={() => setStep(3)}
+          />
+        </div>
       )}
 
       {/* ── Step 3: Review & Apply ── */}
       {step === 3 && (
         <div className="space-y-4">
+          {!result && <MffDiagnostics result={mffResult} />}
+          {!result && mffResult && removalReview.complete && mffResult.diagnostics.length === 0 && (
+            <Card>
+              <CardContent className="pt-4 text-sm space-y-1">
+                <p className="font-medium">Confirmed complete schedule for removal</p>
+                <p className="break-all">File: {mffFileName}</p>
+                {mffResult.removalScopes.filter(scope => removalReview.scopes.includes(scope.key)).map(scope => (
+                  <p key={scope.key}>{scope.package_name} · {scope.season} · {scope.start} to {scope.end}</p>
+                ))}
+                <p>Only the missing sync flights listed below will be removed.</p>
+              </CardContent>
+            </Card>
+          )}
           {/* Result banner */}
           {result && (
             <Card className={result.errors.length > 0 ? "border-amber-400" : "border-green-400"}>
@@ -1427,7 +1511,7 @@ export default function PackageSyncPage() {
           {plan && totalChanges === 0 && !applying && !result && (
             <div className="text-center py-10 text-muted-foreground">
               <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
-              <p className="text-sm">Nothing to sync — all packages and flights are up to date.</p>
+              <p className="text-sm">No changes selected. Missing saved flights are preserved unless removal is authorized.</p>
             </div>
           )}
 

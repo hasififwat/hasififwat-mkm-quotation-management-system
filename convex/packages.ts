@@ -616,10 +616,11 @@ export const listWithHotelsAndMeals = query({
   args: {},
   handler: async (ctx) => {
     await requirePackageAccess(ctx);
-    const [packages, hotels, meals] = await Promise.all([
+    const [packages, hotels, meals, rooms] = await Promise.all([
       ctx.db.query("packages").collect(),
       ctx.db.query("package_hotels").collect(),
       ctx.db.query("package_meals").collect(),
+      ctx.db.query("package_rooms").collect(),
     ]);
     const mealsByHotelId = new Map<string, string[]>();
     for (const m of meals) {
@@ -635,6 +636,13 @@ export const listWithHotelsAndMeals = query({
       list.push({ hotel_type: h.hotel_type, name: h.name ?? "", enabled: h.enabled, meals: mealsByHotelId.get(String(h._id)) ?? [] });
       hotelsByPkg.set(id, list);
     }
+    const roomsByPkg = new Map<string, { room_type: string; price: number; enabled: boolean }[]>();
+    for (const room of rooms) {
+      const id = String(room.package_id);
+      const list = roomsByPkg.get(id) ?? [];
+      list.push({ room_type: room.room_type, price: room.price, enabled: room.enabled });
+      roomsByPkg.set(id, list);
+    }
     return packages.map((p) => ({
       _id:       String(p._id),
       name:      p.name,
@@ -644,6 +652,7 @@ export const listWithHotelsAndMeals = query({
       source:    p.source ?? "manual",
       transport: p.transport ?? "",
       hotels:    hotelsByPkg.get(String(p._id)) ?? [],
+      rooms:     roomsByPkg.get(String(p._id)) ?? [],
     }));
   },
 });

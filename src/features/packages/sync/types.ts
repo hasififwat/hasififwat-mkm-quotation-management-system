@@ -89,6 +89,7 @@ export type PackageUpdateSpec = {
   current_transport: string;
   transport: string;
   current_hotels: SyncHotel[];
+  current_rooms: SyncRoom[];
   hotels: SyncHotel[];
   rooms: SyncRoom[];
   changes: FieldChange[];
@@ -164,4 +165,26 @@ export type ApplyResult = {
   flightsUpdated: number;
   flightsRemoved: number;
   errors: string[];
+};
+
+export type MffDiagnostic = {
+  row: number | null;
+  code: "unsupported_format" | "invalid_date" | "unknown_package" | "outside_supported_season" | "unrecognized_row";
+  message: string;
+};
+
+export type MffRemovalScope = {
+  key: string;
+  package_id: string;
+  package_name: string;
+  season: string;
+  start: string;
+  end: string;
+};
+
+export type MffParseResult = {
+  rows: FlightDiffRow[];
+  diagnostics: MffDiagnostic[];
+  removalScopes: MffRemovalScope[];
+  preservedMissingFlights: number;
 };
