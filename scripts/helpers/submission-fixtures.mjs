@@ -20,15 +20,31 @@ export function state(authenticated = true) {
       assert.ok(table in tables, `Unknown table ${table}`);
       operations.push(['query', table]);
       const predicates = [];
+      const filters = [];
+      let indexField = '_creationTime';
+      let direction = 'asc';
       const q = {
         withIndex(name, callback) {
-          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year'};
+          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at'};
           assert.ok(name in valid, `Unknown index ${name}`);
           const builder = { eq(field, value) { assert.equal(field, valid[name]); predicates.push([field,value]); return builder; } };
-          callback(builder);
+          indexField = valid[name];
+          callback?.(builder);
           return q;
         },
-        async collect() { return structuredClone(tables[table].filter(row => predicates.every(([k,v]) => row[k] === v))); },
+        filter(callback) {
+          const expression = {field: name => row => row[name], neq: (field, value) => row => field(row) !== value};
+          filters.push(callback(expression));
+          return q;
+        },
+        order(value) { direction = value; return q; },
+        async collect() { return structuredClone(tables[table].filter(row => predicates.every(([k,v]) => row[k] === v) && filters.every(predicate => predicate(row)))); },
+        async paginate({cursor, numItems}) {
+          const rows = (await q.collect()).sort((a,b) => (a[indexField] < b[indexField] ? -1 : a[indexField] > b[indexField] ? 1 : 0) * (direction === 'desc' ? -1 : 1));
+          const start = cursor === null ? 0 : Number(cursor);
+          const end = start + numItems;
+          return {page: rows.slice(start,end), isDone: end >= rows.length, continueCursor: String(end)};
+        },
       };
       return q;
     },

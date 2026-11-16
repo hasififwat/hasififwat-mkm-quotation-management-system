@@ -831,13 +831,13 @@ export default function QuotationBuilder({
 				<div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
 					<span className="mt-0.5 text-base">⚠</span>
 					<div className="flex-1">
-						<p className="font-medium">This quotation is out of date.</p>
+						<p className="font-medium">Verify this quotation&apos;s saved details.</p>
 						<p className="text-amber-700 mt-0.5">
-							The following have changed since this quotation was created:{" "}
+							Details requiring verification:{" "}
 							<span className="font-medium">
 								{stale_fields.map(f => STALE_FIELD_LABELS[f] ?? f).join(", ")}
 							</span>.
-							The PDF still reflects the original values.
+							The PDF uses saved snapshot values where available.
 						</p>
 					</div>
 					<button
@@ -862,7 +862,7 @@ export default function QuotationBuilder({
 			{qid && !snapshot_version_known && (
 				<div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-500">
 					<span>🕐</span>
-					Snapshot age unknown — this quotation was created before version tracking was introduced.
+					Some saved snapshot values are unavailable. Verify the current details.
 				</div>
 			)}
 
