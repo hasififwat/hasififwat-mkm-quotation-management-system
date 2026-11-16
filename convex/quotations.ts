@@ -1,5 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
+import { requireDescriptions, requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { paginationOptsValidator } from "convex/server";
@@ -32,11 +32,13 @@ function buildLineTotal(price: number, pax: number) {
 	return normalizeCurrency(price * pax);
 }
 
-function validateQuotationPrices(payload: {
+function validateQuotationLines(payload: {
 	selected_rooms: Array<{ price: number; pax: number }>;
-	adds_ons?: Array<{ price: number; pax: number }>;
-	discounts?: Array<{ price: number; pax: number }>;
+	adds_ons?: Array<{ name: string; price: number; pax: number }>;
+	discounts?: Array<{ name: string; price: number; pax: number }>;
 }) {
+	requireDescriptions(payload.adds_ons ?? [], "Add-on");
+	requireDescriptions(payload.discounts ?? [], "Discount");
 	for (const [label, rows] of [["Room", payload.selected_rooms], ["Add-on", payload.adds_ons ?? []], ["Discount", payload.discounts ?? []]] as const) {
 		requirePrices(rows, label);
 		for (const row of rows) {
@@ -533,7 +535,7 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
-		validateQuotationPrices(args.payload);
+		validateQuotationLines(args.payload);
 		const now = new Date().toISOString();
 
 		const allPackages = await ctx.db.query("packages").collect();
@@ -1122,7 +1124,7 @@ export const update = mutation({
 	},
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
-		validateQuotationPrices(args.payload);
+		validateQuotationLines(args.payload);
 		const quotation = await findQuotationByStringId(ctx, args.payload.id);
 		if (!quotation) {
 			throw new Error("Quotation not found");

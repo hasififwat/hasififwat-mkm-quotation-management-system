@@ -856,7 +856,9 @@ export default function QuotationBuilder({
 			<form
 				id="quotation-form"
 				className="mx-auto lg:mx-0"
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit, (errors) => {
+					if (errors.adds_ons || errors.discounts) setCurrentStep("extras");
+				})}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
