@@ -1,0 +1,5 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T03:27:46Z	baseline	Confirmed missing client label and outer quotation validation on modal submit	Fix root causes at metadata and submit boundaries	issue 21; baseline b95671a; ticket5 browser	reproduced
+2026-11-16T03:39:52Z	correction	Contain Enter keydown in client form	Browser disproved submit-only fix because wizard keydown intercepted Enter	85bb3390; earlier recording df518862	Enter and click now pass
+2026-11-16T03:39:52Z	final	Merge latest remote and repeat runtime video on exact head	Quotation save behavior changed in target	ec94da2e5bb8413188897e393b17220bda61ec39; final-head.mp4	49 tests pass; saved recipient and draft survive reload
+2026-11-16T03:39:52Z	cleanup	Stop ticket5 and erase disposable database and storage	Complete fixture cleanup without touching other owners	cleanup.json	ports 3160 3260 3261 free

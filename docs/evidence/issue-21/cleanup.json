@@ -1,0 +1,12 @@
+{
+  "instance": "ticket5",
+  "stopped": true,
+  "portsFree": {
+    "3160": true,
+    "3260": true,
+    "3261": true
+  },
+  "databaseRemoved": true,
+  "storageRemoved": true,
+  "scope": "Only ticket5 disposable data and source snapshots removed. Other instances untouched."
+}

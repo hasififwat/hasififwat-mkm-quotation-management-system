@@ -1,0 +1,11 @@
+{
+  "commit": "b95671a373f7ca65c7ff571d66ce4648986c7b5b",
+  "url": "http://ticket5.localhost:3160/quotations/create",
+  "observations": [
+    "Click Create Client caused Client is required on quotation behind dialog",
+    "Successful creation left Select a client visible",
+    "Enter from second client phone caused Package Selection and Package id required",
+    "PIC Inline PIC, branch Inline Branch, notes Keep draft survived"
+  ],
+  "screenshot": "/Users/hasif.ifwat/.t3/userdata/browser-artifacts/browser-screenshot-ticket5-localhost-mwipe226-d2c96eef.png"
+}
