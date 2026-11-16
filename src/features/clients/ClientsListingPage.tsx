@@ -21,6 +21,7 @@ import {
 import { cn } from "~/lib/utils";
 
 type ClientQuotation = {
+    client_name: string;
 	id: string;
 	quotation_number: string;
 	status: string;
@@ -66,7 +67,7 @@ function formatCurrency(amount: number) {
 
 const LONG_PRESS_MS = 1500;
 
-function QuotationRow({ q, clientName }: { q: ClientQuotation; clientName: string }) {
+function QuotationRow({ q }: { q: ClientQuotation }) {
 	const [progress, setProgress] = useState(0);
 	const [active, setActive] = useState(false);
 	const rafRef = useRef<number | null>(null);
@@ -97,7 +98,7 @@ function QuotationRow({ q, clientName }: { q: ClientQuotation; clientName: strin
 				} else {
 					const text = [
 						`Quotation: ${q.quotation_number}`,
-						`Client: ${clientName}`,
+						`Client: ${q.client_name}`,
 						`Package: ${q.package_name}${q.package_year ? ` (${q.package_year})` : ""}`,
 						`Status: ${q.status.charAt(0).toUpperCase() + q.status.slice(1)}`,
 						`Amount: ${formatCurrency(q.total_amount)}`,
@@ -114,7 +115,7 @@ function QuotationRow({ q, clientName }: { q: ClientQuotation; clientName: strin
 
 			rafRef.current = requestAnimationFrame(tick);
 		},
-		[q, clientName, cancel],
+		[q, cancel],
 	);
 
 	return (
@@ -541,7 +542,6 @@ export default function ClientsListingPage({
 																					<QuotationRow
 																						key={q.id}
 																						q={q}
-																						clientName={client.name}
 																					/>
 																				))}
 																			</tbody>
