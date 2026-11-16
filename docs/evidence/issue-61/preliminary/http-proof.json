@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "0f42ac5d17818b463a2a991c15f7908122bcf05f",
+  "webUrl": "http://localhost:3540",
+  "browserConvexUrl": "http://127.0.0.1:13965",
+  "serverConvexUrl": "http://127.0.0.1:13965",
+  "pdfUrl": "http://localhost:3540/api/quotations/n5770mw4q03th8dh2zhdwcxg1s8jadap/pdf",
+  "anonymousStatus": 401,
+  "authenticatedStatus": 200,
+  "sha256": "d4a0c0a98f3adeddf2af39111f4dbe1c35030e04768f6e81d84e9c21339d6432",
+  "size": 169777,
+  "attachmentSameBytes": true,
+  "scope": "Real HTTP application route with actual password JWT cookie. Browser login is a separate journey."
+}

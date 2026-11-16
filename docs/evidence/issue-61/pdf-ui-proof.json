@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+  "failed": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/review/n57037m13bqxhxw1e7p8ytz4bd8jaz22"
+    },
+    "value": {
+      "pdfLinks": 0,
+      "retryVisible": true,
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nCurrent revision · Saved status draft\n\n1448H-0004\nQuotations\nRevision history\nEdit current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nIntegrated verification\nBranch\nDisposable\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:32 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:32 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nR0\n\nIssued PDF\n\nThe revision is saved, but its PDF could not be prepared. Retry prepares the PDF only and creates no revision.\n\nRetry PDF",
+      "url": "http://127.0.0.1:3540/quotations/review/n57037m13bqxhxw1e7p8ytz4bd8jaz22"
+    }
+  },
+  "afterPublicRetry": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/review/n57037m13bqxhxw1e7p8ytz4bd8jaz22"
+    },
+    "value": {
+      "pdfLinks": 2,
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nCurrent revision · Saved status draft\n\n1448H-0004\nQuotations\nRevision history\nEdit current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nIntegrated verification\nBranch\nDisposable\nSaved by\nn975strsfnp2e0fqaecx96wpe58jae0c\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:32 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:32 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nR0\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://127.0.0.1:3540/quotations/review/n57037m13bqxhxw1e7p8ytz4bd8jaz22"
+    }
+  },
+  "missingOriginal": {
+    "toolIcon": {
+      "_tag": "website",
+      "pageUrl": "http://127.0.0.1:3540/quotations/review/n57fqpaa5bg1519wsn155xapc98jaxk9"
+    },
+    "value": {
+      "pdfLinks": 0,
+      "pdfStatus": 409,
+      "retryButtons": 0,
+      "scrollWidth": 390,
+      "text": "Toggle Sidebar\n\nCurrent revision · Saved status draft\n\n1448H-0001\nQuotations\nRevision history\nEdit current revision\n\nSource revision Not recorded\n\nClient\nRevision History Fixture\nPIC\nIntegrated legacy\nBranch\nDisposable\nSaved by\nNot recorded\nRevision issued (Kuala Lumpur)\nNot recorded\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:38 am\nPackage\nChanged live package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\n\nLegacy provenance is unknown. This retained history does not establish a complete history before migration. Missing values remain not recorded.\n\nSaved quotation\nChanged room\nRoom\nRM 1200.00 × 1\nRM 1200.00\n\nTotal RM 1200.00\n\nPre-migration compatibility\n\nIssued PDF\n\nThe original PDF was not recorded. It cannot be regenerated as an issued original.",
+      "url": "http://127.0.0.1:3540/quotations/review/n57fqpaa5bg1519wsn155xapc98jaxk9",
+      "width": 390
+    }
+  },
+  "scope": "Failed state came from a real attempted artifact. One actual UI Retry PDF prepared it. Missing original is a genuinely migrated legacy row with no artifact; no fabricated PDF or fixture-deleted artifact was used."
+}

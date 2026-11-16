@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {guardRevisionManifest,guardRevisionTarget,verifyRevisionSource} from './helpers/revision-evidence.mjs';
+const runDir='/private/tmp/mkm-issue61-run';
+const run=JSON.parse(await fs.readFile(path.join(runDir,'run.json'),'utf8'));
+assert.equal(path.resolve(run.sourceDir),path.join(runDir,'source'));
+guardRevisionManifest(run,runDir);
+const env=Object.fromEntries((await fs.readFile(path.join(run.sourceDir,'.env.local'),'utf8')).split('\n').filter(Boolean).map(l=>{const i=l.indexOf('=');return[l.slice(0,i),l.slice(i+1)];}));
+guardRevisionTarget(run,runDir,env,run.sourceDir);
+await verifyRevisionSource(run);
+const result=spawnSync(path.resolve('node_modules/.bin/convex'),['dev','--once','--typecheck','disable','--codegen','disable'],{cwd:run.sourceDir,env:{...Object.fromEntries(Object.entries(process.env).filter(([key])=>!key.startsWith('CONVEX_'))),...env},encoding:'utf8'});
+await fs.writeFile(path.join(runDir,'guarded-deploy.log'),`${result.stdout||''}${result.stderr||''}`);
+if(result.status!==0)throw Error('Owned deployment failed. Inspect private guarded-deploy.log');
+console.log(JSON.stringify({sourceCommit:run.sourceCommit,cwd:run.sourceDir,url:run.url}));

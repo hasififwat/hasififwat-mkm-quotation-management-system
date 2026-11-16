@@ -1,0 +1,79 @@
+[
+  {
+    "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+    "id": "4234f84f-eb26-49c8-a022-486dceefe37e",
+    "migration": "absent",
+    "enabled": true,
+    "mode": "legacy",
+    "newCommandStatus": 422,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  },
+  {
+    "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+    "id": "6cb0be80-6193-42be-9745-500c4fd217c9",
+    "migration": "incomplete",
+    "enabled": true,
+    "mode": "migration",
+    "newCommandStatus": 422,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  },
+  {
+    "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+    "id": "880a6a6e-2edc-4dcc-af7c-3e89c569ad7f",
+    "migration": "incomplete",
+    "enabled": false,
+    "mode": "migration",
+    "newCommandStatus": 422,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  },
+  {
+    "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+    "id": "9ae1b8d2-e6e3-4135-9571-d8428b9b2aa0",
+    "migration": "done",
+    "enabled": true,
+    "mode": "active",
+    "newCommandStatus": 200,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  },
+  {
+    "id": "afd24c16-ea98-4923-a3f5-0b7aba261e3e",
+    "migration": "absent",
+    "enabled": false,
+    "mode": "legacy",
+    "newCommandStatus": 422,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  },
+  {
+    "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+    "id": "b56b95b7-0a6b-4503-befd-d1202116a273",
+    "migration": "done",
+    "enabled": false,
+    "mode": "maintenance",
+    "newCommandStatus": 422,
+    "legacyReplayStatus": 200,
+    "replay": {
+      "success": true,
+      "id": "n57fqpaa5bg1519wsn155xapc98jaxk9"
+    }
+  }
+]

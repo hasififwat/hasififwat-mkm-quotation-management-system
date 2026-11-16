@@ -1,0 +1,16 @@
+{
+  "scope": "Owned local setup only; no shared deployment performed.",
+  "incidents": [
+    {
+      "action": "A raw Convex CLI command ran from the repository instead of the private source snapshot, twice.",
+      "result": "Each created an anonymous LOCAL3210 deployment. The CLI process exited; ports3210/3211 were confirmed closed and only the generated repository .env.local/.convex were removed.",
+      "correction": "All subsequent deployment calls use deploy-revision-fixture.mjs with source, account, ownerPID, cwd, URL, environment and sourcehash guards."
+    },
+    {
+      "action": "A production build cleared .next containing this owner temporary fixture and preliminary reports.",
+      "result": "Those preliminary reports were lost and were not used as final evidence.",
+      "correction": "Moved fixture outside.next and reran backend, restore and HTTP verification; durable nonsecret reports are copied underdocs."
+    }
+  ],
+  "sourceNote": "This record supersedes the deleted .next/run.json pointer in the earlier decision row. The original decision row remains append-only."
+}

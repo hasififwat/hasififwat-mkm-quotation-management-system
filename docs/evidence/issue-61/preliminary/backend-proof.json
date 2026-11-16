@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "0f42ac5d17818b463a2a991c15f7908122bcf05f",
+  "backendUrl": "http://127.0.0.1:13965",
+  "surface": "Real password-signup JWT and public HTTP Convex calls. Browser and Next.js HTTP route checks recorded separately.",
+  "checks": [
+    "Public JWT save denied with migration=absent, release=false, no business writes.",
+    "Public JWT save denied with migration=absent, release=true, no business writes.",
+    "Public JWT save denied with migration=incomplete, release=false, no business writes.",
+    "Public JWT save denied with migration=incomplete, release=true, no business writes.",
+    "Public JWT save denied with migration=done, release=false, no business writes.",
+    "Anonymous and invalid JWT save denied; real password-signup JWT accepted below.",
+    "Real JWT concurrent same-key replay and same-base one-winner race; lost-response replay returns original ID after later saves; unchanged new key increments; independent same-year creates unique.",
+    "Real Node worker rendered ready PDF; authenticated download bytes match stored SHA-256; anonymous download rejected; modern row invariants pass."
+  ],
+  "pdf": {
+    "revisionId": "n5770mw4q03th8dh2zhdwcxg1s8jadap",
+    "sha256": "d4a0c0a98f3adeddf2af39111f4dbe1c35030e04768f6e81d84e9c21339d6432",
+    "size": 169777
+  },
+  "counts": {
+    "quotations": 9,
+    "quotation_families": 6,
+    "quotation_items": 11,
+    "quotation_logs": 9,
+    "quotation_create_receipts": 1,
+    "quotation_save_receipts": 8,
+    "quotation_reference_counters": 1,
+    "quotation_pdf_artifacts": 8,
+    "quotation_pdf_attempts": 8
+  }
+}

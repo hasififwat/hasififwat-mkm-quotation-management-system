@@ -1,0 +1,8 @@
+{
+  "revisionId": "n577vd6nex3rb8jq6t820sbvmd8ja640",
+  "before": "pending",
+  "after": "ready",
+  "manualPublicRetries": 1,
+  "scope": "Targeted repair of pre-fix stranded pending row. Does not prove new-save automatic recovery.",
+  "implementationCommit": "0e5db1232323b4340e97a31c9a7bdf88391f9179"
+}

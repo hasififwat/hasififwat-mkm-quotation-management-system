@@ -1,0 +1,169 @@
+{
+  "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+  "sourceEvidence": "ui-source.json",
+  "origin": "http://127.0.0.1:3540",
+  "scope": "Owned server browser, real create/edit routes and backend-synchronized fixture states before modern revisions. No product state setters. HTTP results are separate files.",
+  "states": [
+    {
+      "id": "afd24c16-ea98-4923-a3f5-0b7aba261e3e",
+      "migration": "absent",
+      "enabled": false,
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "text": "Toggle Sidebar\nEdit Quotation\n1\n2\n3\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    },
+    {
+      "id": "4234f84f-eb26-49c8-a022-486dceefe37e",
+      "migration": "absent",
+      "enabled": true,
+      "create": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/create"
+        },
+        "value": {
+          "inputs": 3,
+          "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nC\nChanged live profile\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nCreate Quotation\n1\nClient Details\n2\nPackage Selection\n3\nAdd-ons & Discounts\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nSelect a client\nNotes\nPrevious\nCancel\nNext",
+          "url": "http://127.0.0.1:3540/quotations/create",
+          "width": 1402
+        }
+      },
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "inputs": 5,
+          "text": "Toggle Sidebar\nEdit Quotation\n1\n2\n3\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    },
+    {
+      "id": "880a6a6e-2edc-4dcc-af7c-3e89c569ad7f",
+      "migration": "incomplete",
+      "enabled": false,
+      "create": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/create"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nC\nChanged live profile\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nQuotation saves are temporarily unavailable during revision maintenance. No quotation has been created.",
+          "url": "http://127.0.0.1:3540/quotations/create",
+          "width": 1402
+        }
+      },
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "Toggle Sidebar\n1448H-0001\n\nQuotation editing is unavailable while this family is archived or revision maintenance is in progress.\n\nView this saved revision",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    },
+    {
+      "id": "6cb0be80-6193-42be-9745-500c4fd217c9",
+      "migration": "incomplete",
+      "enabled": true,
+      "create": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/create"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nC\nChanged live profile\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nQuotation saves are temporarily unavailable during revision maintenance. No quotation has been created.",
+          "url": "http://127.0.0.1:3540/quotations/create",
+          "width": 1402
+        }
+      },
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "Toggle Sidebar\n1448H-0001\n\nQuotation editing is unavailable while this family is archived or revision maintenance is in progress.\n\nView this saved revision",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    },
+    {
+      "id": "b56b95b7-0a6b-4503-befd-d1202116a273",
+      "migration": "done",
+      "enabled": false,
+      "create": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/create"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nC\nChanged live profile\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nQuotation saves are temporarily unavailable during revision maintenance. No quotation has been created.",
+          "url": "http://127.0.0.1:3540/quotations/create",
+          "width": 1402
+        }
+      },
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "inputs": 0,
+          "text": "Toggle Sidebar\n1448H-0001\n\nQuotation editing is unavailable while this family is archived or revision maintenance is in progress.\n\nView this saved revision",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    },
+    {
+      "id": "9ae1b8d2-e6e3-4135-9571-d8428b9b2aa0",
+      "migration": "done",
+      "enabled": true,
+      "create": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/create"
+        },
+        "value": {
+          "inputs": 3,
+          "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nC\nChanged live profile\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nCreate Quotation\n\nEvery intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\n1\nClient Details\n2\nPackage Selection\n3\nAdd-ons & Discounts\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nSelect a client\nNotes\nPrevious\nCancel\nNext",
+          "url": "http://127.0.0.1:3540/quotations/create",
+          "width": 1402
+        }
+      },
+      "edit": {
+        "toolIcon": {
+          "_tag": "website",
+          "pageUrl": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9"
+        },
+        "value": {
+          "inputs": 5,
+          "text": "Toggle Sidebar\nEdit Quotation\n\nEditing 1448H-0001. Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\n1\n2\n3\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave new revision",
+          "url": "http://127.0.0.1:3540/quotations/edit/n57fqpaa5bg1519wsn155xapc98jaxk9",
+          "width": 390
+        }
+      }
+    }
+  ]
+}

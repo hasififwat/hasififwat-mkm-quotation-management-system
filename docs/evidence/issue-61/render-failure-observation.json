@@ -1,0 +1,70 @@
+{
+  "sourceCommit": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+  "artifacts": [
+    {
+      "_creationTime": 1794850359600.511,
+      "_id": "mh78np1x7djst1ytmq6xpjynnx8jaga2",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0004.pdf",
+      "input_sha256": "f878e5ed2275b75e89202fce3ab1757407ea6a7a96015f48b01745e692273d07",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n57037m13bqxhxw1e7p8ytz4bd8jaz22",
+      "state": {
+        "kind": "failed",
+        "reason": "PDF creation failed. Retry this saved revision."
+      },
+      "terms_version": "mkm-payment-terms-v1"
+    },
+    {
+      "_creationTime": 1794850359760.769,
+      "_id": "mh72288dbgabb1q0cknm5gtsb18jahr5",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0006.pdf",
+      "input_sha256": "fed263c0ce174ffb543411e585dadf94b5b9542c4c7aeeea0c8eceb5785e020f",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n579985gkp2p85tmdb3m4y78798jakv5",
+      "state": {
+        "kind": "failed",
+        "reason": "PDF creation failed. Retry this saved revision."
+      },
+      "terms_version": "mkm-payment-terms-v1"
+    },
+    {
+      "_creationTime": 1794850361075.134,
+      "_id": "mh727m1xkjqkra5yqfkbrrq2t98jay4q",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0011.pdf",
+      "input_sha256": "70a3c86d7b1502fd5e752ec504e05d07abc45a850ecedb6e25f077b0d596e9b0",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n57caepbkgp06qqr44y5qxv1ks8ja1h7",
+      "state": {
+        "kind": "failed",
+        "reason": "PDF creation failed. Retry this saved revision."
+      },
+      "terms_version": "mkm-payment-terms-v1"
+    }
+  ],
+  "attempts": [
+    {
+      "_creationTime": 1794850359617.265,
+      "_id": "mn70a8xgqbjmx524egqrxzb0h58ja7c9",
+      "artifact_id": "mh78np1x7djst1ytmq6xpjynnx8jaga2",
+      "retired": true
+    },
+    {
+      "_creationTime": 1794850359785.607,
+      "_id": "mn70gcz5dnr03q57weh6sdnbc18jb725",
+      "artifact_id": "mh72288dbgabb1q0cknm5gtsb18jahr5",
+      "retired": true
+    },
+    {
+      "_creationTime": 1794850361090.483,
+      "_id": "mn7e4xj2mc161zr9zzqpmx7ht98jb7vp",
+      "artifact_id": "mh727m1xkjqkra5yqfkbrrq2t98jay4q",
+      "retired": true
+    }
+  ]
+}

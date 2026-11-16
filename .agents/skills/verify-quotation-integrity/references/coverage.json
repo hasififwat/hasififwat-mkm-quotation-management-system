@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "41438191bc23a1f1e3c4eb8c18cb920790994196",
-  "sourceWasUncommitted": true,
+  "lastSyncCommit": "8f3969be1527df8d5b50301b471f2bb992dbd744",
+  "sourceWasUncommitted": false,
   "checkedAt": "2026-11-17",
   "source": "convex/quotations.ts",
-  "sourceSha256": "52700eee15babad0b6444cfcfa4033e1c355ab42553bf7998ce459e4de2c13ea",
+  "sourceSha256": "639a379f9e3411a6f0cf0c1c10ec85266d646925b5a4cf37ac1aa90be86d6654",
   "functions": [
     "create",
     "update",
@@ -68,19 +68,27 @@
   },
   "supportingSourceSha256": {
     "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
-    "scripts/helpers/load-typescript.mjs": "e3cc010d23b3d5289f75f2f77ef516ef987a9d2b9bdcc52b0bada490e7397621",
+    "scripts/helpers/load-typescript.mjs": "5e6d12f97ac1c60139271635e89dcb04f80cc766c784aeede6e2d35ff1aea894",
     "src/domain/submission-validation.ts": "b43b0415610203823c2bd842a537588b3a616dd2dc9916d98ff593bd89683360",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
-    "convex/packages.ts": "b648baea0bb4b64785cabc8c51e22076c36354c2b97a6fe9f4b21c441f73dd3c",
-    "src/features/quotation/QuotationBuilder.tsx": "bd8d05724d069b3ed9f873631810e619bb6f4ead05749f0aab9dabb4ebdf3653",
-    "convex/schema.ts": "3372920754aaa25ab3ac0d36207e88292bed5002e6b779f43b9c971467cb228b",
-    "src/app/api/quotations/create/route.ts": "0ed6f42ddbab9c39a45145159ab909737ff056293a9db9619fe321d03fdec6db",
-    "src/features/quotation/save-quotation.ts": "d6ecebdbf925d9f4a0dde04c866edc568f6f64cfbaae3ccb5884d23b550406f3",
-    "convex/lib/quotationFamilyIdentity.ts": "53fdc6b2cd4078fc499963aadc58e978931cb5cf82db8ac5c8804f1ac57d83c7"
+    "convex/packages.ts": "332d92868689af347607677d4ca05e44e2bd5daac13b256dc906df113b3045b9",
+    "src/features/quotation/QuotationBuilder.tsx": "87656c486206b06acb4397173161f9f20e3529f7c2d85802fba9eab15f1ef4de",
+    "convex/schema.ts": "a9c207d4ba0d483cef65391ef86e70a4171b93be16eabbe1ccf212773e1aa1cb",
+    "src/app/api/quotations/create/route.ts": "ab382d6832783231fe4670848b129eecaccd1165f983dfd63804b472da80c9e4",
+    "src/features/quotation/save-quotation.ts": "5669b28f5bd577a5bae15116c08430ffbfa08a0adba8e3ea450739fe803d03a0",
+    "convex/lib/quotationFamilyIdentity.ts": "4ffd707af8e461e394488795e19cd0ba851db032f53e1ee4de0fde9854ce6d21",
+    "convex/quotationPdfArtifacts.ts": "60a9441801b3db8f68ec17ecde583705654dc962ffbe38575a88f99bc2df294c",
+    "convex/quotationPdfWorker.ts": "3d488ad8e215798dda4b03f9dac2efbdbf302a76ec4ee3c2ad7a4b808c685976",
+    "convex/lib/savedQuotation.ts": "6da2e629c5c2e1ecaafda354b81026774bacd8f33278216a954fd7045cd8da61",
+    "convex/lib/currentQuotations.ts": "3379cf24d47c8333f8a94dea2330061a4e7ab26f977551fe8b3e10189164504c",
+    "src/features/quotation/revision-api.ts": "f7adb000bdc143eca93ac5cf36bdbea2bd6804ebc9f49244db6afa07f8ef9e74",
+    "src/features/quotation/revision-command.ts": "55db4cd613344409d0ca0de253a80f8d9307a35bbf55e3dd078c51e3af864de2"
   },
   "additionalVerification": {
     "createRetries": "scripts/quotation-create-retry.test.mjs executes actual handlers with a sequential in-memory adapter. Actual Convex concurrency is outside this checker.",
-    "revisionTransactions": "scripts/check-revision-backend.mjs executes real public saves on isolated Convex with HTTP queue bypass and injected post-write rollback."
+    "revisionTransactions": "scripts/check-revision-backend.mjs executes real public saves on isolated Convex with HTTP queue bypass and injected post-write rollback.",
+    "integratedJWT": "scripts/check-integrated-revision-backend.mjs uses actual password JWT on ownedlocalConvex. Includesrow/PDFbefore-after, explicitfailedretrycounts, nomanualpendingrescue andindependentrestore.",
+    "expiredJWT": "scripts/check-revision-session.mjs uses actualsignedexpiredRS256JWT, HTTP401 andsamekeyoriginalactorrecovery withunchangedbusinessdump."
   },
-  "revisionSourceSha256": "f15554cfb532e543d1c06abf4eb9d2833d77a2bd7682edc33fff53da6c9bb1ef"
+  "revisionSourceSha256": "35b5196fff87f1eaa0ac52b2b4ddf586256d29f30cbcdb5ee4bf3344554b25a8"
 }

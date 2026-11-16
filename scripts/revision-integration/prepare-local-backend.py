@@ -1,0 +1,73 @@
+import io
+import shutil
+import sys
+import json
+import os
+from pathlib import Path
+import secrets
+import socket
+import subprocess
+import tarfile
+import time
+import urllib.request
+
+os.umask(0o077)
+root = Path(__file__).resolve().parents[2]
+run_dir = Path('/private/tmp/mkm-issue61-run')
+source_dir = run_dir / 'source'
+binary = Path(os.environ['FAMILY_BACKEND_BINARY'])
+backend_url = 'http://127.0.0.1:13965'
+site_url = 'http://127.0.0.1:13966'
+
+if (run_dir / 'run.json').exists():
+    raise SystemExit('A run already exists. Inspect its ownership before preparing another.')
+
+for port in (13965, 13966):
+    with socket.socket() as probe:
+        if probe.connect_ex(('127.0.0.1', port)) == 0:
+            raise SystemExit('Verification port is already occupied: ' + str(port))
+
+source_dir.mkdir(parents=True)
+commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+archive_bytes = subprocess.check_output(['git', 'archive', commit, 'convex', 'src', 'scripts', 'public', 'package.json', 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs', 'convex.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'constants.ts', 'types.ts', 'utils.ts'], cwd=root)
+with tarfile.open(fileobj=io.BytesIO(archive_bytes)) as archive:
+    archive.extractall(source_dir)
+if sys.platform == 'darwin':
+    subprocess.run(['cp', '-cR', str(root / 'node_modules'), str(source_dir / 'node_modules')], check=True)
+else:
+    shutil.copytree(root / 'node_modules', source_dir / 'node_modules', symlinks=True)
+config_path = source_dir / 'next.config.ts'
+config_path.write_text(config_path.read_text().replace('const nextConfig: NextConfig = {', "const nextConfig: NextConfig = {\n allowedDevOrigins: ['127.0.0.1'],"))
+instance_name = 'issue-61-verification'
+instance_secret = secrets.token_hex(32)
+admin_key = subprocess.check_output([str(binary), 'keygen', 'admin-key', '--instance-name', instance_name, '--instance-secret', instance_secret], text=True).strip()
+env_text = '\n'.join([
+    'CONVEX_SELF_HOSTED_URL=' + backend_url,
+    'CONVEX_SELF_HOSTED_ADMIN_KEY=' + admin_key,
+    'NEXT_PUBLIC_CONVEX_URL=' + backend_url,
+    'NEXT_PUBLIC_CONVEX_SITE_URL=' + site_url,
+    'CONVEX_URL=' + backend_url,
+    '',
+])
+env_file = source_dir / '.env.local'
+env_file.write_text(env_text)
+env_file.chmod(0o600)
+auth_file = run_dir / 'fixture-account.json'
+auth_file.write_text(json.dumps({'email': 'revision-verification@example.test', 'password': secrets.token_urlsafe(24)}))
+auth_file.chmod(0o600)
+log = (run_dir / 'backend.log').open('w')
+process = subprocess.Popen([str(binary), '--interface', '127.0.0.1', '--port', '13965', '--site-proxy-port', '13966', '--instance-name', instance_name, '--instance-secret', instance_secret, '--disable-beacon', '--local-storage', str(run_dir / 'storage'), str(run_dir / 'backend.sqlite3')], cwd=run_dir, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+manifest = {'pid': process.pid, 'owner': 'issue-61', 'sourceCommit': commit, 'sourceDir': str(source_dir), 'url': backend_url, 'siteUrl': site_url, 'binary': str(binary), 'fixtureAccountPath': str(auth_file), 'backendIsolation': 'Disposable local SQLite backend. No shared deployment configuration copied.'}
+(run_dir / 'run.json').write_text(json.dumps(manifest, indent=2))
+for attempt in range(30):
+    if process.poll() is not None:
+        raise SystemExit('Owned local backend exited. Inspect backend.log.')
+    try:
+        with urllib.request.urlopen(backend_url + '/version', timeout=1) as response:
+            if response.status == 200:
+                print(json.dumps(manifest, indent=2))
+                break
+    except Exception:
+        time.sleep(0.2)
+else:
+    raise SystemExit('Owned local backend did not become ready.')
