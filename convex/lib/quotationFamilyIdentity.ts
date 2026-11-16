@@ -1,4 +1,4 @@
-import type { Id } from "../_generated/dataModel";
+import type { Doc, Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 
 export async function assertLegacyWritesAllowed(ctx: Pick<QueryCtx, "db">) {
@@ -39,4 +39,10 @@ export async function assertRevisionVacant(
   const existing = await ctx.db.query("quotations")
     .withIndex("by_family_revision", (q) => q.eq("family_id", familyId).eq("revision", revision)).unique();
   if (existing) throw new Error("Quotation family revision already exists");
+}
+
+export function assertMutableLegacyQuotation(quotation: Doc<"quotations">) {
+  if (quotation.family_id || quotation.frozen_document || quotation.document_schema_version !== undefined) {
+    throw new Error("Immutable quotation revisions cannot be changed by legacy operations");
+  }
 }

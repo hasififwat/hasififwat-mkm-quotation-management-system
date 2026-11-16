@@ -11,7 +11,7 @@ export const { transformConvexPackage: transform } = load(path.join(repo, "src/f
 export const { packageSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 import assert from "node:assert/strict";
 export function state(authenticated = true) {
-  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_pdf_artifacts: [], quotation_pdf_attempts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { client_aliases: [], packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_pdf_artifacts: [], quotation_pdf_attempts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
@@ -27,7 +27,7 @@ export function state(authenticated = true) {
       let direction = 'asc';
       const q = {
         withIndex(name, callback) {
-          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at', by_actor_request_key:['actor', 'request_key'], by_key:'key', by_reference:table === 'quotation_create_receipts' ? ['result.hijri_year','result.sequence_num'] : ['hijri_year','sequence_num'], by_reference_revision:['hijri_year','sequence_num','revision'], by_family_revision:['family_id','revision'], by_archived:'archived'};
+          const valid = {by_alias_client_id:'alias_client_id', by_client_id:'client_id', by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at', by_actor_request_key:['actor', 'request_key'], by_key:'key', by_reference:table === 'quotation_create_receipts' ? ['result.hijri_year','result.sequence_num'] : ['hijri_year','sequence_num'], by_reference_revision:['hijri_year','sequence_num','revision'], by_family_revision:['family_id','revision'], by_archived:'archived'};
           assert.ok(name in valid, `Unknown index ${name}`);
           const fields = Array.isArray(valid[name]) ? valid[name] : [valid[name]];
           let fieldIndex = 0;
