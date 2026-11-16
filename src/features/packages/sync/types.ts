@@ -1,3 +1,5 @@
+import type { ReviewedPackageApplyIntent } from "../../../domain/package-sync-intent";
+
 export type MatchStatus = "MATCHED" | "NEW" | "ORPHAN";
 export type FlightDiffStatus = "added" | "removed" | "unchanged" | "edited" | "no_db_package";
 
@@ -82,13 +84,13 @@ export type FieldChange = {
   new: string;
 };
 
-export type PackageUpdateSpec = {
+export type PackageUpdateSpec = ReviewedPackageApplyIntent & {
   kind: "update";
-  db_id: string;
   db_name: string;
   current_transport: string;
   transport: string;
   current_hotels: SyncHotel[];
+  current_rooms: SyncRoom[];
   hotels: SyncHotel[];
   rooms: SyncRoom[];
   changes: FieldChange[];
@@ -141,6 +143,7 @@ export type DbFlight = {
 };
 
 export type SyncPlan = {
+  errors: string[];
   packagesToCreate: PackageCreateSpec[];
   packagesToUpdate: PackageUpdateSpec[];
   packagesToPromote: string[]; // DB package IDs to mark source: "sync"
@@ -164,4 +167,26 @@ export type ApplyResult = {
   flightsUpdated: number;
   flightsRemoved: number;
   errors: string[];
+};
+
+export type MffDiagnostic = {
+  row: number | null;
+  code: "unsupported_format" | "invalid_date" | "unknown_package" | "outside_supported_season" | "unrecognized_row";
+  message: string;
+};
+
+export type MffRemovalScope = {
+  key: string;
+  package_id: string;
+  package_name: string;
+  season: string;
+  start: string;
+  end: string;
+};
+
+export type MffParseResult = {
+  rows: FlightDiffRow[];
+  diagnostics: MffDiagnostic[];
+  removalScopes: MffRemovalScope[];
+  preservedMissingFlights: number;
 };
