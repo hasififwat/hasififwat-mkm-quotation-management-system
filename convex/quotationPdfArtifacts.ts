@@ -8,6 +8,12 @@ import { freezeRevisionPdf } from "./lib/quotationPdfInput";
 import { pdfMetadata } from "./lib/quotationPdfModel";
 
 const LEASE_MS = 120_000;
+const PENDING_RETRY_MS = 15_000;
+
+async function dispatchPendingPdf(ctx: MutationCtx, artifact_id: Id<"quotation_pdf_artifacts">) {
+  await ctx.scheduler.runAfter(PENDING_RETRY_MS, internal.quotationPdfArtifacts.reconcile, {artifact_id});
+  await ctx.scheduler.runAfter(0, internal.quotationPdfWorker.run, {artifact_id});
+}
 export async function enqueueRevisionPdf(ctx: MutationCtx, revision_id: Id<"quotations">, document: FrozenQuotationDocumentV1) {
   const input = freezeRevisionPdf(document);
   const input_json = JSON.stringify(input);
@@ -19,7 +25,7 @@ export async function enqueueRevisionPdf(ctx: MutationCtx, revision_id: Id<"quot
     renderer_version: input.renderVersion, asset_version: input.assets.version, terms_version: input.termsVersion,
     provenance: document.provenance ? "legacy_reconstruction" : "issued_original", state: {kind: "pending"},
   });
-  await ctx.scheduler.runAfter(0, internal.quotationPdfWorker.run, {artifact_id});
+  await dispatchPendingPdf(ctx, artifact_id);
   return artifact_id;
 }
 
@@ -89,7 +95,7 @@ export const reconcile = internalMutation({args: {artifact_id: v.id("quotation_p
     await ctx.db.patch(attempt_id, {retired: true});
   }
   await ctx.db.patch(artifact_id, {state: {kind: "pending"}});
-  await ctx.scheduler.runAfter(0, internal.quotationPdfWorker.run, {artifact_id});
+  await dispatchPendingPdf(ctx, artifact_id);
 }});
 
 export const retry = mutation({args: {revision_id: v.id("quotations")}, handler: async (ctx, {revision_id}) => {
