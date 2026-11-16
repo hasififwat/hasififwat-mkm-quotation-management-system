@@ -19,13 +19,17 @@ const compiled = ts.transpileModule(`${component.getText(ast)}\nexports.HotelSel
 	compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
 });
 const exports = {};
-const element = tag => ({ children, ...props }) => React.createElement(tag, props, children);
+const element = tag => function Element({ children, ...props }) {
+	return React.createElement(tag, props, children);
+};
 vm.runInNewContext(compiled.outputText, {
 	exports, require, React, Controller, useFieldArray, useFormContext,
 	FieldSet: element("fieldset"), FieldLegend: element("legend"), FieldDescription: element("p"),
 	FieldGroup: element("div"), Card: element("section"), Field: element("div"),
 	FieldLabel: element("label"), Input: element("input"), FieldError: () => null,
-	Checkbox: ({ checked, onCheckedChange, ...props }) => React.createElement("button", { ...props, role: "checkbox", "aria-checked": checked }),
+	Checkbox: ({ checked, onCheckedChange, ...props }) => React.createElement("button", {
+		...props, role: "checkbox", "aria-checked": checked, onClick: () => onCheckedChange(!checked),
+	}),
 	Button: element("button"),
 }, { filename });
 

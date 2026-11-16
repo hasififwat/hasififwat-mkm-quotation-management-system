@@ -93,16 +93,21 @@ function HotelSelection({
 }) {
 	const { control, watch } = useFormContext<QuotationFormValues>();
 	const selectedRooms = watch("selected_rooms");
-	// We use useFieldArray to manage the selected_rooms array
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "selected_rooms",
 	});
 
 	const availableRooms = selectedPackage?.rooms?.filter((r) => r.enabled) || [];
+	const displayedRooms = [
+		...availableRooms,
+		...(selectedRooms ?? [])
+			.filter((saved) => !availableRooms.some((room) => room.room_type === saved.room_type))
+			.map((saved) => ({ ...saved, enabled: false })),
+	];
 
 	const handleToggleRoom = (
-		roomToCheck: QuotationPackage["rooms"][number],
+		roomToCheck: Pick<QuotationPackage["rooms"][number], "room_type" | "price">,
 		isChecked: boolean,
 	) => {
 		if (isChecked) {
@@ -134,8 +139,7 @@ function HotelSelection({
 				pax count.
 			</FieldDescription>
 			<FieldGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-				{availableRooms.map((room) => {
-					// Check if this room is already selected
+				{displayedRooms.map((room) => {
 					const selectedIndex = fields.findIndex(
 						(f: QuotationFormValues["selected_rooms"][number]) =>
 							f.room_type === room.room_type,
@@ -145,13 +149,6 @@ function HotelSelection({
 					return (
 						<Card
 							key={room.room_type}
-							onKeyDown={(e) => {
-								if (e.key === "Enter" || e.key === " ") {
-									e.preventDefault();
-									// handleToggleRoom(room, !isSelected);
-								}
-							}}
-							tabIndex={0}
 							className={`
                 relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
                 ${
@@ -181,6 +178,12 @@ function HotelSelection({
 										<span className="text-xs text-muted-foreground">
 											RM {room.price.toLocaleString("en-MY")}
 										</span>
+										{!room.enabled && (
+											<p className="text-xs text-amber-700 dark:text-amber-400">
+												Unavailable. Keep this saved room and price, or remove it.
+												To replace it, remove it and select an available room.
+											</p>
+										)}
 										{isSelected && selectedRooms?.[selectedIndex]?.price !== room.price && (
 											<p className="text-xs text-amber-700">
 												Entered price RM {selectedRooms?.[selectedIndex]?.price.toLocaleString("en-MY")} retained.
@@ -190,6 +193,11 @@ function HotelSelection({
 									</div>
 								</div>
 							</div>
+							{!room.enabled && (
+								<Button type="button" variant="outline" size="sm" onClick={() => remove(selectedIndex)}>
+									Remove {room.room_type}
+								</Button>
+							)}
 
 							<div className="pt-2 ">
 								{selectedIndex !== -1 && (
@@ -224,6 +232,11 @@ function HotelSelection({
 											</Field>
 										)}
 									/>
+								)}
+								{isSelected && (
+									<p className="mt-2 text-xs text-muted-foreground">
+										Room total RM {((selectedRooms?.[selectedIndex]?.price ?? 0) * (selectedRooms?.[selectedIndex]?.pax ?? 0)).toLocaleString("en-MY")}
+									</p>
 								)}
 							</div>
 						</Card>
