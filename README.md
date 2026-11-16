@@ -18,7 +18,7 @@ Verification commands passed.
 - `pnpm exec next typegen` followed by `pnpm typecheck` passed. Fresh-checkout typecheck before type generation lacked Next image declarations.
 - Source and independent review confirmed both existing repair commits are ancestors of the tested baseline.
 
-The T3 transport failed during setup and later recovered. An initial automation selector failed before any client submission. That unsuccessful recording was discarded. Local login initially collided with localhost cookies from other app origins. A dedicated subdomain isolated this run. These setup failures are not application defect findings.
+The T3 transport failed during setup and later recovered. An initial automation selector failed before any client submission. That unsuccessful recording was discarded. An initial localhost login did not remain authenticated. A dedicated subdomain isolated this run and authenticated navigation then passed. Interference from other localhost cookies is an inference. These setup failures are not application defect findings.
 
 Cleanup closed both owned tabs, stopped the web snapshot and backend, and removed the disposable database, fixture source, signing keys, credentials, and local environment file. The parent checkout and other threads' services were untouched. No shared cloud writes, deployment, or merge was performed.
 
