@@ -23,7 +23,7 @@ import { useDebouncedSearch } from "~/hooks/useDebounce";
 
 
 export default function QuotationsPage() {
-	
+
 	const { isAuthenticated } = useConvexAuth();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -78,14 +78,12 @@ export default function QuotationsPage() {
 		targetCursor: string | null,
 		newSort?: string,
 		newDir?: string,
-		newOffset?: number,
 	) => {
 		const params = new URLSearchParams();
 		if (searchTerm) params.set("q", searchTerm);
 		if (packageId) params.set("package_id", packageId);
         if (visibility !== "current") params.set("visibility", visibility);
 		if (targetCursor) params.set("cursor", targetCursor);
-		if (newOffset) params.set("offset", String(newOffset));
 		const s = newSort ?? safeSort;
 		const d = newDir ?? safeDir;
 		if (s !== "updated_at" || d !== "desc") {

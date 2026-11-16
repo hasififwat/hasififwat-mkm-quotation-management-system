@@ -301,7 +301,7 @@ export function DataTable<TData, TValue>({
 
 			return flexRender(cell.column.columnDef.cell, cell.getContext());
 		},
-		[renderPackageCell, renderDropdownMenu, renderAmount],
+		[renderPackageCell, renderDropdownMenu, renderAmount, archived],
 	);
 
 	return (

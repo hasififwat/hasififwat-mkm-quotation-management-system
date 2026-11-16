@@ -99,6 +99,9 @@ test('current client and package replacement moves operational totals and retain
   assert.equal(stats.find(row => row.id === pkg).total, 0);
   assert.equal(stats.find(row => row.id === otherPackage).total, 1);
   assert.equal(stats.find(row => row.id === pkg).historical_total, 3);
+  const history = await page(s, {package_id: pkg, visibility: 'history'});
+  assert.equal(history.total, 3);
+  assert.ok(history.page.every(row => row.package_id === pkg));
 });
 
 test('archive requires auth and release, preserves exact history and source rows, logs once and never promotes', async () => {
