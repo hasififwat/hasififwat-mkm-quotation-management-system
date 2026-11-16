@@ -23,15 +23,16 @@ const root = await fs.mkdtemp(path.join(os.tmpdir(), 'current-family-backend-'))
 const secret = randomBytes(32).toString('hex');
 const name = 'current-family-fixture';
 const adminKey = execFileSync(binary, ['keygen','admin-key','--instance-name',name,'--instance-secret',secret], {encoding:'utf8'}).trim();
-const backend = spawn(binary, ['--interface','127.0.0.1','--port',String(port),'--site-proxy-port',String(port+1),'--instance-name',name,'--instance-secret',secret,'--disable-beacon',path.join(root,'fixture.sqlite3')], {cwd:root,stdio:'ignore'});
+const backend = spawn(binary, ['--interface','127.0.0.1','--port',String(port),'--site-proxy-port',String(port+1),'--instance-name',name,'--instance-secret',secret,'--disable-beacon',path.join(root,'fixture.sqlite3')], {cwd:root,stdio:'ignore',detached:true});
 const result = { surface:'Disposable real Convex backend. Backend fixtures, not UI proof.', checks:[] };
 try {
   await fs.mkdir(path.join(root,'convex/lib'), {recursive:true});
   await fs.mkdir(path.join(root,'convex/_generated'));
   await fs.symlink(path.join(repo,'node_modules'),path.join(root,'node_modules'));
-  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0'}}));
-  await fs.writeFile(path.join(root,'convex.json'), '{}');
-  for (const file of ['schema.ts','quotations.ts','quotationFamilies.ts','packages.ts','lib/currentQuotations.ts','lib/packageEditSnapshot.ts','lib/packageReferences.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0','@react-pdf/renderer':'4.9.0'}}));
+  await fs.copyFile(path.join(repo,'convex.json'),path.join(root,'convex.json'));
+  await fs.cp(path.join(repo,'src/features/quotation/pdf'),path.join(root,'src/features/quotation/pdf'),{recursive:true});
+  for (const file of ['schema.ts','quotations.ts','quotationFamilies.ts','packages.ts','lib/currentQuotations.ts','lib/packageEditSnapshot.ts','lib/packageReferences.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/quotationFamilyIdentity.ts','_generated/server.js','_generated/api.js','quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfAssetsV1.json','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfModel.ts']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
   await fs.mkdir(path.join(root,'src/domain'), {recursive:true});
   for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts','package-edit-conflict.ts','package-sync-intent.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
   await fs.writeFile(path.join(root,'convex/fixture.ts'), `
@@ -84,7 +85,15 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
 
   client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   const key=()=>crypto.randomUUID();
-  const save=command=>client.mutation('quotationRevisionSaves:save',{command});
+  const save = async command => {
+    for (let attempt = 0; ; attempt++) {
+      try { return await client.mutation('quotationRevisionSaves:save', {command}); }
+      catch (error) {
+        if (attempt >= 8 || !String(error).includes('TooManyWrites')) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  };
   const create=()=>({operation:'create',request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}});
   const append=(base,changes={})=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'},...changes});
   const dump=()=>client.query('fixture:dump',{});
@@ -156,7 +165,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   result.source=execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();
   result.source_dirty=execFileSync('git',['status','--porcelain'],{cwd:repo,encoding:'utf8'}).trim().length>0;
 } finally {
-  backend.kill('SIGTERM');
+  process.kill(-backend.pid, 'SIGTERM');
   await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));
   await fs.rm(root,{recursive:true,force:true});
 }
