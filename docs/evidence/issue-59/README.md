@@ -18,15 +18,25 @@ Saved PDF views use authenticated status, artifact-only retry, and `/api/quotati
 
 ## Tested source and runtime
 
-The UI implementation and review corrections are `1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f`. That commit normally incorporates #60 at `e249d211ba76edb551fe8b8538a738a3f81d7fb5`.
+The original recorded UI implementation and initial review corrections are `1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f`. That commit normally incorporates #60 at `e249d211ba76edb551fe8b8538a738a3f81d7fb5`.
 
-The final combined product tested after adding #58's pending watchdog is `5dd686f3f9a5346bec6343c9199317fca5c80484`. It includes #58 recovery head `0259a2eb45b505e7446dfa6355ca4cb682db1172`. The later history-fixture copy-list commit `0dfec2e7ffdba90a0075160975d63b8a246c114e` changes verification setup only. [Source verification](source-verification.json) compared all 180 non-generated application and backend files against the running snapshot. The temporary lost-response hook was removed before that comparison.
+The combined product used for the recorded UI checks after adding #58's pending watchdog is `5dd686f3f9a5346bec6343c9199317fca5c80484`. It includes #58 recovery head `0259a2eb45b505e7446dfa6355ca4cb682db1172`. The later history-fixture copy-list commit `0dfec2e7ffdba90a0075160975d63b8a246c114e` changes verification setup only. [Source verification](source-verification.json) compared all 180 non-generated application and backend files against the running snapshot. The temporary lost-response hook was removed before that comparison.
 
 The disposable backend used `http://127.0.0.1:13865` and site port 13866. The web app used `http://issue59.localhost:3530`. Node was 24.19.0, Next was 16.3.4, and Convex was 1.45.0. The explicit external run directory was `/private/tmp/mkm-issue59-run-0890d1fa`.
 
 Browser proof used owned T3 server incognito tabs 11, 14, and 15. Desktop measured 1402 CSS pixels wide. Mobile measured 390 × 844, with document width 390. Native Chrome AX and combined preview snapshot/action operations timed out. Documented `preview_evaluate` DOM input/change/click events drove the real app. No React state setters, mocked pages, or backend save substitutes were used. Built-in recordings captured actual rendering. PNGs are extracted recording frames and were inspected before delivery.
 
 An initial localhost run encountered cross-port authentication cookie interference. Its rejected save kept entered values and created no revision. The final hostname isolates #59 from the other verification runs. The final authenticated runtime and all subsequent saves used that isolated hostname.
+
+## Later expired-session boundary correction
+
+After the recorded UI run, #61 reproduced a correctly signed expired RS256 JWT without a refresh cookie returning HTTP 500. The availability query ran outside the save error boundary. This differs from the earlier browser cookie-related 401 and was not covered by that observation.
+
+Verified source commit `497059d14710d43eb18a0cc9afd489d523471de6` was cherry-picked alone as `ffdb5d37`. Only `revision-api.ts` and six boundary regressions changed. No #61 ancestry, tooling, or new product behavior was imported. Auth acquisition, client setup, availability, and save now share the error boundary. Verified Unauthenticated errors map to 401 before generic conflicts. Unknown transport errors remain uncertain 500 responses.
+
+The integrated API SHA-256 is `f7adb000bdc143eca93ac5cf36bdbea2bd6804ebc9f49244db6afa07f8ef9e74`, identical to the independently reviewed and actually tested #61 source. [The copied redacted session proof](session-proof.json) records direct Convex denial, HTTP 401 with an expired signed token and no refresh cookie, and recovery with the original valid JWT and exact same command/key to the original saved ID with no business writes. Actor mismatch remains 409 and anonymous requests remain 401. That separate HTTP run used localhost 3540 and backend 13965. It makes no claim about immediate JWT revocation after sign-out.
+
+On the cherry-picked source, all 14 boundary tests and application typecheck passed. The earlier 651-test, browser, media, and backend evidence retains its original source mapping above. The full suite and UI were not rerun for this small separately verified response-mapping correction.
 
 ## Observed user journeys
 
