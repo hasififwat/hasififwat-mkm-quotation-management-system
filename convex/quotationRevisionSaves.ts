@@ -1,3 +1,4 @@
+import { enqueueRevisionPdf } from "./quotationPdfArtifacts";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v, type Infer } from "convex/values";
 import { mutation, type MutationCtx } from "./_generated/server";
@@ -184,6 +185,7 @@ export async function saveRevision(ctx: MutationCtx, actor: string, command: Sav
   for (const item of items) await ctx.db.insert("quotation_items", {...item, quotation_id: id, created_at: now});
   await ctx.db.insert("quotation_logs", {quotation_id: id, action: source ? "revision_saved" : "created",
     description: `Saved ${quotation_number}`, performed_by: actor, created_at: now});
+  await enqueueRevisionPdf(ctx, id, document);
   const result = {id, family_id, quotation_number, revision};
   await ctx.db.insert("quotation_save_receipts", {actor, request_key: command.request_key, content, result});
   return result;

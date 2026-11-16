@@ -16,11 +16,12 @@ export function typescriptLoader(repo, overrides = new Map()) {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
     });
     vm.runInNewContext(compiled.outputText, {
-      exports,
+      exports, structuredClone, crypto, TextEncoder, btoa,
       require(id) {
         if (id === "@convex-dev/auth/server") return authServer;
         if (id.startsWith(".")) {
           const resolved = path.resolve(path.dirname(filename), id);
+          if (resolved.endsWith(".json")) return JSON.parse(fs.readFileSync(resolved, "utf8"));
           if (fs.existsSync(`${resolved}.ts`)) return load(`${resolved}.ts`);
           return localRequire(`${resolved}.js`);
         }
