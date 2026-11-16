@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { quotations, packages, state, create, form, quotePayload } from './helpers/submission-fixtures.mjs';
+import { quotations, state, create, form, reviewedQuote } from './helpers/submission-fixtures.mjs';
 
 for (const [name, operation] of Object.entries(quotations)) {
   if (!operation?._handler) continue;
@@ -18,14 +18,14 @@ test('session actor owns create and update audit records while PIC stays editabl
   const s = state();
   s.ctx.auth.getUserIdentity = async () => ({subject:'fixture-staff|session-one'});
   const packageId = await create(s, form());
-  const payload = {...quotePayload(packageId, s.tables.package_flights[0]._id), created_by:'Spoofed actor'};
-  payload.reviewed_context = (await packages.listWithRooms._handler(s.ctx, {})).find(p => p._id === packageId).creation_context;
+  const payload = {...await reviewedQuote(s, packageId, s.tables.package_flights[0]._id), created_by:'Spoofed actor'};
   const saved = await quotations.create._handler(s.ctx, {payload});
   const row = s.tables.quotations.find(q => q._id === saved.id);
   assert.equal(row.created_by, 'fixture-staff');
   assert.equal(row.pic_name, 'Fixture staff');
   assert.equal(s.tables.quotation_logs[0].performed_by, 'fixture-staff');
   s.ctx.auth.getUserIdentity = async () => ({subject:'second-staff|session-two'});
+  delete payload.reviewed_context;
   await quotations.update._handler(s.ctx, {payload:{...payload,id:saved.id,pic_name:'New PIC'}});
   assert.equal(row.created_by, 'fixture-staff');
   assert.equal(row.pic_name, 'New PIC');
