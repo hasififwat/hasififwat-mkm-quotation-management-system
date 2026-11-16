@@ -33,6 +33,12 @@ async function expectWarning(s, id, expected) {
 }
 
 const changes = [
+  ...['name','year','duration','inclusions','exclusions'].map(field => [
+    `package ${field}`, s => {s.tables.packages[0][field] = 'Changed value';}, [`package.${field}`],
+  ]),
+  ...['departure_date','return_date','departure_sector','return_sector'].map(field => [
+    `flight ${field}`, s => {s.tables.package_flights[0][field] = 'Changed value';}, ['flight'],
+  ]),
   ['meal', s => {s.tables.package_meals[0].meal_type = 'DINNER';}, ['hotels']],
   ['airline', s => {s.tables.package_flights[0].flight = 'NEW AIRLINE';}, ['flight']],
   ['month', s => {s.tables.package_flights[0].month = 'FEB';}, ['flight']],
@@ -98,5 +104,26 @@ test('known empty hotel and room collections detect subsequent additions', async
   await expectWarning(s,id,[]);
   s.tables.package_hotels.push(hotel);
   s.tables.package_rooms.push(room);
+  await expectWarning(s,id,['room_pricing','hotels']);
+});
+
+test('legacy timestamp absence does not invent an absent optional value', async () => {
+  const {s,id,row} = await fixture();
+  delete row.package_snapshot.package_updated_at;
+  s.tables.packages[0].package_code = 'New code';
+  await expectWarning(s,id,['snapshot.incomplete']);
+  s.tables.packages[0].name = 'Known name changed';
+  await expectWarning(s,id,['snapshot.incomplete','package.name']);
+  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  await expectWarning(s,id,[]);
+});
+
+test('removing one member of a nonempty collection is detected', async () => {
+  const {s,id} = await fixture();
+  s.tables.package_hotels.push({...s.tables.package_hotels[0],_id:'hotel:second',hotel_type:'MADINAH'});
+  s.tables.package_rooms.push({...s.tables.package_rooms[0],_id:'room:second',room_type:'Double'});
+  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  s.tables.package_hotels.pop();
+  s.tables.package_rooms.pop();
   await expectWarning(s,id,['room_pricing','hotels']);
 });

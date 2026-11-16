@@ -5,7 +5,7 @@ import { quotationSelectionContext } from "../src/domain/quotation-selection-con
 import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 
 async function requireQuotationActor(ctx: Pick<QueryCtx, "auth">): Promise<string> {
 	const userId = await getAuthUserId(ctx);
@@ -127,92 +127,76 @@ function buildHotelsSnapshot(
 	}));
 }
 
+function groupMealsByHotelId(meals: Array<{ package_hotel_id: string; meal_type: string }>) {
+	const grouped = new Map<string, string[]>();
+	for (const meal of meals) {
+		const bucket = grouped.get(String(meal.package_hotel_id)) ?? [];
+		bucket.push(meal.meal_type);
+		grouped.set(String(meal.package_hotel_id), bucket);
+	}
+	return grouped;
+}
+
+function groupHotelsByPackageId(hotels: Doc<"package_hotels">[]) {
+	const grouped = new Map<string, Doc<"package_hotels">[]>();
+	for (const hotel of hotels) {
+		const bucket = grouped.get(String(hotel.package_id)) ?? [];
+		bucket.push(hotel);
+		grouped.set(String(hotel.package_id), bucket);
+	}
+	return grouped;
+}
+
+function sameRows<T>(saved: T[], live: T[], values: (row: T) => unknown[]) {
+	const normalize = (rows: T[]) => rows.map((row) => JSON.stringify(values(row))).sort();
+	return JSON.stringify(normalize(saved)) === JSON.stringify(normalize(live));
+}
+
 function computeStaleFields(
-	pkgSnap: {
-		package_updated_at?: string;
-		name?: string;
-		year?: string;
-		duration?: string;
-		transport?: string;
-		package_code?: string;
-		inclusions?: string;
-		exclusions?: string;
-		rooms?: Array<{ room_type: string; price: number; enabled: boolean }>;
-	} | undefined | null,
-	flightSnap: {
-		departure_date: string;
-		return_date: string;
-		departure_sector: string;
-		return_sector: string;
-	} | undefined | null,
-	currentPackage: {
-		updated_at: string;
-		name: string;
-		year: string;
-		duration: string;
-		transport?: string;
-		package_code?: string;
-		inclusions?: string;
-		exclusions?: string;
-	} | undefined,
-	liveFlight: {
-		departure_date: string;
-		return_date: string;
-		departure_sector: string;
-		return_sector: string;
-	} | undefined,
+	pkgSnap: Doc<"quotations">["package_snapshot"] | null,
+	flightSnap: Doc<"quotations">["flight_snapshot"] | null,
+	currentPackage: Doc<"packages"> | undefined,
+	liveFlight: Doc<"package_flights"> | undefined,
 	liveRooms: Array<{ room_type: string; price: number; enabled: boolean }>,
-	liveHotels: Array<{ hotel_type: string; name?: string; enabled: boolean }>,
-	hotelSnap: Array<{ hotel_type: string; name?: string; enabled: boolean }> | undefined | null,
+	liveHotels: ReturnType<typeof buildHotelsSnapshot>,
+	hotelSnap: Doc<"quotations">["hotels_snapshot"] | null,
 ): { stale_fields: string[]; snapshot_version_known: boolean } {
 	const stale_fields: string[] = [];
 	const snapshot_version_known = pkgSnap?.package_updated_at !== undefined;
+	if (!snapshot_version_known || !pkgSnap?.rooms || !flightSnap || !hotelSnap) {
+		stale_fields.push("snapshot.incomplete");
+	}
 
-	if (pkgSnap && currentPackage) {
-		if (pkgSnap.name         !== undefined && pkgSnap.name         !== currentPackage.name)         stale_fields.push("package.name");
-		if (pkgSnap.year         !== undefined && pkgSnap.year         !== currentPackage.year)         stale_fields.push("package.year");
-		if (pkgSnap.duration     !== undefined && pkgSnap.duration     !== currentPackage.duration)     stale_fields.push("package.duration");
-		if (pkgSnap.transport    !== undefined && pkgSnap.transport    !== currentPackage.transport)    stale_fields.push("package.transport");
-		if (pkgSnap.inclusions   !== undefined && pkgSnap.inclusions   !== currentPackage.inclusions)   stale_fields.push("package.inclusions");
-		if (pkgSnap.exclusions   !== undefined && pkgSnap.exclusions   !== currentPackage.exclusions)   stale_fields.push("package.exclusions");
-		if (pkgSnap.package_code !== undefined && pkgSnap.package_code !== currentPackage.package_code) stale_fields.push("package.code");
-
-		if (pkgSnap.rooms && pkgSnap.rooms.length > 0 && liveRooms.length > 0) {
-			const snapPrices = new Map(pkgSnap.rooms.map((r) => [r.room_type, r.price]));
-			const roomPriceChanged = liveRooms.some(
-				(r) => snapPrices.has(r.room_type) && snapPrices.get(r.room_type) !== r.price,
-			);
-			const roomAdded = liveRooms.some((r) => !snapPrices.has(r.room_type));
-			if (roomPriceChanged || roomAdded) stale_fields.push("room_pricing");
-		} else if ((!pkgSnap.rooms || pkgSnap.rooms.length === 0) && liveRooms.length > 0) {
-			// Snapshot predates room price tracking — treat as stale so agent must re-verify pricing
-			stale_fields.push("room_pricing");
+	if (pkgSnap && !currentPackage) {
+		stale_fields.push("package.removed");
+	} else if (pkgSnap && currentPackage) {
+		const fields = [
+			["name", "package.name"], ["year", "package.year"],
+			["duration", "package.duration"], ["transport", "package.transport"],
+			["inclusions", "package.inclusions"], ["exclusions", "package.exclusions"],
+			["package_code", "package.code"],
+		] as const;
+		for (const [field, label] of fields) {
+			if ((snapshot_version_known || pkgSnap[field] !== undefined) && pkgSnap[field] !== currentPackage[field]) {
+				stale_fields.push(label);
+			}
 		}
 	}
 
-	if (hotelSnap && hotelSnap.length > 0 && liveHotels.length > 0) {
-		const snapMap = new Map(hotelSnap.map((h) => [h.hotel_type, h]));
-		const hotelChanged = liveHotels.some((live) => {
-			const snap = snapMap.get(live.hotel_type);
-			if (!snap) return true;
-			if (snap.name !== live.name) return true;
-			if (snap.enabled !== live.enabled) return true;
-			return false;
-		});
-		if (hotelChanged) stale_fields.push("hotels");
+	if (pkgSnap?.rooms && !sameRows(pkgSnap.rooms, liveRooms, (room) => [room.room_type, room.price, room.enabled])) {
+		stale_fields.push("room_pricing");
+	}
+	if (hotelSnap && !sameRows(hotelSnap, liveHotels, (hotel) => [
+		hotel.hotel_type, hotel.name, hotel.placeholder, hotel.enabled, [...hotel.meals].sort(),
+	])) {
+		stale_fields.push("hotels");
 	}
 
 	if (flightSnap && !liveFlight) {
 		stale_fields.push("flight.removed");
 	} else if (flightSnap && liveFlight) {
-		if (
-			liveFlight.departure_date    !== flightSnap.departure_date    ||
-			liveFlight.return_date       !== flightSnap.return_date       ||
-			liveFlight.departure_sector  !== flightSnap.departure_sector  ||
-			liveFlight.return_sector     !== flightSnap.return_sector
-		) {
-			stale_fields.push("flight");
-		}
+		const fields = ["month", "flight", "departure_date", "return_date", "departure_sector", "return_sector"] as const;
+		if (fields.some((field) => flightSnap[field] !== liveFlight[field])) stale_fields.push("flight");
 	}
 
 	return { stale_fields, snapshot_version_known };
@@ -222,11 +206,13 @@ export const list = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireQuotationActor(ctx);
-		const [quotations, packages, packageFlights, packageRooms] = await Promise.all([
+		const [quotations, packages, packageFlights, packageRooms, packageHotels, packageMeals] = await Promise.all([
 			ctx.db.query("quotations").collect(),
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
 			ctx.db.query("package_rooms").collect(),
+			ctx.db.query("package_hotels").collect(),
+			ctx.db.query("package_meals").collect(),
 		]);
 
 			const packagesById = new Map<string, (typeof packages)[number]>();
@@ -247,6 +233,9 @@ export const list = query({
 			roomsByPackageId.set(id, bucket);
 		}
 
+		const mealsByHotelId = groupMealsByHotelId(packageMeals);
+		const hotelsByPackageId = groupHotelsByPackageId(packageHotels);
+
 		return quotations
 			.filter((q) => !q.archived)
 			.sort((a, b) => b.created_at.localeCompare(a.created_at))
@@ -261,8 +250,8 @@ export const list = query({
 					selectedPackage,
 					selectedFlight,
 					liveRooms,
-					[],
-					null,
+					buildHotelsSnapshot(hotelsByPackageId.get(quotation.package_id) ?? [], mealsByHotelId),
+					quotation.hotels_snapshot,
 				);
 				const is_stale = stale_fields.length > 0;
 
@@ -401,10 +390,12 @@ export const listPaginated = query({
 						.order(order)
 						.paginate(paginationOpts);
 
-		const [allPackages, allFlights, allRooms] = await Promise.all([
+		const [allPackages, allFlights, allRooms, allHotels, allMeals] = await Promise.all([
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
 			ctx.db.query("package_rooms").collect(),
+			ctx.db.query("package_hotels").collect(),
+			ctx.db.query("package_meals").collect(),
 		]);
 
 		const packagesById = new Map<string, (typeof allPackages)[number]>();
@@ -425,6 +416,9 @@ export const listPaginated = query({
 			roomsByPackageId.set(id, bucket);
 		}
 
+		const mealsByHotelId = groupMealsByHotelId(allMeals);
+		const hotelsByPackageId = groupHotelsByPackageId(allHotels);
+
 		return {
 			...result,
 			page: result.page.map((quotation) => {
@@ -438,8 +432,8 @@ export const listPaginated = query({
 					selectedPackage,
 					selectedFlight,
 					liveRooms,
-					[],
-					null,
+					buildHotelsSnapshot(hotelsByPackageId.get(quotation.package_id) ?? [], mealsByHotelId),
+					quotation.hotels_snapshot,
 				);
 				const is_stale = rowStaleFields.length > 0;
 
@@ -771,7 +765,7 @@ export const getQuotationForEdit = query({
 			return null;
 		}
 
-		const [items, packageRooms, allPackages, allFlights, allPackageHotels] = await Promise.all([
+		const [items, packageRooms, allPackages, allFlights, allPackageHotels, allPackageMeals] = await Promise.all([
 			ctx.db
 				.query("quotation_items")
 				.withIndex("by_quotation_id", (q) => q.eq("quotation_id", String(quotation._id)))
@@ -780,6 +774,7 @@ export const getQuotationForEdit = query({
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
 			ctx.db.query("package_hotels").collect(),
+			ctx.db.query("package_meals").collect(),
 		]);
 
 		const packageRoomById = new Map<string, (typeof packageRooms)[number]>();
@@ -834,7 +829,7 @@ export const getQuotationForEdit = query({
 			currentPackage,
 			liveFlight,
 			liveRoomsForEdit,
-			liveHotelsForEdit,
+			buildHotelsSnapshot(liveHotelsForEdit, groupMealsByHotelId(allPackageMeals)),
 			quotation.hotels_snapshot,
 		);
 
@@ -1016,7 +1011,7 @@ export const getQuotationFullDetails = query({
 			selectedPackage,
 			liveFlight,
 			availableRooms,
-			availableHotels,
+			buildHotelsSnapshot(availableHotels, groupMealsByHotelId(packageMeals)),
 			quotation.hotels_snapshot,
 		);
 

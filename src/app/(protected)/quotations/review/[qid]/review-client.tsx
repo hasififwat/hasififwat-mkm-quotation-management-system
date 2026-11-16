@@ -60,8 +60,8 @@ export function ReviewClient({
 				<div className="w-full flex items-center gap-3 border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
 					<span>⚠</span>
 					<span>
-						This PDF reflects the original values.{" "}
-						The following have changed since this quotation was created:{" "}
+						This PDF uses saved snapshot values where available.{" "}
+						Details requiring verification:{" "}
 						<span className="font-medium">
 							{staleFields.map(f => STALE_FIELD_LABELS[f] ?? f).join(", ")}
 						</span>.

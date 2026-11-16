@@ -223,7 +223,7 @@ export function DataTable<TData, TValue>({
 									<Tooltip>
 										<TooltipTrigger className="cursor-help text-amber-500 text-xs">⚠</TooltipTrigger>
 										<TooltipContent side="top">
-											Something has changed since this quotation was created — open to see details
+											Saved quotation details require verification. Open to see details.
 										</TooltipContent>
 									</Tooltip>
 								</TooltipProvider>
