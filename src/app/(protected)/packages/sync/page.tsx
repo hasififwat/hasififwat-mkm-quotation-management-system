@@ -1294,7 +1294,7 @@ export default function PackageSyncPage() {
               <CardContent className="pt-4 space-y-2">
                 <div className="flex items-center gap-2 font-semibold">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  {result.errors.length > 0 ? "Sync stopped with errors" : "Sync complete"}
+                  {result.errors.length > 0 ? "Sync finished with errors" : "Sync complete"}
                 </div>
                 <div className="text-sm text-muted-foreground grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <span>Packages created: <strong>{result.created}</strong></span>
