@@ -1,0 +1,145 @@
+{
+  "productCommit": "1f70d1b0dff9a5c2e83b0a9dfebae468e15dd30f",
+  "combinedBackendCommit": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+  "historyDependency": "e249d211ba76edb551fe8b8538a738a3f81d7fb5",
+  "pdfRecoveryDependency": "0259a2eb45b505e7446dfa6355ca4cb682db1172",
+  "url": "http://issue59.localhost:3530",
+  "backend": "http://127.0.0.1:13865",
+  "runtime": "T3 server incognito tabs 11, 14, 15",
+  "method": "Normal DOM input/change/click and navigation through preview_evaluate after snapshot/act timeouts. No React state setters or backend save substitutions. Actual built-in recordings inspected through extracted frames.",
+  "views": {
+    "r0": {
+      "download": {
+        "cache": "private, no-store",
+        "sha256": "89965b450108030d59ef8bc7fe1cfab1e2fea0fb37c6166d23d3989c75859160",
+        "size": 169756,
+        "status": 200
+      },
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nRevision 1448H-0002 saved. PDF preparation has its own status below.\n\nCurrent revision · Saved status draft\n\n1448H-0002\nQuotations\nRevision history\nEdit current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nBrowser revision zero\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n577bdgr50cebb3tq0nhsrgwwh8jbq1x?saved=1"
+    },
+    "r1": {
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nRevision 1448H-0002-R1 saved. PDF preparation has its own status below.\n\nCurrent revision · Saved status draft\n\n1448H-0002-R1\nQuotations\nRevision history\nEdit current revision\n\nSource revision 1448H-0002\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:22 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nBrowser revision one\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n575t4xfp2qw3hnxpxhp2qwygs8jabdy?saved=1"
+    },
+    "r2": {
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nRevision 1448H-0002-R2 saved. PDF preparation has its own status below.\n\nCurrent revision · Saved status draft\n\n1448H-0002-R2\nQuotations\nRevision history\nEdit current revision\n\nSource revision 1448H-0002-R1\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:23 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nBrowser revision two lost-response-fixture\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n578kn7kpdp27319yqz8kh5w3d8jbjwk?saved=1"
+    },
+    "r3": {
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nRevision 1448H-0002-R3 saved. PDF preparation has its own status below.\n\nCurrent revision · Saved status draft\n\n1448H-0002-R3\nQuotations\nRevision history\nEdit current revision\n\nSource revision 1448H-0002-R2\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:25 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nBrowser revision two lost-response-fixture\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n57d4s5ahntf9sz4v0gn47g4md8ja7b0?saved=1"
+    },
+    "r4": {
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nRevision 1448H-0002-R4 saved. PDF preparation has its own status below.\n\nCurrent revision · Saved status draft\n\n1448H-0002-R4\nQuotations\nRevision history\nEdit current revision\n\nSource revision 1448H-0002-R3\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:29 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1250.00 × 4\nRM 5000.00\n\nTotal RM 5000.00\n\nReviewed catalog with intentional price 1250\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n5779a4nmra531ahqk6nx5k4xs8jbkqg?saved=1"
+    },
+    "lost": {
+      "disabled": true,
+      "notes": "Browser revision two lost-response-fixture",
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nEdit Quotation\n\nEditing 1448H-0002-R1. Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\nWe could not confirm this save. Your entries are kept on this page. Retry this save to recover its original revision without creating a duplicate.\n\nRetry this save\nOpen sign-in in a new tab\n1\nClient Details\n2\nPackage Selection\n3\nAdd-ons & Discounts\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave new revision",
+      "url": "http://issue59.localhost:3530/quotations/edit/n575t4xfp2qw3hnxpxhp2qwygs8jabdy"
+    },
+    "historyReload": {
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nRevision history\n\n1448H-0002 · Current family\n\nEarliest retained quotation 17 Nov 2026, 1:21 am in Kuala Lumpur time. Each link opens its exact saved revision.\n\nView current revision\nEdit current revision\nQuotations\n1448H-0002\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nTotal\nRM 4800.00\nSource revision\nInitial revision\nView saved details and issued PDF\n1448H-0002-R1\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:22 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:22 am\nTotal\nRM 4800.00\nSource revision\n1448H-0002\nView saved details and issued PDF\n1448H-0002-R2\nCurrent revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:23 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:23 am\nTotal\nRM 4800.00\nSource revision\n1448H-0002-R1\nView saved details and issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/n578kn7kpdp27319yqz8kh5w3d8jbjwk/history"
+    },
+    "mobileHistory": {
+      "documentWidth": 390,
+      "height": 844,
+      "text": "Toggle Sidebar\nRevision history\n\n1448H-0002 · Current family\n\nEarliest retained quotation 17 Nov 2026, 1:21 am in Kuala Lumpur time. Each link opens its exact saved revision.\n\nView current revision\nEdit current revision\nQuotations\n1448H-0002\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nTotal\nRM 4800.00\nSource revision\nInitial revision\nView saved details and issued PDF\n1448H-0002-R1\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:22 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:22 am\nTotal\nRM 4800.00\nSource revision\n1448H-0002\nView saved details and issued PDF\n1448H-0002-R2\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:23 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:23 am\nTotal\nRM 4800.00\nSource revision\n1448H-0002-R1\nView saved details and issued PDF\n1448H-0002-R3\nHistorical revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:25 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:25 am\nTotal\nRM 4800.00\nSource revision\n1448H-0002-R2\nView saved details and issued PDF\n1448H-0002-R4\nCurrent revision\nSaved status\ndraft\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:29 am\nSaved at (Kuala Lumpur)\n17 Nov 2026, 1:29 am\nTotal\nRM 5000.00\nSource revision\n1448H-0002-R3\nView saved details and issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/n5779a4nmra531ahqk6nx5k4xs8jbkqg/history",
+      "width": 390
+    },
+    "staleMobile": {
+      "documentWidth": 390,
+      "links": [
+        {
+          "href": "/quotations",
+          "text": ""
+        },
+        {
+          "href": "/quotations/review/n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+          "text": "View current revision in a new tab"
+        },
+        {
+          "href": "/",
+          "text": "Open sign-in in a new tab"
+        },
+        {
+          "href": "/quotations/review/n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+          "text": "Cancel"
+        }
+      ],
+      "notes": "Losing editor retained draft",
+      "text": "Toggle Sidebar\nEdit Quotation\n\nEditing 1448H-0002-R2. Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\nA newer revision exists. Your entries are kept on this page and were not saved. View the current revision before reconciling your draft.\n\nView current revision in a new tab\nOpen sign-in in a new tab\n1\n2\n3\nClient Details\nEnter the client and person in charge details.\nPIC Name\nBranch\nClient Name\nCreate New Client\nRevision History Fixture\nNotes\nPrevious\nCancel\nNext\nSave new revision",
+      "url": "http://issue59.localhost:3530/quotations/edit/n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+      "width": 390
+    },
+    "historicalR0": {
+      "editLinks": 0,
+      "sha256": "89965b450108030d59ef8bc7fe1cfab1e2fea0fb37c6166d23d3989c75859160",
+      "size": 169756,
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nHistorical revision · Saved status draft\n\n1448H-0002\n\nThis is an exact saved revision. A newer revision exists. This view is read-only.\n\nQuotations\nRevision history\nView current revision\n\nSource revision Initial revision\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nn97cvn1jsfs5p0w682tkd5wf7n8jaw32\nRevision issued (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:21 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\n\nTotal RM 4800.00\n\nBrowser revision zero\n\nIssued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n577bdgr50cebb3tq0nhsrgwwh8jbq1x"
+    },
+    "exactReloads": [
+      {
+        "historical": true,
+        "notesPersisted": true,
+        "total": true,
+        "url": "http://issue59.localhost:3530/quotations/review/n577bdgr50cebb3tq0nhsrgwwh8jbq1x"
+      },
+      {
+        "historical": true,
+        "notesPersisted": true,
+        "total": true,
+        "url": "http://issue59.localhost:3530/quotations/review/n575t4xfp2qw3hnxpxhp2qwygs8jabdy"
+      },
+      {
+        "historical": true,
+        "notesPersisted": true,
+        "total": true,
+        "url": "http://issue59.localhost:3530/quotations/review/n578kn7kpdp27319yqz8kh5w3d8jbjwk"
+      }
+    ],
+    "missingOriginal": {
+      "buttons": 0,
+      "http": 409,
+      "links": 0,
+      "pdf": "Issued PDF\n\nThe original PDF was not recorded. It cannot be regenerated as an issued original.",
+      "text": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\n\nCurrent revision · Saved status draft\n\n1448H-0001\nQuotations\nRevision history\nEdit current revision\n\nSource revision Not recorded\n\nClient\nRevision History Fixture\nPIC\nRevision Verification\nBranch\nDisposable fixture\nSaved by\nNot recorded\nRevision issued (Kuala Lumpur)\nNot recorded\nEarliest retained quotation (Kuala Lumpur)\n17 Nov 2026, 1:15 am\nPackage\nRevision verification package\nFlight\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\n\nLegacy provenance is unknown. This retained history does not establish a complete history before migration. Missing values remain not recorded.\n\nSaved quotation\nQuad\nRoom\nRM 1200.00 × 4\nRM 4800.00\nAirport transfer\nAdd-on\nRM 100.00 × 4\nRM 400.00\nGroup discount\nDiscount\nRM 50.00 × 4\nRM 200.00\n\nTotal RM 5000.00\n\nBaseline saved before immutable revisions.\n\nIssued PDF\n\nThe original PDF was not recorded. It cannot be regenerated as an issued original.",
+      "url": "http://issue59.localhost:3530/quotations/review/n57c934gx0b12k6ygm2fp2e79s8jaa6n"
+    },
+    "pendingPdf": {
+      "http": 409,
+      "links": 0,
+      "pdf": "Issued PDF\n\nThe revision is saved. Its PDF is being prepared. You can leave this page and return later.",
+      "url": "http://issue59.localhost:3530/quotations/review/n57d4s5ahntf9sz4v0gn47g4md8ja7b0?saved=1"
+    },
+    "retriedPdf": {
+      "links": 2,
+      "saved": true,
+      "text": "Issued PDF\n\nThe issued PDF is ready. These are the preserved bytes for this exact revision.\n\nOpen issued PDF\nDownload issued PDF",
+      "url": "http://issue59.localhost:3530/quotations/review/n57d4s5ahntf9sz4v0gn47g4md8ja7b0?saved=1"
+    },
+    "mobileValidation": {
+      "pax": "0",
+      "text": "Toggle Sidebar\nEdit Quotation\n\nEditing 1448H-0002-R4. Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.\n\n1\n2\n3\nPackage Selection\nSelect a travel package and room configuration.\n\nRetained saved selection\n\nRevision verification package\n\n2027-01-01 KUL-JED to 2027-01-12 JED-KUL\n\nQuad\n\nPrice (RM)\nPassengers\nAt least 1 pax\nReview catalog to replace selection\nPrevious\nCancel\nNext\nSave new revision",
+      "url": "http://issue59.localhost:3530/quotations/edit/n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+      "validity": "Value must be greater than or equal to 1.",
+      "width": 390
+    }
+  },
+  "fixtureHooks": [
+    "One committed R2 HTTP result replaced with503 once per request key in disposable revision-api.ts. Restored before unchanged/stale/replacement checks.",
+    "R3 pending and failed status conditions injected through disposable internal fixture mutation. Artifact-only retry used actual public mutation. R0 PDF never altered.",
+    "No fixture source or release activation is included in product source."
+  ],
+  "download": {
+    "filename": "1448H-0002.pdf",
+    "size": 169756,
+    "sha256": "89965b450108030d59ef8bc7fe1cfab1e2fea0fb37c6166d23d3989c75859160",
+    "method": "Clicked actual Download issued PDF link, then hashed browser download."
+  }
+}

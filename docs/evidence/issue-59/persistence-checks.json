@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "after-r0.json prior quotations and items unchanged in after-r1.json",
+    "after-r1.json prior quotations and items unchanged in after-r2-retry.json",
+    "Lost committed response retry returned original R2 with identical rows items families and receipts",
+    "Cancel persisted no changes"
+  ]
+}

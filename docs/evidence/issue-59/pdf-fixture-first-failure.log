@@ -1,0 +1,30 @@
+[CONVEX A(quotationPdfWorker:run)] [ERROR] 'PDF attempt failed' 'mn73j1gv27g7wyazt05j5v8ap58jbbt0' Error: Unexpected token 'i', "invalid JSON" is not valid JSON
+    at parse (<unknown location>)
+    at handler (convex:/user/quotationPdfWorker.js:677:18)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async invokeFunction (convex:/user/_deps/node/I75GB6AS.js:1334:9)
+    at async invokeAction (convex:/user/_deps/node/I75GB6AS.js:1395:10)
+    at bundledFunctions.js:65226:21
+    at async runWithEnvironmentVariables (bundledFunctions.js:65041:12)
+    at async executeInner (bundledFunctions.js:65199:10)
+    at async execute (bundledFunctions.js:65159:21)
+    at bundledFunctions.js:65108:21
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+'failed' !== 'ready'
+
+    at file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/feat-59-quotation-revis-0890d1fa686561b0/work/issue59-run/check-pdf-artifact-backend.mjs:216:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'failed',
+  expected: 'ready',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

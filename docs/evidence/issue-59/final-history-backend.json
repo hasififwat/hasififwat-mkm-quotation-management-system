@@ -1,0 +1,17 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Zero, R1, R2 preserve exact previous rows and item IDs. Explicit unchanged save creates R2. Same-key concurrent calls and delayed retries return exact receipts. Changed payload conflicts. Revisions do not allocate base numbers.",
+    "Real concurrent distinct requests from one base yield one success and one conflict. Independent families progress. Injected failure after all writes rolls back quotation, items, pointer, receipt, log and counter. Forged and stale requests write nothing.",
+    "Unavailable historical client, package, flight and rooms retain exact saved values without repricing. Frozen document preserves phone and return flight. Receipt replay succeeds after catalog deletion; new replacements reject.",
+    "Historical saved payloads remain equal after live client, package, room, flight, hotel, meal and profile changes. Old IDs stay exact and identify the newer current revision. Legacy unavailable retention preserves snapshots, items and quoted totals.",
+    "Reviewed refresh appends one new ID at original prices. Stale catalog context and foreign source items write nothing. Receipt replay succeeds after catalog deletion. Every destructive quotation writer and creator migration rejects with zero persisted writes, including missing migration-gate defense. Client merge only writes aliases and cycles roll back."
+  ],
+  "runtime": {
+    "node": "v24.19.0",
+    "convex": "1.45.0",
+    "url": "http://127.0.0.1:14275"
+  },
+  "source": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+  "cleanup": "Isolated process stopped and temporary database removed in finally."
+}

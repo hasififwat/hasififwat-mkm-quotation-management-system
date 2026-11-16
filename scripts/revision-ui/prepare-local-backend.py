@@ -3,6 +3,8 @@ import json
 import os
 from pathlib import Path
 import secrets
+import shutil
+import sys
 import socket
 import subprocess
 import tarfile
@@ -33,7 +35,10 @@ commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=Tr
 archive_bytes = subprocess.check_output(['git', 'archive', commit, 'convex', 'src', 'scripts', 'public', 'package.json', 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs', 'convex.json', 'constants.ts', 'types.ts', 'utils.ts'], cwd=root)
 with tarfile.open(fileobj=io.BytesIO(archive_bytes)) as archive:
     archive.extractall(source_dir)
-os.symlink(root / 'node_modules', source_dir / 'node_modules')
+if sys.platform == 'darwin':
+    subprocess.run(['cp', '-cR', str(root / 'node_modules'), str(source_dir / 'node_modules')], check=True)
+else:
+    shutil.copytree(root / 'node_modules', source_dir / 'node_modules', symlinks=True)
 instance_name = 'mkm-issue59-verification'
 instance_secret = secrets.token_hex(32)
 admin_key = subprocess.check_output([str(binary), 'keygen', 'admin-key', '--instance-name', instance_name, '--instance-secret', instance_secret], text=True).strip()
