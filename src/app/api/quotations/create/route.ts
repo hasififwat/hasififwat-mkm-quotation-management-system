@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
 	try {
 		const payload = await request.json();
 
-		await client.mutation(api.quotations.create, { payload });
+		const quotation = await client.mutation(api.quotations.create, { payload });
 
-		return NextResponse.json({ success: true });
+		return NextResponse.json({ success: true, id: quotation.id });
 	} catch (error) {
 		console.error("Error in quotations.create API route:", error);
 		return NextResponse.json(
