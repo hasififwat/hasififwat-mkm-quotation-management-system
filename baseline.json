@@ -1,0 +1,29 @@
+{
+  "sha": "fae2c23d738bce0cbadd2882634aab7f9b6f36e1",
+  "previewUrl": "http://q005-feedback.localhost:3330",
+  "authenticatedProtectedCreateAndReload": true,
+  "quotationCreatedThroughRealBuilder": true,
+  "quotationId": "m17arf08dtr3b0bqndcp2e3bph8japsc",
+  "savedListAmount": "RM 10,150.00",
+  "room": {
+    "type": "Quad",
+    "price": 5000,
+    "pax": 2
+  },
+  "addOn": {
+    "name": "Fixture transfer",
+    "price": 100,
+    "pax": 2
+  },
+  "discount": {
+    "name": "Fixture discount",
+    "price": 50,
+    "pax": 1
+  },
+  "trigger": "Only own package season and Quad catalog price changed to 7000 via fixture mutation",
+  "refreshFaultInjection": "Page fetch wrapper only for refresh_snapshot returns delayed HTTP500; real authenticated component and all other requests untouched",
+  "doubleClickRequests": 2,
+  "refreshButtonDisabled": false,
+  "feedback": [],
+  "runtime": "Own local backend DATABASE_UDF_USER_TIMEOUT_SECONDS=10. Functional verification only."
+}

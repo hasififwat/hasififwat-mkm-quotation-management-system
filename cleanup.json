@@ -1,0 +1,10 @@
+{
+  "ownedServicesStopped": true,
+  "ownedDataKeysCredentialsSnapshotsRemoved": true,
+  "browserTabClosed": true,
+  "ports": {
+    "3330": "free",
+    "3430": "free",
+    "3431": "free"
+  }
+}

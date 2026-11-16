@@ -1,0 +1,43 @@
+{
+  "issue": "https://github.com/hasififwat/hasififwat-mkm-quotation-management-system/issues/31",
+  "testedHead": "0318341379a22e8f32147d40f0011e0b87230d1a",
+  "base": "fae2c23d738bce0cbadd2882634aab7f9b6f36e1",
+  "previewUrl": "http://q005-feedback.localhost:3330",
+  "snapshotSourceMatchesHead": true,
+  "checks": {
+    "refreshTests": 20,
+    "regressionTests": 159,
+    "quotationAuthTests": 29,
+    "typecheck": "pass after next typegen",
+    "productionBuild": "pass in owned snapshot with turbopack.root=/ for external dependency symlink",
+    "changedFileLint": "pass",
+    "fullLint": "20 errors,35 warnings in unchanged code"
+  },
+  "review": "Independent gpt-6.1-sol source review found no actionable findings; added-comment scan found no comments or suppressions",
+  "browser": {
+    "baseline": "Actual authenticated builder; two clicks sent2 delayed HTTP500 refresh requests, no pending or failure feedback",
+    "pending": "Two clicks sent1 request, disabled true; notes retained",
+    "401": "Safe failure, no raw error",
+    "500": "Uncertain; check saved before retry",
+    "rejectedFetch": "Uncertain; notes retained",
+    "unknownResponseAfterCommit": "Actual local refresh request committed, response replaced with empty200 body, UI uncertain, saved PDF verified separately",
+    "success": "Real local request without fetch wrapper; success status remains after stale warning disappears, unsaved PIC/branch/note preserved",
+    "persistence": "Deliberate subsequent save; second PDF review and reload show5000x2,100x2 addon,50x1 discount,total10150; expanded list independently shows saved note/PIC/addon/discount/total"
+  },
+  "limits": [
+    "Fault scenarios use page-local fetch interception for refresh requests only; real authenticated app and all other requests unchanged",
+    "Only own disposable backend used; DATABASE_UDF_USER_TIMEOUT_SECONDS=10 for functional checks, no performance claim",
+    "No shared backend deployment; no merge; versioned confirmation remains#32",
+    "No deslop/control-ui plugins available; project browser verification,lint and independent source review used"
+  ],
+  "cleanup": {
+    "ownedServicesStopped": true,
+    "ownedDataKeysCredentialsSnapshotsRemoved": true,
+    "browserTabClosed": true,
+    "ports": {
+      "3330": "free",
+      "3430": "free",
+      "3431": "free"
+    }
+  }
+}

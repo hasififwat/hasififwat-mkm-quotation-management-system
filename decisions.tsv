@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T04:58:33.809429+00:00	setup	Kept required base and made no application edits	Authenticated browser reproduction is a prerequisite	proof.json	BLOCKED
+2026-11-16T05:08:01.204623+00:00	baseline	Retried own instance with local runtime override and distinct hostname	Recovered tools and auth permit required reproduction	baseline.json	Reproduced two refresh requests with no feedback
+2026-11-16T05:21:01.592692+00:00	complete	Kept pushed code history stable and verified saved amounts in PDF reload	Dependent32 needs a stable base; messages alone do not prove persistence	proof.json	Functional checks passed; existing full-lint debt reported
