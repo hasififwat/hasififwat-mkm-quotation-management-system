@@ -37,6 +37,7 @@ export type ClientWithStats = {
 	phone_number?: string;
 	created_at: string;
 	quotation_count: number;
+	historical_quotation_count: number;
 	last_quotation_at: string | null;
 	quotations: ClientQuotation[];
 };
@@ -319,7 +320,7 @@ export default function ClientsListingPage({
 						Clients
 					</h2>
 					<p className="text-slate-500 text-xs md:text-sm">
-						Manage and view all registered clients. Expand a row to see their full quotation history.
+						Manage clients and current quotations. Open a client to view historical and archived revisions.
 					</p>
 				</div>
 				<Button asChild className="w-full md:w-auto gap-2">
@@ -466,7 +467,7 @@ export default function ClientsListingPage({
 													onClick={() => toggle(client.id)}
 												>
 													<TableCell className="font-medium">
-														{client.name}
+														<Link href={`/clients/${client.id}`} onClick={event => event.stopPropagation()} className="hover:underline">{client.name}</Link>
 													</TableCell>
 													<TableCell className="text-muted-foreground text-sm">
 														{client.phone_number || "—"}
@@ -503,10 +504,14 @@ export default function ClientsListingPage({
 													<TableRow className="hover:bg-transparent">
 														<TableCell colSpan={6} className="p-0 border-b-0">
 															<div className="border-l-4 border-primary/40 bg-muted/20 px-6 py-4">
+																<div className="flex items-center justify-between gap-3 mb-3">
+																	<p className="text-sm font-medium">Current quotations</p>
+																	<Link href={`/clients/${client.id}`} className="text-sm text-primary hover:underline">View client and history ({client.historical_quotation_count})</Link>
+																</div>
 																{client.quotations.length === 0 ? (
 																	<div className="flex items-center justify-between py-2">
 																		<p className="text-sm text-muted-foreground">
-																			No quotations yet.
+																			No current quotations.
 																		</p>
 																		<Button asChild size="sm" variant="outline">
 																			<Link href={`/quotations/create?client_id=${client.id}`}>

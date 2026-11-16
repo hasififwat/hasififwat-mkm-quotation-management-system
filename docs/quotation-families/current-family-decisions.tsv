@@ -1,0 +1,5 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T16:52:34Z	frame	Use explicit current pointers before filters and pages	Model the Domain keeps current identity in the family and saved content in the revision	convex/lib/currentQuotations.ts	implementation underway
+2026-11-16T16:52:34Z	design	Choose derived read helper over materialized operational fields	Existing readers collect rows and a materialized model would cross save ownership	docs/quotation-families/historical-boundary.md	two independent designs agree
+2026-11-16T16:54:38Z	review	Remove row archive checks after family selection and expose package history filter	Independent review found current visibility disagreement and inaccessible historical package associations	docs/quotation-families/current-family-consumers.md	fixes applied
+2026-11-16T16:55:19Z	verification	Actual handler regressions pass after review corrections	Prove It Works checks public behavior and immutable source rows	scripts/current-family-reads.test.mjs	29 focused tests pass

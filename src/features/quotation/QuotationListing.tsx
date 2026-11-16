@@ -6,6 +6,7 @@ import { DataTable } from "./components/QuotationTable/data-table";
 
 interface Props {
 	data: unknown[];
+    archived?: boolean;
 	isLoading?: boolean;
 	isDone?: boolean;
 	isFirstPage?: boolean;
@@ -19,6 +20,7 @@ interface Props {
 
 const QuotationListing: React.FC<Props> = ({
 	data,
+    archived,
 	isLoading = false,
 	isDone,
 	isFirstPage,
@@ -33,6 +35,7 @@ const QuotationListing: React.FC<Props> = ({
 		<div>
 			<DataTable
 				columns={columns}
+                archived={archived}
 				data={data as Quotation[]}
 				isLoading={isLoading}
 				isDone={isDone}
