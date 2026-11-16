@@ -5,7 +5,7 @@ Staff can synchronize package and flight CSVs and trust saved results. This proo
 ## Exact sources
 
 - PR50 remains `6ca78412`, based on migration/nextjs-upgrade.
-- PR51 remains `0bcf61ef`, based on fix/43-flight-staff-sessions.
+- PR51 remains `0bcf61ef`. It now targets migration/nextjs-upgrade because PR50 merged during verification. The verified source is unchanged.
 - PR52 is `d2c8b578966ed06f42f0d4503efcd6f9ec6722dc`, based on fix/44-sync-quotation-references.
 - PR49 is `6fa5f2fc061283b3153c19ff5247d6bc527d4b0f`, based on fix/46-sync-price-only-updates.
 - PR48 is `5ab3470fb011b072aa03e7087a4b8f1a8d626dde`, based on fix/45-sync-schedule-safety.
@@ -18,9 +18,9 @@ Preview was http://sync-integration.localhost:3610. Disposable local Convex used
 
 At standalone 51, reference conflict retains files. [DOM](phase-a-review-dom.json) and byte-identical [before](phase-a-before-review.json)/[after](phase-a-after-review.json) establish that Review retained files performs no writes. Earlier success preservation is baseline evidence, not a separate new scenario.
 
-At 52, actual CSV apply changes 1200 to 2500. [Saved](phase 52-saved.json), [second editor](phase 52-second-view.json), and [reload](phase 52-reload.json) show 2500. Existing quotation remains 1200.
+At 52, actual CSV apply changes 1200 to 2500. [Saved](phase%2052-saved.json), [second editor](phase%2052-second-view.json), and [reload](phase%2052-reload.json) show 2500. Existing quotation remains 1200.
 
-At 49, [malformed schedule](phase 49-malformed.json) disables removals and [explicit scoped review](phase 49-scoped-review.json) permits one. [Saved read](phase 49-saved.json) retains the manual quoted flight.
+At 49, [malformed schedule](phase%2049-malformed.json) disables removals and [explicit scoped review](phase%2049-scoped-review.json) permits one. [Saved read](phase%2049-saved.json) retains the manual quoted flight.
 
 At 48, concurrent price 4321 makes the package stale while flight update/removal are pending. [Rejection](final-stale-rejected.json) contains actionable text and zero counters. [Before](final-concurrent.json) and [after](final-stale-saved.json) are byte-identical. Explicit [re-review](final-rereview.json) then [applies](final-applied.json). [Reload](final-reload.json) and [saved](final-read.json) show 2600 and the same updated flight ID. Historical quotation remains 1200. The initial frozen review was observed but not retained. The integration test proves frozen scope metadata; the extra missing flight appears only at explicit re-review. Do not treat this as complete visual acceptance.
 
@@ -28,7 +28,7 @@ At 48, concurrent price 4321 makes the package stale while flight update/removal
 
 ## Checks and review
 
-[573 tests](final-all-tests.txt), [typecheck](final-typecheck.txt), [build](final-source-build.txt) and [49 build](phase 49-source-build.txt) pass. [Scoped lint](phase 48-lint.txt) has zero errors. [Full lint](final-full-lint.txt) has 20 errors and 33 warnings. Fresh independent review passed 65 focused tests and inspected source and exact saved evidence, with no actionable findings. Snapshot-only root adjustment supported external dependencies. No deslop plugin was available; scoped diff/comment review was used.
+[573 tests](final-all-tests.txt), [typecheck](final-typecheck.txt), [build](final-source-build.txt) and [49 build](phase%2049-source-build.txt) pass. [Scoped lint](phase%2048-lint.txt) has zero errors. [Full lint](final-full-lint.txt) has 20 errors and 33 warnings. Fresh independent review passed 65 focused tests and inspected source and exact saved evidence, with no actionable findings. Snapshot-only root adjustment supported external dependencies. No deslop plugin was available; scoped diff/comment review was used.
 
 ## Media boundaries
 
