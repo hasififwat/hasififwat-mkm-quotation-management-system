@@ -194,7 +194,7 @@ function HotelSelection({
 								</div>
 							</div>
 							{!room.enabled && (
-								<Button type="button" variant="outline" size="sm" onClick={() => remove(selectedIndex)}>
+								<Button type="button" variant="outline" size="sm" onClick={() => remove(selectedIndex)} onKeyDown={(event) => event.stopPropagation()}>
 									Remove {room.room_type}
 								</Button>
 							)}
