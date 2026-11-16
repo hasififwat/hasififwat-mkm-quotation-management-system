@@ -1,6 +1,13 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type QueryCtx } from "./_generated/server";
+
+async function requireClientActor(ctx: Pick<QueryCtx, "auth">): Promise<string> {
+	const userId = await getAuthUserId(ctx);
+	if (!userId) throw new Error("Not authenticated");
+	return userId;
+}
 
 function buildQuotationNumber(hijriYear: string, sequenceNum: number, revision: number) {
 	const paddedSequence = String(sequenceNum).padStart(4, "0");
@@ -26,6 +33,7 @@ function normalisePhone(phone: string): string {
 export const listWithStats = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireClientActor(ctx);
 		const [clients, quotations, packages] = await Promise.all([
 			ctx.db.query("clients").collect(),
 			ctx.db.query("quotations").collect(),
@@ -76,6 +84,7 @@ export const listWithStats = query({
 export const getAgentNames = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireClientActor(ctx);
 		const quotations = await ctx.db.query("quotations").collect();
 		return [...new Set(quotations.map((q) => q.pic_name))].sort();
 	},
@@ -84,6 +93,7 @@ export const getAgentNames = query({
 export const listWithStatsPaginated = query({
 	args: { paginationOpts: paginationOptsValidator },
 	handler: async (ctx, args) => {
+		await requireClientActor(ctx);
 		const page = await ctx.db.query("clients").order("desc").paginate(args.paginationOpts);
 
 		const [allQuotations, packages] = await Promise.all([
@@ -136,6 +146,7 @@ export const listWithStatsPaginated = query({
 export const getWithQuotations = query({
 	args: { client_id: v.string() },
 	handler: async (ctx, args) => {
+		await requireClientActor(ctx);
 		const clients = await ctx.db.query("clients").collect();
 		const client = clients.find((c) => String(c._id) === args.client_id);
 		if (!client) return null;
@@ -180,6 +191,7 @@ export const getWithQuotations = query({
 export const list = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireClientActor(ctx);
 		const clients = await ctx.db.query("clients").collect();
 
 		return clients
@@ -197,6 +209,7 @@ export const list = query({
 export const findDuplicateClients = query({
 	args: {},
 	handler: async (ctx) => {
+		await requireClientActor(ctx);
 		const [clients, quotations] = await Promise.all([
 			ctx.db.query("clients").collect(),
 			ctx.db.query("quotations").collect(),
@@ -278,6 +291,7 @@ export const mergeClients = mutation({
 		duplicateIds: v.array(v.string()),
 	},
 	handler: async (ctx, args) => {
+		await requireClientActor(ctx);
 		const canonical = await ctx.db
 			.query("clients")
 			.collect()
@@ -333,6 +347,7 @@ export const create = mutation({
 		force: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
+		await requireClientActor(ctx);
 		const name = args.name.trim();
 		const rawPhone = args.phone_number?.trim() || "";
 		const normalisedPhone = normalisePhone(rawPhone);
