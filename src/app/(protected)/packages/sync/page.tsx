@@ -2,6 +2,8 @@
 
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
+import { ConvexError } from "convex/values";
+import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
 import { useMutation, useQuery } from "convex/react";
 import {
   AlertTriangle,
@@ -46,11 +48,17 @@ import type {
   ApplyResult,
   FlightAddSpec,
   FlightRemoveSpec,
+  FlightUpdateSpec,
   PackageCreateSpec,
   PackageMappingRow,
   PackageUpdateSpec,
   SyncPlan,
 } from "~/features/packages/sync/types";
+
+function syncErrorMessage(error: unknown): string {
+  if (error instanceof ConvexError && isPackageReferenceConflict(error.data)) return error.data.message;
+  return String(error);
+}
 
 // ─── File drop zone ───────────────────────────────────────────────────────────
 
@@ -429,6 +437,33 @@ function FlightsToAddSection({ items }: { items: FlightAddSpec[] }) {
   );
 }
 
+function FlightsToUpdateSection({ items }: { items: FlightUpdateSpec[] }) {
+  if (!items.length) return null;
+  return (
+    <AccordionItem value="flights-update">
+      <AccordionTrigger className="px-4 hover:no-underline">
+        <span className="font-semibold">Update {items.length} flights in place</span>
+      </AccordionTrigger>
+      <AccordionContent>
+        <div className="mx-2 mb-2 overflow-x-auto rounded-md border">
+          <Table>
+            <TableHeader><TableRow>
+              <TableHead>Package</TableHead><TableHead>Departure</TableHead>
+              <TableHead>Dep. Sector</TableHead><TableHead>Return</TableHead><TableHead>Ret. Sector</TableHead>
+            </TableRow></TableHeader>
+            <TableBody>{items.map(spec => (
+              <TableRow key={spec.db_flight_id}>
+                <TableCell>{spec.package_name}</TableCell><TableCell>{spec.departure_date}</TableCell>
+                <TableCell>{spec.departure_sector}</TableCell><TableCell>{spec.return_date}</TableCell><TableCell>{spec.return_sector}</TableCell>
+              </TableRow>
+            ))}</TableBody>
+          </Table>
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  );
+}
+
 function FlightsToRemoveSection({ items }: { items: FlightRemoveSpec[] }) {
   if (items.length === 0) return null;
   return (
@@ -479,6 +514,7 @@ type PackageEntry = {
   action: "create" | "update" | "flights-only";
   spec: PackageCreateSpec | PackageUpdateSpec | null;
   flightsToAdd: FlightAddSpec[];
+  flightsToUpdate: FlightUpdateSpec[];
   flightsToRemove: FlightRemoveSpec[];
 };
 
@@ -488,7 +524,7 @@ function buildMergedEntries(plan: SyncPlan): PackageEntry[] {
   const getOrCreate = (name: string, season: string): PackageEntry => {
     const key = `${name.trim().toUpperCase()}|${season.trim().toUpperCase()}`;
     if (!map.has(key)) {
-      map.set(key, { key, name, season, action: "flights-only", spec: null, flightsToAdd: [], flightsToRemove: [] });
+      map.set(key, { key, name, season, action: "flights-only", spec: null, flightsToAdd: [], flightsToUpdate: [], flightsToRemove: [] });
     }
     return map.get(key)!;
   };
@@ -506,6 +542,9 @@ function buildMergedEntries(plan: SyncPlan): PackageEntry[] {
   for (const f of plan.flightsToAdd) {
     getOrCreate(f.package_name, f.season).flightsToAdd.push(f);
   }
+  for (const f of plan.flightsToUpdate) {
+    getOrCreate(f.package_name, f.season).flightsToUpdate.push(f);
+  }
   for (const f of plan.flightsToRemove) {
     getOrCreate(f.package_name, f.season).flightsToRemove.push(f);
   }
@@ -519,7 +558,7 @@ function buildMergedEntries(plan: SyncPlan): PackageEntry[] {
 function MergedPlanSection({ plan }: { plan: SyncPlan }) {
   const [showNoFlights, setShowNoFlights] = useState(false);
   const allEntries = buildMergedEntries(plan);
-  const withFlights = allEntries.filter((e) => e.flightsToAdd.length > 0 || e.flightsToRemove.length > 0);
+  const withFlights = allEntries.filter((e) => e.flightsToAdd.length > 0 || e.flightsToUpdate.length > 0 || e.flightsToRemove.length > 0);
   const noFlightsCount = allEntries.length - withFlights.length;
   const entries = showNoFlights ? allEntries : withFlights;
   return (
@@ -547,9 +586,9 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
         )}
         <div className="space-y-2 mx-2 mb-2">
           {entries.map((entry) => {
-            const pureAdds    = entry.flightsToAdd.filter(f => f.row.status !== "edited");
-            const editedAdds  = entry.flightsToAdd.filter(f => f.row.status === "edited");
-            const pureRemoves = entry.flightsToRemove.filter(f => f.row.status !== "edited");
+            const pureAdds    = entry.flightsToAdd;
+            const editedAdds  = entry.flightsToUpdate;
+            const pureRemoves = entry.flightsToRemove;
             const hasFlights  = pureAdds.length > 0 || editedAdds.length > 0 || pureRemoves.length > 0;
             return (
             <Collapsible key={entry.key} defaultOpen={false}>
@@ -1060,6 +1099,7 @@ export default function PackageSyncPage() {
   const syncPackage = useMutation(api.packages.syncPackageFromCsv);
   const promotePackageToSync = useMutation(api.packages.promotePackageToSync);
   const addFlight = useMutation(api.packageFlights.addFlight);
+  const updateFlight = useMutation(api.packageFlights.updateFlight);
   const deleteFlight = useMutation(api.packageFlights.deleteFlight);
   const promoteToSync = useMutation(api.packageFlights.promoteToSync);
 
@@ -1097,8 +1137,7 @@ export default function PackageSyncPage() {
 
   const totalChanges = plan
     ? plan.packagesToCreate.length + plan.packagesToUpdate.length +
-      plan.flightsToAdd.length +
-      plan.flightsToRemove.filter(f => f.row.status !== "edited").length
+      plan.flightsToAdd.length + plan.flightsToUpdate.length + plan.flightsToRemove.length
     : 0;
 
   const applying = progress !== null && progress.phase !== "done";
@@ -1109,11 +1148,11 @@ export default function PackageSyncPage() {
 
     const total =
       plan.packagesToCreate.length + plan.packagesToUpdate.length +
-      plan.flightsToAdd.length + plan.flightsToRemove.length;
+      plan.flightsToAdd.length + plan.flightsToUpdate.length + plan.flightsToRemove.length;
 
     let done = 0;
     const errors: string[] = [];
-    let created = 0, updated = 0, flightsAdded = 0, flightsRemoved = 0;
+    let created = 0, updated = 0, flightsAdded = 0, flightsUpdated = 0, flightsRemoved = 0;
     const newPackageIdMap = new Map<string, string>();
 
     setProgress({ phase: "packages", done: 0, total, current: "Starting…" });
@@ -1129,7 +1168,7 @@ export default function PackageSyncPage() {
         });
         newPackageIdMap.set(`${spec.name.trim().toUpperCase()}|${spec.season.trim().toUpperCase()}`, res.id);
         created++;
-      } catch (e) { errors.push(`Create ${spec.name} (${spec.season}): ${String(e)}`); }
+      } catch (e) { errors.push(`Create ${spec.name} (${spec.season}): ${syncErrorMessage(e)}`); }
       done++;
     }
 
@@ -1144,7 +1183,7 @@ export default function PackageSyncPage() {
           hotels: spec.hotels, rooms: spec.rooms,
         });
         updated++;
-      } catch (e) { errors.push(`Update ${spec.db_name}: ${String(e)}`); }
+      } catch (e) { errors.push(`Update ${spec.db_name}: ${syncErrorMessage(e)}`); }
       done++;
     }
 
@@ -1152,7 +1191,7 @@ export default function PackageSyncPage() {
       setProgress({ phase: "packages", done, total, current: `Classifying ${plan.packagesToPromote.length} packages as sync…` });
       try {
         await promotePackageToSync({ ids: plan.packagesToPromote });
-      } catch (e) { errors.push(`Promote packages: ${String(e)}`); }
+      } catch (e) { errors.push(`Promote packages: ${syncErrorMessage(e)}`); }
     }
 
     for (const spec of plan.flightsToAdd) {
@@ -1174,7 +1213,23 @@ export default function PackageSyncPage() {
           source: "sync",
         });
         flightsAdded++;
-      } catch (e) { errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`); }
+      } catch (e) { errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`); }
+      done++;
+    }
+
+    for (const spec of plan.flightsToUpdate) {
+      setProgress({ phase: "flights", done, total, current: `Updating flight ${spec.package_name} ${spec.departure_date}…` });
+      try {
+        await updateFlight({
+          id: spec.db_flight_id as Id<"package_flights">,
+          package_id: spec.db_package_id as Id<"packages">,
+          month: spec.month,
+          dep_flight: airlineName(spec.row.airline) || undefined,
+          departure_date: spec.departure_date, departure_sector: spec.departure_sector,
+          return_date: spec.return_date, return_sector: spec.return_sector,
+        });
+        flightsUpdated++;
+      } catch (e) { errors.push(`Update flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`); }
       done++;
     }
 
@@ -1183,7 +1238,7 @@ export default function PackageSyncPage() {
       try {
         await deleteFlight({ id: spec.db_flight_id as Id<"package_flights"> });
         flightsRemoved++;
-      } catch (e) { errors.push(`Remove flight ${spec.package_name} ${spec.departure_date}: ${String(e)}`); }
+      } catch (e) { errors.push(`Remove flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`); }
       done++;
     }
 
@@ -1191,11 +1246,11 @@ export default function PackageSyncPage() {
       setProgress({ phase: "flights", done, total, current: `Classifying ${plan.flightsToPromote.length} flights as sync…` });
       try {
         await promoteToSync({ ids: plan.flightsToPromote });
-      } catch (e) { errors.push(`Promote flights: ${String(e)}`); }
+      } catch (e) { errors.push(`Promote flights: ${syncErrorMessage(e)}`); }
     }
 
     setProgress({ phase: "done", done: total, total, current: "Done" });
-    setResult({ created, updated, flightsAdded, flightsRemoved, errors });
+    setResult({ created, updated, flightsAdded, flightsUpdated, flightsRemoved, errors });
   }
 
   function resetUpload() {
@@ -1278,13 +1333,16 @@ export default function PackageSyncPage() {
             <Card className={result.errors.length > 0 ? "border-amber-400" : "border-green-400"}>
               <CardContent className="pt-4 space-y-2">
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  Sync complete
+                  {result.errors.length > 0
+                    ? <AlertTriangle className="w-5 h-5 text-amber-600" />
+                    : <CheckCircle2 className="w-5 h-5 text-green-600" />}
+                  {result.errors.length > 0 ? "Sync finished with errors" : "Sync complete"}
                 </div>
                 <div className="text-sm text-muted-foreground grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <span>Packages created: <strong>{result.created}</strong></span>
                   <span>Packages updated: <strong>{result.updated}</strong></span>
                   <span>Flights added: <strong>{result.flightsAdded}</strong></span>
+                  <span>Flights updated: <strong>{result.flightsUpdated}</strong></span>
                   <span>Flights removed: <strong>{result.flightsRemoved}</strong></span>
                 </div>
                 {result.errors.length > 0 && (
@@ -1333,15 +1391,15 @@ export default function PackageSyncPage() {
                   <p className="text-xs text-muted-foreground mt-0.5">Packages to update</p>
                 </div>
                 <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/20 p-3 text-center">
-                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{plan.flightsToAdd.filter(f => f.row.status !== "edited").length}</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{plan.flightsToAdd.length}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Flights to add</p>
                 </div>
                 <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-3 text-center">
-                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{plan.flightsToAdd.filter(f => f.row.status === "edited").length}</p>
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{plan.flightsToUpdate.length}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Flights to update</p>
                 </div>
                 <div className="rounded-lg border bg-red-50 dark:bg-red-950/20 p-3 text-center">
-                  <p className="text-2xl font-bold text-red-700 dark:text-red-400">{plan.flightsToRemove.filter(f => f.row.status !== "edited").length}</p>
+                  <p className="text-2xl font-bold text-red-700 dark:text-red-400">{plan.flightsToRemove.length}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Flights to remove</p>
                 </div>
               </div>
@@ -1351,6 +1409,7 @@ export default function PackageSyncPage() {
                   <PackagesToCreateSection items={plan.packagesToCreate} />
                   <PackagesToUpdateSection items={plan.packagesToUpdate} />
                   <FlightsToAddSection items={plan.flightsToAdd} />
+                  <FlightsToUpdateSection items={plan.flightsToUpdate} />
                   <FlightsToRemoveSection items={plan.flightsToRemove} />
                 </Accordion>
               </CardContent>
