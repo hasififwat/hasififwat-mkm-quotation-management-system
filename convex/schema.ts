@@ -166,6 +166,24 @@ quotations: defineTable({
     .index("by_updated_at", ["updated_at"])
     .index("by_creator_id", ["creator_id"]),
 
+  quotation_create_receipts: defineTable({
+    actor: v.string(),
+    request_key: v.string(),
+    content: v.string(),
+    result: v.object({
+      id: v.string(),
+      quotation_number: v.string(),
+      hijri_year: v.string(),
+      sequence_num: v.number(),
+      revision: v.number(),
+      total_amount: v.number(),
+      status: v.union(
+        v.literal("draft"), v.literal("sent"), v.literal("accepted"),
+        v.literal("rejected"), v.literal("revised"), v.literal("superseded"),
+      ),
+    }),
+  }).index("by_actor_request_key", ["actor", "request_key"]),
+
   quotation_items: defineTable({
     quotation_id: v.string(),
     item_type: v.string(),

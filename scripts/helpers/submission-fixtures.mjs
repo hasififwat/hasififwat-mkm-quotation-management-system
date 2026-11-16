@@ -11,7 +11,7 @@ export const { transformConvexPackage: transform } = load(path.join(repo, "src/f
 export const { packageSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 import assert from "node:assert/strict";
 export function state(authenticated = true) {
-  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
@@ -25,10 +25,12 @@ export function state(authenticated = true) {
       let direction = 'asc';
       const q = {
         withIndex(name, callback) {
-          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at'};
+          const valid = {by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at', by_actor_request_key:['actor', 'request_key']};
           assert.ok(name in valid, `Unknown index ${name}`);
-          const builder = { eq(field, value) { assert.equal(field, valid[name]); predicates.push([field,value]); return builder; } };
-          indexField = valid[name];
+          const fields = Array.isArray(valid[name]) ? valid[name] : [valid[name]];
+          let fieldIndex = 0;
+          const builder = { eq(field, value) { assert.equal(field, fields[fieldIndex++]); predicates.push([field,value]); return builder; } };
+          indexField = fields[0];
           callback?.(builder);
           return q;
         },
@@ -39,6 +41,7 @@ export function state(authenticated = true) {
         },
         order(value) { direction = value; return q; },
         async collect() { return structuredClone(tables[table].filter(row => predicates.every(([k,v]) => row[k] === v) && filters.every(predicate => predicate(row)))); },
+        async unique() { const rows = await q.collect(); assert.ok(rows.length <= 1, 'Expected a unique record'); return rows[0] ?? null; },
         async paginate({cursor, numItems}) {
           const rows = (await q.collect()).sort((a,b) => (a[indexField] < b[indexField] ? -1 : a[indexField] > b[indexField] ? 1 : 0) * (direction === 'desc' ? -1 : 1));
           const start = cursor === null ? 0 : Number(cursor);
