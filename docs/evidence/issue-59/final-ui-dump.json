@@ -1,0 +1,668 @@
+{
+  "artifacts": [
+    {
+      "_creationTime": 1794849681117.605,
+      "_id": "mh74sg4h00h57q3wjf4wvzc0t58jajeh",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0002.pdf",
+      "input_sha256": "bc5bbb52bd70dd9d100ed859101aec800c0ce8869f4b7507884282a53fc1b1a6",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n577bdgr50cebb3tq0nhsrgwwh8jbq1x",
+      "state": {
+        "attempt_id": "mn709z15t9f4w4grh95v2sb7ah8jbq55",
+        "input_sha256": "bc5bbb52bd70dd9d100ed859101aec800c0ce8869f4b7507884282a53fc1b1a6",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "89965b450108030d59ef8bc7fe1cfab1e2fea0fb37c6166d23d3989c75859160",
+        "size": 169756,
+        "storage_id": "kg27y1wars5dctgexegsnrpcvx8jadym"
+      },
+      "terms_version": "mkm-payment-terms-v1",
+      "omitted_input_json_sha256": "bc5bbb52bd70dd9d100ed859101aec800c0ce8869f4b7507884282a53fc1b1a6"
+    },
+    {
+      "_creationTime": 1794849743144.3796,
+      "_id": "mh73hsn180sn5b80nkw0qcceqh8jagvw",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0002-R1.pdf",
+      "input_sha256": "da9b620f2e582d23b5441d5d7ce9c14f3bcf93395f70eccaf4cee4f405314814",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n575t4xfp2qw3hnxpxhp2qwygs8jabdy",
+      "state": {
+        "attempt_id": "mn7ce6pnmj8dk5pg4wtrc926vd8jbefa",
+        "input_sha256": "da9b620f2e582d23b5441d5d7ce9c14f3bcf93395f70eccaf4cee4f405314814",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "32db205ffb42d1ff04b81c89463b5b531841fcf700adea4a69614ff3849693b0",
+        "size": 169763,
+        "storage_id": "kg282fpysaksvxjk8e99k99x4n8jazvx"
+      },
+      "terms_version": "mkm-payment-terms-v1",
+      "omitted_input_json_sha256": "da9b620f2e582d23b5441d5d7ce9c14f3bcf93395f70eccaf4cee4f405314814"
+    },
+    {
+      "_creationTime": 1794849819419.9507,
+      "_id": "mh7fnqn8k384d2qbrfsgng3vyn8jbyzm",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0002-R2.pdf",
+      "input_sha256": "e70b99d53d98adb9d57fdcf1dd06bc9a8ceb43b6733e25f7d1d13dc0174852d9",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+      "state": {
+        "attempt_id": "mn72va3xh0ege9n1eg1g01adsn8jbh1c",
+        "input_sha256": "e70b99d53d98adb9d57fdcf1dd06bc9a8ceb43b6733e25f7d1d13dc0174852d9",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "d76e0f2e24a44838103a38811ce43b786db23e69ad3ad571e66cd67188d5c074",
+        "size": 169763,
+        "storage_id": "kg24yc1ca5526v0gn31nthkx598jbc4w"
+      },
+      "terms_version": "mkm-payment-terms-v1",
+      "omitted_input_json_sha256": "e70b99d53d98adb9d57fdcf1dd06bc9a8ceb43b6733e25f7d1d13dc0174852d9"
+    },
+    {
+      "_creationTime": 1794849943405.0247,
+      "_id": "mh71eagf4as1mdz9avs3yf332d8jbzvn",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0002-R3.pdf",
+      "input_sha256": "4cb8f632834be58f74f327694916e403c3f07caa23ce9212bbb10e3f41f3a969",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+      "state": {
+        "attempt_id": "mn71crfp90sdwh525p33h2pm058jaqjx",
+        "input_sha256": "4cb8f632834be58f74f327694916e403c3f07caa23ce9212bbb10e3f41f3a969",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "e31d19e5fed24c69eae57473dba5abb34837a461b080d289f4c23af35214d0cc",
+        "size": 169763,
+        "storage_id": "kg2e3xc5gsf0qenn4gmqm678p58jahta"
+      },
+      "terms_version": "mkm-payment-terms-v1",
+      "omitted_input_json_sha256": "4cb8f632834be58f74f327694916e403c3f07caa23ce9212bbb10e3f41f3a969"
+    },
+    {
+      "_creationTime": 1794850169606.9358,
+      "_id": "mh7cftyec794z8re6ecm75m01s8jakkd",
+      "asset_version": "mkm-branding-v1",
+      "filename": "1448H-0002-R4.pdf",
+      "input_sha256": "5a5c6cb63ff455c5ec488a54acb3e261acab0dfefcf856e74e74a56613c50f38",
+      "provenance": "issued_original",
+      "renderer_version": "mkm-quotation-v1",
+      "revision_id": "n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+      "state": {
+        "attempt_id": "mn7eh663rhebrct6zne652c37x8ja1wv",
+        "input_sha256": "5a5c6cb63ff455c5ec488a54acb3e261acab0dfefcf856e74e74a56613c50f38",
+        "kind": "ready",
+        "mime": "application/pdf",
+        "sha256": "26d88a6f81b53b230daac3d76ef74933eeade3144eb2ac6d289c14393b506a65",
+        "size": 169765,
+        "storage_id": "kg2dv7ezahp5xbke2g601b1z3x8jbmz9"
+      },
+      "terms_version": "mkm-payment-terms-v1",
+      "omitted_input_json_sha256": "5a5c6cb63ff455c5ec488a54acb3e261acab0dfefcf856e74e74a56613c50f38"
+    }
+  ],
+  "families": [
+    {
+      "_creationTime": 1794849333924.464,
+      "_id": "m17957196kbnn0vf2rc4ceev8h8jbqn3",
+      "archived": false,
+      "current_revision_id": "n57c934gx0b12k6ygm2fp2e79s8jaa6n",
+      "hijri_year": "1448H",
+      "sequence_num": 1
+    },
+    {
+      "_creationTime": 1794849681117.6042,
+      "_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "archived": false,
+      "current_revision_id": "n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+      "hijri_year": "1448H",
+      "sequence_num": 2
+    }
+  ],
+  "items": [
+    {
+      "_creationTime": 1794849325146.0225,
+      "_id": "m976a8y5an9zk574zc1p301dzh8jbn4b",
+      "created_at": "2026-11-16T17:15:25.146Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1200,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n57c934gx0b12k6ygm2fp2e79s8jaa6n",
+      "unit_price": 1200
+    },
+    {
+      "_creationTime": 1794849325146.0227,
+      "_id": "m97bhb9jqm4x1gm1wtqrygbjmh8jam8p",
+      "created_at": "2026-11-16T17:15:25.146Z",
+      "description": "Airport transfer",
+      "item_type": "addon",
+      "original_price": 100,
+      "package_room_id": "",
+      "quantity": 4,
+      "quotation_id": "n57c934gx0b12k6ygm2fp2e79s8jaa6n",
+      "unit_price": 100
+    },
+    {
+      "_creationTime": 1794849325146.023,
+      "_id": "m974nf73rjjq66hed2wnycfhp98jbhr2",
+      "created_at": "2026-11-16T17:15:25.146Z",
+      "description": "Group discount",
+      "item_type": "discount",
+      "original_price": 50,
+      "package_room_id": "",
+      "quantity": 4,
+      "quotation_id": "n57c934gx0b12k6ygm2fp2e79s8jaa6n",
+      "unit_price": -50
+    },
+    {
+      "_creationTime": 1794849681117.6045,
+      "_id": "m974vxt8nck0vgxx31bxmmqa2d8jbt4k",
+      "created_at": "2026-11-16T17:21:21.117Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1200,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n577bdgr50cebb3tq0nhsrgwwh8jbq1x",
+      "unit_price": 1200
+    },
+    {
+      "_creationTime": 1794849743144.3792,
+      "_id": "m972pkhectt5pjj5swh1nvy3gd8jam9s",
+      "created_at": "2026-11-16T17:22:23.144Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1200,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n575t4xfp2qw3hnxpxhp2qwygs8jabdy",
+      "unit_price": 1200
+    },
+    {
+      "_creationTime": 1794849819419.9502,
+      "_id": "m97bgmbawnpvnx2s9pqwk6918x8jby05",
+      "created_at": "2026-11-16T17:23:39.419Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1200,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+      "unit_price": 1200
+    },
+    {
+      "_creationTime": 1794849943405.0242,
+      "_id": "m972gzwngtjgz343py7vbgry7x8ja1mn",
+      "created_at": "2026-11-16T17:25:43.405Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1200,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+      "unit_price": 1200
+    },
+    {
+      "_creationTime": 1794850169606.9353,
+      "_id": "m97ct122t34bt9cshds51xmnw98jahg1",
+      "created_at": "2026-11-16T17:29:29.606Z",
+      "description": "Quad",
+      "item_type": "room",
+      "original_price": 1250,
+      "package_room_id": "kn744sxxkf4c566bf2hswgznp98jbwj8",
+      "quantity": 4,
+      "quotation_id": "n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+      "unit_price": 1250
+    }
+  ],
+  "quotations": [
+    {
+      "_creationTime": 1794849325146.0222,
+      "_id": "n57c934gx0b12k6ygm2fp2e79s8jaa6n",
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:15:25.146Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 0,
+      "family_id": "m17957196kbnn0vf2rc4ceev8h8jbqn3",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "legacy_provenance": "legacy_unknown",
+      "notes": "Baseline saved before immutable revisions.",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "revision": 0,
+      "sequence_num": 1,
+      "snapshot_completeness": "unknown",
+      "status": "draft",
+      "total_amount": 5000,
+      "updated_at": "2026-11-16T17:15:25.146Z"
+    },
+    {
+      "_creationTime": 1794849681117.604,
+      "_id": "n577bdgr50cebb3tq0nhsrgwwh8jbq1x",
+      "archived": false,
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:21:21.117Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 1,
+      "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "frozen_document": "{\"version\":1,\"quotation_number\":\"1448H-0002\",\"issue_date\":\"2026-11-16T17:21:21.117Z\",\"saved_by\":\"n97cvn1jsfs5p0w682tkd5wf7n8jaw32\",\"status\":\"draft\",\"client_id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"client_name\":\"Revision History Fixture\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"package_snapshot\":{\"name\":\"Revision verification package\",\"year\":\"2026/2027\",\"duration\":\"12 days\",\"transport\":\"Bus\",\"inclusions\":\"Breakfast\",\"exclusions\":\"Visa\",\"package_updated_at\":\"2026-11-16T17:15:25.135Z\",\"rooms\":[{\"room_type\":\"Quad\",\"price\":1200,\"enabled\":true}]},\"flight_snapshot\":{\"id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"month\":\"JAN\",\"flight\":\"MALAYSIA AIRLINES\",\"departure_date\":\"2027-01-01\",\"departure_sector\":\"KUL-JED\",\"return_date\":\"2027-01-12\",\"return_sector\":\"JED-KUL\"},\"hotels_snapshot\":[{\"hotel_type\":\"MAKKAH\",\"name\":\"Makkah Hotel\",\"placeholder\":\"\",\"enabled\":true,\"meals\":[\"BREAKFAST\"]}],\"pic_name\":\"Revision Verification\",\"branch\":\"Disposable fixture\",\"notes\":\"Browser revision zero\",\"total_amount\":4800,\"client_phone\":\"\",\"return_flight\":null,\"items\":[{\"item_type\":\"room\",\"description\":\"Quad\",\"package_room_id\":\"kn744sxxkf4c566bf2hswgznp98jbwj8\",\"quantity\":4,\"unit_price\":1200,\"original_price\":1200}],\"provenance\":null}",
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "issue_date": "2026-11-16T17:21:21.117Z",
+      "notes": "Browser revision zero",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "revision": 0,
+      "saved_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "sequence_num": 2,
+      "snapshot_completeness": "partial",
+      "status": "draft",
+      "total_amount": 4800,
+      "updated_at": "2026-11-16T17:21:21.117Z"
+    },
+    {
+      "_creationTime": 1794849743144.379,
+      "_id": "n575t4xfp2qw3hnxpxhp2qwygs8jabdy",
+      "archived": false,
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:22:23.144Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 1,
+      "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "frozen_document": "{\"version\":1,\"quotation_number\":\"1448H-0002-R1\",\"issue_date\":\"2026-11-16T17:22:23.144Z\",\"saved_by\":\"n97cvn1jsfs5p0w682tkd5wf7n8jaw32\",\"status\":\"draft\",\"client_id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"client_name\":\"Revision History Fixture\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"package_snapshot\":{\"duration\":\"12 days\",\"exclusions\":\"Visa\",\"inclusions\":\"Breakfast\",\"name\":\"Revision verification package\",\"package_updated_at\":\"2026-11-16T17:15:25.135Z\",\"rooms\":[{\"enabled\":true,\"price\":1200,\"room_type\":\"Quad\"}],\"transport\":\"Bus\",\"year\":\"2026/2027\"},\"flight_snapshot\":{\"departure_date\":\"2027-01-01\",\"departure_sector\":\"KUL-JED\",\"flight\":\"MALAYSIA AIRLINES\",\"id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"month\":\"JAN\",\"return_date\":\"2027-01-12\",\"return_sector\":\"JED-KUL\"},\"hotels_snapshot\":[{\"enabled\":true,\"hotel_type\":\"MAKKAH\",\"meals\":[\"BREAKFAST\"],\"name\":\"Makkah Hotel\",\"placeholder\":\"\"}],\"pic_name\":\"Revision Verification\",\"branch\":\"Disposable fixture\",\"notes\":\"Browser revision one\",\"total_amount\":4800,\"client_phone\":\"\",\"return_flight\":null,\"items\":[{\"item_type\":\"room\",\"description\":\"Quad\",\"package_room_id\":\"kn744sxxkf4c566bf2hswgznp98jbwj8\",\"quantity\":4,\"unit_price\":1200,\"original_price\":1200}],\"provenance\":null}",
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "issue_date": "2026-11-16T17:22:23.144Z",
+      "notes": "Browser revision one",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "previous_revision_id": "n577bdgr50cebb3tq0nhsrgwwh8jbq1x",
+      "revision": 1,
+      "saved_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "sequence_num": 2,
+      "snapshot_completeness": "partial",
+      "status": "draft",
+      "total_amount": 4800,
+      "updated_at": "2026-11-16T17:22:23.144Z"
+    },
+    {
+      "_creationTime": 1794849819419.95,
+      "_id": "n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+      "archived": false,
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:23:39.419Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 1,
+      "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "frozen_document": "{\"version\":1,\"quotation_number\":\"1448H-0002-R2\",\"issue_date\":\"2026-11-16T17:23:39.419Z\",\"saved_by\":\"n97cvn1jsfs5p0w682tkd5wf7n8jaw32\",\"status\":\"draft\",\"client_id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"client_name\":\"Revision History Fixture\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"package_snapshot\":{\"duration\":\"12 days\",\"exclusions\":\"Visa\",\"inclusions\":\"Breakfast\",\"name\":\"Revision verification package\",\"package_updated_at\":\"2026-11-16T17:15:25.135Z\",\"rooms\":[{\"enabled\":true,\"price\":1200,\"room_type\":\"Quad\"}],\"transport\":\"Bus\",\"year\":\"2026/2027\"},\"flight_snapshot\":{\"departure_date\":\"2027-01-01\",\"departure_sector\":\"KUL-JED\",\"flight\":\"MALAYSIA AIRLINES\",\"id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"month\":\"JAN\",\"return_date\":\"2027-01-12\",\"return_sector\":\"JED-KUL\"},\"hotels_snapshot\":[{\"enabled\":true,\"hotel_type\":\"MAKKAH\",\"meals\":[\"BREAKFAST\"],\"name\":\"Makkah Hotel\",\"placeholder\":\"\"}],\"pic_name\":\"Revision Verification\",\"branch\":\"Disposable fixture\",\"notes\":\"Browser revision two lost-response-fixture\",\"total_amount\":4800,\"client_phone\":\"\",\"return_flight\":null,\"items\":[{\"item_type\":\"room\",\"description\":\"Quad\",\"package_room_id\":\"kn744sxxkf4c566bf2hswgznp98jbwj8\",\"quantity\":4,\"unit_price\":1200,\"original_price\":1200}],\"provenance\":null}",
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "issue_date": "2026-11-16T17:23:39.419Z",
+      "notes": "Browser revision two lost-response-fixture",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "previous_revision_id": "n575t4xfp2qw3hnxpxhp2qwygs8jabdy",
+      "revision": 2,
+      "saved_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "sequence_num": 2,
+      "snapshot_completeness": "partial",
+      "status": "draft",
+      "total_amount": 4800,
+      "updated_at": "2026-11-16T17:23:39.419Z"
+    },
+    {
+      "_creationTime": 1794849943405.024,
+      "_id": "n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+      "archived": false,
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:25:43.405Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 1,
+      "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "frozen_document": "{\"version\":1,\"quotation_number\":\"1448H-0002-R3\",\"issue_date\":\"2026-11-16T17:25:43.405Z\",\"saved_by\":\"n97cvn1jsfs5p0w682tkd5wf7n8jaw32\",\"status\":\"draft\",\"client_id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"client_name\":\"Revision History Fixture\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"package_snapshot\":{\"duration\":\"12 days\",\"exclusions\":\"Visa\",\"inclusions\":\"Breakfast\",\"name\":\"Revision verification package\",\"package_updated_at\":\"2026-11-16T17:15:25.135Z\",\"rooms\":[{\"enabled\":true,\"price\":1200,\"room_type\":\"Quad\"}],\"transport\":\"Bus\",\"year\":\"2026/2027\"},\"flight_snapshot\":{\"departure_date\":\"2027-01-01\",\"departure_sector\":\"KUL-JED\",\"flight\":\"MALAYSIA AIRLINES\",\"id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"month\":\"JAN\",\"return_date\":\"2027-01-12\",\"return_sector\":\"JED-KUL\"},\"hotels_snapshot\":[{\"enabled\":true,\"hotel_type\":\"MAKKAH\",\"meals\":[\"BREAKFAST\"],\"name\":\"Makkah Hotel\",\"placeholder\":\"\"}],\"pic_name\":\"Revision Verification\",\"branch\":\"Disposable fixture\",\"notes\":\"Browser revision two lost-response-fixture\",\"total_amount\":4800,\"client_phone\":\"\",\"return_flight\":null,\"items\":[{\"item_type\":\"room\",\"description\":\"Quad\",\"package_room_id\":\"kn744sxxkf4c566bf2hswgznp98jbwj8\",\"quantity\":4,\"unit_price\":1200,\"original_price\":1200}],\"provenance\":null}",
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "issue_date": "2026-11-16T17:25:43.405Z",
+      "notes": "Browser revision two lost-response-fixture",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "previous_revision_id": "n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+      "revision": 3,
+      "saved_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "sequence_num": 2,
+      "snapshot_completeness": "partial",
+      "status": "draft",
+      "total_amount": 4800,
+      "updated_at": "2026-11-16T17:25:43.405Z"
+    },
+    {
+      "_creationTime": 1794850169606.935,
+      "_id": "n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+      "archived": false,
+      "branch": "Disposable fixture",
+      "client_id": "k1747qd8fvmjem5ptphhtd3y398ja6cj",
+      "client_name": "Revision History Fixture",
+      "created_at": "2026-11-16T17:29:29.606Z",
+      "created_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "document_schema_version": 1,
+      "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+      "flight_id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+      "flight_snapshot": {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k97bjwcra0087qnngv92x2zcyd8jaxj4",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      },
+      "frozen_document": "{\"version\":1,\"quotation_number\":\"1448H-0002-R4\",\"issue_date\":\"2026-11-16T17:29:29.606Z\",\"saved_by\":\"n97cvn1jsfs5p0w682tkd5wf7n8jaw32\",\"status\":\"draft\",\"client_id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"client_name\":\"Revision History Fixture\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"package_snapshot\":{\"name\":\"Revision verification package\",\"year\":\"2026/2027\",\"duration\":\"12 days\",\"transport\":\"Bus\",\"inclusions\":\"Breakfast\",\"exclusions\":\"Visa\",\"package_updated_at\":\"2026-11-16T17:15:25.135Z\",\"rooms\":[{\"room_type\":\"Quad\",\"price\":1200,\"enabled\":true}]},\"flight_snapshot\":{\"id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"month\":\"JAN\",\"flight\":\"MALAYSIA AIRLINES\",\"departure_date\":\"2027-01-01\",\"departure_sector\":\"KUL-JED\",\"return_date\":\"2027-01-12\",\"return_sector\":\"JED-KUL\"},\"hotels_snapshot\":[{\"hotel_type\":\"MAKKAH\",\"name\":\"Makkah Hotel\",\"placeholder\":\"\",\"enabled\":true,\"meals\":[\"BREAKFAST\"]}],\"pic_name\":\"Revision Verification\",\"branch\":\"Disposable fixture\",\"notes\":\"Reviewed catalog with intentional price 1250\",\"total_amount\":5000,\"client_phone\":\"\",\"return_flight\":null,\"items\":[{\"item_type\":\"room\",\"description\":\"Quad\",\"package_room_id\":\"kn744sxxkf4c566bf2hswgznp98jbwj8\",\"quantity\":4,\"unit_price\":1250,\"original_price\":1250}],\"provenance\":null}",
+      "hijri_year": "1448H",
+      "hotels_snapshot": [
+        {
+          "enabled": true,
+          "hotel_type": "MAKKAH",
+          "meals": [
+            "BREAKFAST"
+          ],
+          "name": "Makkah Hotel",
+          "placeholder": ""
+        }
+      ],
+      "issue_date": "2026-11-16T17:29:29.606Z",
+      "notes": "Reviewed catalog with intentional price 1250",
+      "package_id": "nh72hy4w97afacj9w0aeakfmth8jb9r5",
+      "package_snapshot": {
+        "duration": "12 days",
+        "exclusions": "Visa",
+        "inclusions": "Breakfast",
+        "name": "Revision verification package",
+        "package_updated_at": "2026-11-16T17:15:25.135Z",
+        "rooms": [
+          {
+            "enabled": true,
+            "price": 1200,
+            "room_type": "Quad"
+          }
+        ],
+        "transport": "Bus",
+        "year": "2026/2027"
+      },
+      "pic_name": "Revision Verification",
+      "previous_revision_id": "n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+      "revision": 4,
+      "saved_by": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "sequence_num": 2,
+      "snapshot_completeness": "partial",
+      "status": "draft",
+      "total_amount": 5000,
+      "updated_at": "2026-11-16T17:29:29.606Z"
+    }
+  ],
+  "receipts": [
+    {
+      "_creationTime": 1794849681117.6057,
+      "_id": "n17798fbywhf43hah4dcpvhgqh8jaxxq",
+      "actor": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "content": "{\"branch\":\"Disposable fixture\",\"client\":{\"id\":\"k1747qd8fvmjem5ptphhtd3y398ja6cj\",\"mode\":\"replace\"},\"extras\":{\"addons\":[],\"discounts\":[],\"mode\":\"replace\"},\"notes\":\"Browser revision zero\",\"operation\":\"create\",\"pic_name\":\"Revision Verification\",\"selection\":{\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"mode\":\"replace\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"reviewed_context\":\"{\\\"version\\\":1,\\\"package\\\":[\\\"nh72hy4w97afacj9w0aeakfmth8jb9r5\\\",\\\"Revision verification package\\\",\\\"12 days\\\",\\\"2026/2027\\\",\\\"2026/2027\\\",\\\"Bus\\\",\\\"unpublished\\\",\\\"\\\",\\\"Breakfast\\\",\\\"Visa\\\",false],\\\"rooms\\\":[\\\"[\\\\\\\"Quad\\\\\\\",1200,true]\\\"],\\\"flights\\\":[\\\"[\\\\\\\"k97bjwcra0087qnngv92x2zcyd8jaxj4\\\\\\\",\\\\\\\"JAN\\\\\\\",\\\\\\\"MALAYSIA AIRLINES\\\\\\\",\\\\\\\"\\\\\\\",\\\\\\\"2027-01-01\\\\\\\",\\\\\\\"KUL-JED\\\\\\\",\\\\\\\"2027-01-12\\\\\\\",\\\\\\\"JED-KUL\\\\\\\"]\\\"],\\\"hotels\\\":[\\\"[\\\\\\\"MAKKAH\\\\\\\",\\\\\\\"Makkah Hotel\\\\\\\",true,\\\\\\\"\\\\\\\",[\\\\\\\"BREAKFAST\\\\\\\"]]\\\"]}\",\"rooms\":[{\"pax\":4,\"price\":1200,\"room_type\":\"Quad\"}]}}",
+      "request_key": "9ffb4870-9058-40bb-9060-39b5b3bf97a9",
+      "result": {
+        "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+        "id": "n577bdgr50cebb3tq0nhsrgwwh8jbq1x",
+        "quotation_number": "1448H-0002",
+        "revision": 0
+      }
+    },
+    {
+      "_creationTime": 1794849743144.3804,
+      "_id": "n17ee1rgb3jsbea18ss4sahyws8ja25e",
+      "actor": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "content": "{\"branch\":\"Disposable fixture\",\"client\":{\"mode\":\"retain\"},\"expected_current_id\":\"n577bdgr50cebb3tq0nhsrgwwh8jbq1x\",\"extras\":{\"addons\":[],\"discounts\":[],\"mode\":\"replace\"},\"family_id\":\"m17aaz21qt2w5y813dahp1myhh8jb02s\",\"notes\":\"Browser revision one\",\"operation\":\"append\",\"pic_name\":\"Revision Verification\",\"selection\":{\"mode\":\"retain\",\"rooms\":[{\"pax\":4,\"price\":1200,\"source_item_id\":\"m974vxt8nck0vgxx31bxmmqa2d8jbt4k\"}]},\"source_revision_id\":\"n577bdgr50cebb3tq0nhsrgwwh8jbq1x\"}",
+      "request_key": "3bae8e2b-a316-44cd-afcd-9d591b356b1b",
+      "result": {
+        "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+        "id": "n575t4xfp2qw3hnxpxhp2qwygs8jabdy",
+        "quotation_number": "1448H-0002-R1",
+        "revision": 1
+      }
+    },
+    {
+      "_creationTime": 1794849819419.9514,
+      "_id": "n173e1mbg433prsq7jg0gwwd2d8jb1vg",
+      "actor": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "content": "{\"branch\":\"Disposable fixture\",\"client\":{\"mode\":\"retain\"},\"expected_current_id\":\"n575t4xfp2qw3hnxpxhp2qwygs8jabdy\",\"extras\":{\"addons\":[],\"discounts\":[],\"mode\":\"replace\"},\"family_id\":\"m17aaz21qt2w5y813dahp1myhh8jb02s\",\"notes\":\"Browser revision two lost-response-fixture\",\"operation\":\"append\",\"pic_name\":\"Revision Verification\",\"selection\":{\"mode\":\"retain\",\"rooms\":[{\"pax\":4,\"price\":1200,\"source_item_id\":\"m972pkhectt5pjj5swh1nvy3gd8jam9s\"}]},\"source_revision_id\":\"n575t4xfp2qw3hnxpxhp2qwygs8jabdy\"}",
+      "request_key": "6be7da34-8af6-4746-9662-2a37ef9de402",
+      "result": {
+        "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+        "id": "n578kn7kpdp27319yqz8kh5w3d8jbjwk",
+        "quotation_number": "1448H-0002-R2",
+        "revision": 2
+      }
+    },
+    {
+      "_creationTime": 1794849943405.0254,
+      "_id": "n17f9jssd60kfjhr3gbpb88th18jarn6",
+      "actor": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "content": "{\"branch\":\"Disposable fixture\",\"client\":{\"mode\":\"retain\"},\"expected_current_id\":\"n578kn7kpdp27319yqz8kh5w3d8jbjwk\",\"extras\":{\"addons\":[],\"discounts\":[],\"mode\":\"replace\"},\"family_id\":\"m17aaz21qt2w5y813dahp1myhh8jb02s\",\"notes\":\"Browser revision two lost-response-fixture\",\"operation\":\"append\",\"pic_name\":\"Revision Verification\",\"selection\":{\"mode\":\"retain\",\"rooms\":[{\"pax\":4,\"price\":1200,\"source_item_id\":\"m97bgmbawnpvnx2s9pqwk6918x8jby05\"}]},\"source_revision_id\":\"n578kn7kpdp27319yqz8kh5w3d8jbjwk\"}",
+      "request_key": "be1ed583-f9e4-49c0-964d-c82e363a1c00",
+      "result": {
+        "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+        "id": "n57d4s5ahntf9sz4v0gn47g4md8ja7b0",
+        "quotation_number": "1448H-0002-R3",
+        "revision": 3
+      }
+    },
+    {
+      "_creationTime": 1794850169606.937,
+      "_id": "n179z10r9nhv83d6wtg1d835mh8ja0rp",
+      "actor": "n97cvn1jsfs5p0w682tkd5wf7n8jaw32",
+      "content": "{\"branch\":\"Disposable fixture\",\"client\":{\"mode\":\"retain\"},\"expected_current_id\":\"n57d4s5ahntf9sz4v0gn47g4md8ja7b0\",\"extras\":{\"addons\":[],\"discounts\":[],\"mode\":\"replace\"},\"family_id\":\"m17aaz21qt2w5y813dahp1myhh8jb02s\",\"notes\":\"Reviewed catalog with intentional price 1250\",\"operation\":\"append\",\"pic_name\":\"Revision Verification\",\"selection\":{\"flight_id\":\"k97bjwcra0087qnngv92x2zcyd8jaxj4\",\"mode\":\"replace\",\"package_id\":\"nh72hy4w97afacj9w0aeakfmth8jb9r5\",\"reviewed_context\":\"{\\\"version\\\":1,\\\"package\\\":[\\\"nh72hy4w97afacj9w0aeakfmth8jb9r5\\\",\\\"Revision verification package\\\",\\\"12 days\\\",\\\"2026/2027\\\",\\\"2026/2027\\\",\\\"Bus\\\",\\\"unpublished\\\",\\\"\\\",\\\"Breakfast\\\",\\\"Visa\\\",false],\\\"rooms\\\":[\\\"[\\\\\\\"Quad\\\\\\\",1200,true]\\\"],\\\"flights\\\":[\\\"[\\\\\\\"k97bjwcra0087qnngv92x2zcyd8jaxj4\\\\\\\",\\\\\\\"JAN\\\\\\\",\\\\\\\"MALAYSIA AIRLINES\\\\\\\",\\\\\\\"\\\\\\\",\\\\\\\"2027-01-01\\\\\\\",\\\\\\\"KUL-JED\\\\\\\",\\\\\\\"2027-01-12\\\\\\\",\\\\\\\"JED-KUL\\\\\\\"]\\\"],\\\"hotels\\\":[\\\"[\\\\\\\"MAKKAH\\\\\\\",\\\\\\\"Makkah Hotel\\\\\\\",true,\\\\\\\"\\\\\\\",[\\\\\\\"BREAKFAST\\\\\\\"]]\\\"]}\",\"rooms\":[{\"pax\":4,\"price\":1250,\"room_type\":\"Quad\"}]},\"source_revision_id\":\"n57d4s5ahntf9sz4v0gn47g4md8ja7b0\"}",
+      "request_key": "912ff8c3-fcf9-41a7-9c74-d834e0db31d9",
+      "result": {
+        "family_id": "m17aaz21qt2w5y813dahp1myhh8jb02s",
+        "id": "n5779a4nmra531ahqk6nx5k4xs8jbkqg",
+        "quotation_number": "1448H-0002-R4",
+        "revision": 4
+      }
+    }
+  ],
+  "projection": "Saved rows and artifact metadata. Embedded PDF input JSON omitted; exact R0 issued bytes are attached."
+}

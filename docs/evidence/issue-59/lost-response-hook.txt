@@ -1,0 +1,6 @@
+    const fixtureKey = (command as {request_key: string}).request_key;
+    if (JSON.stringify(payload).includes("lost-response-fixture") && !fixtureLostResponses.has(fixtureKey)) {
+      fixtureLostResponses.add(fixtureKey);
+      return Response.json({error: "Disposable fixture withheld committed success"}, {status: 503});
+    }
+    return Response.json({success: true, ...result});

@@ -50,6 +50,8 @@ import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 import { STALE_FIELD_LABELS } from "./stale-labels";
+import { beginRevisionAttempt, finishRevisionAttempt, type RevisionSource, type RevisionSaveSession, type RevisionAttempt } from "./revision-command";
+import { saveRevisionAttempt } from "./save-quotation";
 import { saveQuotation, type QuotationCreateAttempt } from "./save-quotation";
 import { refreshQuotationSnapshot, type RefreshSnapshotResult, type RefreshSnapshotState } from "./refresh-snapshot";
 
@@ -594,6 +596,9 @@ export default function QuotationBuilder({
 	qid,
 	stale_fields = [],
 	snapshot_version_known = false,
+	revisionEnabled = false,
+	revisionActor,
+	revisionSource,
 }: {
 	initialData: QuotationFormValues | null;
 	initialClientId?: string;
@@ -602,8 +607,18 @@ export default function QuotationBuilder({
 	qid?: string;
 	stale_fields?: string[];
 	snapshot_version_known?: boolean;
+	revisionEnabled?: boolean;
+	revisionActor?: string;
+	revisionSource?: RevisionSource;
 }) {
 	const router = useRouter();
+	const [revisionSession, setRevisionSession] = useState<RevisionSaveSession>({kind: "editing"});
+	const revisionFlight = useRef(false);
+	const [selectionMode, setSelectionMode] = useState<"retain" | "replace">(revisionSource ? "retain" : "replace");
+	const [catalogReview, setCatalogReview] = useState<QuotationPackage[] | null>(null);
+	const [reviewPackageId, setReviewPackageId] = useState("");
+	const [staleCurrentId, setStaleCurrentId] = useState<string | null>(null);
+	const revisionLocked = revisionSession.kind === "pending" || revisionSession.kind === "uncertain" || revisionSession.kind === "saved";
 	const convex = useConvex();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isReviewing, setIsReviewing] = useState(false);
@@ -666,6 +681,9 @@ export default function QuotationBuilder({
 	const clientsById = new Map<string, ClientSummary>(
 		allClients.map((client) => [client.id, client]),
 	);
+	if (revisionSource) clientsById.set(revisionSource.client_id, {
+		id: revisionSource.client_id, name: revisionSource.saved_document.client_name,
+	});
 	for (const client of Object.values(inlineClients)) {
 		clientsById.set(client.id, client);
 	}
@@ -722,6 +740,12 @@ export default function QuotationBuilder({
 		try {
 			const latestPackages = await convex.query(api.packages.listWithRooms, {});
 			const latest = latestPackages.find((pkg) => String(pkg._id) === methods.getValues("package_id"));
+			if (revisionEnabled) {
+				setCatalogReview(latestPackages);
+				setReviewPackageId(latest ? String(latest._id) : "");
+				setReviewNotice("Review current catalog details, then explicitly choose Use reviewed selection. Opening this review does not change your saved selection or entered values.");
+				return;
+			}
 			setPackageOptions(latestPackages);
 			setSelectedPackage(latest ?? null);
 			setCurrentStep("package");
@@ -747,7 +771,48 @@ export default function QuotationBuilder({
 		}
 	};
 
+	const commitRevision = async (attempt: RevisionAttempt, recovering = false) => {
+		if (revisionFlight.current) return;
+		revisionFlight.current = true;
+		setRevisionSession({kind: "pending", attempt});
+		try {
+			const result = await saveRevisionAttempt(attempt);
+			setRevisionSession(finishRevisionAttempt(attempt, result, recovering));
+			if (result.kind === "rejected") {
+				if (result.conflict === "stale" && qid) {
+					try { const current = await convex.query(api.quotations.getQuotationFullDetails, {target_quotation_id: qid}); setStaleCurrentId(current?.revision_context.current_revision_id ?? null); } catch {}
+				}
+			} else if (result.kind === "saved") {
+				router.push(`/quotations/review/${encodeURIComponent(result.id)}?saved=1`);
+			}
+		} finally { revisionFlight.current = false; }
+	};
+
+	const useReviewedSelection = () => {
+		const pkg = catalogReview?.find(value => String(value._id) === reviewPackageId);
+		if (!pkg || !catalogReview) return;
+		const currentRooms = methods.getValues("selected_rooms") ?? [];
+		const samePackage = methods.getValues("package_id") === String(pkg._id);
+		setPackageOptions(catalogReview);
+		setSelectedPackage(pkg);
+		setValue("package_id", String(pkg._id));
+		setValue("selected_rooms", samePackage ? currentRooms.filter(room => pkg.rooms.some(option => option.enabled && option.room_type === room.room_type)) : []);
+		if (!samePackage || !pkg.flights.some(flight => String(flight._id) === methods.getValues("flight_id"))) setValue("flight_id", "");
+		setSelectionMode("replace");
+		setCatalogReview(null);
+		setCurrentStep("package");
+		setReviewNotice("Reviewed catalog selected for this draft. Check the flight, room quantities and entered prices. Save creates a new draft revision; earlier revisions stay unchanged.");
+	};
+
 	const onSubmit = async (data: QuotationFormValues) => {
+		if (revisionEnabled) {
+			if (revisionLocked || revisionFlight.current) return;
+			try {
+				const attempt = beginRevisionAttempt(data, revisionSource, selectionMode === "retain" ? {mode: "retain"} : {mode: "replace", catalog: selectedPackage}, crypto.randomUUID(), revisionActor ?? "");
+				await commitRevision(attempt);
+			} catch (error) { setRevisionSession({kind: "rejected", message: error instanceof Error ? error.message : "Your draft is retained. Review its details before saving."}); }
+			return;
+		}
 		if (!qid && !createAttempt.current) {
 			createAttempt.current = { requestKey: crypto.randomUUID() };
 		}
@@ -796,6 +861,19 @@ export default function QuotationBuilder({
 				</h2>
 			</div>
 
+			{revisionEnabled && <p className="rounded-lg border bg-muted p-4 text-sm">{revisionSource ? `Editing ${revisionSource.reference_number}. ` : ""}Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.</p>}
+			{revisionSession.kind === "uncertain" || revisionSession.kind === "rejected" ? <div role="alert" className="space-y-3 rounded-lg border border-destructive p-4 text-sm"><p>{revisionSession.message}</p>
+				{revisionSession.kind === "uncertain" && <Button type="button" onClick={() => { if (revisionSession.kind === "uncertain") void commitRevision(revisionSession.attempt, true); }}>Retry this save</Button>}
+				{revisionSession.kind === "rejected" && revisionSession.conflict === "selection" && <Button type="button" variant="outline" onClick={reviewLatestPackage}>Review latest package</Button>}
+				{revisionSession.kind === "rejected" && revisionSession.conflict === "stale" && qid && <Link className="block underline" target="_blank" rel="noopener noreferrer" href={staleCurrentId ? `/quotations/review/${staleCurrentId}` : `/quotations/${qid}/history`}>View current revision in a new tab</Link>}
+				<Link className="block underline" target="_blank" rel="noopener noreferrer" href="/">Open sign-in in a new tab</Link>
+			</div> : null}
+			{catalogReview && <section aria-label="Review catalog replacement" className="space-y-4 rounded-lg border p-4">
+				<h3 className="font-semibold">Review catalog replacement</h3><p className="text-sm">The saved selection is retained until you explicitly use a reviewed selection.</p>
+				<label className="block text-sm">Current catalog package<select className="mt-1 block w-full rounded border bg-background p-2" value={reviewPackageId} onChange={event => setReviewPackageId(event.target.value)}><option value="">Choose a package</option>{catalogReview.map(pkg => <option key={String(pkg._id)} value={String(pkg._id)}>{pkg.name}</option>)}</select></label>
+				{catalogReview.filter(pkg => String(pkg._id) === reviewPackageId).map(pkg => <div key={String(pkg._id)} className="space-y-2 text-sm"><p>{pkg.name} · {pkg.duration}</p>{pkg.flights.map(flight => <p key={String(flight._id)}>{flight.departure_date} {flight.departure_sector} to {flight.return_date} {flight.return_sector}</p>)}{pkg.rooms.filter(room => room.enabled).map(room => <p key={room.room_type}>{room.room_type} · Catalog RM {room.price.toFixed(2)}</p>)}</div>)}
+				<div className="flex flex-wrap gap-3"><Button type="button" disabled={!reviewPackageId || revisionLocked} onClick={useReviewedSelection}>Use reviewed selection</Button><Button type="button" variant="outline" onClick={() => setCatalogReview(null)}>Cancel replacement review</Button></div>
+			</section>}
 			{saveError && (
 				<div role="alert" className="space-y-3 rounded-lg border border-destructive bg-destructive/5 p-4 text-sm">
 					<p>{saveError.message}{saveError.conflict && " No quotation was saved. Your draft is retained."}</p>
@@ -849,7 +927,7 @@ export default function QuotationBuilder({
 					</div>
 				</CardContent>
 			</Card>
-			{qid && stale_fields.length > 0 && (
+			{!revisionEnabled && qid && stale_fields.length > 0 && (
 				<div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
 					<span className="mt-0.5 text-base">⚠</span>
 					<div className="flex-1">
@@ -874,7 +952,7 @@ export default function QuotationBuilder({
 				</div>
 			)}
 
-			{qid && refreshState.status !== "idle" && (
+			{!revisionEnabled && qid && refreshState.status !== "idle" && (
 				<div
 					role={refreshState.status === "failure" || refreshState.status === "uncertain" ? "alert" : "status"}
 					className="rounded-lg border bg-muted p-4 text-sm space-y-2"
@@ -897,7 +975,7 @@ export default function QuotationBuilder({
 				</div>
 			)}
 
-			{qid && !snapshot_version_known && (
+			{!revisionEnabled && qid && !snapshot_version_known && (
 				<div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-500">
 					<span>🕐</span>
 					Some saved snapshot values are unavailable. Verify the current details.
@@ -909,7 +987,9 @@ export default function QuotationBuilder({
 				className="mx-auto lg:mx-0"
 				onSubmit={(event) => {
 					void handleSubmit(onSubmit, (errors) => {
-						if (errors.adds_ons || errors.discounts) setCurrentStep("extras");
+						if (errors.pic_name || errors.branch || errors.client_id) setCurrentStep("basic");
+						else if (errors.package_id || errors.flight_id || errors.selected_rooms) setCurrentStep("package");
+						else if (errors.adds_ons || errors.discounts) setCurrentStep("extras");
 					})(event);
 				}}
 				onKeyDown={(e) => {
@@ -921,6 +1001,7 @@ export default function QuotationBuilder({
 					}
 				}}
 			>
+				<fieldset disabled={revisionLocked || isSubmitting} className="min-w-0">
 				<FormProvider {...methods}>
 					<Card>
 						<CardHeader>
@@ -1047,6 +1128,12 @@ export default function QuotationBuilder({
 							<div
 								className={currentStep === "package" ? "space-y-6" : "hidden"}
 							>
+								{selectionMode === "retain" && revisionSource ? <div className="space-y-4">
+									<p className="font-medium">Retained saved selection</p><p>{revisionSource.saved_document.package_snapshot?.name || "Package not recorded"}</p>
+									<p className="text-sm">{revisionSource.saved_document.flight_snapshot ? `${revisionSource.saved_document.flight_snapshot.departure_date} ${revisionSource.saved_document.flight_snapshot.departure_sector} to ${revisionSource.saved_document.flight_snapshot.return_date} ${revisionSource.saved_document.flight_snapshot.return_sector}` : "Flight details not recorded"}</p>
+									{revisionSource.selected_rooms.map((room, index) => <div key={room.source_item_id} className="grid grid-cols-1 gap-3 rounded border p-3 sm:grid-cols-3"><p>{room.room_type}</p><Controller name={`selected_rooms.${index}.price`} control={methods.control} render={({field, fieldState}) => <Field><FieldLabel htmlFor={`saved-price-${index}`}>Price (RM)</FieldLabel><Input id={`saved-price-${index}`} type="number" min="0" step="0.01" value={field.value} onChange={event => field.onChange(event.target.value === "" ? NaN : Number(event.target.value))} />{fieldState.error && <FieldError errors={[fieldState.error]} />}</Field>} /><Controller name={`selected_rooms.${index}.pax`} control={methods.control} render={({field, fieldState}) => <Field><FieldLabel htmlFor={`saved-pax-${index}`}>Passengers</FieldLabel><Input id={`saved-pax-${index}`} type="number" min="1" step="1" value={field.value} onChange={event => field.onChange(event.target.value === "" ? NaN : Number(event.target.value))} />{fieldState.error && <FieldError errors={[fieldState.error]} />}</Field>} /></div>)}
+									<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>{isReviewing ? "Loading catalog..." : "Review catalog to replace selection"}</Button>
+								</div> : <>
 								<Controller
 									name="package_id"
 									control={methods.control}
@@ -1107,6 +1194,8 @@ export default function QuotationBuilder({
 								<FlightSelection selectedPackage={selectedPackage} />
 
 								<HotelSelection selectedPackage={selectedPackage} />
+								{revisionEnabled && <Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>Review latest catalog</Button>}
+								</>}
 							</div>
 
 							{/* Step 3: Add-ons & Discounts */}
@@ -1137,7 +1226,8 @@ export default function QuotationBuilder({
                 
               )} */}
 
-							<div className="flex gap-2">
+							<div className="flex flex-wrap gap-2">
+								<Link className="self-center px-2 text-sm underline" href={qid ? `/quotations/review/${qid}` : "/quotations"}>Cancel</Link>
 								<Button
 									type="button"
 									variant="outline"
@@ -1150,9 +1240,9 @@ export default function QuotationBuilder({
 									type="submit"
 									className={`gap-2  ${currentStep !== "extras" && !qid ? "hidden" : ""}`}
 									hidden={currentStep !== "extras" && !qid}
-									disabled={isSubmitting}
+									disabled={isSubmitting || revisionLocked}
 								>
-									{isSubmitting ? (
+									{isSubmitting || revisionSession.kind === "pending" ? (
 										<>
 											<svg
 												className="animate-spin h-4 w-4"
@@ -1180,7 +1270,7 @@ export default function QuotationBuilder({
 									) : (
 										<>
 											<Save className="w-4 h-4" />
-											Save
+											{revisionEnabled ? "Save new revision" : "Save"}
 										</>
 									)}
 								</Button>
@@ -1188,6 +1278,7 @@ export default function QuotationBuilder({
 						</CardFooter>
 					</Card>
 				</FormProvider>
+				</fieldset>
 			</form>
 		</div>
 	);

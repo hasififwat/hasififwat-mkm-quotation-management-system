@@ -1,0 +1,26 @@
+{
+  "surface": "Disposable real Convex backend. Backend fixtures, not UI proof.",
+  "checks": [
+    "Zero, R1, R2 preserve exact previous rows and item IDs. Explicit unchanged save creates R2. Same-key concurrent calls and delayed retries return exact receipts. Changed payload conflicts. Revisions do not allocate base numbers.",
+    "Real concurrent distinct requests from one base yield one success and one conflict. Independent families progress. Injected failure after all writes rolls back quotation, items, pointer, receipt, log and counter. Forged and stale requests write nothing.",
+    "Unavailable historical client, package, flight and rooms retain exact saved values without repricing. Frozen document preserves phone and return flight. Receipt replay succeeds after catalog deletion; new replacements reject.",
+    "Concurrent claims admit one worker. Expired crashed attempt is retired and reconciles to ready. Stale finalize and failure cannot replace ready bytes.",
+    "Malformed frozen input fails without losing revision. Restoring the test input and retrying reaches ready. Fixture-only clones are removed before retrieval checks.",
+    "Injected render and upload exceptions reach failed. Public authenticated retry reaches ready without another revision. Injected finalization exception recovers the registered candidate to ready.",
+    "Deployed changed current template, formatter, terms and branding while a frozen job was pending. Retained v1 completed with identical frozen input. Previously issued downloads remain byte-identical after deployment.",
+    "Retired late upload is cleaned by its recorded attempt without deleting authoritative storage. Missing original returns explicit status and download/retry reject.",
+    "Actual scheduled Node renderer stored and authenticated downloads return identical SHA-256. Anonymous retrieval rejects. Ready retry preserves all revisions."
+  ],
+  "runtime": {
+    "node": "v24.19.0",
+    "convex": "1.45.0",
+    "url": "http://127.0.0.1:14265"
+  },
+  "pdf": {
+    "sha256": "6e0ebaabe7f4c916f9b1b3d46b0df4fb61e2a5e5589ae7ba86d49a6861dc692f",
+    "size": 169262,
+    "filename": "1448H-0001.pdf"
+  },
+  "source": "5dd686f3f9a5346bec6343c9199317fca5c80484",
+  "cleanup": "Isolated process stopped and temporary database removed in finally."
+}

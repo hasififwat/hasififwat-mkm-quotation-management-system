@@ -22,8 +22,9 @@ try {
   await fs.mkdir(path.join(root,'convex/_generated'));
   await fs.symlink(path.join(repo,'node_modules'),path.join(root,'node_modules'));
   await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0'}}));
-  await fs.writeFile(path.join(root,'convex.json'), '{}');
-  for (const file of ['schema.ts','quotations.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  await fs.copyFile(path.join(repo,'convex.json'),path.join(root,'convex.json'));
+  await fs.cp(path.join(repo,'src'),path.join(root,'src'),{recursive:true});
+  for (const file of ['quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfModel.ts','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfAssetsV1.json','_generated/api.js','schema.ts','quotations.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/currentQuotations.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
   await fs.mkdir(path.join(root,'src/domain'), {recursive:true});
   for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
   await fs.writeFile(path.join(root,'convex/fixture.ts'), `
