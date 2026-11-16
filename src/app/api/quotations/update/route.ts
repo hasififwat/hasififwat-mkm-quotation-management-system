@@ -1,3 +1,4 @@
+import { saveRevisionResponse } from "~/features/quotation/revision-api";
 import { api } from "convex/_generated/api";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -6,7 +7,11 @@ import { getServerConvexClient } from "~/lib/convex-server";
 
 export async function POST(request: NextRequest) {
 	const client = await getServerConvexClient();
-	const payload = await request.json();
+	let payload;
+		try { payload = await request.json(); }
+		catch { return NextResponse.json({success: false, error: "Invalid JSON save payload"}, {status: 400}); }
+	const revision = await saveRevisionResponse(payload, "append");
+	if (revision) return revision;
 
 	try {
 		if (payload._intent === "refresh_snapshot") {

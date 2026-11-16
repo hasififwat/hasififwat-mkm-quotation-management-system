@@ -1,3 +1,4 @@
+import { saveRevisionResponse } from "~/features/quotation/revision-api";
 import { api } from "convex/_generated/api";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -9,7 +10,11 @@ export async function POST(request: NextRequest) {
 	const client = await getServerConvexClient();
 
 	try {
-		const payload = await request.json();
+		let payload;
+		try { payload = await request.json(); }
+		catch { return NextResponse.json({success: false, error: "Invalid JSON save payload"}, {status: 400}); }
+		const revision = await saveRevisionResponse(payload, "create");
+		if (revision) return revision;
 
 		const quotation = await client.mutation(api.quotations.create, { payload });
 
