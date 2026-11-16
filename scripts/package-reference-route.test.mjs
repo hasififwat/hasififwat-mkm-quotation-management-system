@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import {createRequire} from 'node:module';
 import {test} from 'node:test';
-import {load,packages,state,create,read,transform,normalize,form,quotations,quotePayload,packageSchema} from './helpers/submission-fixtures.mjs';
+import {load,packages,state,create,read,transform,normalize,form,quotations,reviewedQuote,packageSchema} from './helpers/submission-fixtures.mjs';
 const require=createRequire(import.meta.url);
 const {ConvexError}=require('convex/values');
 const ts=require('typescript');
@@ -24,7 +24,7 @@ function route(mutation) {
   return data=>exports.POST({json:async()=>data});
 }
 test('actual reference rejection reaches HTTP400 with affected quotation and no writes',async()=>{
-  const s=state();const id=await create(s,form());await quotations.create._handler(s.ctx,{payload:quotePayload(id,s.tables.package_flights[0]._id)});
+  const s=state();const id=await create(s,form());await quotations.create._handler(s.ctx,{payload:await reviewedQuote(s,id,s.tables.package_flights[0]._id)});
   const data=transform(await read(s,id));data.flights=[];const before=structuredClone(s.tables);s.operations.length=0;
   const response=await route((_ref,args)=>packages.updatePackage._handler(s.ctx,args))(data);
   assert.equal(response.status,400);const body=await response.json();

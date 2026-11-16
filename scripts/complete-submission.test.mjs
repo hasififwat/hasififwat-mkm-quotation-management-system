@@ -1,13 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, quotePayload } from "./helpers/submission-fixtures.mjs";
-
-async function reviewedQuote(s, ...args) {
-  const payload = quotePayload(...args);
-  const displayed = (await packages.listWithRooms._handler(s.ctx, {})).find(pkg => pkg._id === payload.package_id);
-  payload.reviewed_context = displayed.creation_context;
-  return payload;
-}
+import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, reviewedQuote } from "./helpers/submission-fixtures.mjs";
 
 const badPrices = [-1, NaN, Infinity, -Infinity, 1.001];
 const badDates = ["", " ", "2027-02-30", "2027-13-01", "01/01/2027"];
