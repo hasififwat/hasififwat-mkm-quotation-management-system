@@ -66,7 +66,7 @@ function createDatabase() {
     package_rooms: ["p1", "p2"].map((package_id, index) => ({
       _id: `r${index + 1}`, package_id, room_type: "quad", price: 100, enabled: true,
     })),
-    package_hotels: [], package_meals: [], quotation_items: [], quotation_logs: [],
+    package_hotels: [], package_meals: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [],
     quotations: [{
       _id: "q1", hijri_year: "1448H", sequence_num: 1, revision: 0,
       client_id: "c1", client_name: "Verification client", package_id: "p1", flight_id: "f1",
@@ -90,6 +90,7 @@ function createDatabase() {
         async collect() {
           return structuredClone(tables[table].filter((row) => predicates.every(([field, value]) => row[field] === value)));
         },
+        async unique() { const rows = await query.collect(); assert.ok(rows.length <= 1); return rows[0] ?? null; },
       };
       return query;
     },
@@ -156,6 +157,7 @@ async function check(source) {
       adds_ons: [], discounts: [], ...(input.operation === "update" ? { id: "q1" } : {}),
     };
     if (input.operation === "create") {
+      payload.request_key = "d5b28771-25d5-4dca-915f-29a006947747";
       const pkg = state.tables.packages.find(row => row._id === input.package_id);
       if (pkg) payload.reviewed_context = quotationSelectionContext(
         pkg,

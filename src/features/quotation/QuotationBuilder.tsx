@@ -50,7 +50,7 @@ import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 import { STALE_FIELD_LABELS } from "./stale-labels";
-import { saveQuotation } from "./save-quotation";
+import { saveQuotation, type QuotationCreateAttempt } from "./save-quotation";
 import { refreshQuotationSnapshot, type RefreshSnapshotResult, type RefreshSnapshotState } from "./refresh-snapshot";
 
 type Step = "basic" | "package" | "extras";
@@ -612,6 +612,7 @@ export default function QuotationBuilder({
 	const [reviewNotice, setReviewNotice] = useState("");
 	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
 	const refreshRequest = useRef<Promise<RefreshSnapshotResult> | null>(null);
+	const createAttempt = useRef<QuotationCreateAttempt | null>(null);
 
 	const handleRefreshSnapshot = async () => {
 		if (!qid || refreshRequest.current) return;
@@ -747,6 +748,9 @@ export default function QuotationBuilder({
 	};
 
 	const onSubmit = async (data: QuotationFormValues) => {
+		if (!qid && !createAttempt.current) {
+			createAttempt.current = { requestKey: crypto.randomUUID() };
+		}
 		const basePayload = {
 			pic_name: data.pic_name ?? "",
 			branch: data.branch ?? "",
@@ -761,6 +765,7 @@ export default function QuotationBuilder({
 		};
 		const payload = qid ? { ...basePayload, id: data.id ?? qid } : {
 			...basePayload,
+			request_key: createAttempt.current?.requestKey,
 			reviewed_context: selectedPackage?.creation_context,
 		};
 
@@ -902,9 +907,11 @@ export default function QuotationBuilder({
 			<form
 				id="quotation-form"
 				className="mx-auto lg:mx-0"
-				onSubmit={handleSubmit(onSubmit, (errors) => {
-					if (errors.adds_ons || errors.discounts) setCurrentStep("extras");
-				})}
+				onSubmit={(event) => {
+					void handleSubmit(onSubmit, (errors) => {
+						if (errors.adds_ons || errors.discounts) setCurrentStep("extras");
+					})(event);
+				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();

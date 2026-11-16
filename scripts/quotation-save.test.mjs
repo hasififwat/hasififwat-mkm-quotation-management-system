@@ -71,3 +71,19 @@ test("selection conflict returns review metadata without retrying or changing th
   assert.equal(calls, 1);
   assert.deepEqual(draft, before);
 });
+
+test("attempt conflict retains the draft and gives recovery guidance without package review metadata", async () => {
+  const draft = { notes: "Edited retained draft", request_key: "d5b28771-25d5-4dca-915f-29a006947747" };
+  const before = structuredClone(draft);
+  let calls = 0;
+  const message = "An earlier version was saved. Your current entries are kept. Check Quotations.";
+  const result = await saveQuotation(draft, undefined, async () => {
+    calls++;
+    return Response.json({ code: "QUOTATION_ATTEMPT_CONFLICT", error: message }, { status: 409 });
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.message, message);
+  assert.equal(result.selectionConflict, undefined);
+  assert.equal(calls, 1);
+  assert.deepEqual(draft, before);
+});

@@ -482,6 +482,7 @@ export const listPaginated = query({
 export const create = mutation({
 	args: {
 		payload: v.object({
+			request_key: v.optional(v.string()),
 			pic_name: v.string(),
 			branch: v.string(),
 			client_id: v.string(),
@@ -529,6 +530,30 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
+		const requestKey = args.payload.request_key;
+		if (requestKey !== undefined && !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestKey)) {
+			throw new ConvexError({ code: "QUOTATION_ATTEMPT_CONFLICT", message: "This save attempt is invalid. Your entries are kept on this page. Check Quotations before starting a new quotation." });
+		}
+		const requestContent = JSON.stringify(args.payload, (key, value) => {
+			if (key === "request_key" || key === "created_by") return undefined;
+			return value && typeof value === "object" && !Array.isArray(value)
+				? Object.fromEntries(Object.entries(value).sort(([left], [right]) => left.localeCompare(right)))
+				: value;
+		});
+		if (requestKey !== undefined) {
+			const receipt = await ctx.db.query("quotation_create_receipts")
+				.withIndex("by_actor_request_key", (q) => q.eq("actor", actor).eq("request_key", requestKey))
+				.unique();
+			if (receipt) {
+				if (receipt.content !== requestContent) {
+					throw new ConvexError({ code: "QUOTATION_ATTEMPT_CONFLICT", message: "An earlier version of this draft was already saved. Your current entries are kept on this page. Check Quotations to edit the saved record or start a new quotation." });
+				}
+				if (!await ctx.db.get(receipt.result.id as Id<"quotations">)) {
+					throw new ConvexError({ code: "QUOTATION_ATTEMPT_CONFLICT", message: "This quotation was saved and later deleted. Your entries are kept on this page. Check Quotations before starting a new quotation." });
+				}
+				return receipt.result;
+			}
+		}
 		validateQuotationLines(args.payload);
 		const now = new Date().toISOString();
 
@@ -742,7 +767,7 @@ export const create = mutation({
 			}),
 		});
 
-		return {
+		const result: Doc<"quotation_create_receipts">["result"] = {
 			id: String(quotationId),
 			quotation_number: quotationNumber,
 			hijri_year: hijriYear,
@@ -751,6 +776,12 @@ export const create = mutation({
 			total_amount: totalAmount,
 			status: args.payload.status ?? "draft",
 		};
+		if (requestKey !== undefined) {
+			await ctx.db.insert("quotation_create_receipts", {
+				actor, request_key: requestKey, content: requestContent, result,
+			});
+		}
+		return result;
 	},
 });
 

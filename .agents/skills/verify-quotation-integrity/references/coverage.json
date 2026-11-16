@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "9215b8319f9f51e689e3509d3eab2bdff2a9e226",
-  "sourceWasUncommitted": false,
+  "lastSyncCommit": "c2002ce5a9a54d3bd1b3f959e32f985c4df8f6ac",
+  "sourceWasUncommitted": true,
   "checkedAt": "2026-11-16",
   "source": "convex/quotations.ts",
-  "sourceSha256": "646ae1739c1da7c2783f3f1ed78c03d82a9509e20e85ef239189b6a38e1e5e24",
+  "sourceSha256": "2e2e74702a3e6985672b7b3d4cdbd90f24deb734ed72ca66723f4390016006cc",
   "functions": [
     "create",
     "update"
@@ -43,7 +43,8 @@
     "src/app/(protected)/quotations/duplicates/page.tsx",
     "src/domain/quotation-selection-context.ts",
     "convex/packages.ts",
-    "src/features/quotation/QuotationBuilder.tsx"
+    "src/features/quotation/QuotationBuilder.tsx",
+    "src/features/quotation/save-quotation.ts"
   ],
   "versions": {
     "node": "24.19.0",
@@ -58,9 +59,15 @@
   "supportingSourceSha256": {
     "src/domain/umrah-years.ts": "c07e25b3adecff6997bd8cc5053f23420084279e5dad600770ceafe5aa75682c",
     "scripts/helpers/load-typescript.mjs": "b12566af0edae1366357256d5d4bc92e97a5c509e3288550ec1027c7052dff25",
-    "src/domain/submission-validation.ts": "aeb4190dadfd924ea8d969fbc82716645b72ca4675f5bb7260c6d73f13f3e52e",
+    "src/domain/submission-validation.ts": "b43b0415610203823c2bd842a537588b3a616dd2dc9916d98ff593bd89683360",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
     "convex/packages.ts": "2dd88ff1a082f9951b3e6eb22350a10475eaf266adfdc29d2bf6a786fce87511",
-    "src/features/quotation/QuotationBuilder.tsx": "a8278ddff769f6b4aa7a58029c441b1b23748f3d43ea1a9048135c76d51551e6"
+    "src/features/quotation/QuotationBuilder.tsx": "bd8d05724d069b3ed9f873631810e619bb6f4ead05749f0aab9dabb4ebdf3653",
+    "convex/schema.ts": "8597d6ef149cb2900d0f4a098a71e27a2835a36ed554ac2397fc09f26b6c92d3",
+    "src/app/api/quotations/create/route.ts": "0ed6f42ddbab9c39a45145159ab909737ff056293a9db9619fe321d03fdec6db",
+    "src/features/quotation/save-quotation.ts": "d6ecebdbf925d9f4a0dde04c866edc568f6f64cfbaae3ccb5884d23b550406f3"
+  },
+  "additionalVerification": {
+    "createRetries": "scripts/quotation-create-retry.test.mjs executes actual handlers with a sequential in-memory adapter. Actual Convex concurrency is outside this checker."
   }
 }

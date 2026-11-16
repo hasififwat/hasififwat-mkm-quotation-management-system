@@ -1,3 +1,5 @@
+export type QuotationCreateAttempt = { requestKey: string };
+
 type SaveResult =
 	| { ok: true; id: string }
 	| { ok: false; message: string; selectionConflict?: true };
@@ -23,9 +25,11 @@ export async function saveQuotation(
 			if (!qid && response.status === 409) {
 				const body: unknown = await response.json().catch(() => null);
 				if (body && typeof body === "object" && "code" in body &&
-					body.code === "QUOTATION_SELECTION_CONFLICT" && "error" in body &&
+					(body.code === "QUOTATION_SELECTION_CONFLICT" || body.code === "QUOTATION_ATTEMPT_CONFLICT") && "error" in body &&
 					typeof body.error === "string") {
-					return { ok: false, message: body.error, selectionConflict: true };
+					return body.code === "QUOTATION_SELECTION_CONFLICT"
+						? { ok: false, message: body.error, selectionConflict: true }
+						: { ok: false, message: body.error };
 				}
 			}
 			return {
