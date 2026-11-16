@@ -1,0 +1,25 @@
+import { createRequire } from 'node:module';
+import { readFile, writeFile, chmod, realpath } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { spawnSync } from 'node:child_process';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR || path.join(root, '.next/mkm-issue59'));
+const manifest = JSON.parse(await readFile(path.join(runDir, 'run.json'), 'utf8'));
+if (!/^http:\/\/127\.0\.0\.1:[0-9]+$/.test(manifest.url) || manifest.owner !== 'quotation-revisions-59') throw new Error('Unexpected verification backend');
+const authRoot = await realpath(path.join(root, 'node_modules/@convex-dev/auth'));
+const authRequire = createRequire(path.join(authRoot, 'package.json'));
+const { generateKeyPair, exportPKCS8, exportJWK } = await import(pathToFileURL(authRequire.resolve('jose')).href);
+const keys = await generateKeyPair('RS256', { extractable: true });
+const privateKey = (await exportPKCS8(keys.privateKey)).trimEnd().replaceAll('\n', ' ');
+const jwks = JSON.stringify({ keys: [{ use: 'sig', ...await exportJWK(keys.publicKey) }] });
+const variablesPath = path.join(runDir, '.env.auth');
+await writeFile(variablesPath, `JWT_PRIVATE_KEY=${privateKey}\nJWKS=${jwks}\nSITE_URL=http://localhost:${process.env.REVISION_UI_WEB_PORT || '3530'}\nCONVEX_SITE_URL=${manifest.siteUrl}\n`);
+await chmod(variablesPath, 0o600);
+const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('CONVEX_')));
+const cli = path.join(root, 'node_modules/.bin/convex');
+const outcome = spawnSync(cli, ['env', 'set', '--from-file', variablesPath], { cwd: manifest.sourceDir, env: environment, encoding: 'utf8' });
+await writeFile(path.join(runDir, 'auth-config.log'), `${outcome.stdout || ''}${outcome.stderr || ''}`);
+if (outcome.status !== 0) throw new Error('Local auth setup failed. Inspect the private auth-config.log.');
+console.log('Configured generated signing keys on the owned disposable backend.');

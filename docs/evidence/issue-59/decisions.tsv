@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-16T16:55:48Z	base	Merged #57 readers into #58 PDF base on the isolated #59 branch	Both saved reads and issued PDF APIs are prerequisites	44d0ba953c789b9784c06631a099c4858df8b2fe	merge complete
+2026-11-16T16:55:48Z	isolation	Reserved backend 13865/13866 and web 3530 for disposable verification	Separate Before Serializing Shared State keeps other runs untouched	.next/mkm-issue59/run.json	backend and authenticated synthetic fixtures ready
+2026-11-16T17:01:47Z	review	Cleared inherited CONVEX variables and awaited owned process-group exit before cleanup	Independent review found inherited CLI targets and premature cleanup claims	scripts/revision-ui/control-fixture.mjs	corrected before harness commit
