@@ -49,6 +49,7 @@ import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
 import { STALE_FIELD_LABELS } from "./stale-labels";
+import { saveQuotation } from "./save-quotation";
 
 type Step = "basic" | "package" | "extras";
 
@@ -312,9 +313,11 @@ function AddOnSection() {
 										<Input
 											type="number"
 											min={0}
+											step={0.01}
 											{...field}
 											id={`addon-price-${index}`}
-											onChange={(e) => field.onChange(Number(e.target.value))}
+											value={Number.isNaN(field.value) ? "" : field.value}
+											onChange={(e) => field.onChange(e.currentTarget.valueAsNumber)}
 											aria-invalid={fieldState.invalid}
 										/>
 										{fieldState.invalid && (
@@ -454,9 +457,11 @@ function DiscountSection() {
 										<Input
 											type="number"
 											min={0}
+											step={0.01}
 											{...field}
 											id={`discount-price-${index}`}
-											onChange={(e) => field.onChange(Number(e.target.value))}
+											value={Number.isNaN(field.value) ? "" : field.value}
+											onChange={(e) => field.onChange(e.currentTarget.valueAsNumber)}
 											aria-invalid={fieldState.invalid}
 										/>
 										{fieldState.invalid && (
@@ -590,6 +595,7 @@ export default function QuotationBuilder({
 	const [packageOptions, setPackageOptions] = useState(allPackages);
 	const [saveError, setSaveError] = useState<{ message: string; conflict: boolean } | null>(null);
 	const [reviewNotice, setReviewNotice] = useState("");
+
 	const profile = useQuery(api.profiles.getMyProfile);
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
 
@@ -721,25 +727,12 @@ export default function QuotationBuilder({
 		setIsSubmitting(true);
 		setSaveError(null);
 		try {
-			const res = await fetch(
-				qid ? "/api/quotations/update" : "/api/quotations/create",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
-				},
-			);
-			if (!res.ok) {
-				const body = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
-				setSaveError({
-					message: body.error ?? "Could not save the quotation. Try again.",
-					conflict: !qid && res.status === 409 && body.code === "QUOTATION_SELECTION_CONFLICT",
-				});
+			const result = await saveQuotation(payload, qid);
+			if (!result.ok) {
+				setSaveError({ message: result.message, conflict: !qid && result.selectionConflict === true });
 				return;
 			}
-			router.push("/quotations");
-		} catch {
-			setSaveError({ message: "Could not save the quotation. Check your connection and try again.", conflict: false });
+			router.push(`/quotations/review/${encodeURIComponent(result.id)}`);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -758,11 +751,9 @@ export default function QuotationBuilder({
 				</h2>
 			</div>
 
-			{!qid && saveError && (
+			{saveError && (
 				<div role="alert" className="space-y-3 rounded-lg border border-destructive bg-destructive/5 p-4 text-sm">
-					<p>{saveError.message} {saveError.conflict
-						? "No quotation was saved. Your draft is retained."
-						: "Your draft is retained. Check the quotation list before retrying to confirm whether it saved."}</p>
+					<p>{saveError.message}{saveError.conflict && " No quotation was saved. Your draft is retained."}</p>
 					{saveError.conflict && (
 						<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>
 							{isReviewing ? "Loading latest package..." : "Review latest package"}
@@ -1054,6 +1045,14 @@ export default function QuotationBuilder({
 							</div>
 						</CardContent>
 
+						{saveError && (
+							<div role="alert" className="mx-6 rounded-md border border-destructive p-4 text-sm text-destructive">
+								<p>{saveError}</p>
+								<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block underline">
+									Check Quotations in a new tab
+								</Link>
+							</div>
+						)}
 						<CardFooter className="flex justify-between border-t p-6">
 							<Button
 								type="button"

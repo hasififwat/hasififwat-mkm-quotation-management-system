@@ -11,9 +11,9 @@ export async function POST(request: NextRequest) {
 	try {
 		const payload = await request.json();
 
-		await client.mutation(api.quotations.create, { payload });
+		const quotation = await client.mutation(api.quotations.create, { payload });
 
-		return NextResponse.json({ success: true });
+		return NextResponse.json({ success: true, id: quotation.id });
 	} catch (error) {
 		if (error instanceof ConvexError && error.data && typeof error.data === "object" && error.data.code === "QUOTATION_SELECTION_CONFLICT") {
 			return NextResponse.json(
