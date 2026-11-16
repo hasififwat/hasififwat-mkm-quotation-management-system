@@ -88,6 +88,13 @@ Existing browser-only sessions need one fresh sign-in after this change.
 Maintenance scripts that call package functions through `convex run` also need
 an explicit authorized identity through the CLI's `--identity` option. An admin
 deployment credential alone does not supply a user identity to these handlers.
+Package flight functions use the same policy.
+
+For `scripts/compare-mff-flights.js` and `scripts/fix-package-seasons.js`, set
+`CONVEX_RUN_IDENTITY` to the authorized staff identity JSON before running the
+script. Both scripts pass this value to `convex run --identity`. They require
+separate deployment admin access. The season script no longer pushes backend
+code implicitly. Publish reviewed backend changes separately.
 
 ### Environment variables
 

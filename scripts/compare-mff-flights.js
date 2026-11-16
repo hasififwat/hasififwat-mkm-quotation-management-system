@@ -15,7 +15,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { runStaffConvex } from './helpers/staff-convex.mjs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -230,11 +230,7 @@ function parseMff(csvPath) {
 // Fetch DB data via Convex CLI
 // ---------------------------------------------------------------------------
 function runConvex(fn) {
-  const raw = execSync(`npx convex run ${fn}`, {
-    encoding: 'utf8',
-    cwd: ROOT,
-    stdio: ['pipe', 'pipe', 'pipe'],
-  });
+  const raw = runStaffConvex(ROOT, fn);
   return JSON.parse(raw);
 }
 

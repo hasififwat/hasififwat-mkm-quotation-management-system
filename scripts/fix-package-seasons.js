@@ -10,7 +10,7 @@
  *   node scripts/fix-package-seasons.js --apply   # applies the changes to Convex
  */
 
-import { execSync } from 'child_process';
+import { runStaffConvex } from './helpers/staff-convex.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -44,16 +44,8 @@ function getSeasonCode(isoDate) {
 // Fetch helpers
 // ---------------------------------------------------------------------------
 function runConvex(fn) {
-  const raw = execSync(`npx convex run ${fn}`, {
-    encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'],
-  });
+  const raw = runStaffConvex(ROOT, fn);
   return JSON.parse(raw);
-}
-
-function runConvexMutation(fn, argsJson) {
-  execSync(`npx convex run ${fn} '${argsJson}'`, {
-    encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'],
-  });
 }
 
 // ---------------------------------------------------------------------------
@@ -138,17 +130,9 @@ if (!APPLY) {
 // ---------------------------------------------------------------------------
 console.log('\n🔧 Applying…\n');
 
-// Push new mutation first
-execSync('npx convex run --push packages:patchSeason \'{"id":"dummy","season":"x"}\' 2>/dev/null || true', {
-  cwd: ROOT, stdio: 'pipe',
-});
-
 for (const { pkg, derivedSeason } of toFix) {
   try {
-    const argsJson = JSON.stringify({ id: pkg._id, season: derivedSeason });
-    execSync(`npx convex run packages:patchSeason '${argsJson}'`, {
-      encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'],
-    });
+    runStaffConvex(ROOT, 'packages:patchSeason', { id: pkg._id, season: derivedSeason });
     console.log(`  ✓ ${pkg.name}: "${pkg.season}" → "${derivedSeason}"`);
   } catch (err) {
     console.error(`  ✗ ${pkg.name}: ${err.message.split('\n')[0]}`);
