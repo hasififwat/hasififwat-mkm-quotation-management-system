@@ -107,41 +107,36 @@ export default function PDFPreviewMobile({ details }: Props) {
 
 				{/* Room and Add-ons */}
 				<div className="mt-3">
-					{/* Table */}
-					<div className="flex flex-row">
-						{/* PACKAGE & ROOMS COLUMNS */}
-						<div className="w-[140px] shrink-0">
-							{/* Header Row */}
-							<div className="bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
+					<div>
+						<div className="flex flex-row">
+							<div className="w-[140px] shrink-0 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
 								PAKEJ/BILIK
 							</div>
-							{/* Data Rows */}
-							<div className="p-1 text-center border-l border-b border-black">
-								{pkg.name.toLocaleUpperCase()} - {paxCount} PAX
-							</div>
-						</div>
-						{/* ROOMS COLUMNS */}
-						{rooms.map((room) => (
-							<div className="flex-1 min-w-0" key={room.id}>
-								{/* Header Row */}
-								<div className="bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black truncate">
+							{rooms.map((room) => (
+								<div
+									key={room.id}
+									className="flex-1 min-w-0 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black"
+								>
 									{room.room_type.toUpperCase()}/PAX
 								</div>
-								{/* Data Rows */}
-								<div className="p-1 text-center border-l border-b border-black">
-									{fmt(room.price)} X ({room.pax} pax)
-								</div>
-							</div>
-						))}
-
-						{/* SUBTOTAL COLUMN */}
-						<div className="w-[120px] shrink-0">
-							{/* Header Row */}
-							<div className="bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
+							))}
+							<div className="w-[120px] shrink-0 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
 								JUMLAH
 							</div>
-							{/* Data Rows */}
-							<div className="p-1 text-center border-l border-b border-r border-black bg-slate-200">
+						</div>
+						<div className="flex flex-row">
+							<div className="w-[140px] shrink-0 p-1 text-center border-l border-b border-black">
+								{pkg.name.toLocaleUpperCase()} - {paxCount} PAX
+							</div>
+							{rooms.map((room) => (
+								<div
+									key={room.id}
+									className="flex-1 min-w-0 p-1 text-center border-l border-b border-black"
+								>
+									{fmt(room.price)} X ({room.pax} pax)
+								</div>
+							))}
+							<div className="w-[120px] shrink-0 p-1 text-center border-l border-b border-r border-black bg-slate-200">
 								{fmt(packageTotal)}
 							</div>
 						</div>
@@ -238,36 +233,37 @@ export default function PDFPreviewMobile({ details }: Props) {
 				</div>
 
 				{/* Package Inclusions and Exclusions */}
-				<div className="mt-3">
-					{/* Header */}
-					<div className="flex flex-row">
-						<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
-							PAKEJ TERMASUK
+				{(inclusionItems.length > 0 || exclusionItems.length > 0) && (
+					<div className="mt-3">
+						{/* Header */}
+						<div className="flex flex-row">
+							<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
+								PAKEJ TERMASUK
+							</div>
+							<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
+								PAKEJ TIDAK TERMASUK
+							</div>
 						</div>
-						<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
-							PAKEJ TIDAK TERMASUK
+						{/* Data */}
+						<div className="flex flex-row">
+							<div className="flex-1 p-1 border-l border-b border-black text-left ">
+								{inclusionItems.map((inc) => (
+									<div key={`inclusion-${inc}`} className="mb-2 leading-relaxed">
+										- {inc}
+									</div>
+								))}
+							</div>
+							<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
+								{exclusionItems.map((inc) => (
+									<div key={`exclusion-${inc}`} className="mb-2 leading-relaxed">
+										- {inc}
+									</div>
+								))}
+							</div>
 						</div>
-					</div>
-					{/* Data */}
-					<div className="flex flex-row">
-						<div className="flex-1 p-1 border-l border-b border-black text-left ">
-							{inclusionItems.map((inc) => (
-								<div key={`inclusion-${inc}`} className="mb-2 leading-relaxed">
-									- {inc}
-								</div>
-							))}
-						</div>
-						<div className="flex-1 p-1 border-l border-r border-b border-black text-left">
-							{exclusionItems.map((inc) => (
-								<div key={`exclusion-${inc}`} className="mb-2 leading-relaxed">
-									- {inc}
-								</div>
-							))}
-						</div>
-					</div>
 
-					{/* Inclusions */}
-				</div>
+					</div>
+				)}
 
 				{/* Terms and Conditions */}
 				<div className="mt-3">
