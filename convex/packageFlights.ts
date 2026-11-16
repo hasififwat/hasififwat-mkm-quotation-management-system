@@ -1,7 +1,12 @@
 import { requireFlightDates } from "../src/domain/submission-validation";
 import type { Id } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+
+async function requireFlightAccess(ctx: Pick<QueryCtx, "auth">): Promise<void> {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Not authenticated");
+}
 
 export const addFlight = mutation({
   args: {
@@ -16,6 +21,7 @@ export const addFlight = mutation({
     source: v.optional(v.union(v.literal("sync"), v.literal("manual"))),
   },
   handler: async (ctx, args) => {
+    await requireFlightAccess(ctx);
     requireFlightDates(args);
     const now = new Date().toISOString();
     const id = await ctx.db.insert("package_flights", {
@@ -37,6 +43,7 @@ export const addFlight = mutation({
 export const deleteFlight = mutation({
   args: { id: v.id("package_flights") },
   handler: async (ctx, args) => {
+    await requireFlightAccess(ctx);
     await ctx.db.delete(args.id);
   },
 });
@@ -44,6 +51,7 @@ export const deleteFlight = mutation({
 export const setSourceManual = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireFlightAccess(ctx);
     const flights = await ctx.db.query("package_flights").collect();
     let count = 0;
     for (const f of flights) {
@@ -59,6 +67,7 @@ export const setSourceManual = mutation({
 export const promoteToSync = mutation({
   args: { ids: v.array(v.string()) },
   handler: async (ctx, args) => {
+    await requireFlightAccess(ctx);
     for (const id of args.ids) {
       const f = await ctx.db.get(id as Id<"package_flights">);
       if (f && f.source === "manual") {
@@ -71,6 +80,7 @@ export const promoteToSync = mutation({
 export const listAll = query({
   args: {},
   handler: async (ctx) => {
+    await requireFlightAccess(ctx);
     const [flights, packages] = await Promise.all([
       ctx.db.query("package_flights").collect(),
       ctx.db.query("packages").collect(),
