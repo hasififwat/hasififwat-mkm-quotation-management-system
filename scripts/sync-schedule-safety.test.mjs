@@ -45,3 +45,11 @@ test('existing edited-flight behavior does not need removal authorization',()=>{
   assert.equal(result.rows[0].status,'edited');
   assert.equal(buildSyncPlan([],result.rows,packages).flightsToAdd.length,1);
 });
+
+test('unrecognized schedule data in the preamble blocks removals',()=>{
+  const initial=parse(csv(line()));
+  const preamble=[...Array(9).fill(''),line('NEW UMJ ALIAS','unknown date')];
+  const result=parse([...preamble,line()].join('\n'),undefined,initial.removalScopes.map(s=>s.key));
+  assert.ok(result.diagnostics.some(d=>d.row===10));
+  assert.equal(result.rows.filter(r=>r.status==='removed').length,0);
+});

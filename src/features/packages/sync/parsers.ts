@@ -660,7 +660,7 @@ export function parseMffCsv(
     const row = parseCSVLine(lines[i]);
     const get = (idx: number) => (row[idx] ?? "").trim();
     if (i < 10) {
-      if (parseMffDate(get(9)) || Object.hasOwn(MFF_NAME_MAP, get(35).toUpperCase())) {
+      if (get(8) || get(9) || get(14) || get(15) || get(35)) {
         diagnostics.push({ row: i + 1, code: "unsupported_format", message: "Schedule data appears before the supported MFF data section." });
       }
       continue;
