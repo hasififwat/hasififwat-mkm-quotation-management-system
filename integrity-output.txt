@@ -1,0 +1,1 @@
+{"evidence":"/tmp/mkm-q005-confirmation-proof/integrity.json","cases":864,"failures":{"authenticated_writes":0,"flight_matches_package":0},"adapterErrors":0,"mutationTests":[{"operation":"create","detected":true},{"operation":"update","detected":true},{"operation":"create","detected":true},{"operation":"update","detected":true}],"baselineRestored":true}

@@ -1,0 +1,12 @@
+{
+  "instance": "q005-confirmation",
+  "portsFree": [
+    3340,
+    3440,
+    3441
+  ],
+  "ownedTabClosed": true,
+  "ownedServicesStopped": true,
+  "fixtureDataKeysCredentialsSnapshotsRemoved": true,
+  "sharedWrites": false
+}

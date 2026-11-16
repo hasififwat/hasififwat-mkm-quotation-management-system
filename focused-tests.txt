@@ -1,0 +1,48 @@
+✔ SHA256 token has fixed size and ignores property and row order (5.793167ms)
+✔ same timestamp, legacy snapshot, item and delimiter changes remain distinct (2.150541ms)
+✔ refresh sends only the saved quotation ID and refresh intent (1.43875ms)
+✔ HTTP 400 rejects refresh without exposing the backend error (0.271875ms)
+✔ HTTP 401 rejects refresh without exposing the backend error (0.120125ms)
+✔ HTTP 403 rejects refresh without exposing the backend error (0.068292ms)
+✔ HTTP 404 rejects refresh without exposing the backend error (0.050333ms)
+✔ HTTP 409 rejects refresh without exposing the backend error (0.05075ms)
+✔ HTTP 500 tells staff to verify a possible commit before retrying (0.100959ms)
+✔ HTTP 502 tells staff to verify a possible commit before retrying (0.069209ms)
+✔ HTTP 503 tells staff to verify a possible commit before retrying (0.119792ms)
+✔ unknown success response null remains uncertain (0.169292ms)
+✔ unknown success response {} remains uncertain (0.067542ms)
+✔ unknown success response {"success":true} remains uncertain (0.052291ms)
+✔ unknown success response {"refreshed":true} remains uncertain (0.047667ms)
+✔ unknown success response {"success":false,"refreshed":true} remains uncertain (0.030834ms)
+✔ unknown success response {"success":"true","refreshed":true} remains uncertain (0.032917ms)
+✔ a rejected fetch remains uncertain and preserves safe recovery copy (0.082084ms)
+✔ a lost or malformed response after possible commit remains uncertain (0.050917ms)
+✔ repeated refresh activation sends once while pending and revalidates only on success (2.51675ms)
+✔ repeated refresh activation sends once while pending and revalidates only on failure (1.71325ms)
+✔ repeated refresh activation sends once while pending and revalidates only on uncertain (2.110583ms)
+✔ refresh rejects a changed saved quotation before snapshot or log writes (8.950791ms)
+✔ loaded A context rejects review after another editor saves B (2.421375ms)
+✔ confirmation rejects changed saved content without writes (1.773834ms)
+✔ confirmation rejects changed saved content without writes (1.486ms)
+✔ confirmation rejects changed saved content without writes (1.302541ms)
+✔ confirmation rejects changed saved content without writes (1.669084ms)
+✔ confirmation rejects changed saved content without writes (1.013958ms)
+✔ confirmation rejects packages.name without parent timestamp changes (1.591167ms)
+✔ confirmation rejects package_rooms.price without parent timestamp changes (1.018209ms)
+✔ confirmation rejects package_rooms.enabled without parent timestamp changes (1.038542ms)
+✔ confirmation rejects package_flights.departure_sector without parent timestamp changes (0.938292ms)
+✔ confirmation rejects package_hotels.name without parent timestamp changes (0.842667ms)
+✔ confirmation rejects package_meals.meal_type without parent timestamp changes (1.589917ms)
+✔ success writes reviewed snapshots and preserves every charge and item (1.981292ms)
+✔ unrelated package changes do not conflict (1.208209ms)
+✔ legacy snapshots and original prices can be reviewed and refreshed (1.3605ms)
+✔ missing or unrelated saved flight blocks review without writes (1.2745ms)
+✔ anonymous review and confirmation reject (0.931625ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 486.05625
