@@ -1,0 +1,12 @@
+{
+  "services": "stopped",
+  "ports": [
+    3610,
+    3620,
+    3621
+  ],
+  "instance": "removed including generated credentials",
+  "preview": "closed",
+  "native": "owned incognito window remains; no further window switching",
+  "shared": "untouched"
+}

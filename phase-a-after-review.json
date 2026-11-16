@@ -1,0 +1,101 @@
+{
+  "fixture": {
+    "packageId": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+    "flightId": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+    "quoteId": "m572gabj5y6e65h7e1h7rw2rpx8jbm14"
+  },
+  "packages": [
+    {
+      "_id": "mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt",
+      "hotels": [
+        {
+          "enabled": true,
+          "hotel_type": "Makkah",
+          "meals": [],
+          "name": "Test Makkah Hotel"
+        },
+        {
+          "enabled": true,
+          "hotel_type": "Madinah",
+          "meals": [],
+          "name": "Test Madinah Hotel"
+        }
+      ],
+      "name": "QUOTE-003 Test Package",
+      "season": "2026/2027",
+      "source": "manual",
+      "status": "published",
+      "transport": "Bus",
+      "year": "2026/2027"
+    },
+    {
+      "_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+      "hotels": [
+        {
+          "enabled": true,
+          "hotel_type": "OTHER",
+          "meals": [],
+          "name": "Test Hotel"
+        }
+      ],
+      "name": "MENARA JAM",
+      "season": "MS - NOV",
+      "source": "sync",
+      "status": "published",
+      "transport": "",
+      "year": "2026/2027"
+    }
+  ],
+  "flights": [
+    {
+      "_id": "k57437yx3b54ahby978d1f928h8ja4qc",
+      "departure_date": "2026-12-10",
+      "departure_sector": "KUL-JED",
+      "flight": "TEST003",
+      "month": "December",
+      "package_id": "mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt",
+      "package_name": "QUOTE-003 Test Package",
+      "package_season": "2026/2027",
+      "return_date": "2026-12-22",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    },
+    {
+      "_id": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-JED",
+      "flight": "Malaysia Airlines",
+      "month": "NOV",
+      "package_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+      "package_name": "MENARA JAM",
+      "package_season": "MS - NOV",
+      "return_date": "2026-11-20",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    }
+  ],
+  "quotation": {
+    "adds_ons": [],
+    "branch": "Local",
+    "client_id": "jx79yatj03yp7b28gs49fwe3058jbsaq",
+    "discounts": [],
+    "flight_id": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+    "id": "m572gabj5y6e65h7e1h7rw2rpx8jbm14",
+    "notes": "",
+    "package_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+    "pic_name": "ISSUE-044 Test Agent",
+    "reference_number": "1448H-0001",
+    "selected_rooms": [
+      {
+        "pax": 1,
+        "price": 1200,
+        "room_type": "Quad"
+      }
+    ],
+    "snapshot_version_known": true,
+    "stale_fields": [],
+    "status": "draft"
+  }
+}

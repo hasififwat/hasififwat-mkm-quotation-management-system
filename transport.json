@@ -1,0 +1,11 @@
+{
+  "reference": {
+    "code": "PACKAGE_REFERENCE_CONFLICT",
+    "message": "The package was not saved. 1448H-0001 (m572gabj5y6e65h7e1h7rw2rpx8jbm14) needs flight k57bz9443ay82f52kh6mv3xcvn8jbhrd. Keep these flights and room types, or change the affected quotations before removing them. Your complete draft is still here."
+  },
+  "duplicate": [
+    "fulfilled",
+    "rejected"
+  ],
+  "anonymous": "rejected"
+}

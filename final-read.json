@@ -1,0 +1,162 @@
+{
+  "fixture": {
+    "packageId": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+    "flightId": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+    "quoteId": "m572gabj5y6e65h7e1h7rw2rpx8jbm14"
+  },
+  "packages": [
+    {
+      "_id": "mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt",
+      "editToken": "package-edit-v1:{\"flights\":[{\"_creationTime\":1794819956623.4666,\"_id\":\"k57437yx3b54ahby978d1f928h8ja4qc\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"departure_date\":\"2026-12-10\",\"departure_sector\":\"KUL-JED\",\"flight\":\"TEST003\",\"month\":\"December\",\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"return_date\":\"2026-12-22\",\"return_sector\":\"JED-KUL\"}],\"hotels\":[{\"_creationTime\":1794819956623.4653,\"_id\":\"k9700qk1ynvmhchf5btqfskvs98jawz6\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"enabled\":true,\"hotel_type\":\"Makkah\",\"name\":\"Test Makkah Hotel\",\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"placeholder\":\"\"},{\"_creationTime\":1794819956623.4656,\"_id\":\"k976ef4v84chrfvjaxt8at0cc98jbtdw\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"enabled\":true,\"hotel_type\":\"Madinah\",\"name\":\"Test Madinah Hotel\",\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"placeholder\":\"\"}],\"meals\":[],\"package\":{\"_creationTime\":1794819956623.465,\"_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"duration\":\"12 HARI 10 MALAM\",\"exclusions\":\"\",\"inclusions\":\"\",\"name\":\"QUOTE-003 Test Package\",\"season\":\"2026/2027\",\"source\":\"manual\",\"status\":\"published\",\"transport\":\"Bus\",\"updated_at\":\"2026-11-16T09:05:56.623Z\",\"year\":\"2026/2027\"},\"rooms\":[{\"_creationTime\":1794819956623.4658,\"_id\":\"kh72xtkdfkw22z9ewdm3jr454n8jbczs\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"enabled\":true,\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"price\":5000,\"room_type\":\"Quad\"},{\"_creationTime\":1794819956623.466,\"_id\":\"kh74sfk5pbg9dt9z71bg9jset58jaz7x\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"enabled\":true,\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"price\":5500,\"room_type\":\"Triple\"},{\"_creationTime\":1794819956623.4663,\"_id\":\"kh7a3v7cxfjxx80y6s1v9p5bwn8jbpmc\",\"created_at\":\"2026-11-16T09:05:56.623Z\",\"enabled\":true,\"package_id\":\"mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt\",\"price\":6000,\"room_type\":\"Double\"}]}",
+      "hotels": [
+        {
+          "enabled": true,
+          "hotel_type": "Makkah",
+          "meals": [],
+          "name": "Test Makkah Hotel"
+        },
+        {
+          "enabled": true,
+          "hotel_type": "Madinah",
+          "meals": [],
+          "name": "Test Madinah Hotel"
+        }
+      ],
+      "name": "QUOTE-003 Test Package",
+      "rooms": [
+        {
+          "enabled": true,
+          "price": 5000,
+          "room_type": "Quad"
+        },
+        {
+          "enabled": true,
+          "price": 5500,
+          "room_type": "Triple"
+        },
+        {
+          "enabled": true,
+          "price": 6000,
+          "room_type": "Double"
+        }
+      ],
+      "season": "2026/2027",
+      "source": "manual",
+      "status": "published",
+      "transport": "Bus",
+      "year": "2026/2027"
+    },
+    {
+      "_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+      "editToken": "package-edit-v1:{\"flights\":[{\"_creationTime\":1794820697565.898,\"_id\":\"k57588mh4bqdjpfzdj9mnmcsnn8ja19a\",\"created_at\":\"2026-11-16T09:18:17.565Z\",\"departure_date\":\"2026-11-12\",\"departure_sector\":\"KUL-MED\",\"flight\":\"Saudi Airlines\",\"month\":\"NOV\",\"package_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"return_date\":\"2026-11-22\",\"return_sector\":\"JED-KUL\",\"source\":\"sync\"},{\"_creationTime\":1794820096199.2207,\"_id\":\"k57bz9443ay82f52kh6mv3xcvn8jbhrd\",\"created_at\":\"2026-11-16T09:08:16.199Z\",\"departure_date\":\"2026-11-10\",\"departure_sector\":\"KUL-JED\",\"flight\":\"Malaysia Airlines\",\"month\":\"NOV\",\"package_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"return_date\":\"2026-11-20\",\"return_sector\":\"JED-KUL\"}],\"hotels\":[{\"_creationTime\":1794820730565.779,\"_id\":\"k97abtstp74a7s9fqdx53kxxb18jbggw\",\"created_at\":\"2026-11-16T09:18:50.565Z\",\"enabled\":false,\"hotel_type\":\"MAKKAH\",\"name\":\"\",\"package_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"placeholder\":\"\"},{\"_creationTime\":1794820730565.7793,\"_id\":\"k97ec5pedxk895b1mdpqvvt8718jawvx\",\"created_at\":\"2026-11-16T09:18:50.565Z\",\"enabled\":false,\"hotel_type\":\"MADINAH\",\"name\":\"\",\"package_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"placeholder\":\"\"}],\"meals\":[],\"package\":{\"_creationTime\":1794820096199.22,\"_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"created_at\":\"2026-11-16T09:08:16.199Z\",\"duration\":\"12 days\",\"exclusions\":\"\",\"inclusions\":\"\",\"name\":\"MENARA JAM\",\"season\":\"MS - NOV\",\"source\":\"sync\",\"status\":\"published\",\"transport\":\"\",\"updated_at\":\"2026-11-16T09:18:50.565Z\",\"year\":\"2026/2027\"},\"rooms\":[{\"_creationTime\":1794820730565.7795,\"_id\":\"kh77kvyr1tmp83gseke8j79bad8janns\",\"created_at\":\"2026-11-16T09:18:50.565Z\",\"enabled\":true,\"package_id\":\"mh793z1h5n9c4f84hgk8g7c5958jbk8p\",\"price\":2600,\"room_type\":\"Quad\"}]}",
+      "hotels": [
+        {
+          "enabled": false,
+          "hotel_type": "MAKKAH",
+          "meals": [],
+          "name": ""
+        },
+        {
+          "enabled": false,
+          "hotel_type": "MADINAH",
+          "meals": [],
+          "name": ""
+        }
+      ],
+      "name": "MENARA JAM",
+      "rooms": [
+        {
+          "enabled": true,
+          "price": 2600,
+          "room_type": "Quad"
+        }
+      ],
+      "season": "MS - NOV",
+      "source": "sync",
+      "status": "published",
+      "transport": "",
+      "year": "2026/2027"
+    },
+    {
+      "_id": "mh739w6nna2e8km9t2ex2vdjv18jazrg",
+      "editToken": "package-edit-v1:{\"flights\":[],\"hotels\":[],\"meals\":[],\"package\":{\"_creationTime\":1794820750539.444,\"_id\":\"mh739w6nna2e8km9t2ex2vdjv18jazrg\",\"created_at\":\"2026-11-16T09:19:10.539Z\",\"duration\":\"12 days\",\"exclusions\":\"\",\"inclusions\":\"\",\"name\":\"DUP LOCAL\",\"season\":\"MS - NOV\",\"source\":\"sync\",\"status\":\"unpublished\",\"transport\":\"\",\"updated_at\":\"2026-11-16T09:19:10.539Z\",\"year\":\"2026/2027\"},\"rooms\":[]}",
+      "hotels": [],
+      "name": "DUP LOCAL",
+      "rooms": [],
+      "season": "MS - NOV",
+      "source": "sync",
+      "status": "unpublished",
+      "transport": "",
+      "year": "2026/2027"
+    }
+  ],
+  "flights": [
+    {
+      "_id": "k57437yx3b54ahby978d1f928h8ja4qc",
+      "departure_date": "2026-12-10",
+      "departure_sector": "KUL-JED",
+      "flight": "TEST003",
+      "month": "December",
+      "package_id": "mh77zk90qcwv9j9p6hnc5gdy7h8jb5jt",
+      "package_name": "QUOTE-003 Test Package",
+      "package_season": "2026/2027",
+      "return_date": "2026-12-22",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    },
+    {
+      "_id": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+      "departure_date": "2026-11-10",
+      "departure_sector": "KUL-JED",
+      "flight": "Malaysia Airlines",
+      "month": "NOV",
+      "package_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+      "package_name": "MENARA JAM",
+      "package_season": "MS - NOV",
+      "return_date": "2026-11-20",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "manual"
+    },
+    {
+      "_id": "k57588mh4bqdjpfzdj9mnmcsnn8ja19a",
+      "departure_date": "2026-11-12",
+      "departure_sector": "KUL-MED",
+      "flight": "Saudi Airlines",
+      "month": "NOV",
+      "package_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+      "package_name": "MENARA JAM",
+      "package_season": "MS - NOV",
+      "return_date": "2026-11-22",
+      "return_flight": "",
+      "return_sector": "JED-KUL",
+      "source": "sync"
+    }
+  ],
+  "quotation": {
+    "adds_ons": [],
+    "branch": "Local",
+    "client_id": "jx79yatj03yp7b28gs49fwe3058jbsaq",
+    "discounts": [],
+    "flight_id": "k57bz9443ay82f52kh6mv3xcvn8jbhrd",
+    "id": "m572gabj5y6e65h7e1h7rw2rpx8jbm14",
+    "notes": "",
+    "package_id": "mh793z1h5n9c4f84hgk8g7c5958jbk8p",
+    "pic_name": "ISSUE-044 Test Agent",
+    "reference_number": "1448H-0001",
+    "selected_rooms": [
+      {
+        "pax": 1,
+        "price": 1200,
+        "room_type": "Quad"
+      }
+    ],
+    "snapshot_version_known": true,
+    "stale_fields": [
+      "room_pricing",
+      "hotels"
+    ],
+    "status": "draft"
+  }
+}

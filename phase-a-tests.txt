@@ -1,0 +1,16 @@
+✔ edited flight success preserves quotation selection (26.152833ms)
+✔ edited flight rejection preserves quotation selection (1.621542ms)
+✔ referenced genuine deletion rejects without writes (1.059084ms)
+✔ unreferenced genuine deletion succeeds (0.61425ms)
+✔ CSV room removal rejects before package, hotel or room writes (0.700083ms)
+✔ CSV same-type room ID churn preserves saved prices and permits quotation save (0.597042ms)
+✔ new flight update rejects anonymous access before database operations (0.072458ms)
+✔ flight update rejects package mismatch and invalid dates without writes (0.539042ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 714.663125
