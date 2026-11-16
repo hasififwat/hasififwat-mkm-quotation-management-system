@@ -15,9 +15,7 @@ const url = `http://127.0.0.1:${port}`;
 const secret = randomBytes(32).toString('hex');
 const name = 'pdf-artifact-fixture';
 const adminKey = execFileSync(binary, ['keygen','admin-key','--instance-name',name,'--instance-secret',secret], {encoding:'utf8'}).trim();
-const backend = spawn(binary, ['--interface','127.0.0.1','--port',String(port),'--site-proxy-port',String(port+1),'--instance-name',name,'--instance-secret',secret,'--disable-beacon',path.join(root,'fixture.sqlite3')], {cwd:root,stdio:['ignore','pipe','pipe']});
-backend.stdout.on('data',()=>{});
-backend.stderr.on('data',()=>{});
+const backend = spawn(binary, ['--interface','127.0.0.1','--port',String(port),'--site-proxy-port',String(port+1),'--instance-name',name,'--instance-secret',secret,'--disable-beacon',path.join(root,'fixture.sqlite3')], {cwd:root,stdio:'ignore',detached:true});
 const result = { surface:'Disposable real Convex backend. Backend fixtures, not UI proof.', checks:[] };
 try {
   await fs.mkdir(path.join(root,'convex/lib'), {recursive:true});
@@ -253,7 +251,7 @@ export const upload=internalAction({args:{bytes:v.bytes()},handler:async(ctx,{by
   console.log(JSON.stringify(result,null,2));
   if(process.env.REVISION_EVIDENCE) await fs.writeFile(process.env.REVISION_EVIDENCE,JSON.stringify(result,null,2)+'\n');
 } finally {
-  backend.kill('SIGTERM');
+  process.kill(-backend.pid, 'SIGTERM');
   await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));
   await fs.rm(root,{recursive:true,force:true});
 }
