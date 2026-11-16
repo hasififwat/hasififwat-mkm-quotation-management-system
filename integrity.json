@@ -1,9 +1,9 @@
 {
   "checker": "finite exhaustive execution of actual Convex handlers; in-memory database adapter",
-  "generatedAt": "2026-11-16T04:00:18.711Z",
-  "commit": "c1af0959cee2327548298891226885377f7d6bfa",
+  "generatedAt": "2026-11-16T04:04:12.842Z",
+  "commit": "7e2de6a810394da5883c7149579f729e9b117dea",
   "source": "convex/quotations.ts",
-  "sourceSha256": "fbed2b99b72ee7a258f72258707861db572770749d94dacb687f726699157101",
+  "sourceSha256": "2c288a0a45762d4c8951e57ef319607ecdb1afd7df29ccdaf2b9edda79983eaa",
   "versions": {
     "node": "v24.19.0",
     "typescript": "5.9.3",
