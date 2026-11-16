@@ -46,3 +46,14 @@ export function requireFlightDates(flight: FlightDates, label = "Flight") {
 	const errors = Object.values(flightDateErrors(flight));
 	if (errors.length) throw new Error(`${label}: ${errors.join(" ")}`);
 }
+
+export function descriptionError(value: string): string | undefined {
+	if (!value.trim()) return "Enter a description.";
+}
+
+export function requireDescriptions(rows: ReadonlyArray<{ name: string }>, label: string) {
+	rows.forEach((row, index) => {
+		const error = descriptionError(row.name);
+		if (error) throw new Error(`${label} ${index + 1}: ${error}`);
+	});
+}
