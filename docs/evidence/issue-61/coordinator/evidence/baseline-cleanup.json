@@ -1,0 +1,16 @@
+{
+  "owner": "quotation-revisions-root",
+  "cleanedAt": "2026-11-16T17:35:20.102386+00:00",
+  "removedRunDir": "/Users/hasif.ifwat/Documents/personal/mkm-quotation-management-system-next/.next/mkm-revision-integration",
+  "privateDatabaseStorageSigningKeysAndAccountRemoved": true,
+  "ownedPortsClosed": [
+    3500,
+    3510,
+    3511
+  ],
+  "nonSecretEvidencePreserved": "work/quotation-revisions-run/evidence/manifest.json",
+  "browser": "No native browser action taken during cleanup. User windows/PR tabs preserved; an inert local fixture tab may remain.",
+  "originalBackendProcessGroupStillExists": false,
+  "orphanedNodeExecutorPidRemoved": 22170,
+  "orphanOwnershipVerifiedBy": "Original process group6543 and exact baseline cwd before SIGTERM"
+}

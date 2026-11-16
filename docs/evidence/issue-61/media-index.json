@@ -1,0 +1,92 @@
+{
+  "uiOrigin": "http://127.0.0.1:3540",
+  "uiSource": "79540a434f1d1215fc36e9ccd99996df5338ca19",
+  "implementation": "332074728a056fd08ed22fbf9d8fa2a144338e50",
+  "media": [
+    {
+      "file": "gate-states.mp4",
+      "sha256": "5d9c1b890d65b64843b3c87ce03f7b2f63c3b2b7ed4db5c20c58c12e7ee375d6",
+      "bytes": 836720,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "issued-sample.pdf",
+      "sha256": "3116ab30833a01d377b111c7286548f641dacd734e7f9f3d873cc2833b81ac72",
+      "bytes": 169262,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "missing-original-mobile.mp4",
+      "sha256": "614772b3cc276d336e0cfd8fd42f35f33f870055c1c1d34e01e4754204467325",
+      "bytes": 192469,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "missing-original-mobile.png",
+      "sha256": "1f07980155eaefbd8da7a4edd491739b0549c4c9ebfaa5bdeac68830b6870ed8",
+      "bytes": 305655,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "mobile-stale.mp4",
+      "sha256": "5ce84ded9fe328621c22e5e47b83530480fc0f61f58498f8ea061e592cc43814",
+      "bytes": 157601,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "mobile-stale.png",
+      "sha256": "a97554718f485da9e5ee29c61c925b86da2e0fadb0ced44276e77268fce9b162",
+      "bytes": 288183,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "old-review-reload.mp4",
+      "sha256": "df05af45b73d2939c273a00b365ed4cb35765a7d03fb9e251cff58d91d646b2d",
+      "bytes": 316425,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "old-review-reload.png",
+      "sha256": "c2fb30aefb76c391420c58be303dc1d5e1e9106333223e8630235f315d725105",
+      "bytes": 558398,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "pdf-failed.png",
+      "sha256": "0c7b290c4939515ed3f3be79f6c5353ea109254a84b27ed9347f449c86848616",
+      "bytes": 517914,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "pdf-failure-retry.mp4",
+      "sha256": "e676c3c37e2c3ee2c5e095d467bb7ae1ba2097fd24648e2a171ee6cd26549b61",
+      "bytes": 156480,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "save-r0-r1.mp4",
+      "sha256": "41ab946061ec7171bb85b3e486a55560842a0f1506f2aa95fb2ac87748845fad",
+      "bytes": 608610,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "saved-r1.png",
+      "sha256": "c840edb1ddc8dbcd9b93a3275207f47e1e21da59fd9e4db94611c06fc291d288",
+      "bytes": 572950,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "validation.mp4",
+      "sha256": "c407f71046fa0ae70e17993bc4b7fa36b981ab633d1e272168ea61a1ae78390c",
+      "bytes": 605261,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    },
+    {
+      "file": "validation.png",
+      "sha256": "29131f16076156657b4a8e306f09797d0c903952076c02fb611edffaeb7b9481",
+      "bytes": 388805,
+      "scope": "Actual synthetic app/browser evidence or actual issued PDF; see README for each source/run."
+    }
+  ],
+  "cleanup": "cleanup.json"
+}

@@ -1,0 +1,14 @@
+{
+  "surface": "Coordinator-owned disposable local Convex Node action",
+  "backend": "http://127.0.0.1:3510",
+  "rendererCommit": "08dca8a1d8a4bc0dec33735193280a72057c2c0c",
+  "defaultBundleResult": "Cannot find module '#standard-fonts/Helvetica'",
+  "successfulConfiguration": {"node": {"externalPackages": ["@react-pdf/renderer"]}},
+  "result": {
+    "byteLength": 170064,
+    "date": "17 Nov 2026",
+    "sha256": "96a22e49e887599dd24ba3b03a88105011cf2f5e50bd92ba34ea39a3e311473a",
+    "storageId": "kg2efd4ggzg9qcvv1yde1jkjsd8ja09x"
+  },
+  "scope": "Actual rendering and storage. Does not establish durable job recovery, authoritative downloads, cloud deployment or artifact immutability."
+}

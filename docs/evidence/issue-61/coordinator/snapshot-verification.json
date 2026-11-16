@@ -1,0 +1,7 @@
+{
+  "decisionsSha256": "85f27923f37f5cc633d27cdc1aba96b974ee6e70fb79107cf0b5dae70dece8f9",
+  "auditSha256": "42ec0959a48bbf639248dceec79643414b1fe08b6246ec9f58cc5a0571426a85",
+  "evidenceManifestSha256": "56a95d45665eba0be13123951dc9b1b883145e4e7367ef87296b000416914943",
+  "proofFilesVerified": 8,
+  "scope": "Copied only coordinator decisions.tsv, audit-review.md and evidence/. No state, helpers, credentials or private fixture files."
+}

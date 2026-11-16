@@ -1,5 +1,5 @@
 {
-  "lastSyncCommit": "8f3969be1527df8d5b50301b471f2bb992dbd744",
+  "lastSyncCommit": "332074728a056fd08ed22fbf9d8fa2a144338e50",
   "sourceWasUncommitted": false,
   "checkedAt": "2026-11-17",
   "source": "convex/quotations.ts",
@@ -32,7 +32,10 @@
     "reserveBaseReference",
     "saveRevision",
     "canonicalSave",
-    "assertRevisionVacant"
+    "assertRevisionVacant",
+    "enqueueRevisionPdf",
+    "freezeRevisionPdf",
+    "dispatchPendingPdf"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",

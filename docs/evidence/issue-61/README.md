@@ -2,6 +2,14 @@
 
 Staff need each intentional Save to retain every earlier quotation and exact issued PDF. This evidence supports #61 under #54. The product release remains disabled by default. No shared backend, production data, release activation, or PR merge was performed by this owner.
 
+## Latest accepted committed execution
+
+The authoritative executable implementation is `332074728a056fd08ed22fbf9d8fa2a144338e50`. Its final checks are [committed-checks.json](committed-checks.json). The `committed-` backend, restore, HTTP, session, migration, and integrity reports identify that same source. The authoritative runtime reports are [committed backend](committed-backend-proof.json), [committed restore](committed-restore-proof.json), [committed HTTP](committed-http-proof.json), and [committed session](committed-session-proof.json). [Cleanup at332](cleanup.json) records the same implementation. Earlier unprefixed, gate-inclusive, e39, `final-`, and `preliminary/` files retain their original source scopes and are not relabelled as this run.
+
+The committed run passed 669 tests, application and backend TypeScript, production build, 1,728 handler cases, and all six guard mutants. It retained 17 quotations in 14 families, 16 artifacts, and 17 attempts. One terminal failed-state artifact used one explicit public retry. Pending manual rescue calls were zero. All 16 ready PDFs were recovered from an independent empty backend and authenticated downloads matched their original hashes.
+
+The UI observations identify `79540a43`. Its UI, readers, writers, worker, and template sources match the later implementation except for the separately verified expired-session HTTP boundary. That exact API correction is tested at `497059d1` and again at `33207472`. See [source-scope mapping](source-scopes.json). The UI origin is `http://127.0.0.1:3540`; direct HTTP tests use `http://localhost:3540` with explicit real JWT cookies.
+
 ## Read the evidence by scope
 
 | Evidence | What it establishes | Limit |
@@ -17,7 +25,7 @@ Staff need each intentional Save to retain every earlier quotation and exact iss
 | `pending-diagnostic.json`, `old-pending-repair.json` | Original pre-claim scheduled-action failure and one targeted repair after the fix. | The one retry repairs an old stranded row. It does not prove automatic new-save recovery. |
 | `issue58-sequenced-committed-*.json` | Independent owner handoff for ordinary rendering, claimed failure with one retry, and two pre-claim failures with zero rescue. | These reports identify their own commit. Final combined-source runs are recorded separately. |
 
-Do not combine counts from different runs. The gate-inclusive run had 18 quotations, 15 families, 17 artifacts, 19 attempts, and two explicit failed-state retries. The later ordinary integrated run had 17 quotations, 14 families, 16 artifacts, 16 attempts, and zero failed-state retries. Each report identifies its exact source and file digests.
+Do not combine counts from different runs. The gate-inclusive run had 18 quotations, 15 families, 17 artifacts, 19 attempts, and two explicit failed-state retries. The later ordinary integrated run had 17 quotations, 14 families, 16 artifacts, 16 attempts, and zero failed-state retries. The final committed run had the same retained quotation/family/artifact counts and 17 attempts with one failed-state retry. Each report identifies its exact source and file digests.
 
 The old `migration-rehearsal-superseded.json` withdraws the first queued concurrency and unchanged-target restore claims. Independent review corrections are append-only in `decisions.tsv`. The initial claimed-worker failure causes that were cleaned before diagnosis remain unknown. The separately captured pressure evidence identifies one real local write-budget failure; it does not establish every earlier failure's cause.
 
@@ -35,11 +43,13 @@ The media is synthetic application content. It contains no filled credential fie
 
 The before-change baseline is preserved in [#59's baseline proof](../issue-59/browser-baseline-proof.json) and its application images. It used source `3d18ab73179abc8a4d1d6407c0e6b65d7bc9a3da`, web 3500 and backend 3510. Actual browser Save changed notes while retaining the same ID and reference. The screenshot alone is not the overwrite proof. The baseline is a separate synthetic fixture, not a pixel comparison with this fixture.
 
+The red `1 Issue` badge in some frames is the existing optional Notes uncontrolled-to-controlled warning. The owned preview overlay identifies `QuotationBuilder` Notes and `Input`. Baseline `3d18ab73` has the same omitted Notes default and spread field. Actual saved Notes and reload passed. [The warning record](dev-warning.json) retains the exact observation. It is not the resolved development-origin warning, and the images were not cropped to hide it.
+
 T3 tabs were explicitly confirmed as owned `runtime: server` incognito tabs. Snapshot and input automation timed out. Normal DOM form controls through documented `preview_evaluate` and built-in recording worked. CUA's browser host was unavailable. Native Chrome login worked, then the URL guard stopped before an action when the human focused an unrelated personal window. No unrelated window was operated or captured. The remaining journey used the independent server browser.
 
 ## Reproduce on an owned disposable target
 
-Use Node 24, the lockfile dependencies, and `FAMILY_BACKEND_BINARY` pointing to the local Convex executable. Ports 13965 and 13966 are for the fixture, 13975 through 13978 for migration and empty restore, 13985 and 13986 for nonempty restore, and 3540 for the web app. All helpers reject occupied or unexpected targets where they start backends. The fixture and signing material live outside `.next` at `/private/tmp/mkm-issue61-run` with private permissions.
+Use Node 24, the lockfile dependencies, and `FAMILY_BACKEND_BINARY` pointing to the local Convex executable. Ports 13965 and 13966 are for the fixture, 13975 through 13978 for migration and empty restore, 13985 and 13986 for nonempty restore, and 3540 for the web app. The new #61 backend starters check ports, and deployment helpers reject unexpected ownership or targets. The fixture and signing material live outside `.next` at `/private/tmp/mkm-issue61-run` with private permissions.
 
 ```sh
 python3 scripts/revision-integration/prepare-local-backend.py
@@ -59,3 +69,11 @@ Run `node --test scripts/*.test.mjs`, application and backend TypeScript checks,
 Use [the migration runbook](../../quotation-families/migration-runbook.md) for stop conditions and operator steps. Legacy inventory and `restart` are pre-append tools. Use `check-revision-invariants.mjs` for modern exported rows. The checker calls the actual saved-document and frozen-render-input functions. Its corruption tests reject missing save records, wrong references, changed frozen content, inconsistent attempts, and a self-consistent PDF for the wrong revision.
 
 Production data quality, hosted deployments, runtime capacity, export permissions, and the eventual activation mechanism remain unverified. Rollback must preserve the permanent legacy freeze or keep writes closed. No enable endpoint was added to finish this proof.
+
+## Cleanup
+
+[cleanup.json](cleanup.json) records stopped owned backend/web groups, verified closed ports, removal of the exact private fixture, and closure of all three owned server tabs. A read-only Node/backend working-directory check found no remaining owned main, restore, or migration fixture processes. User windows were untouched. The native fixture window may remain open to the stopped local service.
+
+## Audited coordinator snapshot
+
+[The coordinator trail](coordinator/decisions.tsv) and [independent trail verdict](coordinator/audit-review.md) retain the accepted design, ownership, corrections, source scopes, and resolved local setup incidents. [Eight preserved nonsecret proofs](coordinator/evidence/manifest.json) retain their baseline or prerequisite limits. [Copy verification](coordinator/snapshot-verification.json) records the supplied hashes and verifies every listed proof. No coordinator state, helpers, or private fixture files were copied.
