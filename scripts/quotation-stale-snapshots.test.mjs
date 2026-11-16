@@ -32,6 +32,19 @@ async function expectWarning(s, id, expected) {
   return result;
 }
 
+async function refresh(s, id) {
+  if (!quotations.getSnapshotRefreshReview) {
+    return quotations.refreshSnapshot._handler(s.ctx, {quotation_id:id});
+  }
+  const saved = await quotations.getQuotationForEdit._handler(s.ctx, {target_quotation_id:id});
+  const review = await quotations.getSnapshotRefreshReview._handler(s.ctx, {
+    quotation_id:id, expected_quotation_token:saved.snapshot_refresh_token,
+  });
+  return quotations.refreshSnapshot._handler(s.ctx, {
+    quotation_id:id, expected_quotation_token:review.expected_quotation_token, source_context:review.source_context,
+  });
+}
+
 const changes = [
   ...['name','year','duration','inclusions','exclusions'].map(field => [
     `package ${field}`, s => {s.tables.packages[0][field] = 'Changed value';}, [`package.${field}`],
@@ -64,7 +77,13 @@ for (const [name, change, expected] of changes) {
     const total = row.total_amount;
     change(s);
     await expectWarning(s,id,expected);
-    await quotations.refreshSnapshot._handler(s.ctx, {quotation_id:id});
+    if (name === 'missing flight' && quotations.getSnapshotRefreshReview) {
+      const before = structuredClone(s.tables);
+      await assert.rejects(() => refresh(s,id), /no longer available/i);
+      assert.deepEqual(s.tables,before);
+    } else {
+      await refresh(s,id);
+    }
     assert.deepEqual(s.tables.quotation_items,items);
     assert.equal(row.total_amount,total);
     const after = await expectWarning(s,id,name === 'missing flight' ? expected : []);
@@ -81,7 +100,7 @@ for (const missing of ['package_snapshot','flight_snapshot','hotels_snapshot','r
     if (missing === 'rooms') delete row.package_snapshot.rooms;
     else delete row[missing];
     await expectWarning(s,id,['snapshot.incomplete']);
-    await quotations.refreshSnapshot._handler(s.ctx, {quotation_id:id});
+    await refresh(s,id);
     await expectWarning(s,id,[]);
   });
 }
@@ -89,7 +108,7 @@ for (const missing of ['package_snapshot','flight_snapshot','hotels_snapshot','r
 test('collection enumeration and meal ordering do not produce changes', async () => {
   const {s,id} = await fixture();
   s.tables.package_meals.push({...s.tables.package_meals[0],_id:'meal:2',meal_type:'DINNER'});
-  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  await refresh(s,id);
   s.tables.package_meals.reverse();
   s.tables.package_hotels.reverse();
   s.tables.package_rooms.reverse();
@@ -100,7 +119,7 @@ test('known empty hotel and room collections detect subsequent additions', async
   const {s,id} = await fixture();
   const hotel = s.tables.package_hotels.pop();
   const room = s.tables.package_rooms.pop();
-  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  await refresh(s,id);
   await expectWarning(s,id,[]);
   s.tables.package_hotels.push(hotel);
   s.tables.package_rooms.push(room);
@@ -114,7 +133,7 @@ test('legacy timestamp absence does not invent an absent optional value', async 
   await expectWarning(s,id,['snapshot.incomplete']);
   s.tables.packages[0].name = 'Known name changed';
   await expectWarning(s,id,['snapshot.incomplete','package.name']);
-  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  await refresh(s,id);
   await expectWarning(s,id,[]);
 });
 
@@ -122,7 +141,7 @@ test('removing one member of a nonempty collection is detected', async () => {
   const {s,id} = await fixture();
   s.tables.package_hotels.push({...s.tables.package_hotels[0],_id:'hotel:second',hotel_type:'MADINAH'});
   s.tables.package_rooms.push({...s.tables.package_rooms[0],_id:'room:second',room_type:'Double'});
-  await quotations.refreshSnapshot._handler(s.ctx,{quotation_id:id});
+  await refresh(s,id);
   s.tables.package_hotels.pop();
   s.tables.package_rooms.pop();
   await expectWarning(s,id,['room_pricing','hotels']);
