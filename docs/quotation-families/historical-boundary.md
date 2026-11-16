@@ -55,3 +55,11 @@ FAMILY_BACKEND_BINARY=/path/to/convex-local-backend HISTORY_EVIDENCE=/tmp/histor
 The focused tests execute registered handlers. The real backend fixture uses ports 13565 and 13566, synthetic disposable records, and an admin test identity. It checks historical payloads and display fields after all live-source changes, exact old IDs, reviewed refresh, quoted prices, stale conflicts, receipts, source ownership, alias merges, and alternate-writer rejection. It also retains the prior concurrency and rollback checks. Its process and temporary database are removed in `finally`.
 
 The fixture establishes local Convex transaction behavior. It does not establish production migration safety, real user token validation, browser persistence, or exact issued PDF bytes. The report image is a rendering of actual backend fixture outcomes, not a UI screenshot. No application UI or styling changes are included.
+
+## Recorded verification
+
+Committed implementation `ec8f429e6eae1ef878f022f5b58c77b97cb984e6` passed all 609 repository tests, application typecheck, explicit backend typecheck, and the real disposable backend fixture. The finite handler checker passed 1,728 cases and detected all six guard mutants without adapter errors. Fresh independent review reran 13 focused tests and found no remaining scoped defect after the saved list projection fix.
+
+[Backend outcomes](history-backend-evidence.json), [backend report image](history-backend-evidence.png), and [finite handler outcomes](history-integrity-evidence.json) identify the tested source. Generate the image with `python3 scripts/render-history-evidence.py docs/quotation-families/history-backend-evidence.json`. Ports 13565 and 13566 were closed after fixture cleanup. The shared backend and web ports were untouched.
+
+The first application typecheck lacked the ignored generated `next-env.d.ts`. `next typegen` generated the local types and typecheck passed. The referenced external issue-table rule file and the deslop plugin were unavailable. The supplied issue-table columns, direct diff cleanup, and independent comment review were used. No added comments or suppressions required removal. The project Codex-only model configuration excludes a different-family judge. Both reviews were independent Codex reviews.
