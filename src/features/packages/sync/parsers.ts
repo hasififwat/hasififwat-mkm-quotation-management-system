@@ -571,6 +571,8 @@ const MFF_NAME_MAP: Record<string, string> = {
   "UMJ (TRIP HJ FADHIL PENANG)":          "HAJI FADHIL - EJEN",
 };
 
+const MFF_HEADER_LABELS = new Set(["FLT", "FLIGHT", "FLIGHT NO", "FLIGHT NO.", "DATE", "PACKAGE", "PAKEJ", "DEPARTURE", "RETURN", "DEP FLT", "DEP DATE", "RET FLT", "RET DATE"]);
+
 const MFF_SKIP_PATTERNS = [/^JUALAN TIKET/i, /^LEISURE /i, /^AMANI TRAVEL/i, /UMJ P --> UMJ/i];
 
 function normalizeSector(s: string): string {
@@ -660,7 +662,7 @@ export function parseMffCsv(
     const row = parseCSVLine(lines[i]);
     const get = (idx: number) => (row[idx] ?? "").trim();
     if (i < 10) {
-      if (get(8) || get(9) || get(14) || get(15) || get(35)) {
+      if ([get(8), get(9), get(14), get(15), get(35)].some(value => value && !MFF_HEADER_LABELS.has(value.toUpperCase()))) {
         diagnostics.push({ row: i + 1, code: "unsupported_format", message: "Schedule data appears before the supported MFF data section." });
       }
       continue;

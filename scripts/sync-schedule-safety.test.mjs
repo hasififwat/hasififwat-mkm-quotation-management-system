@@ -53,3 +53,12 @@ test('unrecognized schedule data in the preamble blocks removals',()=>{
   assert.ok(result.diagnostics.some(d=>d.row===10));
   assert.equal(result.rows.filter(r=>r.status==='removed').length,0);
 });
+
+test('supported column headings in the preamble permit deliberate scoped removal',()=>{
+  const header=Array(36).fill('');Object.assign(header,{8:'FLT',9:'DATE',14:'FLT',15:'DATE',35:'PACKAGE'});
+  const text=[...Array(9).fill(''),header.join(','),line()].join('\n');
+  const initial=parse(text);
+  const result=parse(text,undefined,initial.removalScopes.map(s=>s.key));
+  assert.equal(result.diagnostics.length,0);
+  assert.equal(result.rows.filter(r=>r.status==='removed').length,1);
+});
