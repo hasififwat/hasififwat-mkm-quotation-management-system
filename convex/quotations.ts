@@ -1,3 +1,5 @@
+import { readCurrentQuotations, quotationMatches, currentPage } from "./lib/currentQuotations";
+import { canonicalClientId } from "./lib/clientCanonical";
 import { readSavedQuotation, revisionContext } from "./lib/savedQuotation";
 import { saveCommand, saveRevision } from "./quotationRevisionSaves";
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation, reserveBaseReference } from "./lib/quotationFamilyIdentity";
@@ -210,7 +212,7 @@ export const list = query({
 	handler: async (ctx) => {
 		await requireQuotationActor(ctx);
 		const [quotations, packages, packageFlights, packageRooms, packageHotels, packageMeals] = await Promise.all([
-			ctx.db.query("quotations").collect(),
+			readCurrentQuotations(ctx),
 			ctx.db.query("packages").collect(),
 			ctx.db.query("package_flights").collect(),
 			ctx.db.query("package_rooms").collect(),
@@ -239,10 +241,9 @@ export const list = query({
 		const mealsByHotelId = groupMealsByHotelId(packageMeals);
 		const hotelsByPackageId = groupHotelsByPackageId(packageHotels);
 
-		return quotations
-			.filter((q) => !q.archived)
+		return Promise.all(quotations
 			.sort((a, b) => b.created_at.localeCompare(a.created_at))
-			.map((quotation) => {
+			.map(async (quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
 				const displayPackage = quotation.package_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedPackage);
@@ -268,7 +269,10 @@ export const list = query({
 						quotation.revision,
 					),
 					client_name: quotation.client_name,
-					client_id: quotation.client_id,
+					client_id: await canonicalClientId(ctx, quotation.client_id as Id<"clients">),
+                    saved_client_id: quotation.client_id,
+                    family_id: quotation.family_id ?? null,
+                    package_id: quotation.package_id,
 					pic_name: quotation.pic_name,
 					branch: quotation.branch,
 					status: quotation.status,
@@ -298,7 +302,7 @@ export const list = query({
 						: null,
 					flight_snapshot: quotation.flight_snapshot ?? null,
 				};
-			});
+			}));
 	},
 });
 
@@ -310,11 +314,11 @@ export const count = query({
 		await requireQuotationActor(ctx);
 		const normalizedSearch = searchTerm?.trim().toLowerCase() ?? "";
 		const [allQuotations, allPackages] = await Promise.all([
-			ctx.db.query("quotations").collect(),
+			readCurrentQuotations(ctx),
 			ctx.db.query("packages").collect(),
 		]);
 
-		const activeQuotations = allQuotations.filter((q) => !q.archived);
+		const activeQuotations = allQuotations;
 
 		if (!normalizedSearch) {
 			return activeQuotations.length;
@@ -326,12 +330,7 @@ export const count = query({
 		}
 
 		return activeQuotations.filter((quotation) => {
-			const clientName = quotation.client_name?.toLowerCase() ?? "";
-			const packageName = packageNameById.get(quotation.package_id) ?? "";
-			return (
-				clientName.includes(normalizedSearch) ||
-				packageName.includes(normalizedSearch)
-			);
+			return quotationMatches(quotation, normalizedSearch, packageNameById.get(quotation.package_id));
 		}).length;
 	},
 });
@@ -340,7 +339,7 @@ export const findDuplicates = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireQuotationActor(ctx);
-		const allQuotations = await ctx.db.query("quotations").collect();
+		const allQuotations = await readCurrentQuotations(ctx);
 
 		// Group by (client_name, package_id, flight_id, total_amount)
 		const groups = new Map<
@@ -348,7 +347,7 @@ export const findDuplicates = query({
 			(typeof allQuotations)[number][]
 		>();
 
-		for (const q of allQuotations) {
+		for (const q of allQuotations.filter(q => !q.family_id && !q.frozen_document && q.document_schema_version === undefined)) {
 			const key = `${q.client_name}|${q.package_id}|${q.flight_id}|${q.total_amount}`;
 			if (!groups.has(key)) {
 				groups.set(key, []);
@@ -380,21 +379,32 @@ export const findDuplicates = query({
 export const listPaginated = query({
 	args: {
 		paginationOpts: paginationOptsValidator,
+        searchTerm: v.optional(v.string()),
+        package_id: v.optional(v.string()),
+        client_id: v.optional(v.id("clients")),
+        visibility: v.optional(v.union(v.literal("current"), v.literal("archived"), v.literal("history"))),
 		sortBy: v.optional(v.union(v.literal("updated_at"), v.literal("created_at"))),
 		sortDir: v.optional(v.union(v.literal("asc"), v.literal("desc"))),
 	},
-	handler: async (ctx, { paginationOpts, sortBy, sortDir }) => {
+	handler: async (ctx, { paginationOpts, sortBy, sortDir, searchTerm, package_id, client_id, visibility }) => {
 		await requireQuotationActor(ctx);
 		const order = sortDir ?? "desc";
-		const result =
-			(sortBy ?? "updated_at") === "created_at"
-				? await ctx.db.query("quotations").filter((q) => q.neq(q.field("archived"), true)).order(order).paginate(paginationOpts)
-				: await ctx.db
-						.query("quotations")
-						.withIndex("by_updated_at")
-						.filter((q) => q.neq(q.field("archived"), true))
-						.order(order)
-						.paginate(paginationOpts);
+        let rows = await readCurrentQuotations(ctx, visibility === "archived");
+        if (visibility === "history") {
+          const activeIds = new Set(rows.map(row => row._id));
+          rows = (await ctx.db.query("quotations").collect()).filter(row => !activeIds.has(row._id));
+        }
+        const legacyPackages = await ctx.db.query("packages").collect();
+        const names = new Map(legacyPackages.map(pkg => [String(pkg._id), pkg.name]));
+        const canonicalFilter = client_id ? await canonicalClientId(ctx, client_id) : null;
+        const filtered = [];
+        for (const row of rows) {
+          if (package_id && row.package_id !== package_id) continue;
+          if (canonicalFilter && await canonicalClientId(ctx, row.client_id as Id<"clients">) !== canonicalFilter) continue;
+          if (!quotationMatches(row, searchTerm ?? "", names.get(row.package_id))) continue;
+          filtered.push(row);
+        }
+        const result = currentPage(filtered, paginationOpts, sortBy, order);
 
 		const [allPackages, allFlights, allRooms, allHotels, allMeals] = await Promise.all([
 			ctx.db.query("packages").collect(),
@@ -427,7 +437,8 @@ export const listPaginated = query({
 
 		return {
 			...result,
-			page: result.page.map((quotation) => {
+            total: filtered.length,
+			page: await Promise.all(result.page.map(async (quotation) => {
 				const selectedPackage = packagesById.get(quotation.package_id);
 				const selectedFlight = flightsById.get(quotation.flight_id);
 				const displayPackage = quotation.package_snapshot ?? (quotation.family_id || quotation.frozen_document ? null : selectedPackage);
@@ -453,7 +464,10 @@ export const listPaginated = query({
 						quotation.revision,
 					),
 					client_name: quotation.client_name,
-					client_id: quotation.client_id,
+					client_id: await canonicalClientId(ctx, quotation.client_id as Id<"clients">),
+                    saved_client_id: quotation.client_id,
+                    family_id: quotation.family_id ?? null,
+                    package_id: quotation.package_id,
 					pic_name: quotation.pic_name,
 					branch: quotation.branch,
 					status: quotation.status,
@@ -483,7 +497,7 @@ export const listPaginated = query({
 						: null,
 					flight_snapshot: quotation.flight_snapshot ?? null,
 				};
-			}),
+			})),
 		};
 	},
 });

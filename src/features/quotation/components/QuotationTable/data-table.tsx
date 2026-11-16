@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
+import { toast } from "sonner";
 import { useMutation } from "convex/react";
 import {
 	Archive,
@@ -58,6 +59,7 @@ import { QuotationExpandedRow } from "./QuotationExpandedRow";
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+    archived?: boolean;
 	handlePreview?: (quotation: TData) => void;
 	isLoading?: boolean;
 	// pagination
@@ -76,6 +78,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
 	columns,
 	data = [],
+    archived = false,
 	isLoading = false,
 	isDone = true,
 	isFirstPage = true,
@@ -88,19 +91,21 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
 	const archiveQuotation = useMutation(api.quotations.archiveQuotation);
 	const router = useRouter();
+    const archiveFamily = useMutation(api.quotationFamilies.archive);
 	const [expanded, setExpanded] = useState<ExpandedState>({});
 
 	const handleArchive = useCallback(
-		async (quotationId: string) => {
-			if (!confirm("Archive this quotation? It will be hidden from the listing.")) return;
+		async (quotation: Quotation) => {
+			if (!confirm("Archive this family? Saved revisions remain available in history.")) return;
 			try {
-				await archiveQuotation({ id: quotationId as Id<"quotations"> });
+				if (quotation.family_id) await archiveFamily({family_id: quotation.family_id as Id<"quotation_families">});
+                else await archiveQuotation({ id: quotation.id as Id<"quotations"> });
 				router.refresh();
 			} catch (error) {
-				console.error("Failed to archive quotation", error);
+				toast.error(error instanceof Error ? error.message : "Could not archive quotation family");
 			}
 		},
-		[archiveQuotation, router],
+		[archiveQuotation, archiveFamily, router],
 	);
 
 	const table = useReactTable({
@@ -166,24 +171,27 @@ export function DataTable<TData, TValue>({
 								Preview
 							</DropdownMenuItem>
 						</Link>
-						<Link href={`/quotations/edit/${quotation.id}`}>
+                        {quotation.family_id && <Link href={`/quotations/${quotation.id}/history`}>
+                            <DropdownMenuItem>Family history</DropdownMenuItem>
+                        </Link>}
+						{!archived && <Link href={`/quotations/edit/${quotation.id}`}>
 							<DropdownMenuItem>
 								<PencilIcon className="mr-2 h-4 w-4" />
-								Edit
+								Edit current
 							</DropdownMenuItem>
-						</Link>
-						<DropdownMenuItem
-							onClick={() => handleArchive(quotation.id)}
+						</Link>}
+						{!archived && <DropdownMenuItem
+							onClick={() => handleArchive(quotation)}
 							className="text-muted-foreground"
 						>
 							<Archive className="mr-2 h-4 w-4" />
-							Archive
-						</DropdownMenuItem>
+							{quotation.family_id ? "Archive family" : "Archive"}
+						</DropdownMenuItem>}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);
 		},
-		[handleArchive],
+		[handleArchive, archived],
 	);
 
 	const renderCell = useCallback(
@@ -238,15 +246,15 @@ export function DataTable<TData, TValue>({
 							>
 								<Link href={`/quotations/review/${row.id}`}>Preview</Link>
 							</Button>
-							<Separator orientation="vertical" />
+							{!archived && <><Separator orientation="vertical" />
 							<Button
 								variant="ghost"
 								size="sm"
 								className="h-auto p-0 text-xs text-muted-foreground w-fit hover:text-primary"
 								asChild
 							>
-								<Link href={`/quotations/edit/${row.id}`}>Edit</Link>
-							</Button>
+								<Link href={`/quotations/edit/${row.id}`}>Edit current</Link>
+							</Button></>}
 						</div>
 					</div>
 				);
@@ -293,7 +301,7 @@ export function DataTable<TData, TValue>({
 
 			return flexRender(cell.column.columnDef.cell, cell.getContext());
 		},
-		[renderPackageCell, renderDropdownMenu, renderAmount],
+		[renderPackageCell, renderDropdownMenu, renderAmount, archived],
 	);
 
 	return (

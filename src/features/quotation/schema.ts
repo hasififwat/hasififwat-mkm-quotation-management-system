@@ -66,6 +66,7 @@ const flightDetailsSchema = z.object({
 
 // 3. Main Quotation Schema
 export const quotationRowSchema = z.object({
+    family_id: z.string().nullable().optional(),
 	id: z.string(),
 	quotation_number: z.string().nullable(), // Can be null if generation logic fails, though unlikely
 

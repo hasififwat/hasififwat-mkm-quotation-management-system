@@ -1,5 +1,6 @@
-import { associateClients } from "./lib/clientCanonical";
-import type { Id } from "./_generated/dataModel";
+import { associateClients, canonicalClientId } from "./lib/clientCanonical";
+import { readCurrentQuotations } from "./lib/currentQuotations";
+import type { Doc, Id } from "./_generated/dataModel";
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
@@ -33,55 +34,92 @@ function normalisePhone(phone: string): string {
 	return digits;
 }
 
+async function readCanonicalClients(ctx: Pick<QueryCtx, "db">) {
+	const clients = await ctx.db.query("clients").collect();
+	const canonicalIds = new Map(await Promise.all(clients.map(async client => [
+		String(client._id), String(await canonicalClientId(ctx, client._id)),
+	] as const)));
+	const canonicalId = (id: string) => canonicalIds.get(id) ?? id;
+	return { clients: clients.filter(client => canonicalId(String(client._id)) === String(client._id)), canonicalId };
+}
+
+async function readClientAssociations(ctx: Pick<QueryCtx, "db">) {
+	const [{ clients, canonicalId }, current, revisions, packages, families] = await Promise.all([
+		readCanonicalClients(ctx),
+		readCurrentQuotations(ctx),
+		ctx.db.query("quotations").collect(),
+		ctx.db.query("packages").collect(),
+		ctx.db.query("quotation_families").collect(),
+	]);
+	const packagesById = new Map(packages.map(pkg => [String(pkg._id), pkg]));
+	const familiesById = new Map(families.map(family => [String(family._id), family]));
+	const currentIds = new Set(current.map(q => String(q._id)));
+	const summary = (q: Doc<"quotations">) => {
+		const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
+		const family = q.family_id ? familiesById.get(String(q.family_id)) : undefined;
+		return {
+			id: String(q._id),
+			family_id: q.family_id ?? null,
+			current_revision_id: family?.current_revision_id ?? null,
+			is_current: family ? family.current_revision_id === q._id : !q.family_id,
+			archived: family?.archived ?? q.archived ?? false,
+			client_id: canonicalId(q.client_id),
+			saved_client_id: q.client_id,
+			client_name: q.client_name,
+			quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
+			status: q.status,
+			total_amount: q.total_amount,
+			package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
+			package_name: pkg?.name ?? "Unknown Package",
+			package_year: pkg?.year ?? null,
+			pic_name: q.pic_name,
+			branch: q.branch,
+			created_at: q.created_at,
+			updated_at: q.updated_at,
+		};
+	};
+	const newestFirst = (a: Doc<"quotations">, b: Doc<"quotations">) => b.created_at.localeCompare(a.created_at) || String(b._id).localeCompare(String(a._id));
+	const currentByClient = new Map<string, Doc<"quotations">[]>();
+	const historyByClient = new Map<string, Doc<"quotations">[]>();
+	for (const q of current) {
+		const id = canonicalId(q.client_id);
+		const bucket = currentByClient.get(id) ?? [];
+		bucket.push(q);
+		currentByClient.set(id, bucket);
+	}
+	for (const q of revisions) {
+		if (currentIds.has(String(q._id))) continue;
+		const id = canonicalId(q.client_id);
+		const bucket = historyByClient.get(id) ?? [];
+		bucket.push(q);
+		historyByClient.set(id, bucket);
+	}
+	const rows = clients.sort((a, b) => b.created_at.localeCompare(a.created_at) || String(b._id).localeCompare(String(a._id)))
+		.map(client => {
+			const qs = (currentByClient.get(String(client._id)) ?? []).sort(newestFirst);
+			const historical = (historyByClient.get(String(client._id)) ?? []).sort(newestFirst);
+			return {
+				id: String(client._id),
+				name: client.name,
+				phone_number: client.phone_number,
+				created_at: client.created_at,
+				updated_at: client.updated_at,
+				quotation_count: qs.length,
+				total_quoted_value: qs.reduce((sum, q) => sum + Math.round(q.total_amount * 100), 0) / 100,
+				last_quotation_at: qs[0]?.created_at ?? null,
+				quotations: qs.map(summary),
+				historical_quotation_count: historical.length,
+				historical_quotations: historical.map(summary),
+			};
+		});
+	return { rows, canonicalId };
+}
+
 export const listWithStats = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireClientActor(ctx);
-		const [clients, quotations, packages] = await Promise.all([
-			ctx.db.query("clients").collect(),
-			ctx.db.query("quotations").collect(),
-			ctx.db.query("packages").collect(),
-		]);
-
-		const packagesById = new Map(packages.map((p) => [String(p._id), p]));
-
-		const quotationsByClient = new Map<string, typeof quotations>();
-		for (const q of quotations) {
-			const bucket = quotationsByClient.get(q.client_id) ?? [];
-			bucket.push(q);
-			quotationsByClient.set(q.client_id, bucket);
-		}
-
-		return clients
-			.sort((a, b) => b.created_at.localeCompare(a.created_at))
-			.map((client) => {
-				const qs = quotationsByClient.get(String(client._id)) ?? [];
-				const total_spend = qs.reduce((sum, q) => sum + q.total_amount, 0);
-				const sorted = [...qs].sort((a, b) => b.created_at.localeCompare(a.created_at));
-				return {
-					id: String(client._id),
-					name: client.name,
-					phone_number: client.phone_number,
-					created_at: client.created_at,
-					quotation_count: qs.length,
-					total_spend,
-					last_quotation_at: sorted[0]?.created_at ?? null,
-					quotations: sorted.map((q) => {
-						const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
-						return {
-							id: String(q._id),
-							quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
-							status: q.status,
-							total_amount: q.total_amount,
-							package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
-							package_name: pkg?.name ?? "Unknown Package",
-							package_year: pkg?.year ?? null,
-							pic_name: q.pic_name,
-							created_at: q.created_at,
-						};
-					}),
-				};
-			});
+		return (await readClientAssociations(ctx)).rows;
 	},
 });
 
@@ -89,62 +127,26 @@ export const getAgentNames = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireClientActor(ctx);
-		const quotations = await ctx.db.query("quotations").collect();
-		return [...new Set(quotations.map((q) => q.pic_name))].sort();
+		const quotations = await readCurrentQuotations(ctx);
+		return [...new Set(quotations.map(q => q.pic_name))].sort();
 	},
 });
 
 export const listWithStatsPaginated = query({
 	args: { paginationOpts: paginationOptsValidator },
-	handler: async (ctx, args) => {
+	handler: async (ctx, { paginationOpts }) => {
 		await requireClientActor(ctx);
-		const page = await ctx.db.query("clients").order("desc").paginate(args.paginationOpts);
-
-		const [allQuotations, packages] = await Promise.all([
-			ctx.db.query("quotations").collect(),
-			ctx.db.query("packages").collect(),
-		]);
-
-		const clientIds = new Set(page.page.map((c) => String(c._id)));
-		const packagesById = new Map(packages.map((p) => [String(p._id), p]));
-
-		const quotationsByClient = new Map<string, typeof allQuotations>();
-		for (const q of allQuotations) {
-			if (!clientIds.has(q.client_id)) continue;
-			const bucket = quotationsByClient.get(q.client_id) ?? [];
-			bucket.push(q);
-			quotationsByClient.set(q.client_id, bucket);
+		const { rows } = await readClientAssociations(ctx);
+		let remaining = rows;
+		if (paginationOpts.cursor) {
+			const cursor: unknown = JSON.parse(paginationOpts.cursor);
+			if (!Array.isArray(cursor) || cursor.length !== 2 || cursor.some(value => typeof value !== "string")) throw new Error("Invalid client cursor");
+			remaining = rows.filter(row => (row.created_at.localeCompare(cursor[0]) || row.id.localeCompare(cursor[1])) < 0);
 		}
-
-		return {
-			...page,
-			page: page.page.map((client) => {
-				const qs = quotationsByClient.get(String(client._id)) ?? [];
-				const sorted = [...qs].sort((a, b) => b.created_at.localeCompare(a.created_at));
-				return {
-					id: String(client._id),
-					name: client.name,
-					phone_number: client.phone_number,
-					created_at: client.created_at,
-					quotation_count: qs.length,
-					last_quotation_at: sorted[0]?.created_at ?? null,
-					quotations: sorted.map((q) => {
-						const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
-						return {
-							id: String(q._id),
-							quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
-							status: q.status,
-							total_amount: q.total_amount,
-							package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
-							package_name: pkg?.name ?? "Unknown Package",
-							package_year: pkg?.year ?? null,
-							pic_name: q.pic_name,
-							created_at: q.created_at,
-						};
-					}),
-				};
-			}),
-		};
+		const page = remaining.slice(0, paginationOpts.numItems);
+		const last = page.at(-1);
+		const isDone = remaining.length <= page.length;
+		return { page, isDone, continueCursor: !isDone && last ? JSON.stringify([last.created_at, last.id]) : "" };
 	},
 });
 
@@ -152,45 +154,9 @@ export const getWithQuotations = query({
 	args: { client_id: v.string() },
 	handler: async (ctx, args) => {
 		await requireClientActor(ctx);
-		const clients = await ctx.db.query("clients").collect();
-		const client = clients.find((c) => String(c._id) === args.client_id);
-		if (!client) return null;
-
-		const [quotations, packages] = await Promise.all([
-			ctx.db
-				.query("quotations")
-				.withIndex("by_client_id", (q) => q.eq("client_id", args.client_id))
-				.collect(),
-			ctx.db.query("packages").collect(),
-		]);
-
-		const packagesById = new Map(packages.map((p) => [String(p._id), p]));
-
-		return {
-			id: String(client._id),
-			name: client.name,
-			phone_number: client.phone_number,
-			created_at: client.created_at,
-			updated_at: client.updated_at,
-			quotations: quotations
-				.sort((a, b) => b.created_at.localeCompare(a.created_at))
-				.map((q) => {
-					const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
-					return {
-						id: String(q._id),
-						quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
-						status: q.status,
-						total_amount: q.total_amount,
-						package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
-							package_name: pkg?.name ?? "Unknown Package",
-						package_year: pkg?.year ?? null,
-						pic_name: q.pic_name,
-						branch: q.branch,
-						created_at: q.created_at,
-						updated_at: q.updated_at,
-					};
-				}),
-		};
+		const { rows, canonicalId } = await readClientAssociations(ctx);
+		const client = rows.find(row => row.id === canonicalId(args.client_id));
+		return client ? { ...client, requested_client_id: args.client_id } : null;
 	},
 });
 
@@ -198,17 +164,9 @@ export const list = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireClientActor(ctx);
-		const clients = await ctx.db.query("clients").collect();
-
-		return clients
-			.sort((a, b) => b.created_at.localeCompare(a.created_at))
-			.map((client) => ({
-				id: String(client._id),
-				name: client.name,
-				phone_number: client.phone_number,
-				created_at: client.created_at,
-				updated_at: client.updated_at,
-			}));
+		const { clients } = await readCanonicalClients(ctx);
+		return clients.sort((a, b) => b.created_at.localeCompare(a.created_at) || String(b._id).localeCompare(String(a._id)))
+			.map(client => ({ id: String(client._id), name: client.name, phone_number: client.phone_number, created_at: client.created_at, updated_at: client.updated_at }));
 	},
 });
 
@@ -216,15 +174,17 @@ export const findDuplicateClients = query({
 	args: {},
 	handler: async (ctx) => {
 		await requireClientActor(ctx);
-		const [clients, quotations] = await Promise.all([
+		const [allClients, quotations] = await Promise.all([
 			ctx.db.query("clients").collect(),
-			ctx.db.query("quotations").collect(),
+			readCurrentQuotations(ctx),
 		]);
+		const canonicalIds = new Map(await Promise.all(allClients.map(async client => [String(client._id), String(await canonicalClientId(ctx, client._id))] as const)));
+		const clients = allClients.filter(client => canonicalIds.get(String(client._id)) === String(client._id));
 
 		// Count quotations per client_id
 		const quotationCountById = new Map<string, number>();
 		for (const q of quotations) {
-			const key = q.client_id;
+			const key = canonicalIds.get(q.client_id) ?? q.client_id;
 			quotationCountById.set(key, (quotationCountById.get(key) ?? 0) + 1);
 		}
 
