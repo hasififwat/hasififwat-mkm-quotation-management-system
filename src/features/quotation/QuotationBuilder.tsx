@@ -759,6 +759,11 @@ export default function QuotationBuilder({
 							{isReviewing ? "Loading latest package..." : "Review latest package"}
 						</Button>
 					)}
+					{!saveError.conflict && (
+						<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="inline-block underline">
+							Check Quotations in a new tab
+						</Link>
+					)}
 				</div>
 			)}
 			{reviewNotice && <p role="status" className="rounded-lg border bg-muted p-4 text-sm">{reviewNotice}</p>}
