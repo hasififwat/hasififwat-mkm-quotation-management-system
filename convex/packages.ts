@@ -1,4 +1,5 @@
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
+import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { v } from "convex/values";
 import { mutation, query, type QueryCtx } from "./_generated/server";
@@ -133,6 +134,7 @@ export const listWithRooms = query({
 
     return packages.map((pkg) => ({
       ...pkg,
+      creation_context: quotationSelectionContext(pkg, packageRooms, packageFlights, packageHotels, packageMeals),
       rooms: dedupeById(roomsByPackageId.get(pkg._id) ?? []),
       flights: dedupeById(flightsByPackageId.get(pkg._id) ?? []),
       hotels: dedupeById(hotelsByPackageId.get(pkg._id) ?? []).map((hotel) => ({

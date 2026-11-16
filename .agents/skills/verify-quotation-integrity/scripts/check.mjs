@@ -13,6 +13,8 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.
 const require = createRequire(path.join(repo, "package.json"));
 const ts = require("typescript");
 const sourcePath = path.join(repo, "convex/quotations.ts");
+const loadSupporting = typescriptLoader(repo);
+const { quotationSelectionContext } = loadSupporting(path.join(repo, "src/domain/quotation-selection-context.ts"));
 const args = process.argv.slice(2);
 const outIndex = args.indexOf("--out");
 const output = outIndex < 0
@@ -151,6 +153,16 @@ async function check(source) {
       selected_rooms: input.room_type === null ? [] : [{ room_type: input.room_type, pax: input.pax, price: input.price }],
       adds_ons: [], discounts: [], ...(input.operation === "update" ? { id: "q1" } : {}),
     };
+    if (input.operation === "create") {
+      const pkg = state.tables.packages.find(row => row._id === input.package_id);
+      if (pkg) payload.reviewed_context = quotationSelectionContext(
+        pkg,
+        state.tables.package_rooms.filter(row => row.package_id === pkg._id),
+        state.tables.package_flights.filter(row => row.package_id === pkg._id),
+        state.tables.package_hotels.filter(row => row.package_id === pkg._id),
+        state.tables.package_meals,
+      );
+    }
     const refsValid = input.client_id === "c1" && input.room_type === "quad" &&
       ((input.package_id === "p1" && input.flight_id === "f1") || (input.package_id === "p2" && input.flight_id === "f2"));
     let response;
@@ -164,7 +176,7 @@ async function check(source) {
         "Selected flight does not belong to the selected package",
         "At least one room selection is required",
         "Room type 'unknown-room' does not exist in this package",
-      ]).has(error.message) || (!input.authenticated && /unauthenticated|not authenticated/i.test(error.message));
+      ]).has(error.message) || error.data?.code === "QUOTATION_SELECTION_CONFLICT" || (!input.authenticated && /unauthenticated|not authenticated/i.test(error.message));
       if ((refsValid && input.authenticated) || !knownRejection) {
         result.adapterErrors.push({ input, error: error.message });
       }
