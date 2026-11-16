@@ -30,7 +30,25 @@ test('session actor owns create and update audit records while PIC stays editabl
   assert.equal(s.tables.quotation_logs.at(-1).performed_by, 'second-staff');
   const listed = await quotations.list._handler(s.ctx, {});
   assert.equal(listed[0].id, saved.id);
-  const reopened = await quotations.getQuotationFullDetails._handler(s.ctx, {id:saved.id});
-  assert.ok(reopened);
+  const reopened = await quotations.getQuotationFullDetails._handler(s.ctx, {target_quotation_id:saved.id});
+  assert.equal(reopened.id, saved.id);
+  assert.equal(reopened.client_name, 'Fixture Client');
+  assert.equal(reopened.pic_name, 'New PIC');
+  assert.equal(reopened.total_amount, 1200);
+  assert.equal(reopened.reference_number, '1448H-0001');
+  assert.equal(reopened.selected_flight.departure_date, '2027-01-01');
+  await quotations.refreshSnapshot._handler(s.ctx, {quotation_id:saved.id});
+  assert.equal(s.tables.quotation_logs.at(-1).performed_by, 'second-staff');
+  assert.equal(s.tables.quotation_logs.at(-1).action, 'snapshot_refreshed');
   assert.equal(row.total_amount, 1200);
 });
+
+for (const [name, operation] of Object.entries(quotations)) {
+  if (!operation?._handler) continue;
+  test(`${name} propagates session verification errors without database access`, async () => {
+    const s = state();
+    s.ctx.auth.getUserIdentity = async () => { throw new Error('Session verification unavailable'); };
+    await assert.rejects(() => operation._handler(s.ctx, {}), /Session verification unavailable/);
+    assert.deepEqual(s.operations, []);
+  });
+}

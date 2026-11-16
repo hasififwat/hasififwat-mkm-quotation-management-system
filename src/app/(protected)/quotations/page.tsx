@@ -2,7 +2,7 @@
 
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
+import { useConvex, useConvexAuth } from "convex/react";
 import { PAGE_SIZE } from "convex/constants";
 import { Loader2, Plus, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
@@ -24,6 +24,8 @@ import { useDebouncedSearch } from "~/hooks/useDebounce";
 type QuotationRecord = Record<string, unknown>;
 
 export default function QuotationsPage() {
+	const http = useConvex();
+	const { isAuthenticated } = useConvexAuth();
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -53,8 +55,8 @@ export default function QuotationsPage() {
 
 	// Port of the old clientLoader — re-runs whenever the URL params change.
 	useEffect(() => {
+		if (!isAuthenticated) return;
 		let cancelled = false;
-		const http = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL ?? "");
 
 		const load = async () => {
 			setIsLoading(true);
@@ -113,7 +115,7 @@ export default function QuotationsPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [searchTerm, sort, dir, cursor, offset, packageId]);
+	}, [http, isAuthenticated, searchTerm, sort, dir, cursor, offset, packageId]);
 
 	const navigate = useCallback(
 		(url: string) => {
