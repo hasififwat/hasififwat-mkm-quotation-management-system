@@ -23,7 +23,7 @@ The initial backend has no migration freeze or active revision release. To rehea
 node scripts/revision-ui/control-fixture.mjs migrate
 ```
 
-This invokes the actual internal migration and then enables the existing gate through a fixture-only internal mutation. There is no product endpoint that enables release. Start the web app from the manifest's `sourceDir` with `pnpm dev:web --port "$REVISION_UI_WEB_PORT"`. Record the web process you own and stop that process before cleanup.
+This invokes the actual internal migration and then enables the existing gate through a fixture-only internal mutation. There is no product endpoint that enables release. The snapshot clones installed dependencies so Turbopack can resolve them inside the external directory. Start the web app from the manifest's `sourceDir` with Node 24 and `node node_modules/next/dist/bin/next dev --turbopack --port "$REVISION_UI_WEB_PORT"`. Record the web process you own and stop that process before cleanup.
 
 `dump [output-path]` saves exact quotation, item, family, receipt and artifact rows for persistence comparisons. `pdf-state REVISION_ID pending|failed|missing` creates deterministic artifact conditions only in the disposable fixture. Record any injected condition in the evidence. Never treat it as an organically observed worker failure.
 
