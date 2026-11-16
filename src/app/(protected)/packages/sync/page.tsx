@@ -1353,6 +1353,14 @@ export default function PackageSyncPage() {
                     ))}
                   </div>
                 )}
+                {result.errors.length > 0 && (
+                  <div className="space-y-2 text-sm">
+                    <p>Your uploaded files are retained. Earlier successful changes remain saved. Review the latest data before another apply.</p>
+                    <Button variant="outline" onClick={() => { setResult(null); setProgress(null); setStep(1); }}>
+                      Review retained files
+                    </Button>
+                  </div>
+                )}
                 <Button variant="outline" size="sm" onClick={resetUpload} className="mt-2">
                   Start over
                 </Button>
