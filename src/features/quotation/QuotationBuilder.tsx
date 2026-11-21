@@ -1242,11 +1242,10 @@ export default function QuotationBuilder({
 								if (event.key === "Enter") event.stopPropagation();
 							}}
 						>
-							<div className="grid grid-cols-2 gap-2 lg:flex">
+							<div className="flex flex-wrap justify-between gap-2 lg:justify-start">
 								<Button
 									type="button"
 									variant="outline"
-									className="h-11 lg:h-9"
 									onClick={goBack}
 									disabled={currentStep === "basic"}
 								>
@@ -1256,24 +1255,22 @@ export default function QuotationBuilder({
 								<Button
 									type="button"
 									variant="outline"
-									className={currentStep === "extras" ? "hidden" : "h-11 lg:h-9"}
+									className={currentStep === "extras" ? "hidden" : undefined}
 									onClick={goNext}
 								>
 									Next
 									<ChevronRight aria-hidden="true" />
 								</Button>
 							</div>
-							<div className="grid grid-cols-2 gap-2 lg:flex">
-								<Button asChild variant="ghost" className="h-auto min-h-11 lg:h-9 lg:min-h-0">
+							<div className="flex flex-wrap justify-between gap-2 lg:justify-start">
+								<Button asChild variant="ghost" className="px-3 lg:px-4">
 									<Link href={qid ? `/quotations/review/${qid}` : "/quotations"}>
 										Cancel
 									</Link>
 								</Button>
 								<Button
 									type="submit"
-									className={currentStep !== "extras" && !qid
-										? "hidden"
-										: "h-auto min-h-11 whitespace-normal lg:h-9 lg:min-h-0 lg:whitespace-nowrap"}
+									className={currentStep !== "extras" && !qid ? "hidden" : "ml-auto lg:ml-0"}
 									hidden={currentStep !== "extras" && !qid}
 									disabled={isSubmitting || revisionLocked}
 								>
