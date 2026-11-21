@@ -4,7 +4,7 @@ export type RefreshSnapshotResult =
 	| { status: "unavailable"; message: string }
 	| { status: "success" }
 	| { status: "failure"; message: string }
-	| { status: "uncertain"; message: string };
+	| { status: "uncertain"; httpStatus?: number };
 
 export type RefreshSnapshotState =
 	| { status: "idle" }
@@ -12,9 +12,6 @@ export type RefreshSnapshotState =
 	| { status: "review"; review: SnapshotRefreshReview }
 	| { status: "pending" }
 	| RefreshSnapshotResult;
-
-const uncertainRefresh =
-	"We could not confirm whether the snapshot was refreshed. Your entries are kept on this page. Check the saved quotation before refreshing again.";
 
 export async function refreshQuotationSnapshot(
 	quotationId: string,
@@ -38,15 +35,16 @@ export async function refreshQuotationSnapshot(
 				if (body?.code === SNAPSHOT_REFRESH_CONFLICT) return { status: "conflict", message: SNAPSHOT_REFRESH_CONFLICT_MESSAGE };
 				if (body?.code === "SNAPSHOT_REFRESH_UNAVAILABLE") return { status: "unavailable", message: "The saved package or flight is no longer available. Your entries are kept on this page. View the saved quotation to check its selection." };
 			}
-			return response.status >= 500
-				? {
-					status: "uncertain",
-					message: `The server reported a problem (HTTP ${response.status}). ${uncertainRefresh}`,
-				}
-				: {
-					status: "failure",
-					message: `Refresh was rejected (HTTP ${response.status}). Your entries are kept on this page. Check your sign-in before trying again.`,
-				};
+			if (response.status >= 500 || response.status === 408) {
+				return { status: "uncertain", httpStatus: response.status };
+			}
+			const nextStep = response.status === 401 || response.status === 403
+				? "Check your sign-in and access before trying again."
+				: "Check the saved quotation and open the snapshot review again.";
+			return {
+				status: "failure",
+				message: `The refresh was rejected. Nothing was refreshed. Your entries are kept on this page. ${nextStep} (HTTP ${response.status})`,
+			};
 		}
 		const body: unknown = await response.json();
 		if (
@@ -56,8 +54,8 @@ export async function refreshQuotationSnapshot(
 		) {
 			return { status: "success" };
 		}
-		return { status: "uncertain", message: uncertainRefresh };
 	} catch {
-		return { status: "uncertain", message: uncertainRefresh };
+		return { status: "uncertain" };
 	}
+	return { status: "uncertain" };
 }
