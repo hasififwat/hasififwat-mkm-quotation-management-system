@@ -1,0 +1,12 @@
+{
+  "owner": "quotation-revisions-59",
+  "backendPid": 34511,
+  "removedPrivateFixtureState": true,
+  "nextPid": 38872,
+  "nextParentPid": 38855,
+  "closedPorts": [
+    3676,
+    13976,
+    13977
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "incomplete": {
+    "id": "n575qcv1w20bjdem7q16r1wt8h8jmmt5",
+    "reference": "1448H-0001",
+    "staleFields": [
+      "snapshot.incomplete"
+    ],
+    "savedFlight": "MALAYSIA AIRLINES",
+    "total": 5000
+  },
+  "changed": {
+    "id": "n57d0w2xsjv71apvm6svfqabgh8jmfed",
+    "reference": "1448H-0003",
+    "staleFields": [
+      "flight"
+    ],
+    "savedFlight": "MALAYSIA AIRLINES",
+    "total": 4800,
+    "currentFlight": "MKM7602"
+  },
+  "control": {
+    "id": "n5759wd9cjheym2yg77apwdnch8jn1xs",
+    "reference": "1448H-0002",
+    "staleFields": [],
+    "savedFlight": "MALAYSIA AIRLINES",
+    "total": 4800
+  }
+}
