@@ -231,7 +231,7 @@ export function DataTable<TData, TValue>({
 									<Tooltip>
 										<TooltipTrigger className="cursor-help text-amber-500 text-xs">⚠</TooltipTrigger>
 										<TooltipContent side="top">
-											Saved quotation details require verification. Open to see details.
+											Some saved details may be missing or out of date. Select Preview to check the quotation.
 										</TooltipContent>
 									</Tooltip>
 								</TooltipProvider>
