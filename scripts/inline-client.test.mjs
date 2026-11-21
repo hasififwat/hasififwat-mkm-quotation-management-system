@@ -50,8 +50,9 @@ test("creation API returns the stored client name with its ID", async () => {
   });
 });
 
-function formHarness(response) {
+function formHarness(...responses) {
   const states = [];
+  const requests = [];
   let cursor = 0;
   const { CreateClientForm } = load("src/features/clients/CreateClientForm.tsx", {
     react: {
@@ -65,15 +66,19 @@ function formHarness(response) {
     "~/components/ui/input": { Input: "input" },
     "~/components/ui/label": { Label: "label" },
   }, {
-    fetch: async () => ({ ok: true, json: async () => response }),
-    FormData: class extends Map {},
+    fetch: async (_url, { body }) => {
+      const response = responses[requests.length];
+      requests.push(body.get("force"));
+      return { ok: true, json: async () => response };
+    },
+    FormData: function () { return new Map(); },
   });
   const results = [];
   const render = () => {
     cursor = 0;
     return CreateClientForm({ onSuccess: (client) => results.push(client) });
   };
-  return { render, results };
+  return { render, requests, results };
 }
 
 test("client submit contains the event and forwards the returned summary", async () => {
@@ -89,20 +94,48 @@ test("client submit contains the event and forwards the returned summary", async
   assert.deepEqual(results, [client]);
 });
 
-test("duplicate reuse forwards the existing name rather than the candidate name", async () => {
+test("duplicate warning blocks native submit and reuse forwards the existing client", async () => {
   const existing = { id: "client:3", name: "Existing Client", phone_number: "0192100005" };
-  const { render, results } = formHarness({ alreadyExists: true, existing });
-  await render().props.onSubmit({
+  const { render, requests, results } = formHarness({ alreadyExists: true, existing });
+  const submit = {
     preventDefault() {},
     stopPropagation() {},
     currentTarget: [],
-  });
+  };
+  await render().props.onSubmit(submit);
   const form = render();
-  const fieldset = form.props.children[0];
-  const warning = fieldset.props.children[2];
-  const reuseButton = warning.props.children[1].props.children[1];
+  await form.props.onSubmit(submit);
+  assert.deepEqual(requests, ["false"]);
+  const footer = form.props.children.at(-1);
+  const [reuseButton, createButton] = footer.props.children.props.children;
+  assert.equal(reuseButton.props.children, "Use existing client");
+  assert.equal(reuseButton.props.type, "button");
+  assert.equal(createButton.props.children, "Create Anyway");
+  assert.equal(createButton.props.type, "button");
   reuseButton.props.onClick();
+  assert.deepEqual(requests, ["false"]);
   assert.deepEqual(results, [existing]);
+});
+
+test("Create Anyway validates the form and explicitly sends force", async () => {
+  const existing = { id: "client:3", name: "Existing Client", phone_number: "0192100005" };
+  const client = { id: "client:4", name: "New Client" };
+  const { render, requests, results } = formHarness(
+    { alreadyExists: true, existing },
+    { success: true, client },
+  );
+  let valid = false;
+  const form = { reportValidity: () => valid };
+  await render().props.onSubmit({ preventDefault() {}, stopPropagation() {}, currentTarget: form });
+  const footer = render().props.children.at(-1);
+  const createButton = footer.props.children.props.children[1];
+  const click = { currentTarget: { form } };
+  await createButton.props.onClick(click);
+  assert.deepEqual(requests, ["false"]);
+  valid = true;
+  await createButton.props.onClick(click);
+  assert.deepEqual(requests, ["false", "true"]);
+  assert.deepEqual(results, [client]);
 });
 
 test("Enter stays inside the client form without cancelling native submission", () => {
