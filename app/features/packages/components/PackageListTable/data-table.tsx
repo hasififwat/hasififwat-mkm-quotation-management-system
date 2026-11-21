@@ -18,7 +18,7 @@ import {
 	ArrowUp,
 	ArrowUpDown,
 	ChevronDown,
-	Copy,
+	FileText,
 	Loader2,
 	MoreHorizontal,
 	PencilIcon,
@@ -126,12 +126,14 @@ export function DataTable<TData, TValue>({
 				<div className="flex items-start gap-2">
 					<div className="w-7.5 shrink-0">
 						<Button
+							aria-label={`Preview package text for ${package_name}`}
+							title="Preview package text"
 							onClick={() => handlePreview(pkg as TData)}
 							size="icon"
 							variant="ghost"
 							className="h-8 w-8"
 						>
-							<Copy className="h-4 w-4" />
+							<FileText className="h-4 w-4" />
 						</Button>
 					</div>
 
