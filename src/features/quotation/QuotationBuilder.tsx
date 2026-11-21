@@ -1237,15 +1237,16 @@ export default function QuotationBuilder({
 
 
 						<CardFooter
-							className="flex-wrap justify-between gap-x-6 gap-y-3 border-t px-4 sm:px-6"
+							className="grid gap-2 border-t lg:flex lg:justify-between lg:gap-6"
 							onKeyDown={(event) => {
 								if (event.key === "Enter") event.stopPropagation();
 							}}
 						>
-							<div className="flex flex-wrap gap-2">
+							<div className="grid grid-cols-2 gap-2 lg:flex">
 								<Button
 									type="button"
 									variant="outline"
+									className="h-11 lg:h-9"
 									onClick={goBack}
 									disabled={currentStep === "basic"}
 								>
@@ -1255,22 +1256,24 @@ export default function QuotationBuilder({
 								<Button
 									type="button"
 									variant="outline"
-									className={currentStep === "extras" ? "hidden" : undefined}
+									className={currentStep === "extras" ? "hidden" : "h-11 lg:h-9"}
 									onClick={goNext}
 								>
 									Next
 									<ChevronRight aria-hidden="true" />
 								</Button>
 							</div>
-							<div className="ml-auto flex flex-wrap justify-end gap-2">
-								<Button asChild variant="ghost">
+							<div className="grid grid-cols-2 gap-2 lg:flex">
+								<Button asChild variant="ghost" className="h-auto min-h-11 lg:h-9 lg:min-h-0">
 									<Link href={qid ? `/quotations/review/${qid}` : "/quotations"}>
 										Cancel
 									</Link>
 								</Button>
 								<Button
 									type="submit"
-									className={currentStep !== "extras" && !qid ? "hidden" : undefined}
+									className={currentStep !== "extras" && !qid
+										? "hidden"
+										: "h-auto min-h-11 whitespace-normal lg:h-9 lg:min-h-0 lg:whitespace-nowrap"}
 									hidden={currentStep !== "extras" && !qid}
 									disabled={isSubmitting || revisionLocked}
 								>
