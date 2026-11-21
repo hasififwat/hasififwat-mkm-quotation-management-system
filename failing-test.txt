@@ -1,0 +1,24 @@
+✖ refresh rejects an editor loaded on A after another editor saves B (16.343583ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 367.467625
+
+✖ failing tests:
+
+test at scripts/snapshot-refresh-review.test.mjs:5:1
+✖ refresh rejects an editor loaded on A after another editor saves B (16.343583ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///private/tmp/mkm-issue32-fix/scripts/snapshot-refresh-review.test.mjs:29:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }

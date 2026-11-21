@@ -1,0 +1,34 @@
+✔ refresh rejects an editor loaded on A after another editor saves B (13.191ms)
+✔ refresh rejects a changed saved quotation before snapshot or log writes (0.755792ms)
+✔ loaded A context rejects review after another editor saves B (0.840083ms)
+✔ confirmation rejects changed saved content without writes (1.010209ms)
+✔ confirmation rejects changed saved content without writes (2.657291ms)
+✔ confirmation rejects changed saved content without writes (0.839084ms)
+✔ confirmation rejects changed saved content without writes (0.761875ms)
+✔ confirmation rejects changed saved content without writes (0.659959ms)
+✔ confirmation rejects packages.name without parent timestamp changes (0.743708ms)
+✔ confirmation rejects package_rooms.price without parent timestamp changes (0.761417ms)
+✔ confirmation rejects package_rooms.enabled without parent timestamp changes (0.671375ms)
+✔ confirmation rejects package_flights.departure_sector without parent timestamp changes (0.713209ms)
+✔ confirmation rejects package_hotels.name without parent timestamp changes (0.638333ms)
+✔ confirmation rejects package_meals.meal_type without parent timestamp changes (0.567167ms)
+✔ success writes reviewed snapshots and preserves every charge and item (0.818459ms)
+✔ unrelated package changes do not conflict (0.534083ms)
+✔ legacy snapshots and original prices can be reviewed and refreshed (0.55025ms)
+✔ missing or unrelated saved flight blocks review without writes (0.417541ms)
+✔ anonymous review and confirmation reject (0.471584ms)
+✔ exact proposed snapshot changes invalidate confirmation (0.546792ms)
+✔ exact proposed snapshot changes invalidate confirmation (0.524208ms)
+✔ exact proposed snapshot changes invalidate confirmation (0.730791ms)
+✔ unselected flight changes and collection order do not invalidate review (0.554625ms)
+✔ tokenless legacy refresh rejects without writes (0.239083ms)
+✔ review tokens cannot bypass migration restrictions (0.488875ms)
+✔ review tokens cannot bypass frozen restrictions (0.456ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 327.464167
