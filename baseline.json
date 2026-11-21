@@ -1,0 +1,58 @@
+{
+  "url": "http://localhost:3679/quotations/edit/n57frg8t465eczdpkj332evv7h8jnmmx",
+  "output": [
+    "Refresh snapshot",
+    "The saved quotation or package changed after you loaded or reviewed it. Nothing was refreshed. Your entries are kept on this page. Review the latest saved quotation before confirming again.",
+    "Review latest saved quotation",
+    "View saved quotation (opens in a new tab) to verify its details. Unsaved entries on this page are not included."
+  ],
+  "record": {
+    "token": "quotation-refresh-v1:57b4ac9807f74202506c90f89a644372f307dd36ef0ac1024e5683a2c33d0f78",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m97badm5a4ws44zx2f4sq3j5a18jn8ak",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m971wmqm3yhtzxex3q7cxd66r98jm1xq",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m974znykfq9pfsgg5mp7hcpbn98jm2dq",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved outside the editor before the baseline review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "ax": [
+    "  - alert [ref=t3-82f8d8a8-wb-f2e11] [box=-1,-1,1,1]",
+    "            - button \"Refresh snapshot\" [active] [ref=t3-82f8d8a8-wb-f2e102] [box=1050,267,124,28]",
+    "            - alert [box=451,365,1,0]",
+    "          - alert [ref=t3-82f8d8a8-wb-f2e132] [box=452,366,740,166]:",
+    "            - button \"Review latest saved quotation\" [ref=t3-82f8d8a8-wb-f2e134] [box=469,431,233,36]",
+    "              - link \"View saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-wb-f2e136] [cursor=pointer] [box=469,477,283,17]:"
+  ]
+}

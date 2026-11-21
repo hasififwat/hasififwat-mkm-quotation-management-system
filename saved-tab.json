@@ -1,0 +1,56 @@
+{
+  "url": "http://localhost:3679/quotations/review/n57frg8t465eczdpkj332evv7h8jnmmx",
+  "distinctTab": true,
+  "first": "Toggle Sidebar\n\u26a0\nThis PDF uses saved snapshot values where available. Details requiring verification: room prices or availability.\nGo to edit \u2192 refresh snapshot\nDownload PDF\nSEBUT HARGA\nKEPADA:\nREVISION HISTORY FIXTURE\nSEBUT HARGA\nNO. RUJUKAN\nTARIKH\nPIC\nPEJABAT\n: 1448H-0001\n: 21 Nov 2026\n: REVISION VERIFICATION\n: DISPOSABLE FIXTURE\nPAKEJ/BILIK\nQUAD/PAX\nJUMLAH\nREVISION VERIFICATION PACKAGE - 4 PAX\nRM\u00a01,200.00 X (4 pax)\nRM\u00a04,800.00\nAIRPORT TRANSFER\nRM\u00a0100.00 x (4 pax)\nRM\u00a0400.00\nGROUP DISCOUNT\nRM\u00a050.00 x (4 pax)\n- RM\u00a0200.00\nJUMLAH KESELURUHAN\nRM\u00a05,000.00\nBUTIRAN PAKEJ\nJENIS PENERBANGAN\nMALAYSIA AIRLINES\nTARIKH CADANGAN\n01 JAN 2027 - 12 JAN 2027\nJUMLAH HARI\n12 days\nJENIS PENGANGKUTAN\nBUS\nHOTEL MAKKAH:\nMAKKAH HOTEL\nJENIS MAKANAN\nBREAKFAST(MAKKAH)\nPAKEJ TERMASUK\nPAKEJ TIDAK TERMASUK\n- Breakfast\n- Visa",
+  "reloaded": "Toggle Sidebar\n\u26a0\nThis PDF uses saved snapshot values where available. Details requiring verification: room prices or availability.\nGo to edit \u2192 refresh snapshot\nDownload PDF\nSEBUT HARGA\nKEPADA:\nREVISION HISTORY FIXTURE\nSEBUT HARGA\nNO. RUJUKAN\nTARIKH\nPIC\nPEJABAT\n: 1448H-0001\n: 21 Nov 2026\n: REVISION VERIFICATION\n: DISPOSABLE FIXTURE\nPAKEJ/BILIK\nQUAD/PAX\nJUMLAH\nREVISION VERIFICATION PACKAGE - 4 PAX\nRM\u00a01,200.00 X (4 pax)\nRM\u00a04,800.00\nAIRPORT TRANSFER\nRM\u00a0100.00 x (4 pax)\nRM\u00a0400.00\nGROUP DISCOUNT\nRM\u00a050.00 x (4 pax)\n- RM\u00a0200.00\nJUMLAH KESELURUHAN\nRM\u00a05,000.00\nBUTIRAN PAKEJ\nJENIS PENERBANGAN\nMALAYSIA AIRLINES\nTARIKH CADANGAN\n01 JAN 2027 - 12 JAN 2027\nJUMLAH HARI\n12 days\nJENIS PENGANGKUTAN\nBUS\nHOTEL MAKKAH:\nMAKKAH HOTEL\nJENIS MAKANAN\nBREAKFAST(MAKKAH)\nPAKEJ TERMASUK\nPAKEJ TIDAK TERMASUK\n- Breakfast\n- Visa",
+  "meta": {
+    "fields": 0,
+    "opener": false
+  },
+  "draft": [
+    "Draft PIC 79",
+    "Draft Branch 79",
+    "Draft notes 79 stay in the editor"
+  ],
+  "record": {
+    "token": "quotation-refresh-v1:1fd4f50878f831d392b3948bf239ef759769e830e0545e8b749b9bf1629cf376",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  }
+}

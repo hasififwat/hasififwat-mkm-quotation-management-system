@@ -1,0 +1,117 @@
+{
+  "comparison": [
+    "Saved: Quad: RM 1200.00 (available)",
+    "Current: Quad: RM 1450.00 (available)",
+    "Confirm refresh"
+  ],
+  "differences": [
+    {
+      "current": "Quad: RM 1450.00 (available)",
+      "label": "Package room prices and availability",
+      "saved": "Quad: RM 1200.00 (available)"
+    }
+  ],
+  "before": {
+    "token": "quotation-refresh-v1:1fd4f50878f831d392b3948bf239ef759769e830e0545e8b749b9bf1629cf376",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "after": {
+    "token": "quotation-refresh-v1:92807dde483727bff164dac82a6a85d5a6d42eeba7ccb1bea3d6c1abef39f9d3",
+    "stale": [],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "remaining": [],
+  "reqs": [
+    {
+      "url": "http://localhost:3679/api/quotations/update",
+      "method": "POST",
+      "status": 409,
+      "failed": false,
+      "timestamp": "2026-11-21T15:29:38.727Z"
+    },
+    {
+      "url": "http://localhost:3679/api/quotations/update",
+      "method": "POST",
+      "status": 200,
+      "failed": false,
+      "timestamp": "2026-11-21T15:30:15.061Z"
+    }
+  ],
+  "draft": [
+    "Draft PIC 79",
+    "Draft Branch 79",
+    "Draft notes 79 stay in the editor"
+  ],
+  "success": "Snapshot refreshed. Existing quoted prices, passenger counts, add-ons, discounts, and totals were kept."
+}

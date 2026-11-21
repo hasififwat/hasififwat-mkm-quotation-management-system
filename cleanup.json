@@ -1,0 +1,19 @@
+{
+  "loopbackConnectErrors": {
+    "3679": 61,
+    "14279": 61,
+    "14280": 61
+  },
+  "removedPrivateFixturePaths": [
+    "source",
+    "backend.sqlite3",
+    "backend.sqlite3-shm",
+    "backend.sqlite3-wal",
+    "storage",
+    "fixture-account.json",
+    ".session.json",
+    ".env.auth"
+  ],
+  "editorTabClosed": true,
+  "savedTab": "T3 reported This tab has no agent owner during close."
+}

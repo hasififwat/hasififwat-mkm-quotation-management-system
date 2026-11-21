@@ -1,0 +1,187 @@
+{
+  "comparison": [
+    "Review snapshot changes",
+    "",
+    "Review the saved selection and current details. Your draft stays on this page.",
+    "",
+    "Saved package: Revision verification package",
+    "Saved flight: MALAYSIA AIRLINES: 2027-01-01 KUL-JED to 2027-01-12 JED-KUL",
+    "",
+    "Current package: Revision verification package",
+    "Current flight: MALAYSIA AIRLINES: 2027-01-01 KUL-JED to 2027-01-12 JED-KUL",
+    "",
+    "Package room prices and availability",
+    "",
+    "Saved: Quad: RM 1200.00 (available)",
+    "",
+    "Current: Quad: RM 1400.00 (available)",
+    "",
+    "Confirming refresh updates these details on the saved quotation immediately. It preserves quoted prices, passenger counts, add-ons, discounts, and totals.",
+    "",
+    "Confirm refresh",
+    "Cancel",
+    "Client Details",
+    "Enter the client and person in charge details.",
+    "PIC Name"
+  ],
+  "reviewFocus": {
+    "focusVisible": true,
+    "outline": "lab(66.128 -0.0000298023 0.0000119209) solid 2px",
+    "shadow": "none",
+    "tag": "H3",
+    "text": "Review snapshot changes"
+  },
+  "confirmFocus": {
+    "focusVisible": true,
+    "outline": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) none 2.5px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0875752) 0px 0px 0px 0.525451px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+    "tag": "BUTTON",
+    "text": "Confirm refresh"
+  },
+  "requestsAfterRead": 0,
+  "recordBefore": {
+    "token": "quotation-refresh-v1:1fd4f50878f831d392b3948bf239ef759769e830e0545e8b749b9bf1629cf376",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "recordAfterRead": {
+    "token": "quotation-refresh-v1:1fd4f50878f831d392b3948bf239ef759769e830e0545e8b749b9bf1629cf376",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "recordAfterRejection": {
+    "token": "quotation-refresh-v1:1fd4f50878f831d392b3948bf239ef759769e830e0545e8b749b9bf1629cf376",
+    "stale": [
+      "room_pricing"
+    ],
+    "items": {
+      "adds_ons": [
+        {
+          "id": "m9786thfk61zfyjsz58z479aj18jm02n",
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        }
+      ],
+      "discounts": [
+        {
+          "id": "m979ckxe7vkd25rvvp3y3ty4c98jmyth",
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        }
+      ],
+      "selected_rooms": [
+        {
+          "id": "m9714s5k07124t8d5b43f79cqd8jn72j",
+          "package_room_id": "kn77pzsmr1ra9qjwr602hceyy18jn2h6",
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ]
+    },
+    "total": 5000,
+    "pic": "Revision Verification",
+    "branch": "Disposable fixture",
+    "notes": "Saved concurrently before opening review",
+    "flight": "k974290zvsqt9503qyz1gqqy0x8jmsxj"
+  },
+  "requestsAfterRejection": [
+    {
+      "url": "http://localhost:3679/api/quotations/update",
+      "method": "POST",
+      "status": 409,
+      "failed": false,
+      "timestamp": "2026-11-21T15:29:38.727Z"
+    }
+  ],
+  "ax": [
+    "  - alert [ref=t3-82f8d8a8-y6-f4e11] [box=-1,-1,1,1]",
+    "          - alert [ref=t3-82f8d8a8-y6-f4e132] [box=25,271,310,152]:",
+    "            - heading \"Saved details changed\" [level=3] [ref=t3-82f8d8a8-y6-f4e234] [box=25,271,310,20]",
+    "            - paragraph [ref=t3-82f8d8a8-y6-f4e235] [box=25,295,310,80]: The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.",
+    "            - button \"Review latest changes\" [active] [ref=t3-82f8d8a8-y6-f4e239] [box=25,435,181,36]",
+    "            - link \"Open saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-y6-f4e240] [cursor=pointer] [box=25,479,310,58]:"
+  ],
+  "draft": [
+    "Draft PIC 79",
+    "Draft Branch 79",
+    "Draft notes 79 stay in the editor"
+  ]
+}

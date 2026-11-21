@@ -1,0 +1,12 @@
+{
+  "network": [
+    {
+      "url": "http://localhost:3679/api/quotations/update",
+      "method": "POST",
+      "status": 409,
+      "failed": false,
+      "timestamp": "2026-11-21T15:25:44.469Z"
+    }
+  ],
+  "recordUnchanged": true
+}

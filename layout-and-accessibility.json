@@ -1,0 +1,262 @@
+[
+  {
+    "label": "desktop-dark",
+    "actual": "dark",
+    "read": {
+      "alert": "alert",
+      "atomic": "true",
+      "background": "lab(15.8111 20.9107 23.3752)",
+      "documentWidth": 1387,
+      "first": {
+        "bottom": 411,
+        "height": 36,
+        "right": 649.8984375,
+        "width": 181.3984375,
+        "x": 468.5,
+        "y": 375
+      },
+      "panel": {
+        "bottom": 430,
+        "height": 176,
+        "right": 1191.5,
+        "width": 740,
+        "x": 451.5,
+        "y": 254
+      },
+      "second": {
+        "bottom": 413,
+        "height": 38,
+        "right": 978.1328125,
+        "width": 320.234375,
+        "x": 657.8984375,
+        "y": 375
+      },
+      "textColor": "lab(95.916 -1.21653 23.111)",
+      "variants": [
+        "default",
+        "outline"
+      ],
+      "viewport": [
+        1402,
+        877
+      ]
+    },
+    "focus": {
+      "focusVisible": true,
+      "outline": "oklab(0.555999 -0.00000530481 0.000012964 / 0.5) none 1px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "tag": "BUTTON",
+      "text": "Review latest changes"
+    },
+    "secondary": {
+      "focusVisible": true,
+      "outline": "oklab(0.555999 -0.00000530481 0.000012964 / 0.5) none 2.5px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0169272) 0px 0px 0px 0.101563px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "tag": "A",
+      "text": "Open saved quotation (opens in a new tab)"
+    },
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-xo-f4e11] [box=-1,-1,1,1]",
+      "            - alert [ref=t3-82f8d8a8-xo-f4e132] [box=469,271,706,92]:",
+      "              - heading \"Saved details changed\" [level=3] [ref=t3-82f8d8a8-xo-f4e133] [box=469,271,706,20]",
+      "              - paragraph [ref=t3-82f8d8a8-xo-f4e134] [box=469,295,706,40]: The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.",
+      "              - button \"Review latest changes\" [active] [ref=t3-82f8d8a8-xo-f4e138] [box=469,375,181,36]",
+      "              - link \"Open saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-xo-f4e139] [cursor=pointer] [box=658,375,320,38]:"
+    ]
+  },
+  {
+    "label": "desktop-light",
+    "actual": "light",
+    "read": {
+      "alert": "alert",
+      "atomic": "true",
+      "background": "lab(98.6252 -0.635922 8.42309)",
+      "documentWidth": 1387,
+      "first": {
+        "bottom": 411,
+        "height": 36,
+        "right": 649.8984375,
+        "width": 181.3984375,
+        "x": 468.5,
+        "y": 375
+      },
+      "panel": {
+        "bottom": 430,
+        "height": 176,
+        "right": 1191.5,
+        "width": 740,
+        "x": 451.5,
+        "y": 254
+      },
+      "second": {
+        "bottom": 413,
+        "height": 38,
+        "right": 978.1328125,
+        "width": 320.234375,
+        "x": 657.8984375,
+        "y": 375
+      },
+      "textColor": "lab(15.8111 20.9107 23.3752)",
+      "variants": [
+        "default",
+        "outline"
+      ],
+      "viewport": [
+        1402,
+        877
+      ]
+    },
+    "focus": {
+      "focusVisible": true,
+      "outline": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) none 1px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "tag": "BUTTON",
+      "text": "Review latest changes"
+    },
+    "secondary": {
+      "focusVisible": true,
+      "outline": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) none 3px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "tag": "A",
+      "text": "Open saved quotation (opens in a new tab)"
+    },
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-xs-f4e11] [box=-1,-1,1,1]",
+      "            - alert [ref=t3-82f8d8a8-xs-f4e132] [box=469,271,706,92]:",
+      "              - heading \"Saved details changed\" [level=3] [ref=t3-82f8d8a8-xs-f4e133] [box=469,271,706,20]",
+      "              - paragraph [ref=t3-82f8d8a8-xs-f4e134] [box=469,295,706,40]: The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.",
+      "              - button \"Review latest changes\" [active] [ref=t3-82f8d8a8-xs-f4e138] [box=469,375,181,36]",
+      "              - link \"Open saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-xs-f4e139] [cursor=pointer] [box=658,375,320,38]:"
+    ]
+  },
+  {
+    "label": "mobile-dark",
+    "actual": "dark",
+    "read": {
+      "alert": "alert",
+      "atomic": "true",
+      "background": "lab(15.8111 20.9107 23.3752)",
+      "documentWidth": 360,
+      "first": {
+        "bottom": 471,
+        "height": 36,
+        "right": 206.3984375,
+        "width": 181.3984375,
+        "x": 25,
+        "y": 435
+      },
+      "panel": {
+        "bottom": 554,
+        "height": 300,
+        "right": 352,
+        "width": 344,
+        "x": 8,
+        "y": 254
+      },
+      "second": {
+        "bottom": 537,
+        "height": 58,
+        "right": 335,
+        "width": 310,
+        "x": 25,
+        "y": 479
+      },
+      "textColor": "lab(95.916 -1.21653 23.111)",
+      "variants": [
+        "default",
+        "outline"
+      ],
+      "viewport": [
+        375,
+        812
+      ]
+    },
+    "focus": {
+      "focusVisible": true,
+      "outline": "oklab(0.555999 -0.00000530481 0.000012964 / 0.5) none 1px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "tag": "BUTTON",
+      "text": "Review latest changes"
+    },
+    "secondary": {
+      "focusVisible": true,
+      "outline": "oklab(0.555999 -0.00000530481 0.000012964 / 0.5) none 2.5px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0163989) 0px 0px 0px 0.0983932px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "tag": "A",
+      "text": "Open saved quotation (opens in a new tab)"
+    },
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-xw-f4e11] [box=-1,-1,1,1]",
+      "          - alert [ref=t3-82f8d8a8-xw-f4e132] [box=25,271,310,152]:",
+      "            - heading \"Saved details changed\" [level=3] [ref=t3-82f8d8a8-xw-f4e133] [box=25,271,310,20]",
+      "            - paragraph [ref=t3-82f8d8a8-xw-f4e134] [box=25,295,310,80]: The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.",
+      "            - button \"Review latest changes\" [active] [ref=t3-82f8d8a8-xw-f4e138] [box=25,435,181,36]",
+      "            - link \"Open saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-xw-f4e139] [cursor=pointer] [box=25,479,310,58]:"
+    ]
+  },
+  {
+    "label": "mobile-light",
+    "actual": "light",
+    "read": {
+      "alert": "alert",
+      "atomic": "true",
+      "background": "lab(98.6252 -0.635922 8.42309)",
+      "documentWidth": 360,
+      "first": {
+        "bottom": 471,
+        "height": 36,
+        "right": 206.3984375,
+        "width": 181.3984375,
+        "x": 25,
+        "y": 435
+      },
+      "panel": {
+        "bottom": 554,
+        "height": 300,
+        "right": 352,
+        "width": 344,
+        "x": 8,
+        "y": 254
+      },
+      "second": {
+        "bottom": 537,
+        "height": 58,
+        "right": 335,
+        "width": 310,
+        "x": 25,
+        "y": 479
+      },
+      "textColor": "lab(15.8111 20.9107 23.3752)",
+      "variants": [
+        "default",
+        "outline"
+      ],
+      "viewport": [
+        375,
+        812
+      ]
+    },
+    "focus": {
+      "focusVisible": true,
+      "outline": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) none 1px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "tag": "BUTTON",
+      "text": "Review latest changes"
+    },
+    "secondary": {
+      "focusVisible": true,
+      "outline": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) none 2.5px",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0163989) 0px 0px 0px 0.0983932px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "tag": "A",
+      "text": "Open saved quotation (opens in a new tab)"
+    },
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-y0-f4e11] [box=-1,-1,1,1]",
+      "          - alert [ref=t3-82f8d8a8-y0-f4e132] [box=25,271,310,152]:",
+      "            - heading \"Saved details changed\" [level=3] [ref=t3-82f8d8a8-y0-f4e133] [box=25,271,310,20]",
+      "            - paragraph [ref=t3-82f8d8a8-y0-f4e134] [box=25,295,310,80]: The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.",
+      "            - button \"Review latest changes\" [active] [ref=t3-82f8d8a8-y0-f4e138] [box=25,435,181,36]",
+      "            - link \"Open saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-y0-f4e139] [cursor=pointer] [box=25,479,310,58]:"
+    ]
+  }
+]
