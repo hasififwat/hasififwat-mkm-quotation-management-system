@@ -1,0 +1,173 @@
+[
+  {
+    "before": "baseline",
+    "after": "after500",
+    "tokenChanged": false,
+    "beforeStale": [
+      "room_pricing"
+    ],
+    "afterStale": [
+      "room_pricing"
+    ],
+    "savedValuesPreserved": true,
+    "retainedQuote": {
+      "items": [
+        {
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        },
+        {
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        },
+        {
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ],
+      "total": 5000
+    }
+  },
+  {
+    "before": "conflict-before",
+    "after": "conflict-after",
+    "tokenChanged": false,
+    "beforeStale": [
+      "room_pricing"
+    ],
+    "afterStale": [
+      "room_pricing"
+    ],
+    "savedValuesPreserved": true,
+    "retainedQuote": {
+      "items": [
+        {
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        },
+        {
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        },
+        {
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ],
+      "total": 5000
+    }
+  },
+  {
+    "before": "conflict-before",
+    "after": "review-only",
+    "tokenChanged": false,
+    "beforeStale": [
+      "room_pricing"
+    ],
+    "afterStale": [
+      "room_pricing"
+    ],
+    "savedValuesPreserved": true,
+    "retainedQuote": {
+      "items": [
+        {
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        },
+        {
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        },
+        {
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ],
+      "total": 5000
+    }
+  },
+  {
+    "before": "review-only",
+    "after": "success-after",
+    "tokenChanged": true,
+    "beforeStale": [
+      "room_pricing"
+    ],
+    "afterStale": [],
+    "savedValuesPreserved": true,
+    "retainedQuote": {
+      "items": [
+        {
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        },
+        {
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        },
+        {
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ],
+      "total": 5000
+    }
+  },
+  {
+    "before": "lost-before",
+    "after": "lost-after",
+    "tokenChanged": true,
+    "beforeStale": [
+      "room_pricing"
+    ],
+    "afterStale": [],
+    "savedValuesPreserved": true,
+    "retainedQuote": {
+      "items": [
+        {
+          "name": "Airport transfer",
+          "pax": 4,
+          "price": 100,
+          "subtotal": 400
+        },
+        {
+          "name": "Group discount",
+          "pax": 4,
+          "price": 50,
+          "subtotal": 200
+        },
+        {
+          "pax": 4,
+          "price": 1200,
+          "room_type": "Quad",
+          "subtotal": 4800
+        }
+      ],
+      "total": 5000
+    }
+  }
+]

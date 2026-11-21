@@ -1,0 +1,10 @@
+Injected HTTP 500 before forwarding refresh
+Injected HTTP 500 before forwarding refresh
+Injected HTTP 500 before forwarding refresh
+Real refresh response 409
+Real refresh response 200
+Real refresh response 200
+Dropped downstream socket after complete real response 200
+Real refresh response 409
+Real refresh response 200
+Truncated downstream body after complete real response 200

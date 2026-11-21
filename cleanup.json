@@ -1,0 +1,25 @@
+{
+  "loopbackConnectExit": {
+    "3678": 61,
+    "3688": 61,
+    "14078": 61,
+    "14079": 61
+  },
+  "removedFixtureState": [
+    "source",
+    "backend.sqlite3",
+    "backend.sqlite3-wal",
+    "backend.sqlite3-shm",
+    "storage",
+    "fixture-account.json",
+    ".session.json",
+    ".env.auth"
+  ],
+  "ownedProcessIds": {
+    "proxy": 89720,
+    "next": 83588,
+    "run": 82634
+  },
+  "editorTab": "Closed",
+  "savedTabs": "T3 refused to close four link-opened unclaimed tabs. Their disposable origin is stopped."
+}

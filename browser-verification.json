@@ -1,0 +1,270 @@
+{
+  "base": "cede772ab08f9b30e88b4d1648b2b9ff00432357",
+  "testedHead": "611f6e9aca6e989ca9d818a22b7d411b5de1e4f3",
+  "testedEditUrl": "http://localhost:3678/quotations/edit/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+  "keyboard": {
+    "confirm": "Confirm snapshot refresh",
+    "tab": "Review refresh again",
+    "shiftTab": "Check saved quotation (opens in a new tab)",
+    "open": "Enter"
+  },
+  "http500": {
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-te-f3e11] [box=-1,-1,1,1]",
+      "              - paragraph [ref=t3-82f8d8a8-te-f3e101] [box=496,289,679,40]: \"Details requiring verification: room prices or availability. The PDF uses saved snapshot values where available.\"",
+      "            - alert [ref=t3-82f8d8a8-te-f3e132] [box=469,383,706,112]:",
+      "              - heading \"We couldn’t confirm the refresh\" [level=3] [ref=t3-82f8d8a8-te-f3e133] [box=469,383,706,20]",
+      "                - strong [ref=t3-82f8d8a8-te-f3e136] [box=744,457,194,17]: Details requiring verification",
+      "              - link \"Check saved quotation (opens in a new tab)\" [active] [ref=t3-82f8d8a8-te-f3e138] [cursor=pointer] [box=469,507,325,36]:",
+      "              - button \"Review refresh again\" [ref=t3-82f8d8a8-te-f3e139] [box=802,507,174,36]",
+      "            - paragraph [ref=t3-82f8d8a8-te-f3e140] [box=469,555,706,16]: The server reported HTTP 500.",
+      "                    - text: Issue 78 unsaved PIC"
+    ],
+    "savedTab": {
+      "url": "http://localhost:3678/quotations/review/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "verification": "This PDF uses saved snapshot values where available. Details requiring verification: room prices or availability."
+    }
+  },
+  "matrix": [
+    {
+      "atomic": "true",
+      "check": {
+        "height": 36,
+        "right": 793.53125,
+        "width": 325.03125,
+        "x": 468.5,
+        "y": 507
+      },
+      "draft": "Issue 78 unsaved PIC",
+      "padding": 16,
+      "panel": {
+        "height": 222,
+        "right": 1191.5,
+        "width": 740,
+        "x": 451.5,
+        "y": 366
+      },
+      "primary": "default",
+      "retry": {
+        "height": 36,
+        "right": 975.5234375,
+        "width": 173.9921875,
+        "x": 801.53125,
+        "y": 507
+      },
+      "role": "alert",
+      "scrollWidth": 1387,
+      "secondary": "outline",
+      "section": "We couldn’t confirm the refresh\n\nThe saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.\n\nLook for room prices or availability under Details requiring verification in the saved quotation. The quoted prices and total stay the same after a refresh.",
+      "theme": "dark",
+      "width": 1402,
+      "screenshot": "after-http500-desktop-dark.png"
+    },
+    {
+      "atomic": "true",
+      "check": {
+        "height": 56,
+        "right": 335,
+        "width": 310,
+        "x": 25,
+        "y": 607
+      },
+      "draft": "Issue 78 unsaved PIC",
+      "padding": 16,
+      "panel": {
+        "height": 366,
+        "right": 352,
+        "width": 344,
+        "x": 8,
+        "y": 386
+      },
+      "primary": "default",
+      "retry": {
+        "height": 36,
+        "right": 198.9921875,
+        "width": 173.9921875,
+        "x": 25,
+        "y": 671
+      },
+      "role": "alert",
+      "scrollWidth": 360,
+      "secondary": "outline",
+      "section": "We couldn’t confirm the refresh\n\nThe saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.\n\nLook for room prices or availability under Details requiring verification in the saved quotation. The quoted prices and total stay the same after a refresh.",
+      "theme": "dark",
+      "width": 375,
+      "screenshot": "after-http500-mobile-dark.png"
+    },
+    {
+      "atomic": "true",
+      "check": {
+        "height": 56,
+        "right": 335,
+        "width": 310,
+        "x": 25,
+        "y": 607
+      },
+      "draft": "Issue 78 unsaved PIC",
+      "padding": 16,
+      "panel": {
+        "height": 366,
+        "right": 352,
+        "width": 344,
+        "x": 8,
+        "y": 386
+      },
+      "primary": "default",
+      "retry": {
+        "height": 36,
+        "right": 198.9921875,
+        "width": 173.9921875,
+        "x": 25,
+        "y": 671
+      },
+      "role": "alert",
+      "scrollWidth": 360,
+      "secondary": "outline",
+      "section": "We couldn’t confirm the refresh\n\nThe saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.\n\nLook for room prices or availability under Details requiring verification in the saved quotation. The quoted prices and total stay the same after a refresh.",
+      "theme": "light",
+      "width": 375,
+      "screenshot": "after-http500-mobile-light.png"
+    },
+    {
+      "atomic": "true",
+      "check": {
+        "height": 36,
+        "right": 793.53125,
+        "width": 325.03125,
+        "x": 468.5,
+        "y": 507
+      },
+      "draft": "Issue 78 unsaved PIC",
+      "padding": 16,
+      "panel": {
+        "height": 222,
+        "right": 1191.5,
+        "width": 740,
+        "x": 451.5,
+        "y": 366
+      },
+      "primary": "default",
+      "retry": {
+        "height": 36,
+        "right": 975.5234375,
+        "width": 173.9921875,
+        "x": 801.53125,
+        "y": 507
+      },
+      "role": "alert",
+      "scrollWidth": 1387,
+      "secondary": "outline",
+      "section": "We couldn’t confirm the refresh\n\nThe saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.\n\nLook for room prices or availability under Details requiring verification in the saved quotation. The quoted prices and total stay the same after a refresh.",
+      "theme": "light",
+      "width": 1402,
+      "screenshot": "after-http500-desktop-light.png"
+    }
+  ],
+  "conflict": {
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-to-f3e11] [box=-1,-1,1,1]",
+      "            - alert [box=451,365,1,0]",
+      "          - alert [ref=t3-82f8d8a8-to-f3e225] [box=452,366,740,166]:",
+      "            - paragraph [ref=t3-82f8d8a8-to-f3e207] [box=469,383,706,40]: The saved quotation or package changed after you loaded or reviewed it. Nothing was refreshed. Your entries are kept on this page. Review the latest saved quotation before confirming again.",
+      "            - button \"Review latest saved quotation\" [ref=t3-82f8d8a8-to-f3e226] [box=469,431,233,36]",
+      "                    - text: Issue 78 unsaved PIC"
+    ],
+    "network": {
+      "url": "http://localhost:3678/api/quotations/update",
+      "method": "POST",
+      "status": 409,
+      "failed": false,
+      "timestamp": "2026-11-21T15:08:12.091Z"
+    }
+  },
+  "success": {
+    "ax": [
+      "            - paragraph [ref=t3-82f8d8a8-tt-f3e207] [box=469,271,706,20]: Snapshot refreshed. Existing quoted prices, passenger counts, add-ons, discounts, and totals were kept.",
+      "              - link \"View saved quotation (opens in a new tab)\" [ref=t3-82f8d8a8-tt-f3e246] [cursor=pointer] [box=469,301,283,17]:",
+      "                    - text: Issue 78 unsaved PIC"
+    ],
+    "review": {
+      "shown": [
+        ": 1448H-0001",
+        "RM 1,200.00 X (4 pax)",
+        "RM 5,000.00"
+      ],
+      "url": "http://localhost:3678/quotations/review/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "warning": false
+    },
+    "reload": {
+      "shown": [
+        ": 1448H-0001",
+        "RM 1,200.00 X (4 pax)",
+        "RM 5,000.00"
+      ],
+      "url": "http://localhost:3678/quotations/review/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "warning": false
+    }
+  },
+  "lostResponse": {
+    "ax": [
+      "  - alert [ref=t3-82f8d8a8-u5-f5e11] [box=-1,-1,1,1]",
+      "              - paragraph [ref=t3-82f8d8a8-u5-f5e101] [box=496,289,679,40]: \"Details requiring verification: room prices or availability. The PDF uses saved snapshot values where available.\"",
+      "            - alert [ref=t3-82f8d8a8-u5-f5e151] [box=469,383,706,112]:",
+      "              - heading \"We couldn’t confirm the refresh\" [level=3] [ref=t3-82f8d8a8-u5-f5e152] [box=469,383,706,20]",
+      "              - paragraph [ref=t3-82f8d8a8-u5-f5e153] [box=469,407,706,40]: The saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.",
+      "                - strong [ref=t3-82f8d8a8-u5-f5e155] [box=744,457,194,17]: Details requiring verification",
+      "              - link \"Check saved quotation (opens in a new tab)\" [active] [ref=t3-82f8d8a8-u5-f5e157] [cursor=pointer] [box=469,507,325,36]:",
+      "                    - text: Issue 78 unsaved PIC",
+      "                    - text: Issue 78 unsaved branch",
+      "                    - text: Issue 78 unsaved notes"
+    ],
+    "network": [
+      {
+        "url": "http://localhost:3678/api/quotations/update",
+        "method": "POST",
+        "status": 200,
+        "failed": false,
+        "timestamp": "2026-11-21T15:09:40.804Z"
+      },
+      {
+        "url": "http://localhost:3678/api/quotations/update",
+        "method": "POST",
+        "status": null,
+        "failed": true,
+        "errorText": "net::ERR_CONTENT_LENGTH_MISMATCH",
+        "timestamp": "2026-11-21T15:09:40.952Z"
+      }
+    ],
+    "review": {
+      "shown": [
+        ": 1448H-0001",
+        "RM 1,200.00 X (4 pax)",
+        "RM 5,000.00"
+      ],
+      "url": "http://localhost:3678/quotations/review/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "warning": false
+    },
+    "reload": {
+      "shown": [
+        ": 1448H-0001",
+        "RM 1,200.00 X (4 pax)",
+        "RM 5,000.00"
+      ],
+      "url": "http://localhost:3678/quotations/review/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "warning": false
+    },
+    "draft": {
+      "status": "We couldn’t confirm the refresh\n\nThe saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.\n\nLook for room prices or availability under Details requiring verification in the saved quotation. The quoted prices and total stay the same after a refresh.",
+      "url": "http://localhost:3678/quotations/edit/n57e211v1x5s4qbjby5pxh6nf58jndvz",
+      "values": [
+        "Issue 78 unsaved PIC",
+        "Issue 78 unsaved branch",
+        "Issue 78 unsaved notes"
+      ]
+    }
+  },
+  "announcements": {
+    "browser": "T3 Preview accessibility tree exposed the alert and a separately focusable link with the new-tab cue.",
+    "platform": "No screen-reader output captured. AXIsProcessTrusted() returned false on this runner."
+  }
+}
