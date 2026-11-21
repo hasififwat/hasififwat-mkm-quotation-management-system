@@ -1,3 +1,5 @@
+import { quotationRefreshToken, snapshotRefreshToken } from "./lib/quotationRefreshToken";
+import { SNAPSHOT_REFRESH_CONFLICT, SNAPSHOT_REFRESH_CONFLICT_MESSAGE } from "../src/domain/snapshot-refresh-review";
 import { readCurrentQuotations, quotationMatches, currentPage } from "./lib/currentQuotations";
 import { canonicalClientId } from "./lib/clientCanonical";
 import { readSavedQuotation, revisionContext } from "./lib/savedQuotation";
@@ -883,6 +885,7 @@ export const getQuotationForEdit = query({
 			saved_document,
 			revision_context,
 			id: String(quotation._id),
+			snapshot_refresh_token: revision_context.state === "legacy" ? await quotationRefreshToken(quotation, items) : undefined,
 			reference_number: buildQuotationNumber(
 				quotation.hijri_year,
 				quotation.sequence_num,
@@ -1359,8 +1362,88 @@ export const update = mutation({
 	},
 });
 
+function refreshConflict(): never {
+	throw new ConvexError({ code: SNAPSHOT_REFRESH_CONFLICT, message: SNAPSHOT_REFRESH_CONFLICT_MESSAGE });
+}
+
+async function readRefreshQuotation(ctx: QueryCtx, quotationId: string, expected?: string) {
+	const id = ctx.db.normalizeId("quotations", quotationId);
+	const quotation = id ? await ctx.db.get(id) : null;
+	if (!quotation) refreshConflict();
+	assertMutableLegacyQuotation(quotation);
+	if (!expected) refreshConflict();
+	const items = await ctx.db.query("quotation_items")
+		.withIndex("by_quotation_id", q => q.eq("quotation_id", String(quotation._id)))
+		.collect();
+	const token = await quotationRefreshToken(quotation, items);
+	if (expected !== token) refreshConflict();
+	return { quotation, token };
+}
+
+async function readRefreshSource(ctx: QueryCtx, quotation: Doc<"quotations">) {
+	const packageId = ctx.db.normalizeId("packages", quotation.package_id);
+	const flightId = ctx.db.normalizeId("package_flights", quotation.flight_id);
+	const [selectedPackage, selectedFlight, hotelsForPkg, roomsForPkg] = await Promise.all([
+		packageId ? ctx.db.get(packageId) : null,
+		flightId ? ctx.db.get(flightId) : null,
+		ctx.db.query("package_hotels").withIndex("by_package_id", q => q.eq("package_id", quotation.package_id)).collect(),
+		ctx.db.query("package_rooms").withIndex("by_package_id", q => q.eq("package_id", quotation.package_id)).collect(),
+	]);
+	if (!selectedPackage || !selectedFlight || String(selectedFlight.package_id) !== quotation.package_id) {
+		throw new ConvexError({ code: "SNAPSHOT_REFRESH_UNAVAILABLE", message: "The saved package or flight is no longer available. Review the saved quotation before refreshing." });
+	}
+	const meals = await Promise.all(hotelsForPkg.map(hotel =>
+		ctx.db.query("package_meals")
+			.withIndex("by_package_hotel_id", q => q.eq("package_hotel_id", String(hotel._id)))
+			.collect(),
+	));
+	const byCreationOrder = (a: { _creationTime: number; _id: string }, b: { _creationTime: number; _id: string }) =>
+		a._creationTime - b._creationTime || a._id.localeCompare(b._id);
+	const snapshots = {
+		package_snapshot: buildPackageSnapshot(selectedPackage, roomsForPkg.sort(byCreationOrder)),
+		flight_snapshot: buildFlightSnapshot(selectedFlight),
+		hotels_snapshot: buildHotelsSnapshot(
+			hotelsForPkg.sort(byCreationOrder),
+			groupMealsByHotelId(meals.flat().sort(byCreationOrder)),
+		),
+	};
+	return { ...snapshots, source_context: await snapshotRefreshToken(snapshots) };
+}
+
+export const getSnapshotRefreshReview = query({
+	args: { quotation_id: v.string(), expected_quotation_token: v.string() },
+	handler: async (ctx, args) => {
+		await requireQuotationActor(ctx);
+		const { quotation, token } = await readRefreshQuotation(ctx, args.quotation_id, args.expected_quotation_token);
+		const current = await readRefreshSource(ctx, quotation);
+		const changes: Array<{ label: string; saved: string; current: string }> = [];
+		const text = (value: unknown): string => value === undefined || value === null ? "Not recorded" : String(value) || "None";
+		const add = (label: string, saved: unknown, live: unknown) => {
+			if (JSON.stringify(saved) !== JSON.stringify(live)) changes.push({ label, saved: text(saved), current: text(live) });
+		};
+		for (const [key, label] of Object.entries({ name: "Package name", year: "Season", duration: "Duration", transport: "Transport", package_code: "Package code", inclusions: "Inclusions", exclusions: "Exclusions" })) {
+			add(label, quotation.package_snapshot?.[key as keyof NonNullable<typeof quotation.package_snapshot>], current.package_snapshot[key as keyof typeof current.package_snapshot]);
+		}
+		for (const [key, label] of Object.entries({ month: "Flight month", flight: "Flight", departure_date: "Departure date", departure_sector: "Departure sector", return_date: "Return date", return_sector: "Return sector" })) {
+			add(label, quotation.flight_snapshot?.[key as keyof NonNullable<typeof quotation.flight_snapshot>], current.flight_snapshot[key as keyof typeof current.flight_snapshot]);
+		}
+		const rooms = (rows: Array<{ room_type: string; price: number; enabled: boolean }> | undefined) => rows?.map(r => `${r.room_type}: RM ${r.price.toFixed(2)} (${r.enabled ? "available" : "unavailable"})`).sort().join("; ");
+		const hotels = (rows: typeof quotation.hotels_snapshot) => rows?.map(h => `${h.hotel_type}: ${h.name || "Unnamed hotel"}${h.placeholder ? `; note: ${h.placeholder}` : ""} (${h.enabled ? "included" : "not included"}); meals: ${[...h.meals].sort().join(", ") || "None"}`).sort().join("\n");
+		add("Package room prices and availability", rooms(quotation.package_snapshot?.rooms), rooms(current.package_snapshot.rooms));
+		add("Hotels and meals", hotels(quotation.hotels_snapshot), hotels(current.hotels_snapshot));
+		const itinerary = (flight: typeof quotation.flight_snapshot) => flight ? `${flight.flight || "Flight"}: ${flight.departure_date} ${flight.departure_sector} to ${flight.return_date} ${flight.return_sector}` : "Not recorded";
+		return {
+			quotation_id: args.quotation_id, expected_quotation_token: token, source_context: current.source_context,
+			saved_package: quotation.package_snapshot?.name ?? "Not recorded",
+			saved_flight: itinerary(quotation.flight_snapshot),
+			current_package: current.package_snapshot.name,
+			current_flight: itinerary(current.flight_snapshot), changes,
+		};
+	},
+});
+
 export const refreshSnapshot = mutation({
-	args: { quotation_id: v.string(), command: v.optional(saveCommand) },
+	args: { quotation_id: v.string(), command: v.optional(saveCommand), expected_quotation_token: v.optional(v.string()), source_context: v.optional(v.string()) },
 	handler: async (ctx, args) => {
 		const actor = await requireQuotationActor(ctx);
 		if (args.command) {
@@ -1370,72 +1453,24 @@ export const refreshSnapshot = mutation({
 		  return saveRevision(ctx, actor, args.command);
 		}
 		await assertLegacyWritesAllowed(ctx);
-		const quotation = await findQuotationByStringId(ctx, args.quotation_id);
-		if (!quotation) throw new Error("Quotation not found");
-		assertMutableLegacyQuotation(quotation);
-
+		const { quotation } = await readRefreshQuotation(ctx, args.quotation_id, args.expected_quotation_token);
+		if (!args.source_context) refreshConflict();
+		const current = await readRefreshSource(ctx, quotation);
+		if (args.source_context !== current.source_context) refreshConflict();
 		const now = new Date().toISOString();
-
-		const [allPackages, allFlights, allPackageHotels, allPackageMeals, allPackageRooms] =
-			await Promise.all([
-				ctx.db.query("packages").collect(),
-				ctx.db.query("package_flights").collect(),
-				ctx.db.query("package_hotels").collect(),
-				ctx.db.query("package_meals").collect(),
-				ctx.db.query("package_rooms").collect(),
-			]);
-
-		const selectedPackage = allPackages.find(
-			(p) => String(p._id) === quotation.package_id,
-		);
-		if (!selectedPackage) throw new Error("Package no longer exists");
-
-		const selectedFlight = allFlights.find(
-			(f) => String(f._id) === quotation.flight_id,
-		);
-
-		const hotelsForPkg = allPackageHotels.filter(
-			(h) => String(h.package_id) === quotation.package_id,
-		);
-		const mealsByHotelId = new Map<string, string[]>();
-		for (const meal of allPackageMeals) {
-			const key = String(meal.package_hotel_id);
-			const bucket = mealsByHotelId.get(key) ?? [];
-			bucket.push(meal.meal_type);
-			mealsByHotelId.set(key, bucket);
-		}
-
-		const roomsForPkg = allPackageRooms.filter(
-			(r) => String(r.package_id) === quotation.package_id,
-		);
-		const package_snapshot = buildPackageSnapshot(selectedPackage, roomsForPkg);
-		const flight_snapshot = selectedFlight
-			? buildFlightSnapshot(selectedFlight)
-			: quotation.flight_snapshot;
-		const hotels_snapshot = buildHotelsSnapshot(hotelsForPkg, mealsByHotelId);
-
 		await ctx.db.patch(quotation._id, {
-			package_snapshot,
-			flight_snapshot,
-			hotels_snapshot,
+			package_snapshot: current.package_snapshot,
+			flight_snapshot: current.flight_snapshot,
+			hotels_snapshot: current.hotels_snapshot,
 			updated_at: now,
 		});
-
-		const quotationNumber = buildQuotationNumber(
-			quotation.hijri_year,
-			quotation.sequence_num,
-			quotation.revision,
-		);
-
+		const quotationNumber = buildQuotationNumber(quotation.hijri_year, quotation.sequence_num, quotation.revision);
 		await ctx.db.insert("quotation_logs", {
-			quotation_id: String(quotation._id),
-			action: "snapshot_refreshed",
-			description: `Snapshot for ${quotationNumber} refreshed to package version ${selectedPackage.updated_at}`,
-			performed_by: actor,
-			created_at: now,
-			snapshot_data: JSON.stringify({ package_updated_at: selectedPackage.updated_at }),
+			quotation_id: String(quotation._id), action: "snapshot_refreshed",
+			description: `Snapshot for ${quotationNumber} refreshed to package version ${current.package_snapshot.package_updated_at}`,
+			performed_by: actor, created_at: now,
+			snapshot_data: JSON.stringify({ package_updated_at: current.package_snapshot.package_updated_at }),
 		});
-
 		return { success: true };
 	},
 });

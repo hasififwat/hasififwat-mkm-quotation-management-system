@@ -65,3 +65,12 @@ test('explicit same-ID replacement requires current reviewed context and preserv
   assert.equal(row.sequence_num,s.tables.quotations[0].sequence_num);
   assert.equal(row.total_amount,246.9);
 });
+
+test('refresh append command retains receipt replay without legacy refresh tokens', async()=>{
+  const {s,command}=await fixture(); const pkg=s.tables.packages[0]; const flight=s.tables.package_flights[0];
+  const context=await reviewedQuote(s,pkg._id,flight._id);
+  const args={quotation_id:command.source_revision_id,command:{...command,selection:{mode:'replace',package_id:pkg._id,flight_id:flight._id,reviewed_context:context.reviewed_context,rooms:[{room_type:'Quad',price:1200,pax:1}]}}};
+  const saved=await quotations.refreshSnapshot._handler(s.ctx,args); const before=plain(s.tables);
+  assert.deepEqual(plain(await quotations.refreshSnapshot._handler(s.ctx,args)),plain(saved));
+  assert.deepEqual(plain(s.tables),before); assert.equal(s.tables.quotations.length,2);
+});

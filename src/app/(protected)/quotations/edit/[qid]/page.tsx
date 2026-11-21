@@ -39,11 +39,12 @@ export default async function QuotationEditPage({ params }: Params) {
 		</section>;
 	}
 
-	const { stale_fields, snapshot_version_known, ...formData } = initialData;
+	const { stale_fields, snapshot_version_known, snapshot_refresh_token, ...formData } = initialData;
 
 	return (
 		<QuotationBuilder
 			initialData={formData}
+			snapshot_refresh_token={snapshot_refresh_token}
 			revisionEnabled={availability.enabled}
 				revisionActor={availability.actor}
 			revisionSource={context.family_id ? initialData : undefined}
