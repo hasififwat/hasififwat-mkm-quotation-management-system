@@ -1,0 +1,1023 @@
+{
+  "baseline": {
+    "sha": "56ef8742676065b6009bbc100a857b03239d84df",
+    "longPreviewHeight": 3433,
+    "statusTopAfterSave": -2379,
+    "viewportHeight": 800
+  },
+  "head": "f5bb34b6720e632d22666e6938f28cd7548bf2b0",
+  "url": "http://localhost:3675/packages/create",
+  "createConfirmation": {
+    "atomic": "true",
+    "focus": "View saved package",
+    "height": 3559,
+    "links": [
+      {
+        "colors": [
+          "lab(7.78201 -0.0000149012 0)",
+          "lab(90.952 0 -0.0000119209)"
+        ],
+        "focusVisible": true,
+        "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+        "rect": [
+          929,
+          751,
+          1091,
+          783,
+          162,
+          32
+        ],
+        "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.228906) 0px 0px 0px 1.37343px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "size": "sm",
+        "text": "View saved package",
+        "variant": "default"
+      },
+      {
+        "colors": [
+          "lab(98.26 0 0)",
+          "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+        ],
+        "focusVisible": false,
+        "href": "/packages",
+        "rect": [
+          1099,
+          751,
+          1244,
+          783,
+          145,
+          32
+        ],
+        "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "size": "sm",
+        "text": "Back to Packages",
+        "variant": "outline"
+      }
+    ],
+    "panel": [
+      261,
+      734,
+      1261,
+      800,
+      1000,
+      66
+    ],
+    "panelColors": [
+      "lab(98.26 0 0)",
+      "lab(7.78201 -0.0000149012 0)"
+    ],
+    "role": "status",
+    "sameStatusNode": true,
+    "scrollWidth": 1265,
+    "scrollY": 2735,
+    "status": "Package saved successfully.",
+    "theme": "dark",
+    "viewport": [
+      1280,
+      800
+    ]
+  },
+  "matrix": [
+    {
+      "atomic": "true",
+      "focus": "Back to Packages",
+      "height": 3559,
+      "links": [
+        {
+          "colors": [
+            "lab(7.78201 -0.0000149012 0)",
+            "lab(90.952 0 -0.0000119209)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            929,
+            751,
+            1091,
+            783,
+            162,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.412196) 0px 0px 0px 2.47318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+          ],
+          "focusVisible": true,
+          "href": "/packages",
+          "rect": [
+            1099,
+            751,
+            1244,
+            783,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0878039) 0px 0px 0px 0.526823px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        261,
+        734,
+        1261,
+        800,
+        1000,
+        66
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 1265,
+      "scrollY": 2735,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        800
+      ]
+    },
+    {
+      "atomic": "true",
+      "focus": "",
+      "height": 3559,
+      "links": [
+        {
+          "colors": [
+            "oklab(0.860785 -0.00000837413 0.0000201052)",
+            "oklab(0.31918 -0.00000319519 0.00000745761)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            929,
+            727,
+            1091,
+            759,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "oklab(0.278767 -0.00000273242 0.00000652656)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.847919)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            1099,
+            727,
+            1244,
+            759,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0796237) 0px 0px 0px 0.477742px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        261,
+        710,
+        1261,
+        776,
+        1000,
+        66
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 1265,
+      "scrollY": 2759,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        1280,
+        800
+      ]
+    },
+    {
+      "atomic": "true",
+      "focus": "",
+      "height": 3651,
+      "links": [
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "lab(7.78201 -0.0000149012 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            627,
+            187,
+            659,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(2.75381 0 0)",
+            "lab(100 0 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            25,
+            667,
+            170,
+            699,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        578,
+        297,
+        716,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2911,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    {
+      "atomic": "true",
+      "focus": "",
+      "height": 3651,
+      "links": [
+        {
+          "colors": [
+            "oklab(0.451167 -0.00000444187 0.0000105348)",
+            "oklab(0.695713 -0.00000687704 0.0000162768)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            627,
+            187,
+            659,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "oklab(0.719894 -0.00000700116 0.0000168208)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.346398)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            25,
+            667,
+            170,
+            699,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        578,
+        297,
+        716,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2911,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        320,
+        740
+      ]
+    }
+  ],
+  "stepNavigation": [
+    {
+      "atomic": "true",
+      "focus": "",
+      "height": 802,
+      "links": [
+        {
+          "colors": [
+            "lab(7.78201 -0.0000149012 0)",
+            "lab(90.952 0 -0.0000119209)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            929,
+            729,
+            1091,
+            761,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            1099,
+            729,
+            1244,
+            761,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        261,
+        712,
+        1261,
+        778,
+        1000,
+        66
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 1265,
+      "scrollY": 0,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        800
+      ]
+    },
+    {
+      "atomic": "true",
+      "focus": "1Basic Details",
+      "height": 920,
+      "links": [
+        {
+          "colors": [
+            "lab(7.78201 -0.0000149012 0)",
+            "lab(90.952 0 -0.0000119209)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            929,
+            847,
+            1091,
+            879,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            1099,
+            847,
+            1244,
+            879,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        261,
+        830,
+        1261,
+        896,
+        1000,
+        66
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 1265,
+      "scrollY": 0,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        800
+      ]
+    },
+    {
+      "atomic": "true",
+      "focus": "6Preview",
+      "height": 3523,
+      "links": [
+        {
+          "colors": [
+            "lab(7.78201 -0.0000149012 0)",
+            "lab(90.952 0 -0.0000119209)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            929,
+            727,
+            1091,
+            759,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            1099,
+            727,
+            1244,
+            759,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        261,
+        710,
+        1261,
+        776,
+        1000,
+        66
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 1265,
+      "scrollY": 2723,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        800
+      ]
+    }
+  ],
+  "accessibilityTree": [
+    "            - status [ref=t3-82f8d8a8-kr-f3e241] [box=25,595,196,20]: Package saved successfully.",
+    "              - link \"View saved package\" [ref=t3-82f8d8a8-kr-f3e243] [cursor=pointer] [box=25,627,162,32]:",
+    "              - link \"Back to Packages\" [ref=t3-82f8d8a8-kr-f3e244] [cursor=pointer] [box=25,667,145,32]:"
+  ],
+  "createRecord": [
+    {
+      "duration": "12 days",
+      "name": "Issue 75 verified package",
+      "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+    },
+    {
+      "duration": "12 days",
+      "name": "Issue 75 verified package",
+      "nav": "reload",
+      "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+    }
+  ],
+  "secondViewAfterCreate": {
+    "duration": "12 days",
+    "name": "Issue 75 verified package",
+    "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+  },
+  "edit": {
+    "before": {
+      "focus": " Save Package",
+      "height": 3494,
+      "view": 740
+    },
+    "primary": {
+      "atomic": "true",
+      "focus": "View saved package",
+      "height": 3671,
+      "links": [
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "lab(7.78201 -0.0000149012 0)"
+          ],
+          "focusVisible": true,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            651,
+            187,
+            683,
+            162,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.460388) 0px 0px 0px 2.76233px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(2.75381 0 0)",
+            "lab(100 0 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            25,
+            691,
+            170,
+            723,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        602,
+        297,
+        740,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2907,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    "secondary": {
+      "atomic": "true",
+      "focus": "Back to Packages",
+      "height": 3671,
+      "links": [
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "lab(7.78201 -0.0000149012 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            651,
+            187,
+            683,
+            162,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.483601) 0px 0px 0px 2.90161px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(2.75381 0 0)",
+            "lab(100 0 0)"
+          ],
+          "focusVisible": true,
+          "href": "/packages",
+          "rect": [
+            25,
+            691,
+            170,
+            723,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0163989) 0px 0px 0px 0.0983932px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        602,
+        297,
+        740,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2907,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    "opened": {
+      "duration": "14 days",
+      "name": "Issue 75 verified package edited",
+      "nav": "navigate",
+      "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+    },
+    "reloaded": {
+      "duration": "14 days",
+      "name": "Issue 75 verified package edited",
+      "nav": "reload",
+      "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+    },
+    "ax": []
+  },
+  "secondViewAfterEdit": {
+    "duration": "14 days",
+    "name": "Issue 75 verified package edited",
+    "url": "http://localhost:3675/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2"
+  },
+  "productionMobile": {
+    "p": {
+      "atomic": "true",
+      "focus": "View saved package",
+      "height": 3691,
+      "links": [
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "lab(7.78201 -0.0000149012 0)"
+          ],
+          "focusVisible": true,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            657,
+            187,
+            689,
+            162,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.48443) 0px 0px 0px 2.90658px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(2.75381 0 0)",
+            "lab(100 0 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            25,
+            697,
+            170,
+            729,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        608,
+        297,
+        746,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2921.5,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    "s": {
+      "atomic": "true",
+      "focus": "Back to Packages",
+      "height": 3691,
+      "links": [
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "lab(7.78201 -0.0000149012 0)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            657,
+            187,
+            689,
+            162,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.414625) 0px 0px 0px 2.48775px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(2.75381 0 0)",
+            "lab(100 0 0)"
+          ],
+          "focusVisible": true,
+          "href": "/packages",
+          "rect": [
+            25,
+            697,
+            170,
+            729,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0853746) 0px 0px 0px 0.512248px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        608,
+        297,
+        746,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(2.75381 0 0)",
+        "lab(100 0 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": true,
+      "scrollWidth": 305,
+      "scrollY": 2921.5,
+      "status": "Package saved successfully.",
+      "theme": "light",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    "hit": [
+      true,
+      true
+    ],
+    "reopened": {
+      "name": "Issue 75 verified package edited",
+      "transport": "Synthetic fixture coach"
+    },
+    "reread": {
+      "name": "Issue 75 verified package edited",
+      "nav": "reload",
+      "transport": "Synthetic fixture coach"
+    }
+  },
+  "productionSecond": {
+    "secondView": "Synthetic fixture coach",
+    "panel": {
+      "atomic": "true",
+      "focus": "View saved package",
+      "height": 3655,
+      "links": [
+        {
+          "colors": [
+            "lab(7.78201 -0.0000149012 0)",
+            "lab(90.952 0 -0.0000119209)"
+          ],
+          "focusVisible": false,
+          "href": "/packages/edit/nh77ydt7zemgxk7qv24yasd8r58jnyy2",
+          "rect": [
+            25,
+            651,
+            187,
+            683,
+            162,
+            32
+          ],
+          "ring": "none",
+          "size": "sm",
+          "text": "View saved package",
+          "variant": "default"
+        },
+        {
+          "colors": [
+            "lab(98.26 0 0)",
+            "oklab(0.999998 -0.00000980496 0.0000234246 / 0.045)"
+          ],
+          "focusVisible": false,
+          "href": "/packages",
+          "rect": [
+            25,
+            691,
+            170,
+            723,
+            145,
+            32
+          ],
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "size": "sm",
+          "text": "Back to Packages",
+          "variant": "outline"
+        }
+      ],
+      "panel": [
+        8,
+        602,
+        297,
+        740,
+        289,
+        138
+      ],
+      "panelColors": [
+        "lab(98.26 0 0)",
+        "lab(7.78201 -0.0000149012 0)"
+      ],
+      "role": "status",
+      "sameStatusNode": false,
+      "scrollWidth": 305,
+      "scrollY": 2891,
+      "status": "Package saved successfully.",
+      "theme": "dark",
+      "viewport": [
+        320,
+        740
+      ]
+    },
+    "list": "/packages"
+  },
+  "rejected": {
+    "rejected": {
+      "http": 400,
+      "message": "The package was not saved. Correct the invalid fields and save again. Your complete draft is still here.\n\nDownload complete draft\nCheck Packages in a new tab",
+      "saveDisabled": false,
+      "success": ""
+    },
+    "list": {
+      "title": "MKM Quotation",
+      "url": "http://localhost:3675/packages"
+    }
+  },
+  "staleEdit": {
+    "message": "This package changed after you opened it, or its edit baseline is missing. Your changes were not saved. Download your complete draft before leaving. Open the latest package in another tab and manually re-enter the changes you still need.\n\nOpen latest package in another tab\nDownload complete draft\nCheck Packages in a new tab",
+    "saveDisabled": true,
+    "success": ""
+  },
+  "unconfirmed": {
+    "ack": {
+      "id": "nh712625qr9bfyxv5z3nt320f18jmdy7",
+      "status": 200,
+      "success": true
+    },
+    "draftLink": "/packages?q=Issue%2075%20lost%20acknowledgement",
+    "message": "The connection failed before we could confirm the save. Your complete draft is still here.\n\nSaving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.\n\nDownload complete draft\nCheck Packages in a new tab",
+    "saveDisabled": true,
+    "success": ""
+  },
+  "unconfirmedPersistence": {
+    "list": {
+      "found": true,
+      "url": "http://localhost:3675/packages?q=Issue%2075%20lost%20acknowledgement"
+    },
+    "record": {
+      "name": "Issue 75 lost acknowledgement",
+      "nav": "reload",
+      "url": "http://localhost:3675/packages/edit/nh712625qr9bfyxv5z3nt320f18jmdy7"
+    }
+  },
+  "unconfirmedDownload": {
+    "outcome": "unknown",
+    "version": 1,
+    "name": "Issue 75 lost acknowledgement",
+    "attempted": "Issue 75 lost acknowledgement"
+  }
+}
