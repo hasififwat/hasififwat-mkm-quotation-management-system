@@ -15,7 +15,7 @@ import { api } from "convex/_generated/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SearchableDropdown } from "~/components/SearchableDropdown";
-import { Button } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -915,16 +915,22 @@ export default function QuotationBuilder({
 			{saveError && (
 				<div role="alert" className="space-y-3 rounded-lg border border-destructive bg-destructive/5 p-4 text-sm">
 					<p>{saveError.message}{saveError.conflict && " No quotation was saved. Your draft is retained."}</p>
-					{saveError.conflict && (
-						<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>
-							{isReviewing ? "Loading latest package..." : "Review latest package"}
-						</Button>
-					)}
-					{!saveError.conflict && (
-						<Link href="/quotations" target="_blank" rel="noopener noreferrer" className="inline-block underline">
-							Check Quotations in a new tab
-						</Link>
-					)}
+					<div className={qid ? undefined : "grid w-full grid-cols-1 sm:w-64"}>
+						{saveError.conflict ? (
+							<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>
+								{isReviewing ? "Loading latest package..." : "Review latest package"}
+							</Button>
+						) : (
+							<Link
+								href="/quotations"
+								target="_blank"
+								rel="noopener noreferrer"
+								className={qid ? "inline-block underline" : buttonVariants({ variant: "outline" })}
+							>
+								Check Quotations in a new tab
+							</Link>
+						)}
+					</div>
 				</div>
 			)}
 			{reviewNotice && <p role="status" className="rounded-lg border bg-muted p-4 text-sm">{reviewNotice}</p>}
