@@ -25,4 +25,4 @@ The test used the classic edit flow. Browsers without CSS row subgrid use the st
 
 ## Checks and cleanup
 
-248 targeted tests passed. Next route type generation, TypeScript, targeted ESLint, and the committed diff check passed. See [test output](tests.log), [static checks](static-checks.log), [browser measurements](verification.json), and [fixture cleanup](cleanup.json). PNGs are crops of T3 Preview captures.
+248 targeted tests passed. Next route type generation, TypeScript, targeted ESLint, and the committed diff check passed. See [test output](tests.log), [static checks](static-checks.log), [browser measurements](verification.json), and [fixture cleanup](cleanup.json) and [port and file checks](cleanup-checks.log). PNGs are crops of T3 Preview captures.
