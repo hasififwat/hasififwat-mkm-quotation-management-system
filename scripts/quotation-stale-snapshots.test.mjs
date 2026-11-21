@@ -33,9 +33,6 @@ async function expectWarning(s, id, expected) {
 }
 
 async function refresh(s, id) {
-  if (!quotations.getSnapshotRefreshReview) {
-    return quotations.refreshSnapshot._handler(s.ctx, {quotation_id:id});
-  }
   const saved = await quotations.getQuotationForEdit._handler(s.ctx, {target_quotation_id:id});
   const review = await quotations.getSnapshotRefreshReview._handler(s.ctx, {
     quotation_id:id, expected_quotation_token:saved.snapshot_refresh_token,

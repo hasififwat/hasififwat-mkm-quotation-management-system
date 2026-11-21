@@ -24,7 +24,7 @@ Quotation lists and client history summaries use saved package and flight snapsh
 
 The wrapper delegates to `saveRevision` without a catalog or stale-editor preflight. Actor-scoped committed receipts therefore replay before catalog, release, or stale checks. A successful refresh returns the same new-ID result as a revision save. Stale current pointers or catalog context reject with zero committed writes. Retry the same request key and command after uncertain confirmation. A new intentional save needs a new key.
 
-The ID-only refresh payload remains supported only before the permanent family migration freeze. It rejects after migration, even if the revision release is later disabled. The existing frontend refresh flow is not migrated here. Ticket #59 owns the reviewed user flow.
+Before the permanent family migration freeze, legacy snapshot refresh requires a saved quotation token and a token for the proposed package, flight, and hotel snapshots. Staff review those details before confirmation. A mismatch prevents the write. Confirmation preserves quoted amounts and items. The permanent freeze still blocks legacy refresh, even if the revision release is later disabled.
 
 ## Client association contract for #60
 
