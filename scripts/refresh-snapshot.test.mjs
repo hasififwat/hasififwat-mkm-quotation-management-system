@@ -30,15 +30,14 @@ for (const status of [400, 401, 403, 404, 409]) {
     assert.match(result.message, new RegExp(`HTTP ${status}`));
     assert.doesNotMatch(result.message, /secret backend details/);
     assert.match(result.message, /entries.*kept/i);
+    assert.match(result.message, /nothing was refreshed/i);
+    assert.match(result.message, status === 401 || status === 403 ? /sign-in and access/i : /open the snapshot review again/i);
   });
 }
-for (const status of [500, 502, 503]) {
-  test(`HTTP ${status} tells staff to verify a possible commit before retrying`, async () => {
+for (const status of [408, 500, 502, 503]) {
+  test(`HTTP ${status} leaves the refresh outcome unconfirmed`, async () => {
     const result = await refreshQuotationSnapshot("quote:1", review, async () => response(status, { error: "secret backend details" }));
-    assert.equal(result.status, "uncertain");
-    assert.match(result.message, new RegExp(`HTTP ${status}`));
-    assert.match(result.message, /saved quotation.*before.*again/i);
-    assert.doesNotMatch(result.message, /secret backend details/);
+    assert.deepEqual(JSON.parse(JSON.stringify(result)), { status: "uncertain", httpStatus: status });
   });
 }
 for (const body of [null, {}, { success: true }, { refreshed: true }, { success: false, refreshed: true }, { success: "true", refreshed: true }]) {
@@ -46,11 +45,9 @@ for (const body of [null, {}, { success: true }, { refreshed: true }, { success:
     assert.equal((await refreshQuotationSnapshot("quote:1", review, async () => response(200, body))).status, "uncertain");
   });
 }
-test("a rejected fetch remains uncertain and preserves safe recovery copy", async () => {
+test("a rejected fetch remains uncertain without exposing network details", async () => {
   const result = await refreshQuotationSnapshot("quote:1", review, async () => { throw new Error("private network details"); });
-  assert.equal(result.status, "uncertain");
-  assert.match(result.message, /saved quotation.*before.*again/i);
-  assert.doesNotMatch(result.message, /private network details/);
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), { status: "uncertain" });
 });
 test("a lost or malformed response after possible commit remains uncertain", async () => {
   const result = await refreshQuotationSnapshot("quote:1", review, async () => ({ ok: true, status: 200, json: async () => { throw new Error("body lost"); } }));

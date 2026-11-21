@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight, Plus, Save, Trash2 } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	Controller,
 	FormProvider,
@@ -49,7 +49,7 @@ import { CreateClientModal } from "./components/CreateClientModal";
 import type { ClientsListResult, QuotationPackage } from "./loader-utils";
 import type { QuotationFormInput, QuotationFormValues } from "./schema";
 import { quotationFormSchema } from "./schema";
-import { STALE_FIELD_LABELS } from "./stale-labels";
+import { formatStaleFields } from "./stale-labels";
 import { beginRevisionAttempt, finishRevisionAttempt, type RevisionSource, type RevisionSaveSession, type RevisionAttempt } from "./revision-command";
 import { saveRevisionAttempt } from "./save-quotation";
 import { saveQuotation, type QuotationCreateAttempt } from "./save-quotation";
@@ -638,9 +638,17 @@ export default function QuotationBuilder({
 	const [saveError, setSaveError] = useState<{ message: string; conflict: boolean } | null>(null);
 	const [reviewNotice, setReviewNotice] = useState("");
 	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
+	const refreshUnconfirmed = refreshState.status === "uncertain";
+	const checkSavedQuotation = useRef<HTMLAnchorElement>(null);
 	const refreshRequest = useRef(false);
 	const loadedRefreshToken = useRef(snapshot_refresh_token);
 	const createAttempt = useRef<QuotationCreateAttempt | null>(null);
+
+	useEffect(() => {
+		if (refreshUnconfirmed && document.activeElement === document.body) {
+			checkSavedQuotation.current?.focus();
+		}
+	}, [refreshUnconfirmed]);
 
 	const openRefreshReview = async (latest = false) => {
 		if (!qid || refreshRequest.current) return;
@@ -961,12 +969,12 @@ export default function QuotationBuilder({
 						<p className="text-amber-700 mt-0.5">
 							Details requiring verification:{" "}
 							<span className="font-medium">
-								{stale_fields.map(f => STALE_FIELD_LABELS[f] ?? f).join(", ")}
+								{formatStaleFields(stale_fields)}
 							</span>.
 							The PDF uses saved snapshot values where available.
 						</p>
 					</div>
-					<button
+					{!refreshUnconfirmed && <button
 						type="button"
 						className="shrink-0 rounded px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
 						disabled={refreshState.status === "pending" || refreshState.status === "reviewing"}
@@ -974,13 +982,44 @@ export default function QuotationBuilder({
 						onClick={() => openRefreshReview()}
 					>
 						{refreshState.status === "pending" ? "Refreshing snapshot..." : "Refresh snapshot"}
-					</button>
+					</button>}
 				</div>
 			)}
 
-			{!revisionEnabled && qid && refreshState.status !== "idle" && (
+			{!revisionEnabled && qid && (
+				<div className={refreshUnconfirmed ? "space-y-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100" : "sr-only"}>
+					<div role="alert" aria-atomic="true">
+						{refreshState.status === "uncertain" && (
+							<>
+								<h3 className="mb-1 font-semibold">We couldn’t confirm the refresh</h3>
+								<p>The saved quotation may already include the update. Your unsaved edits are still on this page. Check the saved quotation before trying again.</p>
+								<p className="mt-2">
+									Look for {stale_fields.length ? formatStaleFields(stale_fields) : "the affected items"} under <strong>Details requiring verification</strong> in the saved quotation. The quoted prices and total stay the same after a refresh.
+								</p>
+							</>
+						)}
+					</div>
+					{refreshState.status === "uncertain" && (
+						<>
+							<div className="flex flex-wrap gap-2">
+								<Button asChild className="h-auto min-h-9 max-w-full whitespace-normal text-center">
+									<Link ref={checkSavedQuotation} href={`/quotations/review/${qid}`} prefetch={false} target="_blank" rel="noopener noreferrer">
+										Check saved quotation (opens in a new tab)
+									</Link>
+								</Button>
+								<Button type="button" variant="outline" onClick={() => openRefreshReview()}>
+									Review refresh again
+								</Button>
+							</div>
+							{refreshState.httpStatus && <p className="text-xs">The server reported HTTP {refreshState.httpStatus}.</p>}
+						</>
+					)}
+				</div>
+			)}
+
+			{!revisionEnabled && qid && refreshState.status !== "idle" && refreshState.status !== "uncertain" && (
 				<div
-					role={refreshState.status === "failure" || refreshState.status === "uncertain" || refreshState.status === "conflict" || refreshState.status === "unavailable" ? "alert" : "status"}
+					role={refreshState.status === "failure" || refreshState.status === "conflict" || refreshState.status === "unavailable" ? "alert" : "status"}
 					className="rounded-lg border bg-muted p-4 text-sm space-y-2"
 				>
 					<p>
