@@ -1,0 +1,202 @@
+{
+  "branch": "Disposable fixture",
+  "client_name": "Revision History Fixture",
+  "created_at": "2026-11-21T02:10:58.619Z",
+  "hijri_year": "1448H",
+  "id": "n57a1a6ec7hg3nj65fe056cyfn8jn9nt",
+  "items": {
+    "adds_ons": [
+      {
+        "id": "m97aba8fb4grm5qxtyzf069xd98jm930",
+        "name": "Airport transfer",
+        "pax": 4,
+        "price": 100,
+        "subtotal": 400
+      }
+    ],
+    "discounts": [
+      {
+        "id": "m974zsj60v7e9ajevhjmdmwx1x8jn767",
+        "name": "Group discount",
+        "pax": 4,
+        "price": 50,
+        "subtotal": 200
+      }
+    ],
+    "selected_rooms": [
+      {
+        "id": "m977z3xvs3a7bsbe8nncytwesx8jnqkw",
+        "package_room_id": "kn72jz90gmfhxrmcx669wpg6sh8jn6zm",
+        "pax": 4,
+        "price": 1200,
+        "room_type": "Quad",
+        "subtotal": 4800
+      }
+    ]
+  },
+  "notes": "Baseline saved before immutable revisions.",
+  "package": {
+    "available_flights": [],
+    "available_rooms": [],
+    "duration": "12 days",
+    "exclusions": "Visa",
+    "hotels": [
+      {
+        "enabled": true,
+        "hotel_type": "MAKKAH",
+        "meals": [
+          "BREAKFAST"
+        ],
+        "name": "Makkah Hotel",
+        "placeholder": ""
+      }
+    ],
+    "id": "nh799zp9rpzt38t8s7064ft8yh8jmhg3",
+    "inclusions": "Breakfast",
+    "name": "Revision verification package",
+    "package_code": "",
+    "transport": "Bus",
+    "year": "2026/2027"
+  },
+  "pic_name": "Revision Verification",
+  "reference_number": "1448H-0001",
+  "replacement_catalog": {
+    "available_flights": [
+      {
+        "departure_date": "2027-01-01",
+        "departure_sector": "KUL-JED",
+        "flight": "MALAYSIA AIRLINES",
+        "id": "k9725w7r6393q40hkgyv45cbqh8jmcgr",
+        "month": "JAN",
+        "return_date": "2027-01-12",
+        "return_sector": "JED-KUL"
+      }
+    ],
+    "available_rooms": [
+      {
+        "enabled": true,
+        "id": "kn74gqe7ren7nz95kw3p7p6sfx8jm55s",
+        "price": 1900,
+        "room_type": "Quad"
+      }
+    ]
+  },
+  "revision_context": {
+    "business_time_zone": "Asia/Kuala_Lumpur",
+    "can_append": false,
+    "current_revision_id": "n57a1a6ec7hg3nj65fe056cyfn8jn9nt",
+    "expected_current_id": "n57a1a6ec7hg3nj65fe056cyfn8jn9nt",
+    "family_created_at": "2026-11-21T02:10:58.619Z",
+    "family_id": null,
+    "is_current": true,
+    "revision_issue_date": null,
+    "source_revision_id": "n57a1a6ec7hg3nj65fe056cyfn8jn9nt",
+    "state": "legacy"
+  },
+  "saved_document": {
+    "branch": "Disposable fixture",
+    "business_time_zone": "Asia/Kuala_Lumpur",
+    "client_id": "k17bxpbqb2nyqcqcqzsx8yf0598jm148",
+    "client_name": "Revision History Fixture",
+    "client_phone": null,
+    "flight_id": "k9725w7r6393q40hkgyv45cbqh8jmcgr",
+    "flight_snapshot": {
+      "departure_date": "2027-01-01",
+      "departure_sector": "KUL-JED",
+      "flight": "MALAYSIA AIRLINES",
+      "id": "k9725w7r6393q40hkgyv45cbqh8jmcgr",
+      "month": "JAN",
+      "return_date": "2027-01-12",
+      "return_sector": "JED-KUL"
+    },
+    "hotels_snapshot": [
+      {
+        "enabled": true,
+        "hotel_type": "MAKKAH",
+        "meals": [
+          "BREAKFAST"
+        ],
+        "name": "Makkah Hotel",
+        "placeholder": ""
+      }
+    ],
+    "issue_date": null,
+    "items": [
+      {
+        "description": "Quad",
+        "item_type": "room",
+        "original_price": 1200,
+        "package_room_id": "kn72jz90gmfhxrmcx669wpg6sh8jn6zm",
+        "quantity": 4,
+        "unit_price": 1200
+      },
+      {
+        "description": "Airport transfer",
+        "item_type": "addon",
+        "original_price": 100,
+        "package_room_id": "",
+        "quantity": 4,
+        "unit_price": 100
+      },
+      {
+        "description": "Group discount",
+        "item_type": "discount",
+        "original_price": 50,
+        "package_room_id": "",
+        "quantity": 4,
+        "unit_price": -50
+      }
+    ],
+    "notes": "Baseline saved before immutable revisions.",
+    "package_id": "nh799zp9rpzt38t8s7064ft8yh8jmhg3",
+    "package_snapshot": {
+      "duration": "12 days",
+      "exclusions": "Visa",
+      "inclusions": "Breakfast",
+      "name": "Revision verification package",
+      "package_updated_at": "2026-11-21T02:10:58.608Z",
+      "rooms": [
+        {
+          "enabled": true,
+          "price": 1200,
+          "room_type": "Quad"
+        }
+      ],
+      "transport": "Bus",
+      "year": "2026/2027"
+    },
+    "pic_name": "Revision Verification",
+    "provenance": "legacy_unknown",
+    "quotation_number": "1448H-0001",
+    "return_flight": null,
+    "saved_by": null,
+    "status": "draft",
+    "total_amount": 5000,
+    "unknown_fields": [
+      "client_phone",
+      "return_flight",
+      "revision_issue_date",
+      "saved_by",
+      "package.package_code"
+    ],
+    "version": 1
+  },
+  "selected_flight": {
+    "departure_date": "2027-01-01",
+    "departure_sector": "KUL-JED",
+    "flight": "MALAYSIA AIRLINES",
+    "id": "k9725w7r6393q40hkgyv45cbqh8jmcgr",
+    "month": "JAN",
+    "return_date": "2027-01-12",
+    "return_sector": "JED-KUL"
+  },
+  "snapshot_version_known": true,
+  "stale_fields": [
+    "package.name",
+    "room_pricing",
+    "hotels"
+  ],
+  "status": "draft",
+  "total_amount": 5000,
+  "updated_at": "2026-11-21T02:10:58.619Z"
+}

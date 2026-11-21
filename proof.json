@@ -1,0 +1,98 @@
+{
+  "commit": "225d907383dae24990257c7b19011823323c9545",
+  "url": "http://localhost:3564",
+  "draftBefore": [
+    {
+      "id": "pic_name",
+      "value": "Revision Verification"
+    },
+    {
+      "id": "branch",
+      "value": "Disposable fixture"
+    },
+    {
+      "id": "notes",
+      "value": "UNSAVED acceptance draft"
+    },
+    {
+      "id": "",
+      "value": "on"
+    },
+    {
+      "id": "pax-Quad",
+      "value": "7"
+    },
+    {
+      "id": "addon-name-0",
+      "value": "UNSAVED transfer"
+    },
+    {
+      "id": "addon-price-0",
+      "value": "175"
+    },
+    {
+      "id": "addon-pax-0",
+      "value": "7"
+    },
+    {
+      "id": "discount-name-0",
+      "value": "UNSAVED discount"
+    },
+    {
+      "id": "discount-price-0",
+      "value": "25"
+    },
+    {
+      "id": "discount-pax-0",
+      "value": "7"
+    }
+  ],
+  "draftAfter": [
+    {
+      "id": "pic_name",
+      "value": "Revision Verification"
+    },
+    {
+      "id": "branch",
+      "value": "Disposable fixture"
+    },
+    {
+      "id": "notes",
+      "value": "UNSAVED acceptance draft"
+    },
+    {
+      "id": "",
+      "value": "on"
+    },
+    {
+      "id": "pax-Quad",
+      "value": "7"
+    },
+    {
+      "id": "addon-name-0",
+      "value": "UNSAVED transfer"
+    },
+    {
+      "id": "addon-price-0",
+      "value": "175"
+    },
+    {
+      "id": "addon-pax-0",
+      "value": "7"
+    },
+    {
+      "id": "discount-name-0",
+      "value": "UNSAVED discount"
+    },
+    {
+      "id": "discount-price-0",
+      "value": "25"
+    },
+    {
+      "id": "discount-pax-0",
+      "value": "7"
+    }
+  ],
+  "retry": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nEdit Quotation\n1\nClient Details\n2\nPackage Selection\n3\nAdd-ons & Discounts\n⚠\n\nVerify this quotation's saved details.\n\nDetails requiring verification: package name, room prices or availability, hotel details. The PDF uses saved snapshot values where available.\n\nRefresh snapshot\n\nReview the saved selection and current details. Your draft stays on this page.\n\nSaved package: Revision verification package\nSaved flight: MALAYSIA AIRLINES: 2027-01-01 KUL-JED to 2027-01-12 JED-KUL\n\nCurrent package: Reviewed saved package\nCurrent flight: MALAYSIA AIRLINES: 2027-01-01 KUL-JED to 2027-01-12 JED-KUL\n\nPackage name\n\nSaved: Revision verification package\n\nCurrent: Reviewed saved package\n\nPackage room prices and availability\n\nSaved: Quad: RM 1200.00 (available)\n\nCurrent: Quad: RM 1900.00 (available)\n\nHotels and meals\n\nSaved: MAKKAH: Makkah Hotel (included); meals: BREAKFAST\n\nCurrent: MAKKAH: SUPPLEMENT HOTEL REVIEW AGAIN (included); meals: BREAKFAST\n\nConfirming refresh updates these details on the saved quotation immediately. It preserves quoted prices, passenger counts, add-ons, discounts, and totals.\n\nConfirm snapshot refresh Cancel\n\nView saved quotation (opens in a new tab) to verify its details. Unsaved entries on this page are not included.\n\nAdd-ons & Discounts\nAdd optional items and discounts.\nAdd-ons\n\nAdd extra items or services to the quotation.\n\nAdd Item\nDescription\nPrice (RM)\nPax\nDiscounts\n\nAdd discounts to the quotation.\n\nAdd Discount\nDescription\nAmount (RM)\nPax\nPrevious\nCancel\nSave",
+  "success": "MKM Quotation\nNavigation\nPackages\nQuotations\nClients\nSync Packages\nFlight Audit\nR\nRevision Verification\n\nrevision-verification@example.test\n\nSign Out\nToggle Sidebar\nEdit Quotation\n1\nClient Details\n2\nPackage Selection\n3\nAdd-ons & Discounts\n⚠\n\nVerify this quotation's saved details.\n\nDetails requiring verification: package name, room prices or availability, hotel details. The PDF uses saved snapshot values where available.\n\nRefresh snapshot\n\nSnapshot refreshed. Existing quoted prices, passenger counts, add-ons, discounts, and totals were kept.\n\nView saved quotation (opens in a new tab) to verify its details. Unsaved entries on this page are not included.\n\nAdd-ons & Discounts\nAdd optional items and discounts.\nAdd-ons\n\nAdd extra items or services to the quotation.\n\nAdd Item\nDescription\nPrice (RM)\nPax\nDiscounts\n\nAdd discounts to the quotation.\n\nAdd Discount\nDescription\nAmount (RM)\nPax\nPrevious\nCancel\nSave"
+}
