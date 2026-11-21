@@ -50,8 +50,9 @@ test("creation API returns the stored client name with its ID", async () => {
   });
 });
 
-function formHarness(response) {
+function formHarness(...responses) {
   const states = [];
+  const requests = [];
   let cursor = 0;
   const { CreateClientForm } = load("src/features/clients/CreateClientForm.tsx", {
     react: {
@@ -65,7 +66,11 @@ function formHarness(response) {
     "~/components/ui/input": { Input: "input" },
     "~/components/ui/label": { Label: "label" },
   }, {
-    fetch: async () => ({ ok: true, json: async () => response }),
+    fetch: async (_url, { body }) => {
+      const response = responses[requests.length];
+      requests.push(body.get("force"));
+      return { ok: true, json: async () => response };
+    },
     FormData: class extends Map {},
   });
   const results = [];
@@ -73,7 +78,7 @@ function formHarness(response) {
     cursor = 0;
     return CreateClientForm({ onSuccess: (client) => results.push(client) });
   };
-  return { render, results };
+  return { render, requests, results };
 }
 
 test("client submit contains the event and forwards the returned summary", async () => {
@@ -89,15 +94,18 @@ test("client submit contains the event and forwards the returned summary", async
   assert.deepEqual(results, [client]);
 });
 
-test("duplicate reuse forwards the existing name rather than the candidate name", async () => {
+test("duplicate warning blocks native submit and reuse forwards the existing client", async () => {
   const existing = { id: "client:3", name: "Existing Client", phone_number: "0192100005" };
-  const { render, results } = formHarness({ alreadyExists: true, existing });
-  await render().props.onSubmit({
+  const { render, requests, results } = formHarness({ alreadyExists: true, existing });
+  const submit = {
     preventDefault() {},
     stopPropagation() {},
     currentTarget: [],
-  });
+  };
+  await render().props.onSubmit(submit);
   const form = render();
+  await form.props.onSubmit(submit);
+  assert.deepEqual(requests, ["false"]);
   const fieldset = form.props.children[0];
   const warning = fieldset.props.children[2];
   const reuseButton = warning.props.children[1].props.children[1];
