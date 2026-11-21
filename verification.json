@@ -1,0 +1,2835 @@
+{
+  "base": "b11d77be1d1e5e34cfa240948c1875c96b8c2521",
+  "testedHead": "8ec85bf5ff8a0a8c4afb333dc89cb2fa3ef4ce26",
+  "assertions": "Actual edit builder with synthetic rooms. Measured checkbox against center of first name line, common horizontal insets and corresponding control offsets within the cards. Performed actions through T3 Preview.",
+  "measurements": {
+    "before-wide": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 564,
+            "height": 252,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 312
+          },
+          "centerOffset": 44,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 178,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 150,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 218,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 564,
+            "height": 252,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 312
+          },
+          "centerOffset": 12,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 114,
+          "insets": [
+            46,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 86,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 154
+        },
+        {
+          "card": {
+            "bottom": 564,
+            "height": 252,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 312
+          },
+          "centerOffset": 12,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            46,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 312,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 580
+          },
+          "centerOffset": 52,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 238,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 210,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 278,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 5
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "before-narrow": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 508,
+            "height": 236,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 272
+          },
+          "centerOffset": 36,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 162,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 134,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 202,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 712,
+            "height": 188,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 524
+          },
+          "centerOffset": 12,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 114,
+          "insets": [
+            46,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 86,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 154
+        },
+        {
+          "card": {
+            "bottom": 832,
+            "height": 104,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 728
+          },
+          "centerOffset": 12,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            46,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 1128,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 848
+          },
+          "centerOffset": 36,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 246,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "before-narrow-invalid": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 594,
+            "height": 268,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 326
+          },
+          "centerOffset": 36,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.57701 0.217634 0.112472 / 0.2) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 162,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 134,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 234,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 798,
+            "height": 188,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 610
+          },
+          "centerOffset": 12,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 114,
+          "insets": [
+            46,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 86,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 154
+        },
+        {
+          "card": {
+            "bottom": 918,
+            "height": 104,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 814
+          },
+          "centerOffset": 12,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            46,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 1214,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 934
+          },
+          "centerOffset": 36,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            46,
+            46,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 246,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "two-column-available-unavailable": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 444,
+            "height": 248,
+            "right": 334.5,
+            "width": 293.5,
+            "x": 41,
+            "y": 196
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0847126) 0px 0px 0px 0.508275px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 214,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 444,
+            "height": 248,
+            "right": 644,
+            "width": 293.5,
+            "x": 350.5,
+            "y": 196
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 138,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 214
+        },
+        {
+          "card": {
+            "bottom": 748,
+            "height": 288,
+            "right": 334.5,
+            "width": 293.5,
+            "x": 41,
+            "y": 460
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.342398) 0px 0px 0px 2.05439px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 12,000",
+          "qty": "1",
+          "room": "Single",
+          "total": "Room total RM 12,000",
+          "totalOffset": 254
+        },
+        {
+          "card": {
+            "bottom": 748,
+            "height": 288,
+            "right": 644,
+            "width": 293.5,
+            "x": 350.5,
+            "y": 460
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 700
+    },
+    "retained-three": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.461329) 0px 0px 0px 2.76797px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "3",
+          "room": "Double",
+          "total": "Room total RM 30,870",
+          "totalOffset": 230,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 230
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "removed-double": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 10,291",
+          "room": "Double"
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "reselected-double": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.22337) 0px 0px 0px 1.34022px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 10,291",
+          "qty": "1",
+          "room": "Double",
+          "total": "Room total RM 10,291",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "current-three": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.484119) 0px 0px 0px 2.90471px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 10,291",
+          "qty": "3",
+          "room": "Double",
+          "total": "Room total RM 30,873",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 192,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 380
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "removed-quad": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 892,
+            "height": 192,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 700
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.274585) 0px 0px 0px 1.64751px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 10,291",
+          "qty": "3",
+          "room": "Double",
+          "total": "Room total RM 30,873",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 192,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 700
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 192,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 700
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "reload-original": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 886.5,
+            "height": 248,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 638.5
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 214,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 1094.5,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 902.5
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 1194.5,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 1110.5
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 1498.5,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 1210.5
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-1402-dark-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 230,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 230
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-1402-dark-invalid-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.615087 0.0705793 0.0288447 / 0.454625) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 262,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 262
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 924,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 620
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-1402-dark-invalid-blurred": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.704006 0.176798 0.0722319 / 0.00318097) 0px 0px 0px 0.0238573px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 262,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 262
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 924,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 620
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.483336) 0px 0px 0px 2.90001px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-1402-light-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 230,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 230
+        },
+        {
+          "card": {
+            "bottom": 572,
+            "height": 264,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 892,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 588
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-1402-light-invalid-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.697793 0.0169498 0.00877828 / 0.44768) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 262,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 262
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 924,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 620
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-1402-light-invalid-blurred": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.57701 0.217634 0.112472 / 0.10855) 0px 0px 0px 1.62824px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 154,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 262,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 4
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 931.16,
+            "width": 219.34,
+            "x": 711.83,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 182,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 154,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 262
+        },
+        {
+          "card": {
+            "bottom": 604,
+            "height": 296,
+            "right": 1166.49,
+            "width": 219.33,
+            "x": 947.16,
+            "y": 308
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 924,
+            "height": 304,
+            "right": 695.83,
+            "width": 219.33,
+            "x": 476.5,
+            "y": 620
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0875886) 0px 0px 0px 0.525532px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 222,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 194,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 270,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 4
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 1402
+    },
+    "after-375-dark-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 132,
+            "height": 248,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": -116
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 214,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 340,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 148
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 440,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 356
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 744,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 456
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-375-dark-invalid-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 164,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": -116
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.675162 0.142341 0.0581575 / 0.416223) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 246,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 372,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 180
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 472,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 388
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 776,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 488
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-375-dark-invalid-blurred": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 164,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": -116
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.704006 0.176798 0.0722319 / 0.217099) 0px 0px 0px 1.62824px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 246,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 372,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 180
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 472,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 388
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 776,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 488
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0875886) 0px 0px 0px 0.525532px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "dark",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-375-light-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 297,
+            "height": 248,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 49
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "2",
+          "room": "Double",
+          "total": "Room total RM 20,580",
+          "totalOffset": 214,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 505,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 313
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 605,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 521
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 909,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 621
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-375-light-invalid-focused": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 525,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 245
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.57701 0.217634 0.112472 / 0.167298) 0px 0px 0px 2.50947px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 246,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 733,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 541
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 833,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 749
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 1137,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 849
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    },
+    "after-375-light-invalid-blurred": {
+      "rooms": [
+        {
+          "card": {
+            "bottom": 329,
+            "height": 280,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 49
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "error": "At least 1 pax",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.57701 0.217634 0.112472 / 0.111013) 0px 0px 0px 1.66519px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 166,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "true",
+          "labelOffset": 138,
+          "price": "RM 10,291",
+          "qty": "0",
+          "room": "Double",
+          "total": "Room total RM 0",
+          "totalOffset": 246,
+          "warning": "Entered price RM 10,290 retained. Remove and select this room again to use the current price.",
+          "warningLines": 3
+        },
+        {
+          "card": {
+            "bottom": 537,
+            "height": 192,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 345
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": false,
+          "inputOffset": 110,
+          "insets": [
+            18,
+            null,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 82,
+          "price": "RM 8,000",
+          "qty": "3",
+          "room": "Triple",
+          "total": "Room total RM 24,000",
+          "totalOffset": 158
+        },
+        {
+          "card": {
+            "bottom": 637,
+            "height": 84,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 553
+          },
+          "centerOffset": 0,
+          "checked": "false",
+          "fits": true,
+          "focusClearance": null,
+          "focused": null,
+          "inputOffset": null,
+          "insets": [
+            18,
+            null,
+            null,
+            null,
+            null
+          ],
+          "labelOffset": null,
+          "price": "RM 12,000",
+          "room": "Single"
+        },
+        {
+          "card": {
+            "bottom": 941,
+            "height": 288,
+            "right": 327,
+            "width": 294,
+            "x": 33,
+            "y": 653
+          },
+          "centerOffset": 0,
+          "checked": "true",
+          "fits": true,
+          "focusClearance": 18,
+          "focusShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0829621) 0px 0px 0px 0.497773px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "focused": true,
+          "inputOffset": 206,
+          "insets": [
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "invalid": "false",
+          "labelOffset": 178,
+          "price": "RM 6,500",
+          "qty": "4",
+          "room": "Quad",
+          "total": "Room total RM 26,000",
+          "totalOffset": 254,
+          "warning": "Unavailable. Keep this saved room and price, or remove it. To replace it, remove it and select an available room.",
+          "warningLines": 3
+        }
+      ],
+      "theme": "light",
+      "url": "http://localhost:3677/quotations/edit/n579xg764c177fd913p6w3444x8jnkdw",
+      "width": 375
+    }
+  }
+}

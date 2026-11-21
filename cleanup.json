@@ -1,0 +1,9 @@
+{
+  "closedT3Tab": true,
+  "loopbackPortsFree": [
+    3677,
+    13988,
+    13989
+  ],
+  "disposableSourceDatabaseStorageAndCredentialsRemoved": true
+}
