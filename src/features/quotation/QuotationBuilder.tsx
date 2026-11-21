@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, Plus, Save, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Save, Trash2 } from "lucide-react";
 import React, { useRef, useState } from "react";
 import {
 	Controller,
@@ -1236,36 +1236,41 @@ export default function QuotationBuilder({
 						</CardContent>
 
 
-						<CardFooter className="flex justify-between border-t p-6">
-							<Button
-								type="button"
-								variant="outline"
-								onClick={goBack}
-								disabled={currentStep === "basic"}
-							>
-								<ChevronLeft className="w-4 h-4 mr-2" />
-								Previous
-							</Button>
-
-							{/* {currentStep !== "extras" ? (
-              
-              ) : (
-                
-              )} */}
-
+						<CardFooter
+							className="flex-wrap justify-between gap-x-6 gap-y-3 border-t px-4 sm:px-6"
+							onKeyDown={(event) => {
+								if (event.key === "Enter") event.stopPropagation();
+							}}
+						>
 							<div className="flex flex-wrap gap-2">
-								<Link className="self-center px-2 text-sm underline" href={qid ? `/quotations/review/${qid}` : "/quotations"}>Cancel</Link>
 								<Button
 									type="button"
 									variant="outline"
-									className={`gap-2  ${currentStep === "extras" ? "hidden" : ""}`}
+									onClick={goBack}
+									disabled={currentStep === "basic"}
+								>
+									<ChevronLeft aria-hidden="true" />
+									Previous
+								</Button>
+								<Button
+									type="button"
+									variant="outline"
+									className={currentStep === "extras" ? "hidden" : undefined}
 									onClick={goNext}
 								>
 									Next
+									<ChevronRight aria-hidden="true" />
+								</Button>
+							</div>
+							<div className="ml-auto flex flex-wrap justify-end gap-2">
+								<Button asChild variant="ghost">
+									<Link href={qid ? `/quotations/review/${qid}` : "/quotations"}>
+										Cancel
+									</Link>
 								</Button>
 								<Button
 									type="submit"
-									className={`gap-2  ${currentStep !== "extras" && !qid ? "hidden" : ""}`}
+									className={currentStep !== "extras" && !qid ? "hidden" : undefined}
 									hidden={currentStep !== "extras" && !qid}
 									disabled={isSubmitting || revisionLocked}
 								>
@@ -1296,7 +1301,7 @@ export default function QuotationBuilder({
 										</>
 									) : (
 										<>
-											<Save className="w-4 h-4" />
+											<Save aria-hidden="true" />
 											{revisionEnabled ? "Save new revision" : "Save"}
 										</>
 									)}
