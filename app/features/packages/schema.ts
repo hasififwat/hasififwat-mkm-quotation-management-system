@@ -59,6 +59,7 @@ export const selectedPackageSchema = z.array(
 			.array(FlightImportSchema)
 			.min(1, "At least one flight is required"),
 		selected: z.boolean(),
+		duration: z.string().optional(),
 	}),
 );
 

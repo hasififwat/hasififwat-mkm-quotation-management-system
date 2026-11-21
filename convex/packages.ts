@@ -693,6 +693,7 @@ export const createPackageWithFlight = mutation({
         v.object({
           name: v.string(),
           season: v.optional(v.string()),
+          duration: v.optional(v.string()),
           rooms: v.optional(
             v.array(
               v.object({
@@ -742,11 +743,16 @@ export const createPackageWithFlight = mutation({
           (pkg.season || "") === packageSeason,
       );
 
+      const duration = packageItem.duration?.trim() ?? "";
+      if (!matchedPackage && !duration) {
+        throw new Error(`Enter a package duration for ${packageItem.name}.`);
+      }
+
       const packageDocId = matchedPackage
         ? matchedPackage._id
         : await ctx.db.insert("packages", {
             name: packageItem.name,
-            duration: "12 HARI 10 MALAM",
+            duration,
             season: packageItem.season,
             transport: "",
             year: args.payload.year,

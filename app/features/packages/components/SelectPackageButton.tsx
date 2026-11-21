@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useSubmit } from "react-router";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -50,6 +51,7 @@ export default function SelectPackageButton() {
 				name: pkg.name,
 				season: pkg.season,
 				flights: pkg.flights,
+				duration: "",
 				selected: false,
 			})),
 		},
@@ -70,6 +72,7 @@ export default function SelectPackageButton() {
 				name: pkg.name,
 				season: pkg.season,
 				flights: pkg.flights,
+				duration: pkg.duration?.trim() ?? "",
 				rooms: seasonalPriceMap.get(pkg.season) ?? [],
 			})),
 		};
@@ -155,30 +158,51 @@ export default function SelectPackageButton() {
 										control={_form.control}
 										render={({ field }) => {
 											return (
-												<FieldLabel htmlFor={`packages.${index}.selected`}>
-													<Field orientation="horizontal">
-														<Checkbox
-															id={`packages.${index}.selected`}
-															name={`packages.${index}.selected`}
-															checked={field.value}
-															onCheckedChange={(checked) => {
-																field.onChange(checked);
-																field.onBlur();
-															}}
-														/>
-														<FieldContent>
-															<FieldTitle>{pkg.name}</FieldTitle>
-															<FieldDescription>
-																<span className="inline-flex items-center gap-1">
-																	<SeasonBadge season={pkg.season} />
-																	<span>
-																		• {pkg.flights.length} flights included
+												<div className="space-y-2">
+													<FieldLabel htmlFor={`packages.${index}.selected`}>
+														<Field orientation="horizontal">
+															<Checkbox
+																id={`packages.${index}.selected`}
+																name={`packages.${index}.selected`}
+																checked={field.value}
+																onCheckedChange={(checked) => {
+																	field.onChange(checked);
+																	field.onBlur();
+																}}
+															/>
+															<FieldContent>
+																<FieldTitle>{pkg.name}</FieldTitle>
+																<FieldDescription>
+																	<span className="inline-flex items-center gap-1">
+																		<SeasonBadge season={pkg.season} />
+																		<span>
+																			• {pkg.flights.length} flights included
+																		</span>
 																	</span>
-																</span>
-															</FieldDescription>
-														</FieldContent>
-													</Field>
-												</FieldLabel>
+																</FieldDescription>
+															</FieldContent>
+														</Field>
+													</FieldLabel>
+													{field.value && !pkg.already_exists && (
+														<label className="grid gap-1 text-sm">
+															Package duration for {pkg.name}
+															<Input
+																{..._form.register(
+																	`packages.${index}.duration`,
+																)}
+																placeholder="e.g. 9 HARI 7 MALAM"
+																required
+																pattern=".*\S.*"
+															/>
+														</label>
+													)}
+													{field.value && pkg.already_exists && (
+														<p className="text-sm text-muted-foreground">
+															The existing package duration is kept. Change it
+															in Package Edit.
+														</p>
+													)}
+												</div>
 											);
 										}}
 									/>

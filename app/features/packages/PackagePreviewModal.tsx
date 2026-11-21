@@ -2,21 +2,17 @@ import type { api } from "convex/_generated/api";
 import type { FunctionReturnType } from "convex/server";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
 	Combobox,
 	ComboboxChip,
 	ComboboxChips,
 	ComboboxChipsInput,
-	ComboboxCollection,
 	ComboboxContent,
 	ComboboxEmpty,
-	ComboboxGroup,
 	ComboboxItem,
-	ComboboxLabel,
 	ComboboxList,
-	ComboboxSeparator,
-	ComboboxValue,
 	useComboboxAnchor,
 } from "@/components/ui/combobox";
 import {
@@ -41,7 +37,9 @@ type PackageWithRooms = FunctionReturnType<
 	typeof api.packages.listWithRooms
 >[number];
 type Flight = PackageWithRooms["flights"][number];
-type Room = PackageWithRooms["rooms"][number];
+const tokenPattern = /\{\{(name|duration|flights|hotels)\}\}/g;
+const defaultTemplate =
+	"*PAKEJ {{name}} {{duration}}*\n\n{{flights}}\n\n{{hotels}}\n\n(setaraf bermaksud memiliki kualiti yang setanding dengan hotel yang diberi)";
 
 interface Props {
 	pkg: PackageWithRooms;
@@ -50,9 +48,13 @@ interface Props {
 }
 
 const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
-	const [_selectedFlightIds, _setSelectedFlightIds] = useState<string[]>([]);
-
-	const [_openCombobox, _setOpenComboboxx] = useState(false);
+	const [selectedIds, setSelectedIds] = useState<Flight["_id"][]>([]);
+	const [template, setTemplate] = useState<{
+		name: string;
+		text: string;
+	} | null>(null);
+	const [templateError, setTemplateError] = useState("");
+	const [reading, setReading] = useState(false);
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
@@ -63,27 +65,15 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	}, [copied]);
 
 	const selectedFlights = pkg.flights.filter((f: Flight) =>
-		_selectedFlightIds.includes(f._id),
+		selectedIds.includes(f._id),
 	);
 	const enabledHotels = (pkg.hotels ?? []).filter((hotel) => hotel.enabled);
-
-	// Group flights by month
-	const flightsByMonth = pkg.flights.reduce(
-		(acc: Record<string, Flight[]>, flight: Flight) => {
-			const month = flight.month || "Other";
-			if (!acc[month]) {
-				acc[month] = [];
-			}
-			acc[month].push(flight);
-			return acc;
-		},
-		{} as Record<string, Flight[]>,
-	);
 
 	const formatDate = (dateStr: string) => {
 		const date = new Date(dateStr);
 		return date
 			.toLocaleDateString("en-GB", {
+				timeZone: "UTC",
 				day: "2-digit",
 				month: "short",
 				year: "numeric",
@@ -101,24 +91,13 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	};
 
 	const getFlightRoute = (departure: string, returnSector: string) => {
-		// Extract airport codes (e.g., KULMED -> KUL MED)
-		const depCodes = departure.match(/.{3}/g)?.join(" ") || departure;
-		const retCodes = returnSector.match(/.{3}/g)?.join(" ") || returnSector;
-		return `${depCodes} - ${retCodes}`;
+		const airports = (sector: string) =>
+			sector.replace(/^([A-Z]{3})-?([A-Z]{3})$/i, "$1 $2");
+		return `${airports(departure)} - ${airports(returnSector)}`;
 	};
 
-	const _formatDateRange = (departure: string, returnDate: string) => {
-		const depDate = new Date(departure);
-		const retDate = new Date(returnDate);
-
-		const depDay = depDate.getDate().toString().padStart(2, "0");
-		const retDay = retDate.getDate().toString().padStart(2, "0");
-		const month = depDate
-			.toLocaleDateString("en-GB", { month: "short" })
-			.toUpperCase();
-
-		return `${depDay} - ${retDay} ${month}`;
-	};
+	const dateRange = (flight: Flight) =>
+		`${formatDate(flight.departure_date)} - ${formatDate(flight.return_date)}`;
 
 	const formatHotelTypeLabel = (hotelType: string) => {
 		if (!hotelType) {
@@ -156,254 +135,183 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		return ` (${toTitleCase(normalizedMeals[0])})`;
 	};
 
-	const generatePreviewText = () => {
-		if (selectedFlights.length === 0) return "";
-
-		const lines: string[] = [];
-
-		// Package name (bold in WhatsApp with *)
-		lines.push(`*PAKEJ ${pkg.name} ${pkg.duration}*`);
-
-		// Iterate over each selected flight
-		selectedFlights.forEach((flight: Flight) => {
-			lines.push(""); // Add spacing between flights
-			// Dates
-			lines.push(
-				`${formatDate(flight.departure_date)} - ${formatDate(
-					flight.return_date,
-				)}`,
-			);
-
-			// Duration
-			lines.push(pkg.duration);
-
-			// Flight route
-			lines.push(
-				`✈ ${getFlightRoute(flight.departure_sector, flight.return_sector)}`,
-			);
-
-			// Room prices
-			const sortedRooms = pkg.rooms
-				.filter((room: Room) => room.enabled)
-				.sort((a: Room, b: Room) => {
-					const order: Record<string, number> = {
-						Quad: 1,
-						Triple: 2,
-						Double: 3,
-					};
-					return (order[a.room_type] || 99) - (order[b.room_type] || 99);
-				});
-
-			sortedRooms.forEach((room: Room) => {
-				const roomNum =
-					room.room_type === "Quad"
-						? "4"
-						: room.room_type === "Triple"
-							? "3"
-							: "2";
-				lines.push(`Bilik ${roomNum} : ${formatPrice(room.price)}`);
-			});
-		});
-
-		// Empty line
-		lines.push("");
-
-		// Hotels
-		enabledHotels.forEach((hotel) => {
-			lines.push(
-				`${formatHotelTypeLabel(hotel.hotel_type)} : ${hotel.name || hotel.placeholder}${formatHotelMeals(hotel.meals)}`,
-			);
-		});
-
-		// Footer note
-		lines.push("");
-		lines.push(
-			"(setaraf bermaksud memiliki kualiti yang setanding dengan hotel yang diberi)",
+	const roomOrder: Record<string, number> = { Quad: 1, Triple: 2, Double: 3 };
+	const prices = pkg.rooms
+		.filter((room) => room.enabled)
+		.sort(
+			(a, b) => (roomOrder[a.room_type] ?? 99) - (roomOrder[b.room_type] ?? 99),
+		)
+		.map(
+			(room) =>
+				`Bilik ${room.room_type === "Quad" ? "4" : room.room_type === "Triple" ? "3" : "2"} : ${formatPrice(room.price)}`,
 		);
-
-		return lines.join("\n");
+	const flights = selectedFlights
+		.map((flight) =>
+			[
+				dateRange(flight),
+				pkg.duration,
+				`✈️ ${getFlightRoute(flight.departure_sector, flight.return_sector)}`,
+				...prices,
+			].join("\n"),
+		)
+		.join("\n\n");
+	const hotels = enabledHotels
+		.map(
+			(hotel) =>
+				`${formatHotelTypeLabel(hotel.hotel_type)} : ${hotel.name || hotel.placeholder}${formatHotelMeals(hotel.meals)}`,
+		)
+		.join("\n");
+	const values: Record<string, string> = {
+		name: pkg.name,
+		duration: pkg.duration,
+		flights,
+		hotels,
 	};
+	const previewText = (template?.text ?? defaultTemplate).replace(
+		tokenPattern,
+		(_, key: string) => values[key],
+	);
+
+	async function readTemplate(file: File) {
+		setReading(true);
+		try {
+			if (!/\.txt$/i.test(file.name) || file.size > 65536)
+				throw new Error("Choose a .txt file of 64 KB or less.");
+			const content = new TextDecoder("utf-8", { fatal: true })
+				.decode(await file.arrayBuffer())
+				.replace(/\r\n?/g, "\n")
+				.trim();
+			if (!content.includes("{{flights}}"))
+				throw new Error("Include {{flights}} in the template.");
+			if (
+				/[{}]{2}/.test(content.replace(tokenPattern, "")) ||
+				/[\u0000-\u0008\u000b-\u001f]/.test(content)
+			)
+				throw new Error("Use plain text and only the listed tokens.");
+			setTemplate({ name: file.name, text: content });
+			setTemplateError("");
+		} catch (error) {
+			setTemplateError(
+				error instanceof TypeError
+					? "Choose a UTF-8 text file."
+					: error instanceof Error
+						? error.message
+						: "Could not read the template.",
+			);
+		} finally {
+			setReading(false);
+		}
+	}
 
 	const isMobile = useIsMobile();
 
 	const anchor = useComboboxAnchor();
 
-	//connvert flightsByMonth to array of {month, flights}
-	const _flightsByMonthArray = Object.entries(flightsByMonth).map(
-		([month, flights]) => ({
-			month,
-			flights,
-		}),
-	);
-
-	// ] as const
-
-	const _handleValueChange = (val: string[]) => {
-		_setSelectedFlightIds(val);
+	const byId = new Map(pkg.flights.map((flight) => [flight._id, flight]));
+	const flightLabel = (id: Flight["_id"]) => {
+		const flight = byId.get(id);
+		return flight ? dateRange(flight) : "";
 	};
 
-	// Shared content between Dialog and Drawer
 	const renderContent = () => (
-		<div className="space-y-4 px-4 md:px-0 ">
-			{/* Flight Selection */}
-			<FieldLabel className="text-sm font-medium mb-1">
-				Select Flight Dates
-			</FieldLabel>
-
-			<Combobox
-				multiple
-				items={_flightsByMonthArray}
-				// value={selectedFlights}
-				modal={true}
-				onValueChange={_handleValueChange}
-			>
-				{/* <ComboboxChips ref={anchor} className="w-full">
-					<ComboboxValue>
-						{selectedFlights.map((flight) => (
-							<ComboboxChip key={flight.id}>{flight.label}</ComboboxChip>
+		<div className="min-w-0 space-y-4 px-4 md:px-0">
+			<div>
+				<FieldLabel htmlFor="preview-dates">Select Flight Dates</FieldLabel>
+				<Combobox
+					multiple
+					items={Array.from(byId.keys())}
+					value={selectedIds}
+					onValueChange={setSelectedIds}
+					itemToStringLabel={flightLabel}
+				>
+					<ComboboxChips ref={anchor}>
+						{selectedIds.map((id) => (
+							<ComboboxChip key={id}>{flightLabel(id)}</ComboboxChip>
 						))}
-					</ComboboxValue>
-					<ComboboxChipsInput placeholder="Select flight date" />
-				</ComboboxChips> */}
-				<ComboboxChips ref={anchor}>
-					<ComboboxValue>
-						{(values) => (
-							<React.Fragment>
-								{pkg.flights
-									.filter((f: Flight) => values.includes(f._id))
-									.map((flight: Flight) => (
-										<ComboboxChip key={flight._id}>
-											{_formatDateRange(
-												flight.departure_date,
-												flight.return_date,
-											)}
-										</ComboboxChip>
-									))}
-							</React.Fragment>
-						)}
-					</ComboboxValue>
-					<ComboboxChipsInput className="text-base sm:text-sm" />
-				</ComboboxChips>
-				<ComboboxContent anchor={anchor}>
-					<ComboboxEmpty>No items found.</ComboboxEmpty>
-					<ComboboxList>
-						{(group, index) => (
-							<ComboboxGroup key={group.month} items={group.flights}>
-								<ComboboxLabel>{group.month}</ComboboxLabel>
-								<ComboboxCollection>
-									{(item) => (
-										<ComboboxItem key={`${item._id}`} value={item._id}>
-											{formatDate(item.departure_date)} -{" "}
-											{formatDate(item.return_date)}
-										</ComboboxItem>
-									)}
-								</ComboboxCollection>
-
-								{index < _flightsByMonthArray.length - 1 && (
-									<ComboboxSeparator />
-								)}
-							</ComboboxGroup>
-						)}
-					</ComboboxList>
-				</ComboboxContent>
-			</Combobox>
-
-			{/* Preview */}
-			<div className="h-75 overflow-y-auto border rounded-md bg-muted/10 relative">
-				{!selectedFlights.length ? (
-					<div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
-						Select one or more flight dates to see the package preview.
+						<ComboboxChipsInput
+							id="preview-dates"
+							placeholder="Search flight dates"
+							className="text-base sm:text-sm"
+						/>
+					</ComboboxChips>
+					<ComboboxContent anchor={anchor}>
+						<ComboboxEmpty>No matching flight dates.</ComboboxEmpty>
+						<ComboboxList>
+							{(id: Flight["_id"]) => (
+								<ComboboxItem key={id} value={id}>
+									{flightLabel(id)}
+								</ComboboxItem>
+							)}
+						</ComboboxList>
+					</ComboboxContent>
+				</Combobox>
+			</div>
+			<div className="space-y-1">
+				<FieldLabel htmlFor="preview-template">
+					Text template (optional)
+				</FieldLabel>
+				<Input
+					id="preview-template"
+					type="file"
+					accept=".txt,text/plain"
+					disabled={reading}
+					aria-describedby="template-help"
+					onChange={(event) => {
+						const file = event.target.files?.[0];
+						event.target.value = "";
+						if (file) void readTemplate(file);
+					}}
+				/>
+				<p id="template-help" className="text-xs text-muted-foreground">
+					For this preview, choose a UTF-8 .txt file up to 64 KB. Include{" "}
+					{"{{flights}}"} for dates, routes and prices. Optional tokens:{" "}
+					{"{{name}}, {{duration}}, {{hotels}}"}.
+				</p>
+				{template && (
+					<div className="flex flex-wrap items-center gap-2 text-xs">
+						Using {template.name}
+						<Button
+							variant="outline"
+							size="sm"
+							disabled={reading}
+							onClick={() => {
+								setTemplate(null);
+								setTemplateError("");
+							}}
+						>
+							Use default
+						</Button>
 					</div>
-				) : (
-					<Card className="bg-muted/30 border-0 shadow-none min-h-full">
-						<CardContent className="pt-6">
-							<div className="space-y-6 font-mono text-sm whitespace-pre-line">
-								<div className="font-bold text-lg">
-									PAKEJ {pkg.name} {pkg.duration}
-								</div>
-								{selectedFlights.map((flight: Flight) => (
-									<div key={flight._id} className="space-y-3 border-b pb-4">
-										<div>
-											{formatDate(flight.departure_date)} -{" "}
-											{formatDate(flight.return_date)}
-										</div>
-										<div>{pkg.duration}</div>
-										<div>
-											✈{" "}
-											{getFlightRoute(
-												flight.departure_sector,
-												flight.return_sector,
-											)}
-										</div>
-
-										<div className="pt-2 space-y-1">
-											{pkg.rooms
-												.filter((room: Room) => room.enabled)
-												.sort((a: Room, b: Room) => {
-													const order: Record<string, number> = {
-														Quad: 1,
-														Triple: 2,
-														Double: 3,
-													};
-													return (
-														(order[a.room_type] || 99) -
-														(order[b.room_type] || 99)
-													);
-												})
-												.map((room: Room) => (
-													<div key={room._id}>
-														Bilik{" "}
-														{room.room_type === "Quad"
-															? "4"
-															: room.room_type === "Triple"
-																? "3"
-																: "2"}{" "}
-														: {formatPrice(room.price)}
-													</div>
-												))}
-										</div>
-									</div>
-								))}
-
-								{enabledHotels.map((hotel) => (
-									<div key={hotel._id}>
-										{formatHotelTypeLabel(hotel.hotel_type)} :{" "}
-										{hotel.name || hotel.placeholder}
-										{formatHotelMeals(hotel.meals)}
-									</div>
-								))}
-
-								<div className="text-xs text-muted-foreground pt-2">
-									(setaraf bermaksud memiliki kualiti yang setanding dengan
-									hotel yang diberi)
-								</div>
-							</div>
-						</CardContent>
-					</Card>
 				)}
+				{templateError && (
+					<p role="alert" className="text-sm text-destructive">
+						{templateError}
+					</p>
+				)}
+			</div>
+			<div className="max-h-64 min-h-20 overflow-auto whitespace-pre-wrap wrap-anywhere rounded-md border bg-muted/20 p-3 text-sm">
+				{selectedFlights.length
+					? previewText
+					: "Select one or more flight dates to see the package preview."}
 			</div>
 		</div>
 	);
 
-	// Action buttons shared between Dialog and Drawer
 	const actionButtons = (
 		<div className="flex justify-end gap-2">
-			<Button
-				variant="outline"
-				onClick={() => {
-					onOpenChange(false);
-					_setSelectedFlightIds([]);
-				}}
-			>
+			<Button variant="outline" onClick={() => onOpenChange(false)}>
 				Close
 			</Button>
 			<Button
-				disabled={selectedFlights.length === 0}
-				onClick={() => {
-					const previewText = generatePreviewText();
-					if (previewText) {
-						navigator.clipboard.writeText(previewText);
+				disabled={selectedFlights.length === 0 || reading}
+				onClick={async () => {
+					try {
+						await navigator.clipboard.writeText(previewText);
 						setCopied(true);
+					} catch {
+						toast.error(
+							"Could not copy. Select and copy the preview text manually.",
+						);
 					}
 				}}
 				className={copied ? "bg-green-600 hover:bg-green-700" : ""}
@@ -434,7 +342,7 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-2xl ">
+			<DialogContent className="sm:max-w-2xl max-h-[90dvh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>Package Preview</DialogTitle>
 					<DialogDescription>

@@ -25,8 +25,8 @@ const STATUS_OPTIONS = [
 ];
 
 const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
-	const [previewPackage, setPreviewPackage] = useState<PackageWithRooms | null>(null);
-	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+	const [previewId, setPreviewId] = useState<PackageWithRooms["_id"] | null>(null);
+	const previewPackage = data.find((pkg) => pkg._id === previewId);
 	const [seasonFilterOpen, setSeasonFilterOpen] = useState(false);
 	const [selectedSeasons, setSelectedSeasons] = useState<string[]>([]);
 	const [statusFilterOpen, setStatusFilterOpen] = useState(false);
@@ -62,9 +62,7 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 	const handleClearStatuses = useCallback(() => setSelectedStatuses([]), []);
 
 	const handlePreviewPckg = useCallback((pkg: PackageWithRooms) => {
-		console.log("Previewing package:", pkg); // Debug log to verify package data
-		setPreviewPackage(pkg);
-		setIsPreviewOpen(true);
+		setPreviewId(pkg._id);
 	}, []);
 
 	return (
@@ -211,8 +209,10 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 			{previewPackage && (
 				<PackagePreviewModal
 					pkg={previewPackage}
-					open={isPreviewOpen}
-					onOpenChange={setIsPreviewOpen}
+					open
+					onOpenChange={(open) => {
+						if (!open) setPreviewId(null);
+					}}
 				/>
 			)}
 		</div>
