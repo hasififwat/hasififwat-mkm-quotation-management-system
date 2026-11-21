@@ -1,0 +1,2140 @@
+{
+  "baseline": "9aba264c5781a41a0e230f728a3fa56aa5a621e8",
+  "tested": "8c12349a2775a9b489f63b4f5dbfaecf0f4f2387",
+  "preview": "http://localhost:3673",
+  "edit": [
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 1280,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 666.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Save",
+          "top": 666.5,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 666.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.151274) 0px 0px 0px 0.907647px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 666.5,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 320,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 763.75,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "none",
+          "text": "Save",
+          "top": 763.75,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 320,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 763.75,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 763.75,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 1280,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 764,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 764,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 764,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 764,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 320,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 320,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 1280,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 721.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 721.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Save",
+          "top": 721.5,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 721.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 721.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 721.5,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "light",
+      "width": 320,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "edit",
+      "theme": "dark",
+      "width": 320,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    }
+  ],
+  "create": [
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 1280,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 666.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 1034.53125
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 666.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 1034.53125
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 320,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 763.75,
+          "type": "",
+          "variant": "ghost",
+          "x": 216.53125
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 320,
+      "step": "Client Details",
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 715.75,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 763.75,
+          "type": "",
+          "variant": "ghost",
+          "x": 216.53125
+        }
+      ],
+      "focused": [
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 1280,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 487.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 487.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 487.25,
+          "type": "",
+          "variant": "ghost",
+          "x": 1034.53125
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 487.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 487.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 487.25,
+          "type": "",
+          "variant": "ghost",
+          "x": 1034.53125
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 320,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 507.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 507.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 555.25,
+          "type": "",
+          "variant": "ghost",
+          "x": 216.53125
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 320,
+      "step": "Package Selection",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 507.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 222.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 507.25,
+          "type": "button",
+          "variant": "outline",
+          "x": 141.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Cancel",
+          "top": 555.25,
+          "type": "",
+          "variant": "ghost",
+          "x": 216.53125
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Next",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 1280,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 699,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 699,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "none",
+          "text": "Save",
+          "top": 699,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 1280,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 699,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 1024.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 699,
+          "type": "",
+          "variant": "ghost",
+          "x": 945.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0398021) 0px 0px 0px 0.238813px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 699,
+          "type": "submit",
+          "variant": "default",
+          "x": 1032.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "light",
+      "width": 320,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(66.128% -.0000298023 .0000119209) 50%, transparent)"
+        ]
+      ]
+    },
+    {
+      "kind": "create",
+      "theme": "dark",
+      "width": 320,
+      "step": "Add-ons & Discounts",
+      "controls": [
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 206.21875,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 127.75
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-save",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Save",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 214.21875
+        }
+      ],
+      "focused": [
+        [
+          "Previous",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Cancel",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ],
+        [
+          "Save",
+          true,
+          "0 0 0 calc(3px + 0px) color-mix(in oklab, lab(48.496% 0 0) 50%, transparent)"
+        ]
+      ]
+    }
+  ],
+  "cancelDestinationsByEnter": {
+    "create": true,
+    "edit": true
+  },
+  "previousByEnter": true,
+  "confirmedSaves": {
+    "create": {
+      "review": "/quotations/review/n57e9dv7ddxy3s6psagdmd0r1d8jn40m",
+      "result": {
+        "client": true,
+        "pic": true,
+        "reference": "1448H-0002"
+      },
+      "reload": {
+        "client": true,
+        "pic": true,
+        "reference": "1448H-0002"
+      },
+      "values": {
+        "notes": "Issue 73 create persistence",
+        "pic": "Footer verification"
+      }
+    },
+    "edit": {
+      "review": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+      "reference": "1448H-0001",
+      "notes": "Issue 73 edit persistence",
+      "reloaded": true
+    }
+  },
+  "busy": {
+    "create": {
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 133.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 716,
+          "type": "button",
+          "variant": "outline",
+          "x": 25
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 180.8203125,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 764,
+          "type": "",
+          "variant": "ghost",
+          "x": 102.3515625
+        },
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "animate-spin h-4 w-4",
+          "iconWidth": 17.505462646484375,
+          "padding": "12px",
+          "right": 295,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.444291) 0px 0px 0px 2.66574px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Saving...",
+          "top": 764,
+          "type": "submit",
+          "variant": "default",
+          "x": 188.8203125
+        }
+      ],
+      "dark": true,
+      "footerRight": 311,
+      "footerX": 9,
+      "path": "/quotations/create",
+      "step": "Add-ons & Discounts",
+      "width": 320
+    },
+    "edit": {
+      "controls": [
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-left",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 531.0859375,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Previous",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 423
+        },
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "lucide lucide-chevron-right",
+          "iconWidth": 16,
+          "padding": "12px",
+          "right": 620.40625,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "text": "Next",
+          "top": 666.5,
+          "type": "button",
+          "variant": "outline",
+          "x": 539.0859375
+        },
+        {
+          "disabled": false,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": "/quotations/review/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+          "icon": null,
+          "iconWidth": null,
+          "padding": "16px",
+          "right": 998.8203125,
+          "ring": "none",
+          "text": "Cancel",
+          "top": 666.5,
+          "type": "",
+          "variant": "ghost",
+          "x": 920.3515625
+        },
+        {
+          "disabled": true,
+          "focus": false,
+          "gap": "8px",
+          "height": 36,
+          "href": null,
+          "icon": "animate-spin h-4 w-4",
+          "iconWidth": 18.9765625,
+          "padding": "12px",
+          "right": 1113,
+          "ring": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.412445) 0px 0px 0px 2.47467px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+          "text": "Saving...",
+          "top": 666.5,
+          "type": "submit",
+          "variant": "default",
+          "x": 1006.8203125
+        }
+      ],
+      "dark": false,
+      "footerRight": 1137,
+      "footerX": 399,
+      "path": "/quotations/edit/n57bzq289wcxhq8hhqsv14yqyh8jm4cp",
+      "step": "Client Details",
+      "width": 1280
+    }
+  }
+}
