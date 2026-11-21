@@ -639,16 +639,20 @@ export default function QuotationBuilder({
 	const [reviewNotice, setReviewNotice] = useState("");
 	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
 	const refreshUnconfirmed = refreshState.status === "uncertain";
+	const refreshConflict = refreshState.status === "conflict";
 	const checkSavedQuotation = useRef<HTMLAnchorElement>(null);
+	const reviewLatestChanges = useRef<HTMLButtonElement>(null);
+	const refreshReviewHeading = useRef<HTMLHeadingElement>(null);
 	const refreshRequest = useRef(false);
 	const loadedRefreshToken = useRef(snapshot_refresh_token);
 	const createAttempt = useRef<QuotationCreateAttempt | null>(null);
 
 	useEffect(() => {
-		if (refreshUnconfirmed && document.activeElement === document.body) {
-			checkSavedQuotation.current?.focus();
-		}
-	}, [refreshUnconfirmed]);
+		if (document.activeElement !== document.body) return;
+		if (refreshState.status === "uncertain") checkSavedQuotation.current?.focus();
+		if (refreshState.status === "conflict") reviewLatestChanges.current?.focus();
+		if (refreshState.status === "review") refreshReviewHeading.current?.focus();
+	}, [refreshState.status]);
 
 	const openRefreshReview = async (latest = false) => {
 		if (!qid || refreshRequest.current) return;
@@ -962,6 +966,9 @@ export default function QuotationBuilder({
 				</CardContent>
 			</Card>
 			{!revisionEnabled && qid && stale_fields.length > 0 && (
+				refreshState.status === "idle" || refreshState.status === "failure" ||
+				refreshState.status === "unavailable" || refreshUnconfirmed
+			) && (
 				<div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
 					<span className="mt-0.5 text-base">⚠</span>
 					<div className="flex-1">
@@ -977,18 +984,23 @@ export default function QuotationBuilder({
 					{!refreshUnconfirmed && <button
 						type="button"
 						className="shrink-0 rounded px-3 py-1.5 text-xs font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors"
-						disabled={refreshState.status === "pending" || refreshState.status === "reviewing"}
-						aria-busy={refreshState.status === "pending" || refreshState.status === "reviewing"}
 						onClick={() => openRefreshReview()}
 					>
-						{refreshState.status === "pending" ? "Refreshing snapshot..." : "Refresh snapshot"}
+						Refresh snapshot
 					</button>}
 				</div>
 			)}
 
 			{!revisionEnabled && qid && (
-				<div className={refreshUnconfirmed ? "space-y-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100" : "sr-only"}>
+				<div className={refreshUnconfirmed || refreshConflict ? "space-y-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100" : "sr-only"}>
 					<div role="alert" aria-atomic="true">
+						{refreshConflict && (
+							<>
+								<h3 className="mb-1 font-semibold">Saved details changed</h3>
+								<p>The saved quotation or package changed. This refresh attempt did not apply any updates. Your unsaved edits are still in the editor.</p>
+								{stale_fields.length > 0 && <p className="mt-2"><strong>Details requiring verification:</strong> {formatStaleFields(stale_fields)}.</p>}
+							</>
+						)}
 						{refreshState.status === "uncertain" && (
 							<>
 								<h3 className="mb-1 font-semibold">We couldn’t confirm the refresh</h3>
@@ -999,6 +1011,18 @@ export default function QuotationBuilder({
 							</>
 						)}
 					</div>
+					{refreshConflict && (
+						<div className="flex flex-wrap gap-2">
+							<Button ref={reviewLatestChanges} type="button" onClick={() => openRefreshReview(true)}>
+								Review latest changes
+							</Button>
+							<Button asChild variant="outline" className="h-auto min-h-9 max-w-full whitespace-normal text-center">
+								<Link href={`/quotations/review/${qid}`} prefetch={false} target="_blank" rel="noopener noreferrer">
+									Open saved quotation (opens in a new tab)
+								</Link>
+							</Button>
+						</div>
+					)}
 					{refreshState.status === "uncertain" && (
 						<>
 							<div className="flex flex-wrap gap-2">
@@ -1017,11 +1041,16 @@ export default function QuotationBuilder({
 				</div>
 			)}
 
-			{!revisionEnabled && qid && refreshState.status !== "idle" && refreshState.status !== "uncertain" && (
+			{!revisionEnabled && qid && refreshState.status !== "idle" && refreshState.status !== "uncertain" && refreshState.status !== "conflict" && (
 				<div
-					role={refreshState.status === "failure" || refreshState.status === "conflict" || refreshState.status === "unavailable" ? "alert" : "status"}
+					role={refreshState.status === "failure" || refreshState.status === "unavailable" ? "alert" : refreshState.status === "review" ? undefined : "status"}
 					className="rounded-lg border bg-muted p-4 text-sm space-y-2"
 				>
+					{refreshState.status === "review" && (
+						<h3 ref={refreshReviewHeading} tabIndex={-1} className="rounded-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+							Review snapshot changes
+						</h3>
+					)}
 					<p>
 						{refreshState.status === "pending"
 							? "Refreshing the saved snapshot. Your entries are kept on this page."
@@ -1034,10 +1063,12 @@ export default function QuotationBuilder({
 						<p><strong>Current package:</strong> {refreshState.review.current_package}<br /><strong>Current flight:</strong> {refreshState.review.current_flight}</p>
 						{refreshState.review.changes.length ? <ul className="space-y-2">{refreshState.review.changes.map(change => <li key={change.label}><strong>{change.label}</strong><p className="whitespace-pre-wrap">Saved: {change.saved}</p><p className="whitespace-pre-wrap">Current: {change.current}</p></li>)}</ul> : <p>No material snapshot differences found.</p>}
 						<p>Confirming refresh updates these details on the saved quotation immediately. It preserves quoted prices, passenger counts, add-ons, discounts, and totals.</p>
-						<Button type="button" onClick={handleRefreshSnapshot}>Confirm snapshot refresh</Button>{" "}<Button type="button" variant="outline" onClick={() => setRefreshState({ status: "idle" })}>Cancel</Button>
+						<div className="flex flex-wrap gap-2">
+							<Button type="button" onClick={handleRefreshSnapshot}>Confirm refresh</Button>
+							<Button type="button" variant="outline" onClick={() => setRefreshState({ status: "idle" })}>Cancel</Button>
+						</div>
 					</div>}
-					{refreshState.status === "conflict" && <Button type="button" variant="outline" onClick={() => openRefreshReview(true)}>Review latest saved quotation</Button>}
-					{refreshState.status !== "pending" && (
+					{(refreshState.status === "failure" || refreshState.status === "unavailable" || refreshState.status === "success") && (
 						<p>
 							<Link href={`/quotations/review/${qid}`} target="_blank" rel="noopener noreferrer" className="underline font-medium">
 								View saved quotation (opens in a new tab)
