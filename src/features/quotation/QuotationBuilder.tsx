@@ -156,7 +156,10 @@ function HotelSelection({
 						<Card
 							key={room.room_type}
 							className={`
-                relative flex flex-col gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
+                relative flex min-w-0 flex-col gap-4 rounded-lg border-2 p-4 wrap-anywhere cursor-pointer transition-all
+                sm:supports-[grid-template-rows:subgrid]:grid
+                sm:supports-[grid-template-rows:subgrid]:row-span-3
+                sm:supports-[grid-template-rows:subgrid]:grid-rows-subgrid
                 ${
 									isSelected
 										? "border-primary bg-primary/5 ring-2 ring-primary/20"
@@ -164,49 +167,55 @@ function HotelSelection({
 								}
               `}
 						>
-							<div className="flex items-start justify-between gap-2">
-								<div className="flex items-center gap-3">
+							<div className="flex flex-col gap-2">
+								<div className="flex items-start gap-3">
 									<Checkbox
 										id={`room-${room.room_type}`}
+										className="mt-1"
 										checked={isSelected}
 										onCheckedChange={(checked) =>
 											handleToggleRoom(room, checked === true)
 										}
 										onClick={(e) => e.stopPropagation()}
 									/>
-									<div>
-										<label
-											htmlFor={`room-${room.room_type}`}
-											className="font-semibold cursor-pointer block"
-										>
-											{room.room_type}
-										</label>
-										<span className="text-xs text-muted-foreground">
-											RM {room.price.toLocaleString("en-MY")}
-										</span>
-										{!room.enabled && (
-											<p className="text-xs text-amber-700 dark:text-amber-400">
-												Unavailable. Keep this saved room and price, or remove it.
-												To replace it, remove it and select an available room.
-											</p>
-										)}
-										{isSelected && selectedRooms?.[selectedIndex]?.price !== room.price && (
-											<p className="text-xs text-amber-700">
-												Entered price RM {selectedRooms?.[selectedIndex]?.price.toLocaleString("en-MY")} retained.
-												Remove and select this room again to use the current price.
-											</p>
-										)}
-									</div>
+									<label
+										htmlFor={`room-${room.room_type}`}
+										className="min-w-0 cursor-pointer leading-6 font-semibold"
+									>
+										{room.room_type}
+									</label>
 								</div>
+								<p className="text-xs text-muted-foreground">
+									RM {room.price.toLocaleString("en-MY")}
+								</p>
+								{!room.enabled && (
+									<p className="text-xs text-amber-700 dark:text-amber-400">
+										Unavailable. Keep this saved room and price, or remove it.
+										To replace it, remove it and select an available room.
+									</p>
+								)}
+								{isSelected && selectedRooms?.[selectedIndex]?.price !== room.price && (
+									<p className="text-xs text-amber-700 dark:text-amber-400">
+										Entered price RM {selectedRooms?.[selectedIndex]?.price.toLocaleString("en-MY")} retained.
+										Remove and select this room again to use the current price.
+									</p>
+								)}
+								{!room.enabled && (
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										className="h-auto min-h-8 max-w-full self-start py-1 whitespace-normal"
+										onClick={() => remove(selectedIndex)}
+										onKeyDown={(event) => event.stopPropagation()}
+									>
+										Remove {room.room_type}
+									</Button>
+								)}
 							</div>
-							{!room.enabled && (
-								<Button type="button" variant="outline" size="sm" onClick={() => remove(selectedIndex)} onKeyDown={(event) => event.stopPropagation()}>
-									Remove {room.room_type}
-								</Button>
-							)}
 
-							<div className="pt-2 ">
-								{selectedIndex !== -1 && (
+							{isSelected && (
+								<>
 									<Controller
 										control={control}
 										name={`selected_rooms.${selectedIndex}.pax`}
@@ -238,13 +247,11 @@ function HotelSelection({
 											</Field>
 										)}
 									/>
-								)}
-								{isSelected && (
-									<p className="mt-2 text-xs text-muted-foreground">
+									<p className="text-xs text-muted-foreground">
 										Room total RM {((selectedRooms?.[selectedIndex]?.price ?? 0) * (selectedRooms?.[selectedIndex]?.pax ?? 0)).toLocaleString("en-MY")}
 									</p>
-								)}
-							</div>
+								</>
+							)}
 						</Card>
 					);
 				})}
