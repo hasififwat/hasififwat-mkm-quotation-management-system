@@ -1,0 +1,125 @@
+$ react-router build
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 3922 modules transformed.
+Generated an empty chunk: "chrome-devtools".
+Generated an empty chunk: "logout".
+Generated an empty chunk: "resources.create-client".
+rendering chunks...
+computing gzip size...
+build/client/.vite/manifest.json                                 37.22 kB │ gzip:   3.77 kB
+build/client/assets/mkm-quotation-footer-bc9bZ7Ek.png            75.04 kB
+build/client/assets/mkm-quotation-header-C7pzFc5L.png            87.91 kB
+build/client/assets/root-D6rd4AXT.css                           126.52 kB │ gzip:  20.18 kB
+build/client/assets/chrome-devtools-l0sNRNKZ.js                   0.00 kB │ gzip:   0.02 kB
+build/client/assets/logout-l0sNRNKZ.js                            0.00 kB │ gzip:   0.02 kB
+build/client/assets/resources.create-client-l0sNRNKZ.js           0.00 kB │ gzip:   0.02 kB
+build/client/assets/constants-DXShcaho.js                         0.03 kB │ gzip:   0.05 kB
+build/client/assets/check-BL2jUIjy.js                             0.13 kB │ gzip:   0.15 kB
+build/client/assets/chevron-down-BqPU-eGH.js                      0.14 kB │ gzip:   0.15 kB
+build/client/assets/chevron-right-DhyIIbdj.js                     0.14 kB │ gzip:   0.15 kB
+build/client/assets/chevron-left-BaeBjSZR.js                      0.14 kB │ gzip:   0.15 kB
+build/client/assets/loader-circle-BA8cnQth.js                     0.15 kB │ gzip:   0.16 kB
+build/client/assets/plus-CwxmK1Tc.js                              0.17 kB │ gzip:   0.16 kB
+build/client/assets/x-eqaYdBqJ.js                                 0.17 kB │ gzip:   0.16 kB
+build/client/assets/search-zs_1Nbbt.js                            0.18 kB │ gzip:   0.18 kB
+build/client/assets/circle-check-BY1tnVx4.js                      0.19 kB │ gzip:   0.18 kB
+build/client/assets/client.create-BRQmQ9tS.js                     0.20 kB │ gzip:   0.18 kB
+build/client/assets/cloud-upload-DVYSc-HZ.js                      0.26 kB │ gzip:   0.22 kB
+build/client/assets/eye-Drd_v_bu.js                               0.26 kB │ gzip:   0.21 kB
+build/client/assets/triangle-alert-CjZtFeJb.js                    0.28 kB │ gzip:   0.23 kB
+build/client/assets/pencil-45BMcOMH.js                            0.29 kB │ gzip:   0.24 kB
+build/client/assets/plane-BsqoE38F.js                             0.31 kB │ gzip:   0.26 kB
+build/client/assets/users-HdPspQwi.js                             0.32 kB │ gzip:   0.24 kB
+build/client/assets/refresh-cw-Cr-sr0vd.js                        0.33 kB │ gzip:   0.24 kB
+build/client/assets/use-mobile-D3zinVB5.js                        0.33 kB │ gzip:   0.25 kB
+build/client/assets/trash-2-BFgTMKzZ.js                           0.34 kB │ gzip:   0.23 kB
+build/client/assets/stale-labels-CpHHLohP.js                      0.37 kB │ gzip:   0.20 kB
+build/client/assets/file-text-STWGJBSS.js                         0.40 kB │ gzip:   0.26 kB
+build/client/assets/sliders-horizontal-CxnqTuxp.js                0.44 kB │ gzip:   0.25 kB
+build/client/assets/api-Brhq0pTw.js                               0.44 kB │ gzip:   0.32 kB
+build/client/assets/ThemeProvider-X84YoyYw.js                     0.76 kB │ gzip:   0.45 kB
+build/client/assets/season-badge-CKxz_Hua.js                      0.84 kB │ gzip:   0.46 kB
+build/client/assets/input-zxb__cjQ.js                             0.84 kB │ gzip:   0.47 kB
+build/client/assets/ThemeToggle-vBMDEKQk.js                       1.00 kB │ gzip:   0.56 kB
+build/client/assets/index-B7WdnnyF.js                             1.10 kB │ gzip:   0.62 kB
+build/client/assets/tslib.es6-M_FJ09fS.js                         1.10 kB │ gzip:   0.54 kB
+build/client/assets/separator-B215KFiA.js                         1.20 kB │ gzip:   0.65 kB
+build/client/assets/createLucideIcon-C5GcMNlX.js                  1.21 kB │ gzip:   0.70 kB
+build/client/assets/table-BMYZMlx-.js                             1.24 kB │ gzip:   0.50 kB
+build/client/assets/card-CvNlj2ce.js                              1.25 kB │ gzip:   0.49 kB
+build/client/assets/badge-kTMiiSQN.js                             1.26 kB │ gzip:   0.61 kB
+build/client/assets/quotation.create-Cne4oXSF.js                  1.32 kB │ gzip:   0.65 kB
+build/client/assets/quotation.edit-Cne4oXSF.js                    1.32 kB │ gzip:   0.65 kB
+build/client/assets/index-CqvqVjQn.js                             1.38 kB │ gzip:   0.69 kB
+build/client/assets/package.create-B9d7rNR4.js                    1.65 kB │ gzip:   0.81 kB
+build/client/assets/package.edit-CyLURKBK.js                      1.78 kB │ gzip:   0.89 kB
+build/client/assets/index-BiJeLklA.js                             1.83 kB │ gzip:   0.87 kB
+build/client/assets/login-B1jKel5e.js                             2.22 kB │ gzip:   1.05 kB
+build/client/assets/floating-ui.utils.dom-DE9UKtNy.js             2.60 kB │ gzip:   1.14 kB
+build/client/assets/button-ClDJaPX3.js                            3.23 kB │ gzip:   1.40 kB
+build/client/assets/sign-up-DRCW8v1m.js                           3.38 kB │ gzip:   1.38 kB
+build/client/assets/package.stats-DkogmZoD.js                     3.64 kB │ gzip:   1.48 kB
+build/client/assets/root-CpeZw-2D.js                              3.69 kB │ gzip:   1.92 kB
+build/client/assets/index-CZY3fa18.js                             3.71 kB │ gzip:   1.42 kB
+build/client/assets/quotation.duplicates-DCA_fEUH.js              3.82 kB │ gzip:   1.70 kB
+build/client/assets/field-DYRqw2lE.js                             4.51 kB │ gzip:   1.56 kB
+build/client/assets/dashboard-D4x29o1F.js                         4.70 kB │ gzip:   1.21 kB
+build/client/assets/flight.index-CWTvhrxW.js                      4.93 kB │ gzip:   2.12 kB
+build/client/assets/index-53ehskS3.js                             5.03 kB │ gzip:   2.36 kB
+build/client/assets/index-CaLAGpPT.js                             5.13 kB │ gzip:   2.19 kB
+build/client/assets/index-CoL8Nnuk.js                             5.20 kB │ gzip:   1.99 kB
+build/client/assets/popover-BrXpdLTN.js                           5.54 kB │ gzip:   1.99 kB
+build/client/assets/flight.audit-Dp-YqBGV.js                      5.57 kB │ gzip:   1.97 kB
+build/client/assets/http_client-BPdz6Kqs.js                       5.83 kB │ gzip:   1.76 kB
+build/client/assets/client._cid-B0YppGaj.js                       6.01 kB │ gzip:   2.01 kB
+build/client/assets/accordion-DMIkoQsV.js                         6.97 kB │ gzip:   2.60 kB
+build/client/assets/index-BPGIDm_R.js                             8.62 kB │ gzip:   3.41 kB
+build/client/assets/index-BEosWAJd.js                            12.63 kB │ gzip:   4.74 kB
+build/client/assets/client.index-B7ICHq6Z.js                     14.22 kB │ gzip:   4.93 kB
+build/client/assets/_protected-DIBkZTiB.js                       14.53 kB │ gzip:   4.65 kB
+build/client/assets/SearchableDropdown-8zJmGUVy.js               15.46 kB │ gzip:   6.02 kB
+build/client/assets/package.create-from-schedule-Dnchiihw.js     17.29 kB │ gzip:   6.58 kB
+build/client/assets/quotation.index-CYuo8by5.js                  17.79 kB │ gzip:   5.92 kB
+build/client/assets/papaparse.min-Dkpk_Izc.js                    19.40 kB │ gzip:   7.18 kB
+build/client/assets/index-wMa0ki2E.js                            19.91 kB │ gzip:   7.23 kB
+build/client/assets/floating-ui.react-dom-BQbyGhCD.js            20.42 kB │ gzip:   8.03 kB
+build/client/assets/QuotationBuilder-BtMqFAs0.js                 21.92 kB │ gzip:   6.15 kB
+build/client/assets/useDebounce-DMaHkt7x.js                      22.99 kB │ gzip:   7.23 kB
+build/client/assets/utils-CiB0LXSo.js                            25.60 kB │ gzip:   8.21 kB
+build/client/assets/dialog-F63PF56g.js                           28.84 kB │ gzip:  10.38 kB
+build/client/assets/index-_kChi_Ib.js                            33.45 kB │ gzip:   9.57 kB
+build/client/assets/tooltip-C13rGrvk.js                          34.77 kB │ gzip:  12.11 kB
+build/client/assets/useBaseUiId-BF0Ou_GA.js                      44.37 kB │ gzip:  15.86 kB
+build/client/assets/index-5OQxpdsX.js                            51.68 kB │ gzip:  13.94 kB
+build/client/assets/package.sync-C6JQvOCG.js                     56.91 kB │ gzip:  14.08 kB
+build/client/assets/use_queries-BX-S8UM2.js                      57.24 kB │ gzip:  15.34 kB
+build/client/assets/package.index-Soc2kxIG.js                   102.62 kB │ gzip:  33.95 kB
+build/client/assets/PackageBuilder-CEbyYjVk.js                  122.34 kB │ gzip:  32.76 kB
+build/client/assets/chunk-JZWAC4HX-CQhTyTTJ.js                  125.46 kB │ gzip:  42.30 kB
+build/client/assets/schema-BszoGNbt.js                          161.02 kB │ gzip:  35.65 kB
+build/client/assets/coerce-B1Fx6JY9.js                          171.55 kB │ gzip:  50.68 kB
+build/client/assets/entry.client-C55Mom4s.js                    186.77 kB │ gzip:  59.07 kB
+build/client/assets/quotation.review-4BFg2II2.js              1,593.09 kB │ gzip: 531.53 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.40s
+vite v7.3.1 building ssr environment for production...
+transforming...
+✓ 114 modules transformed.
+rendering chunks...
+build/server/.vite/manifest.json                         0.73 kB
+build/server/assets/mkm-quotation-footer-bc9bZ7Ek.png   75.04 kB
+build/server/assets/mkm-quotation-header-C7pzFc5L.png   87.91 kB
+build/server/assets/server-build-D6rd4AXT.css          126.52 kB
+build/server/index.js                                  571.25 kB
+
+✓ 3 assets cleaned from React Router server build.
+build/client/assets/mkm-quotation-footer-bc9bZ7Ek.png
+build/client/assets/mkm-quotation-header-C7pzFc5L.png
+build/server/assets/server-build-D6rd4AXT.css
+
+✓ built in 283ms

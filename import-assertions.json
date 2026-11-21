@@ -1,0 +1,19 @@
+{
+  "name": "Orchid Journey",
+  "packageId": "md716dqhqccgy1ch9wa46mzq0s8jm5dp",
+  "duration": "9 HARI 7 MALAM",
+  "flightDates": [
+    [
+      "2027-01-29",
+      "2027-02-04"
+    ],
+    [
+      "2027-03-02",
+      "2027-03-10"
+    ]
+  ],
+  "blankNewDurationRejected": true,
+  "missingNewDurationRejected": true,
+  "noPartialPackage": true,
+  "reimportPreservesDurationAndIds": true
+}

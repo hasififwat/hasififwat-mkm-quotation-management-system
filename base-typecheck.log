@@ -1,0 +1,32 @@
+$ react-router typegen && tsc
+app/components/ui/command.tsx(54,11): error TS2322: Type 'ReactNode | PayloadChildRenderFunction<unknown>' is not assignable to type 'ReactNode'.
+  Type 'PayloadChildRenderFunction<unknown>' is not assignable to type 'ReactNode'.
+app/components/ui/sidebar.tsx(128,21): error TS2322: Type '{ children: Element; delayDuration: number; }' is not assignable to type 'IntrinsicAttributes & TooltipProviderProps'.
+  Property 'delayDuration' does not exist on type 'IntrinsicAttributes & TooltipProviderProps'.
+app/components/ui/sidebar.tsx(534,20): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
+app/features/authentication /components/ProtectedRoute.tsx(3,35): error TS2307: Cannot find module '~/features/authentication /provider/AuthenticationProvider' or its corresponding type declarations.
+app/features/flights/FlightMaster.tsx(91,23): error TS2571: Object is of type 'unknown'.
+app/features/flights/FlightMaster.tsx(122,28): error TS2345: Argument of type '{ pakej: string; }' is not assignable to parameter of type '{ year_key: string; pakej: string; code: string; month: string; departure: string; return: string; package_name: string; sector_departure: string; sector_return: string; _id?: string | undefined; }'.
+  Type '{ pakej: string; }' is missing the following properties from type '{ year_key: string; pakej: string; code: string; month: string; departure: string; return: string; package_name: string; sector_departure: string; sector_return: string; _id?: string | undefined; }': year_key, code, month, departure, and 4 more.
+app/features/flights/FlightMaster.tsx(125,27): error TS2345: Argument of type 'Record<string, string>' is not assignable to parameter of type '{ year_key: string; pakej: string; code: string; month: string; departure: string; return: string; package_name: string; sector_departure: string; sector_return: string; _id?: string | undefined; }'.
+  Type 'Record<string, string>' is missing the following properties from type '{ year_key: string; pakej: string; code: string; month: string; departure: string; return: string; package_name: string; sector_departure: string; sector_return: string; _id?: string | undefined; }': year_key, pakej, code, month, and 5 more.
+app/features/packages/components/PackageListTable/data-table.tsx(87,4): error TS2322: Type 'ColumnDef<TData, TValue>' is not assignable to type 'ColumnDef<TData, unknown>'.
+  Type 'ColumnDefBase<TData, TValue> & StringHeaderIdentifier' is not assignable to type 'ColumnDef<TData, unknown>'.
+    Type 'ColumnDefBase<TData, TValue> & StringHeaderIdentifier' is not assignable to type 'AccessorFnColumnDefBase<TData, unknown> & IdIdentifier<TData, unknown>'.
+      Property 'accessorFn' is missing in type 'ColumnDefBase<TData, TValue> & StringHeaderIdentifier' but required in type 'AccessorFnColumnDefBase<TData, unknown>'.
+app/features/packages/components/PackageListTable/data-table.tsx(335,23): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
+app/root.tsx(33,36): error TS7031: Binding element 'request' implicitly has an 'any' type.
+app/root.tsx(33,45): error TS7031: Binding element 'context' implicitly has an 'any' type.
+app/root.tsx(33,56): error TS7006: Parameter 'next' implicitly has an 'any' type.
+app/routes/_protected/flight.audit.tsx(161,43): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
+convex/packageFlights.ts(61,18): error TS2339: Property 'source' does not exist on type '{ _id: Id<"clients">; _creationTime: number; phone_number?: string | undefined; name: string; created_at: string; updated_at: string; } | { _id: Id<"quotations">; _creationTime: number; ... 20 more ...; flight_id: string; } | ... 17 more ... | { ...; }'.
+  Property 'source' does not exist on type '{ _id: Id<"clients">; _creationTime: number; phone_number?: string | undefined; name: string; created_at: string; updated_at: string; }'.
+convex/packages.ts(1229,18): error TS2339: Property 'source' does not exist on type '{ _id: Id<"clients">; _creationTime: number; phone_number?: string | undefined; name: string; created_at: string; updated_at: string; } | { _id: Id<"quotations">; _creationTime: number; ... 20 more ...; flight_id: string; } | ... 17 more ... | { ...; }'.
+  Property 'source' does not exist on type '{ _id: Id<"clients">; _creationTime: number; phone_number?: string | undefined; name: string; created_at: string; updated_at: string; }'.
+convex/profiles.ts(23,48): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+convex/quotations.ts(960,21): error TS7006: Parameter 'h' implicitly has an 'any' type.
+[ELIFECYCLE] Command failed with exit code 2.

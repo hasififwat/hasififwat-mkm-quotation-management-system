@@ -1,0 +1,15 @@
+{
+  "ownedPreviewClosed": true,
+  "stoppedPids": [
+    88390,
+    96731
+  ],
+  "releasedLoopbackPorts": [
+    57436,
+    57437,
+    57438
+  ],
+  "removedSyntheticDatabaseAndAuthKeys": true,
+  "removedTestUploadsAndGeneratedFiles": true,
+  "cleanWorktree": true
+}
