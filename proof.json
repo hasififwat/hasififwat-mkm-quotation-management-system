@@ -1,0 +1,618 @@
+{
+  "sha": "cc2b5943781d3400f274cb972efed56c45b92995",
+  "testedEntry": "http://localhost:3682/quotations/create?client_id=k17a88ms8vfepdvv0bvdnxsnx98jmt8s",
+  "nextOrigin": "http://127.0.0.1:3681",
+  "captureOrigin": "http://localhost:3682 (owned loopback fault proxy)",
+  "conflict": {
+    "before": [
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 409,
+        "failed": false,
+        "timestamp": "2026-11-21T15:53:49.267Z"
+      }
+    ],
+    "after": [
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 409,
+        "failed": false,
+        "timestamp": "2026-11-21T15:53:49.267Z"
+      }
+    ],
+    "current": [
+      [
+        "pic_name",
+        "Issue 80 draft PIC"
+      ],
+      [
+        "branch",
+        "Issue 80 branch"
+      ],
+      [
+        "",
+        ""
+      ],
+      [
+        "notes",
+        "Issue 80 original draft notes"
+      ],
+      [
+        "",
+        ""
+      ],
+      [
+        "flight_id",
+        ""
+      ],
+      [
+        "pax-Quad",
+        "3"
+      ],
+      [
+        "addon-name-0",
+        "Synthetic transfer"
+      ],
+      [
+        "addon-price-0",
+        "55"
+      ],
+      [
+        "addon-pax-0",
+        "3"
+      ],
+      [
+        "discount-name-0",
+        "Synthetic discount"
+      ],
+      [
+        "discount-price-0",
+        "12"
+      ],
+      [
+        "discount-pax-0",
+        "2"
+      ]
+    ],
+    "recordDumpEqual": true
+  },
+  "unknown": {
+    "before": [
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 409,
+        "failed": false,
+        "timestamp": "2026-11-21T15:53:49.267Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 200,
+        "failed": false,
+        "timestamp": "2026-11-21T15:54:36.984Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": null,
+        "failed": true,
+        "errorText": "net::ERR_CONTENT_LENGTH_MISMATCH",
+        "timestamp": "2026-11-21T15:54:37.134Z"
+      }
+    ],
+    "after": [
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 409,
+        "failed": false,
+        "timestamp": "2026-11-21T15:53:49.267Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 200,
+        "failed": false,
+        "timestamp": "2026-11-21T15:54:36.984Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": null,
+        "failed": true,
+        "errorText": "net::ERR_CONTENT_LENGTH_MISMATCH",
+        "timestamp": "2026-11-21T15:54:37.134Z"
+      }
+    ],
+    "original": [
+      [
+        "pic_name",
+        "Issue 80 draft PIC"
+      ],
+      [
+        "branch",
+        "Issue 80 branch"
+      ],
+      [
+        "",
+        ""
+      ],
+      [
+        "notes",
+        "Issue 80 original draft notes"
+      ],
+      [
+        "",
+        ""
+      ],
+      [
+        "flight_id",
+        ""
+      ],
+      [
+        "pax-Quad",
+        "3"
+      ],
+      [
+        "addon-name-0",
+        "Synthetic transfer"
+      ],
+      [
+        "addon-price-0",
+        "55"
+      ],
+      [
+        "addon-pax-0",
+        "3"
+      ],
+      [
+        "discount-name-0",
+        "Synthetic discount"
+      ],
+      [
+        "discount-price-0",
+        "12"
+      ],
+      [
+        "discount-pax-0",
+        "2"
+      ]
+    ],
+    "recordDumpEqual": true,
+    "listUrl": "http://localhost:3682/quotations",
+    "reloadedReference": "1448H-0003",
+    "reloadValues": [
+      [
+        "pic_name",
+        "Issue 80 draft PIC"
+      ],
+      [
+        "branch",
+        "Issue 80 branch"
+      ],
+      [
+        "notes",
+        "Issue 80 original draft notes"
+      ],
+      [
+        "pax-Quad",
+        "3"
+      ],
+      [
+        "addon-name-0",
+        "Synthetic transfer"
+      ],
+      [
+        "addon-price-0",
+        "55"
+      ],
+      [
+        "addon-pax-0",
+        "3"
+      ],
+      [
+        "discount-name-0",
+        "Synthetic discount"
+      ],
+      [
+        "discount-price-0",
+        "12"
+      ],
+      [
+        "discount-pax-0",
+        "2"
+      ]
+    ],
+    "ax": [
+      "          - link \"Check Quotations in a new tab\" [active] [ref=t3-82f8d8a8-12z-f5e362] [cursor=pointer] [box=25,257,310,36]:"
+    ]
+  },
+  "focusLink": {
+    "focusWide": {
+      "actionHeight": 36,
+      "actionWidth": 256,
+      "align": "start",
+      "focus": true,
+      "focusVisible": true,
+      "gap": 12,
+      "height": 850,
+      "offsetX": 17,
+      "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.555999 -0.00000530481 0.000012964 / 0.0871457) 0px 0px 0px 0.522874px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "overflow": false,
+      "padding": "8px 16px",
+      "tag": "A",
+      "target": "_blank",
+      "text": "Check Quotations in a new tab",
+      "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+      "width": 1280
+    },
+    "focusNarrow": {
+      "actionHeight": 36,
+      "actionWidth": 310,
+      "align": "start",
+      "focus": true,
+      "focusVisible": true,
+      "gap": 12,
+      "height": 812,
+      "offsetX": 17,
+      "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.707999 -0.00000712276 0.0000166297 / 0.0188968) 0px 0px 0px 0.113381px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+      "overflow": false,
+      "padding": "8px 16px",
+      "tag": "A",
+      "target": "_blank",
+      "text": "Check Quotations in a new tab",
+      "theme": "inter_c15e96cb-module__0bjUvq__variable",
+      "width": 375
+    },
+    "beforeAction": [
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 409,
+        "failed": false,
+        "timestamp": "2026-11-21T15:53:49.267Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": 200,
+        "failed": false,
+        "timestamp": "2026-11-21T15:54:36.984Z"
+      },
+      {
+        "url": "http://localhost:3682/api/quotations/create",
+        "method": "POST",
+        "status": null,
+        "failed": true,
+        "errorText": "net::ERR_CONTENT_LENGTH_MISMATCH",
+        "timestamp": "2026-11-21T15:54:37.134Z"
+      }
+    ],
+    "ax": [
+      "          - link \"Check Quotations in a new tab\" [active] [ref=t3-82f8d8a8-12z-f5e362] [cursor=pointer] [box=25,257,310,36]:"
+    ]
+  },
+  "layout": {
+    "baseline": {
+      "unknown": [
+        {
+          "actionHeight": 20,
+          "actionWidth": 202.1953125,
+          "align": "start",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 850,
+          "offsetX": 17,
+          "outline": "none",
+          "overflow": false,
+          "padding": "0px",
+          "tag": "A",
+          "target": "_blank",
+          "text": "Check Quotations in a new tab",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable",
+          "width": 1280
+        },
+        {
+          "actionHeight": 20,
+          "actionWidth": 202.1953125,
+          "align": "start",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 812,
+          "offsetX": 17,
+          "outline": "none",
+          "overflow": false,
+          "padding": "0px",
+          "tag": "A",
+          "target": "_blank",
+          "text": "Check Quotations in a new tab",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable",
+          "width": 375
+        },
+        {
+          "actionHeight": 20,
+          "actionWidth": 202.1953125,
+          "align": "start",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 812,
+          "offsetX": 17,
+          "outline": "none",
+          "overflow": false,
+          "padding": "0px",
+          "tag": "A",
+          "target": "_blank",
+          "text": "Check Quotations in a new tab",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+          "width": 375
+        },
+        {
+          "actionHeight": 20,
+          "actionWidth": 202.1953125,
+          "align": "start",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 850,
+          "offsetX": 17,
+          "outline": "none",
+          "overflow": false,
+          "padding": "0px",
+          "tag": "A",
+          "target": "_blank",
+          "text": "Check Quotations in a new tab",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+          "width": 1280
+        }
+      ],
+      "conflict": [
+        {
+          "actionHeight": 36,
+          "actionWidth": 183.578125,
+          "align": "center",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 850,
+          "offsetX": 17,
+          "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "overflow": false,
+          "padding": "8px 16px",
+          "tag": "BUTTON",
+          "target": null,
+          "text": "Review latest package",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable",
+          "variant": "outline",
+          "width": 1280
+        },
+        {
+          "actionHeight": 36,
+          "actionWidth": 183.578125,
+          "align": "center",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 812,
+          "offsetX": 17,
+          "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "overflow": false,
+          "padding": "8px 16px",
+          "tag": "BUTTON",
+          "target": null,
+          "text": "Review latest package",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable",
+          "variant": "outline",
+          "width": 375
+        },
+        {
+          "actionHeight": 36,
+          "actionWidth": 183.578125,
+          "align": "center",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 812,
+          "offsetX": 17,
+          "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "overflow": false,
+          "padding": "8px 16px",
+          "tag": "BUTTON",
+          "target": null,
+          "text": "Review latest package",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+          "variant": "outline",
+          "width": 375
+        },
+        {
+          "actionHeight": 36,
+          "actionWidth": 183.578125,
+          "align": "center",
+          "focus": false,
+          "focusVisible": false,
+          "gap": 12,
+          "height": 850,
+          "offsetX": 17,
+          "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+          "overflow": false,
+          "padding": "8px 16px",
+          "tag": "BUTTON",
+          "target": null,
+          "text": "Review latest package",
+          "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+          "variant": "outline",
+          "width": 1280
+        }
+      ]
+    },
+    "conflict": [
+      {
+        "actionHeight": 36,
+        "actionWidth": 256,
+        "align": "center",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 850,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "BUTTON",
+        "target": null,
+        "text": "Review latest package",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable",
+        "variant": "outline",
+        "width": 1280
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 310,
+        "align": "center",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 812,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "BUTTON",
+        "target": null,
+        "text": "Review latest package",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable",
+        "variant": "outline",
+        "width": 375
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 310,
+        "align": "center",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 812,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "BUTTON",
+        "target": null,
+        "text": "Review latest package",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+        "variant": "outline",
+        "width": 375
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 256,
+        "align": "center",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 850,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "BUTTON",
+        "target": null,
+        "text": "Review latest package",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+        "variant": "outline",
+        "width": 1280
+      }
+    ],
+    "unknown": [
+      {
+        "actionHeight": 36,
+        "actionWidth": 256,
+        "align": "start",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 850,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "A",
+        "target": "_blank",
+        "text": "Check Quotations in a new tab",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable",
+        "width": 1280
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 310,
+        "align": "start",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 812,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "A",
+        "target": "_blank",
+        "text": "Check Quotations in a new tab",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable",
+        "width": 375
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 310,
+        "align": "start",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 812,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "A",
+        "target": "_blank",
+        "text": "Check Quotations in a new tab",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+        "width": 375
+      },
+      {
+        "actionHeight": 36,
+        "actionWidth": 256,
+        "align": "start",
+        "focus": false,
+        "focusVisible": false,
+        "gap": 12,
+        "height": 850,
+        "offsetX": 17,
+        "outline": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+        "overflow": false,
+        "padding": "8px 16px",
+        "tag": "A",
+        "target": "_blank",
+        "text": "Check Quotations in a new tab",
+        "theme": "inter_c15e96cb-module__0bjUvq__variable dark",
+        "width": 1280
+      }
+    ]
+  },
+  "retry": {
+    "url": "http://localhost:3682/quotations/review/n570f650nhnk62bqwamh3k6nth8jn32f",
+    "recordDumpEqual": true
+  },
+  "serverCreateLog": [
+    "POST /api/quotations/create 409 in 216ms (next.js: 185ms, proxy.ts: 7ms, application-code: 24ms)",
+    " POST /api/quotations/create 200 in 35ms (next.js: 1.6ms, proxy.ts: 15ms, application-code: 19ms)",
+    " POST /api/quotations/create 409 in 26ms (next.js: 4ms, proxy.ts: 7ms, application-code: 15ms)",
+    " POST /api/quotations/create 409 in 78ms (next.js: 49ms, proxy.ts: 10ms, application-code: 20ms)",
+    " POST /api/quotations/create 200 in 31ms (next.js: 3ms, proxy.ts: 14ms, application-code: 14ms)",
+    " POST /api/quotations/create 200 in 41ms (next.js: 3ms, proxy.ts: 19ms, application-code: 18ms)"
+  ]
+}
