@@ -1,0 +1,18 @@
+{
+  "browserTabClosed": true,
+  "webAndConvexPortsFree": [
+    3672,
+    14272,
+    14273
+  ],
+  "fixtureStateRemoved": [
+    "source",
+    "backend.sqlite3",
+    "backend.sqlite3-wal",
+    "backend.sqlite3-shm",
+    "storage",
+    "fixture-account.json",
+    ".session.json",
+    ".env.auth"
+  ]
+}

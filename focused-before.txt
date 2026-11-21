@@ -1,0 +1,35 @@
+✔ creation API returns the stored client name with its ID (37.504125ms)
+✔ client submit contains the event and forwards the returned summary (22.793542ms)
+✖ duplicate warning blocks native submit and reuse forwards the existing client (5.261166ms)
+✔ Enter stays inside the client form without cancelling native submission (3.358ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.627208
+
+✖ failing tests:
+
+test at scripts/inline-client.test.mjs:97:1
+✖ duplicate warning blocks native submit and reuse forwards the existing client (5.261166ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      'false',
+  +   'true'
+    ]
+
+      at TestContext.<anonymous> (file:///Users/hasif.ifwat/.t3/worktrees/mkm-quotation-management-system-next/t3-90c01f02-76782bb8cb25d3a5/scripts/inline-client.test.mjs:108:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'false', 'true' ],
+    expected: [ 'false' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

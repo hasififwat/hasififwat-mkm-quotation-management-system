@@ -1,0 +1,13 @@
+✔ creation API returns the stored client name with its ID (47.706292ms)
+✔ client submit contains the event and forwards the returned summary (26.105792ms)
+✔ duplicate warning blocks native submit and reuse forwards the existing client (6.017708ms)
+✔ Create Anyway validates the form and explicitly sends force (4.178709ms)
+✔ Enter stays inside the client form without cancelling native submission (3.6385ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 213.213542

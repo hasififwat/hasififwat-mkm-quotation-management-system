@@ -1,0 +1,14 @@
+{
+  "bounds": {
+    "dialogWidth": 343,
+    "formScrollWidth": 1162,
+    "theme": "light",
+    "width": 375
+  },
+  "selectedBefore": "Select a client",
+  "warning": [
+    "- paragraph [ref=t3-82f8d8a8-3d-f3e98] [box=69,408,1112,40]: \"A client with this number already exists: Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
+    "- button \"Use Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ\" [ref=t3-82f8d8a8-3d-f3e99] [box=69,456,1112,32]",
+    "- button \"Create Anyway\" [ref=t3-82f8d8a8-3d-f3e100] [box=1060,517,134,36]"
+  ]
+}

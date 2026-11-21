@@ -1,0 +1,96 @@
+{
+  "dark": {
+    "actions": [
+      {
+        "insideDialog": true,
+        "label": "Use existing client",
+        "type": "button",
+        "variant": "default"
+      },
+      {
+        "insideDialog": true,
+        "label": "Create Anyway",
+        "type": "button",
+        "variant": "outline"
+      }
+    ],
+    "dialogInsideViewport": true,
+    "formScrollWidth": 256,
+    "formText": "Name\nPhone\n\nThis phone number already belongs to Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ.\n\nUse existing client\nCreate Anyway",
+    "formWidth": 256,
+    "height": 650,
+    "textScrollWidth": 206,
+    "textWidth": 206,
+    "theme": "dark",
+    "warning": "This phone number already belongs to Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ.",
+    "width": 320
+  },
+  "secondaryFocus": {
+    "focusVisible": true,
+    "id": "",
+    "label": "Create Anyway",
+    "tag": "BUTTON"
+  },
+  "postsBeforeEnter": 1,
+  "postsAfterEnter": 1,
+  "postsAfterOverride": 2,
+  "pre": [
+    {
+      "id": "k179vampabfxwc3k1n4cs48pg98jmemj",
+      "name": "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "phone_number": "0107200073"
+    }
+  ],
+  "after": [
+    {
+      "id": "k176pdgep81ycb92ba5d8hky2d8jn2b9",
+      "name": "Disposable Explicit Override",
+      "phone_number": "0107200073"
+    },
+    {
+      "id": "k179vampabfxwc3k1n4cs48pg98jmemj",
+      "name": "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "phone_number": "0107200073"
+    }
+  ],
+  "selected": "Disposable Explicit Override",
+  "list": {
+    "path": "/clients?q=0107200073",
+    "secondView": [
+      [
+        "Disposable Explicit Override",
+        "0107200073",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ],
+      [
+        "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "0107200073",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ]
+    ],
+    "reload": [
+      [
+        "Disposable Explicit Override",
+        "0107200073",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ],
+      [
+        "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "0107200073",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ]
+    ]
+  }
+}

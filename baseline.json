@@ -1,0 +1,36 @@
+{
+  "sha": "225d907383dae24990257c7b19011823323c9545",
+  "preview": "http://localhost:3672/quotations/create",
+  "before": {
+    "dialogWidth": 343,
+    "formWidth": 1162,
+    "submit": [
+      "Create Anyway"
+    ],
+    "width": 375
+  },
+  "initial": [
+    {
+      "id": "k17eegzjrfezxzxxta1y6yhxkd8jmrd9",
+      "name": "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "phone_number": "0107200072"
+    }
+  ],
+  "after": [
+    {
+      "id": "k17cjwfgyarxheqxf5m7354p658jmtgn",
+      "name": "Disposable Baseline Enter",
+      "phone_number": "0107200072"
+    },
+    {
+      "id": "k17eegzjrfezxzxxta1y6yhxkd8jmrd9",
+      "name": "Disposable Client Alexandria Binti VerificationABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "phone_number": "0107200072"
+    }
+  ],
+  "beforePosts": 1,
+  "afterPosts": 2,
+  "selected": [
+    "- combobox [ref=t3-82f8d8a8-36-f2e115] [box=33,558,309,36]: Disposable Baseline Enter"
+  ]
+}

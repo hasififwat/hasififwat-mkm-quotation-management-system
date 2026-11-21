@@ -1,0 +1,42 @@
+{
+  "requiredFields": true,
+  "uniqueSubmitKey": "Enter",
+  "uniqueRows": [
+    {
+      "id": "k1799r4yzbek20srt842ygmyg98jm88q",
+      "name": "Disposable Standalone Client",
+      "phone_number": "0107200074"
+    }
+  ],
+  "list": {
+    "path": "/clients?q=0107200074",
+    "secondView": [
+      [
+        "Disposable Standalone Client",
+        "0107200074",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ]
+    ],
+    "reload": [
+      [
+        "Disposable Standalone Client",
+        "0107200074",
+        "0",
+        "—",
+        "21/11/2026",
+        ""
+      ]
+    ]
+  },
+  "reuseFieldEnterPosts": 0,
+  "reuseRows": [
+    {
+      "id": "k1799r4yzbek20srt842ygmyg98jm88q",
+      "name": "Disposable Standalone Client",
+      "phone_number": "0107200074"
+    }
+  ]
+}
