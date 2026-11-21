@@ -147,12 +147,21 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 
 	const [submissionErrors, setSubmissionErrors] = useState<string[]>([]);
 	const [focusRequest, setFocusRequest] = useState<{ path: FieldPath<IPackageDetailsForm> } | null>(null);
+	const saveConfirmationRef = useRef<HTMLDivElement>(null);
+	const savedPackageLinkRef = useRef<HTMLAnchorElement>(null);
 
 	useEffect(() => {
 		if (focusRequest) {
 			setFocus(focusRequest.path);
 		}
 	}, [focusRequest, setFocus]);
+
+	useEffect(() => {
+		if (saveState.kind === "saved" && document.activeElement === document.body) {
+			savedPackageLinkRef.current?.focus({ preventScroll: true });
+			saveConfirmationRef.current?.scrollIntoView({ block: "nearest" });
+		}
+	}, [saveState.kind]);
 
 	const onInvalid = (errors: FieldErrors<IPackageDetailsForm>) => {
 		const messages: Array<{ path: string; message: string }> = [];
@@ -411,7 +420,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 			/>
 
 			<form
-				className="space-y-6"
+				className="flex flex-col gap-6"
 				noValidate
 				onSubmit={(event) => {
 					if (currentStep !== "preview" || saveBlocked) {
@@ -421,13 +430,6 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 					return methods.handleSubmit(_onSubmit, onInvalid)(event);
 				}}
 			>
-				{saveState.kind === "saved" && (
-					<div role="status" className="rounded-lg border p-4 space-y-2">
-						<p className="font-semibold">Package saved successfully.</p>
-						<Link className="underline" href={`/packages/edit/${saveState.packageId}`}>View saved package</Link>
-						<p><Link className="underline" href="/packages">Back to Packages</Link></p>
-					</div>
-				)}
 				{(saveState.kind === "unknown" || saveState.kind === "rejected" || saveState.kind === "conflict") && (
 					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm space-y-3">
 						<p className="font-semibold">{saveState.message}</p>
@@ -499,6 +501,26 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 					)}
 				</FormProvider>
 				</fieldset>
+				<div
+					ref={saveConfirmationRef}
+					className={saveState.kind === "saved"
+						? "flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 text-card-foreground"
+						: "sr-only"}
+				>
+					<p role="status" aria-atomic="true" className="text-sm font-semibold">
+						{saveState.kind === "saved" ? "Package saved successfully." : ""}
+					</p>
+					{saveState.kind === "saved" && (
+						<div className="flex flex-wrap items-center gap-2">
+							<Button asChild size="sm">
+								<a ref={savedPackageLinkRef} href={`/packages/edit/${saveState.packageId}`}>View saved package</a>
+							</Button>
+							<Button asChild size="sm" variant="outline">
+								<Link href="/packages">Back to Packages</Link>
+							</Button>
+						</div>
+					)}
+				</div>
 			</form>
 		</div>
 	);
