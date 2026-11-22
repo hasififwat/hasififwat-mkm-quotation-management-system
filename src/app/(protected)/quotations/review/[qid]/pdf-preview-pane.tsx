@@ -57,7 +57,7 @@ export default function PdfPreviewPane({
 						)}
 					</div>
 
-					<div className="fixed bottom-8 right-8 z-50">
+					<div className="fixed right-4 bottom-4 z-50 sm:right-8 sm:bottom-8">
 						<Button
 							size="lg"
 							className="shadow-xl"

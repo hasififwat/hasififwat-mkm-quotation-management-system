@@ -127,8 +127,8 @@ export default function QuotationsPage() {
                 <Link href="/quotations" aria-current={visibility === "current" ? "page" : undefined}>Current families</Link>
                 <Link href="/quotations?visibility=archived" aria-current={visibility === "archived" ? "page" : undefined}>Archived families</Link>
             </div>
-            <Card className="overflow-hidden">
-				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border space-y-2">
+			<Card className="gap-0 overflow-hidden py-0">
+				<CardHeader className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-5 [.border-b]:pb-4">
 					{/* Fields visibility button row */}
 					<div className="flex justify-start">
 						<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>
@@ -213,11 +213,11 @@ export default function QuotationsPage() {
 						</Popover>
 					</div>
 					{/* Search bar */}
-					<form onSubmit={(e) => e.preventDefault()} className="relative">
+					<form onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1">
 						{isSearchLoading ? (
-							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 animate-spin" />
+							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
 						) : (
-							<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+							<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
 						)}
 						<Input
 							name="q"

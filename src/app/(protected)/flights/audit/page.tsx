@@ -117,7 +117,7 @@ export default function FlightAuditPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border overflow-x-auto">
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -146,13 +146,13 @@ export default function FlightAuditPage() {
                 const source = f.source ?? "manual";
                 return (
                   <TableRow key={f._id}>
-                    <TableCell className="font-medium text-sm">{f.package_name}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{f.package_season}</TableCell>
-                    <TableCell className="text-sm">{f.flight || <span className="text-muted-foreground/50">—</span>}</TableCell>
+                    <TableCell className="min-w-36 max-w-64 whitespace-normal wrap-anywhere text-sm font-medium">{f.package_name}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere text-xs text-muted-foreground">{f.package_season}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere text-sm">{f.flight || <span className="text-muted-foreground/50">—</span>}</TableCell>
                     <TableCell className="text-sm tabular-nums">{f.departure_date}</TableCell>
-                    <TableCell className="text-xs font-mono">{f.departure_sector}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere font-mono text-xs">{f.departure_sector}</TableCell>
                     <TableCell className="text-sm tabular-nums">{f.return_date}</TableCell>
-                    <TableCell className="text-xs font-mono">{f.return_sector}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere font-mono text-xs">{f.return_sector}</TableCell>
                     <TableCell>
                       <TooltipProvider>
                         <Tooltip>

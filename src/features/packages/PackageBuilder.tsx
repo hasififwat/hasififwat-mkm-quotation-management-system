@@ -16,7 +16,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import BasicDetails from "./components/Form/BasicDetails";
 import FlightDetails from "./components/Form/FlightDetails";
 import HotelDetailsSection from "./components/Form/HotelDetails";
@@ -87,29 +86,27 @@ const PackageStepNavigation = ({
 	onStepChange: (step: Step) => void;
 }) => (
 	<Card>
-		<CardContent>
-			<div className="flex items-center justify-between">
+		<CardContent className="@container">
+			<div className="grid grid-cols-3 gap-x-1 gap-y-2 @min-[40rem]:grid-cols-6">
 				{STEPS.map((step, index) => (
-					<React.Fragment key={step.id}>
-						<button
-							type="button"
-							onClick={() => onStepChange(step.id)}
-							className={`flex items-center gap-2 transition-colors ${
-								currentStep === step.id && "text-primary font-semibold"
+					<button
+						key={step.id}
+						type="button"
+						onClick={() => onStepChange(step.id)}
+						className={`flex min-w-0 flex-col items-center gap-1 rounded-md py-1 text-center transition-colors ${
+							currentStep === step.id && "text-primary font-semibold"
+						}`}
+					>
+						<span
+							className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-sm transition-colors ${
+								currentStep === step.id &&
+								"border-primary bg-primary text-primary-foreground"
 							}`}
 						>
-							<div
-								className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors ${
-									currentStep === step.id &&
-									"border-primary bg-primary text-primary-foreground"
-								}`}
-							>
-								<span className="text-sm">{index + 1}</span>
-							</div>
-							<span className="hidden md:inline text-sm">{step.label}</span>
-						</button>
-						{index < STEPS.length - 1 && <Separator className="flex-1 mx-2" />}
-					</React.Fragment>
+							{index + 1}
+						</span>
+						<span className="max-w-full wrap-anywhere text-sm">{step.label}</span>
+					</button>
 				))}
 			</div>
 		</CardContent>

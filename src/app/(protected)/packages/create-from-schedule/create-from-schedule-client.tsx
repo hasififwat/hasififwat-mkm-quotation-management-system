@@ -168,13 +168,13 @@ function PackageCreateFromScheduleContent() {
 
 				{packageData && packageData.length > 0 && (
 					<Card>
-						<CardHeader>
+						<CardHeader className="has-data-[slot=card-action]:grid-cols-1 lg:has-data-[slot=card-action]:grid-cols-[1fr_auto]">
 							<CardTitle>Extracted Packages</CardTitle>
 							<CardDescription>
 								{packageData.length} packages found in the uploaded file.
 							</CardDescription>
-							<CardAction>
-								<div className="flex items-center gap-2">
+							<CardAction className="col-start-1 row-span-1 row-start-3 justify-self-stretch lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:justify-self-end">
+								<div className="flex flex-wrap items-center gap-2">
 									<SetSeasonalPriceButton />
 									<SelectPackageButton />
 								</div>

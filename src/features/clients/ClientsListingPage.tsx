@@ -164,7 +164,7 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 					{q.status.charAt(0).toUpperCase() + q.status.slice(1)}
 				</Badge>
 			</td>
-			<td className="py-2 pr-4 text-right font-mono">
+			<td className="py-2 pr-4 text-right font-mono whitespace-nowrap">
 				{formatCurrency(q.total_amount)}
 			</td>
 			<td className="py-2 pr-4 text-muted-foreground whitespace-nowrap">
@@ -332,8 +332,8 @@ export default function ClientsListingPage({
 				</Button>
 			</div>
 
-			<Card className="overflow-hidden">
-				<div className="p-4 border-b border-border space-y-2">
+			<Card className="gap-0 overflow-hidden py-0">
+				<div className="flex flex-col gap-3 border-b bg-muted/40 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
 					{/* Agent filter */}
 					<div className="flex items-center gap-2">
 						<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
@@ -416,7 +416,7 @@ export default function ClientsListingPage({
 					</div>
 
 					{/* Search */}
-					<div className="relative">
+					<div className="relative min-w-0 flex-1">
 						{isLoading ? (
 							<Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
 						) : (
@@ -443,7 +443,7 @@ export default function ClientsListingPage({
 							</p>
 						</div>
 					) : (
-						<div className="overflow-x-auto">
+						<div className="@container">
 							<Table className="min-w-full">
 								<TableHeader>
 									<TableRow>
@@ -503,14 +503,14 @@ export default function ClientsListingPage({
 
 												{isOpen && (
 													<TableRow className="hover:bg-transparent">
-														<TableCell colSpan={6} className="p-0 border-b-0">
-															<div className="border-l-4 border-primary/40 bg-muted/20 px-6 py-4">
-																<div className="flex items-center justify-between gap-3 mb-3">
+														<TableCell colSpan={6} className="border-b-0 p-0 whitespace-normal wrap-anywhere">
+															<div className="border-l-4 border-primary/40 bg-muted/20 px-4 py-4 @min-[40rem]:px-6">
+																<div className="mb-3 flex flex-col items-start gap-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
 																	<p className="text-sm font-medium">Current quotations</p>
 																	<Link href={`/clients/${client.id}`} className="text-sm text-primary hover:underline">View client and history ({client.historical_quotation_count})</Link>
 																</div>
 																{client.quotations.length === 0 ? (
-																	<div className="flex items-center justify-between py-2">
+																	<div className="flex flex-col items-start gap-2 py-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
 																		<p className="text-sm text-muted-foreground">
 																			No current quotations.
 																		</p>

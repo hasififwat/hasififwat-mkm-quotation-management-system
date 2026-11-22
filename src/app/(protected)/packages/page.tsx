@@ -55,10 +55,10 @@ export default function PackageListPage() {
 				</DropdownMenu>
 			</div>
 
-			<Card className="overflow-hidden">
-				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border">
+			<Card className="gap-0 overflow-hidden py-0">
+				<CardHeader className="border-b px-4 py-4 sm:px-5 [.border-b]:pb-4">
 					<form onSubmit={(e) => e.preventDefault()} className="relative" role="search">
-						<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+						<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
 
 						<Input
 							name="q"
