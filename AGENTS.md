@@ -174,3 +174,35 @@ Pstack model settings belong in `.agents/pstack-models.md`. The local
 `setup-pstack` skill creates or updates that file; do not read or write global
 pstack settings for this installation. Installing pstack does not activate
 `poteto-mode` for unrelated tasks.
+
+## Narrative explanations for technical work
+
+For architecture reviews, investigations, bug analyses, and design decisions,
+communicate like an experienced engineer walking a colleague through what was
+discovered. The goal is understanding, not maximum information density.
+
+- Establish the real-world problem before naming the design pattern or solution.
+  Show what can go wrong with a concrete, realistic scenario when it helps.
+- Make the causal chain clear: what the code does, why that behavior matters,
+  what approach addresses it, and why that approach is preferable.
+- Explain the reasoning and the consequences of alternatives rather than
+  listing conclusions or compressing trade-offs into jargon.
+- Use readable explanatory paragraphs for complex ideas. Avoid packing entire
+  decisions into one bullet, table cell, or dense paragraph.
+- Introduce project-specific terms when the reader has the context to
+  understand them. Keep technical precision, uncertainty, and evidence intact.
+- Share a grounded recommendation and its priority when the evidence warrants
+  it. Never imply tested code is deployed or invent undocumented rationale.
+- Scale the depth to the task: simple questions need direct short answers;
+  substantial reviews can be long if that genuinely improves comprehension.
+
+For substantial written architecture reviews, **read
+`docs/examples/architecture-review-example.md` first** as a reference for
+voice, narrative flow, practical examples, and depth of explanation. It is
+a historical *style example*, not an authoritative description of current
+system behavior. Revalidate all claims against current evidence, and do
+not imitate its headings or length mechanically.
+
+When in doubt, write as if explaining your investigation to a capable developer
+who has not seen the code yet, rather than summarizing an audit for someone who
+already knows every detail.
