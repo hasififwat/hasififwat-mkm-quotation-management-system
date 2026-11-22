@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
 import PDFPreviewMobile from "~/features/quotation/components/PDFPreviewMobile";
+import { QuotationPdfSkeleton } from "~/features/quotation/components/QuotationPdfSkeleton";
 import { STALE_FIELD_LABELS } from "~/features/quotation/stale-labels";
 
 import type { QuotationFullDetails } from "./types";
@@ -16,8 +17,11 @@ import type { QuotationFullDetails } from "./types";
 const PdfPreviewPane = dynamic(() => import("./pdf-preview-pane"), {
 	ssr: false,
 	loading: () => (
-		<div className="flex items-center justify-center h-screen text-muted-foreground text-sm">
-			Loading PDF viewer…
+		<div className="hidden min-h-screen w-full flex-1 flex-col items-center gap-3 p-4 md:flex">
+			<p role="status" className="text-sm text-muted-foreground">
+				Loading PDF viewer…
+			</p>
+			<QuotationPdfSkeleton className="flex-1" />
 		</div>
 	),
 });
