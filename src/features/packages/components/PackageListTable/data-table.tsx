@@ -394,7 +394,8 @@ export function DataTable<TData, TValue>({
 
 	const [seasonNavOpen, setSeasonNavOpen] = useState(false);
 	const visibleColCount = table.getVisibleLeafColumns().length;
-	const rows = table.getRowModel().rows;
+	// Reading an empty grouped model while pending makes TanStack reset the initial expansion.
+	const rows = isLoading ? [] : table.getRowModel().rows;
 
 	return (
 		<div className="overflow-hidden">
@@ -474,7 +475,7 @@ export function DataTable<TData, TValue>({
 						))}
 					</TableHeader>
 					<TableBody aria-busy={isLoading}>
-						{isLoading && rows.length === 0 ? (
+						{isLoading ? (
 							<TableSkeletonRows columns={visibleColCount} />
 						) : rows.length > 0 ? (
 							rows.map((row) => {
