@@ -1,0 +1,6 @@
+iteration	hypothesis	before	after	decision
+1	Separate the sidebar and workspace with a visible gutter	1 px desktop gap	16 px desktop gap, 8 px at tablet	kept
+2	Match route and authentication placeholders to the destination	Generic spinner	18 protected routes mapped, 2 editor transitions observed	kept
+3	Keep table headings and show pending rows until data resolves	False empty client state while pending	4 skeleton rows, then data, true empty or failure	kept
+4	Keep the document space while a preview or issued PDF is pending	Text or spinner in document area	Document silhouette and live PDF status, retry shown on failure	kept
+5	Evaluate grouped package rows after the query resolves	Season group collapsed on arrival in trial	Initial expansion and manual collapse both verified	kept
