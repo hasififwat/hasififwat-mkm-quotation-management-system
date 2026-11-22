@@ -1,0 +1,245 @@
+{
+  "baselineCommit": "04657649f0d109c6052ba422d9cfa82395823301",
+  "testedCommit": "af8b3feeece1e34be34a813938ae6935d1306e90",
+  "localPreviewUrls": [
+    "http://localhost:3537",
+    "http://localhost:3538"
+  ],
+  "measurements": {
+    "pageChecks": [
+      ["/dashboard", "light", 1440, 1440, true, []],
+      ["/clients", "light", 1440, 1440, true, []],
+      ["/clients/create", "light", 1440, 1440, true, []],
+      ["/clients/[cid]", "light", 1440, 1440, true, []],
+      ["/packages", "light", 1440, 1440, true, []],
+      ["/packages/create", "light", 1440, 1440, true, []],
+      ["/packages/edit/[pid]", "light", 1440, 1440, true, []],
+      ["/packages/create-from-schedule", "light", 1440, 1440, true, []],
+      ["/packages/sync", "light", 1440, 1440, true, []],
+      ["/packages/stats", "light", 1440, 1440, true, []],
+      ["/flights", "light", 1314, 1314, true, []],
+      ["/flights/audit", "light", 1314, 1314, true, []],
+      ["/quotations", "light", 1314, 1314, true, []],
+      ["/quotations/create", "light", 1440, 1440, true, []],
+      ["/quotations/edit/[qid]", "light", 1440, 1440, true, []],
+      ["/quotations/review/[qid]", "light", 1440, 1440, true, []],
+      ["/quotations/[qid]/history", "light", 1440, 1440, true, []],
+      ["/quotations/duplicates", "light", 1440, 1440, true, []],
+      ["/dashboard", "dark", 1440, 1440, true, []],
+      ["/clients", "dark", 1440, 1440, true, []],
+      ["/clients/create", "dark", 1440, 1440, true, []],
+      ["/clients/[cid]", "dark", 1440, 1440, true, []],
+      ["/packages", "dark", 1440, 1440, true, []],
+      ["/packages/create", "dark", 1440, 1440, true, []],
+      ["/packages/edit/[pid]", "dark", 1440, 1440, true, []],
+      ["/packages/create-from-schedule", "dark", 1440, 1440, true, []],
+      ["/packages/sync", "dark", 1440, 1440, true, []],
+      ["/packages/stats", "dark", 1440, 1440, true, []],
+      ["/flights", "dark", 1440, 1440, true, []],
+      ["/flights/audit", "dark", 1440, 1440, true, []],
+      ["/quotations", "dark", 1440, 1440, true, []],
+      ["/quotations/create", "dark", 1440, 1440, true, []],
+      ["/quotations/edit/[qid]", "dark", 1440, 1440, true, []],
+      ["/quotations/review/[qid]", "dark", 1440, 1440, true, []],
+      ["/quotations/[qid]/history", "dark", 1440, 1440, true, []],
+      ["/quotations/duplicates", "dark", 1440, 1440, true, []],
+      ["/dashboard", "dark", 390, 390, true, []],
+      ["/clients", "dark", 356, 356, true, []],
+      ["/clients/create", "dark", 356, 356, true, []],
+      ["/clients/[cid]", "dark", 356, 356, true, []],
+      ["/packages", "dark", 390, 390, true, []],
+      ["/packages/create", "dark", 390, 390, true, []],
+      ["/packages/edit/[pid]", "dark", 390, 390, true, []],
+      ["/packages/create-from-schedule", "dark", 390, 390, true, []],
+      ["/packages/sync", "dark", 390, 390, true, []],
+      ["/packages/stats", "dark", 390, 390, true, []],
+      ["/flights", "dark", 390, 390, true, []],
+      ["/flights/audit", "dark", 390, 390, true, []],
+      ["/quotations", "dark", 390, 390, true, []],
+      ["/quotations/create", "dark", 390, 390, true, []],
+      ["/quotations/edit/[qid]", "dark", 390, 390, true, []],
+      ["/quotations/review/[qid]", "dark", 390, 390, true, []],
+      ["/quotations/[qid]/history", "dark", 390, 390, true, []],
+      ["/quotations/duplicates", "dark", 390, 390, true, []],
+      ["/dashboard", "light", 390, 390, true, []],
+      ["/clients", "light", 390, 390, true, []],
+      ["/clients/create", "light", 390, 390, true, []],
+      ["/clients/[cid]", "light", 390, 390, true, []],
+      ["/packages", "light", 390, 390, true, []],
+      ["/packages/create", "light", 390, 390, true, []],
+      ["/packages/edit/[pid]", "light", 390, 390, true, []],
+      ["/packages/create-from-schedule", "light", 390, 390, true, []],
+      ["/packages/sync", "light", 390, 390, true, []],
+      ["/packages/stats", "light", 390, 390, true, []],
+      ["/flights", "light", 390, 390, true, []],
+      ["/flights/audit", "light", 390, 390, true, []],
+      ["/quotations", "light", 390, 390, true, []],
+      ["/quotations/create", "light", 390, 390, true, []],
+      ["/quotations/edit/[qid]", "light", 390, 390, true, []],
+      ["/quotations/review/[qid]", "light", 390, 390, true, []],
+      ["/quotations/[qid]/history", "light", 390, 390, true, []],
+      ["/quotations/duplicates", "light", 390, 390, true, []],
+      ["/", "light", 390, 390, true, []],
+      ["/logout", "light", 390, 390, true, []],
+      ["/sign-up", "light", 390, 390, true, []],
+      ["[404 fallback]", "light", 390, 390, true, []],
+      ["/", "dark", 390, 390, true, []],
+      ["/logout", "dark", 390, 390, true, []],
+      ["/sign-up", "dark", 390, 390, true, []],
+      ["[404 fallback]", "dark", 390, 390, true, []],
+      ["/", "light", 1440, 1440, true, []],
+      ["/logout", "light", 1440, 1440, true, []],
+      ["/sign-up", "light", 1440, 1440, true, []],
+      ["[404 fallback]", "light", 1440, 1440, true, []],
+      ["/", "dark", 1402, 1402, true, []],
+      ["/logout", "dark", 1402, 1402, true, []],
+      ["/sign-up", "dark", 1402, 1402, true, []],
+      ["[404 fallback]", "dark", 1402, 1402, true, []]
+    ],
+    "narrowProtectedChecks": [
+      ["/dashboard", "light", 320, 320, true, []],
+      ["/clients", "light", 320, 320, true, []],
+      ["/clients/create", "light", 320, 320, true, []],
+      ["/clients/[cid]", "light", 320, 320, true, []],
+      ["/packages", "light", 320, 320, true, []],
+      ["/packages/create", "light", 320, 320, true, []],
+      ["/packages/edit/[pid]", "light", 320, 320, true, []],
+      ["/packages/create-from-schedule", "light", 320, 320, true, []],
+      ["/packages/sync", "light", 320, 320, true, []],
+      ["/packages/stats", "light", 320, 320, true, []],
+      ["/flights", "light", 320, 320, true, []],
+      ["/flights/audit", "light", 320, 320, true, []],
+      ["/quotations", "light", 320, 320, true, []],
+      ["/quotations/create", "light", 320, 320, true, []],
+      ["/quotations/edit/[qid]", "light", 320, 320, true, []],
+      ["/quotations/review/[qid]", "light", 320, 320, true, []],
+      ["/quotations/[qid]/history", "light", 320, 320, true, []],
+      ["/quotations/duplicates", "light", 320, 320, true, []]
+    ],
+    "clippedControlsInTargetedScenarios": {
+      "before": 5,
+      "after": 0,
+      "items": [
+        "Package create Preview",
+        "Package edit Preview",
+        "Import Select Package",
+        "Two duplicate Delete actions"
+      ]
+    },
+    "tabletPreviewRightEdgeAt820px": {
+      "before": 918,
+      "after": 771
+    },
+    "importSelectRightEdgeAt390px": {
+      "before": 428,
+      "after": 345
+    },
+    "duplicateDeleteRightEdgesAt320px": {
+      "before": [
+        355,
+        355
+      ],
+      "after": [
+        267,
+        267
+      ]
+    },
+    "loginControlHeight": {
+      "before": 36,
+      "after": 48
+    },
+    "contrast": {
+      "light": {
+        "canvas": 6.27,
+        "focus": 5.07,
+        "heading": "rgb(23, 37, 46)",
+        "muted": 5.87,
+        "primary": 6.46,
+        "theme": "light"
+      },
+      "dark": {
+        "canvas": 8.98,
+        "focus": 10.25,
+        "heading": "rgb(232, 239, 243)",
+        "muted": 6.41,
+        "primary": 7.5,
+        "theme": "dark"
+      }
+    },
+    "pageCheckColumns": [
+      "route",
+      "theme",
+      "viewportWidth",
+      "documentWidth",
+      "expectedStateRendered",
+      "clippedControls"
+    ]
+  },
+  "interactions": {
+    "auth": {
+      "blank": {
+        "focused": "email",
+        "invalid": true,
+        "path": "/"
+      },
+      "invalid": {
+        "message": "Invalid email or password.",
+        "path": "/"
+      },
+      "theme": {
+        "dark": false,
+        "stored": "light"
+      },
+      "signup": {
+        "path": "/sign-up",
+        "validation": true
+      },
+      "fallback": "/",
+      "logout": "/",
+      "guard": "/"
+    },
+    "accountBlankAndInvalidLogin": true,
+    "mobileSidebarNavigation": true,
+    "mobileSidebarSignOut": true,
+    "clientCreatePersisted": true,
+    "packageEditPersisted": true,
+    "quotationRevisionPersisted": true,
+    "scheduleImportActions": {
+      "actions": [
+        {
+          "left": 41,
+          "right": 200,
+          "text": "Set Seasonal Price\n3"
+        },
+        {
+          "left": 208,
+          "right": 345,
+          "text": "Select Package"
+        }
+      ],
+      "extracted": true,
+      "viewport": 390
+    },
+    "flightAndSync": {
+      "flight": {
+        "path": "/flights",
+        "rows": 1
+      },
+      "audit": {
+        "scroll": {
+          "clientWidth": 322,
+          "scrollWidth": 745
+        },
+        "offset": 389,
+        "filters": "sync empty, manual populated"
+      },
+      "sync": {
+        "parsed": true,
+        "path": "/packages/sync"
+      }
+    },
+    "duplicateConfirmationDismissed": true,
+    "legacyDownloadBytes": 170086,
+    "legacyDesktopPreview": true
+  }
+}
