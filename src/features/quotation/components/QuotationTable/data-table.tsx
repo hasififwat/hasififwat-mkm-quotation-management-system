@@ -373,7 +373,7 @@ export function DataTable<TData, TValue>({
 			</div>
 			{/* Pagination controls */}
 			{(onPreviousPage || onNextPage) && (
-				<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-100">
+				<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
 					<Button
 						variant="outline"
 						size="sm"

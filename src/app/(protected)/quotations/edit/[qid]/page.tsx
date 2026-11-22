@@ -31,8 +31,8 @@ export default async function QuotationEditPage({ params }: Params) {
 
 	const context = initialData.revision_context;
 	if ((availability.enabled && !context.family_id) || context.state === "historical" || (context.family_id && (!context.can_append || !availability.enabled)) || (availability.frozen && !availability.enabled)) {
-		return <section className="col-span-full mx-auto max-w-3xl space-y-4 p-6">
-			<h1 className="text-2xl font-semibold">{initialData.reference_number}</h1>
+		return <section className="workspace-page max-w-4xl space-y-4">
+			<h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">{initialData.reference_number}</h1>
 			<p role="status">{context.state === "historical" ? "A newer revision exists. This saved revision is read-only. Editing an older revision cannot create a branch." : "Quotation editing is unavailable while this family is archived or revision maintenance is in progress."}</p>
 			<div className="flex flex-wrap gap-4"><Link className="underline" href={`/quotations/review/${qid}`}>View this saved revision</Link>
 			{context.state === "historical" && <Link className="underline" href={`/quotations/edit/${context.current_revision_id}`}>Edit current revision</Link>}</div>

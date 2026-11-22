@@ -106,13 +106,13 @@ export default function QuotationsPage() {
 	};
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
-					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 						Travel Quotations
 					</h2>
-					<p className="text-slate-500 text-xs md:text-sm">
+					<p className="text-muted-foreground text-xs md:text-sm">
 						Current quotation families and saved history.
 					</p>
 				</div>
@@ -128,7 +128,7 @@ export default function QuotationsPage() {
                 <Link href="/quotations?visibility=archived" aria-current={visibility === "archived" ? "page" : undefined}>Archived families</Link>
             </div>
             <Card className="overflow-hidden">
-				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100 space-y-2">
+				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border space-y-2">
 					{/* Fields visibility button row */}
 					<div className="flex justify-start">
 						<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>

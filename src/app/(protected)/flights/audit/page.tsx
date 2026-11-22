@@ -46,12 +46,12 @@ export default function FlightAuditPage() {
   const manualCount = flights.filter((f) => (f.source ?? "manual") === "manual").length;
 
   return (
-    <div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 pb-10 animate-fadeIn">
+    <div className="workspace-page max-w-7xl space-y-6 animate-fadeIn">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Plane className="w-6 h-6 text-muted-foreground" />
         <div>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">Flight Audit</h2>
+          <h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Flight Audit</h2>
           <p className="text-sm text-muted-foreground">All flights in the database</p>
         </div>
       </div>

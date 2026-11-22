@@ -70,7 +70,7 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 
 	return (
 		<div>
-			<div className="p-4 border-b border-slate-100 flex items-center gap-2">
+			<div className="p-4 border-b border-border flex items-center gap-2">
 				{seasons.length > 0 && (
 					<Popover open={seasonFilterOpen} onOpenChange={setSeasonFilterOpen}>
 						<PopoverTrigger asChild>

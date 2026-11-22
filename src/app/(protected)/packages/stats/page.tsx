@@ -55,9 +55,9 @@ export default function PackageStatsPage() {
 	const publishedCount = data?.filter((p) => p.status === "published").length ?? 0;
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div>
-				<h2 className="text-xl md:text-2xl font-bold tracking-tight">Package Usage</h2>
+				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Package Usage</h2>
 				<p className="text-muted-foreground text-xs md:text-sm">
 					How many quotations have been created per package.
 				</p>

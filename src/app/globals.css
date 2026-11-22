@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@utility workspace-page {
+	@apply col-span-full mx-auto w-full min-w-0 px-4 py-6 sm:px-6 lg:px-8 lg:py-8;
+}
+
 @theme {
 	--font-sans:
 		var(--font-inter), ui-sans-serif, system-ui, sans-serif,

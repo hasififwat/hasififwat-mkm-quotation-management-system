@@ -314,13 +314,13 @@ export default function ClientsListingPage({
 	}
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
-					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 						Clients
 					</h2>
-					<p className="text-slate-500 text-xs md:text-sm">
+					<p className="text-muted-foreground text-xs md:text-sm">
 						Manage clients and current quotations. Open a client to view historical and archived revisions.
 					</p>
 				</div>
@@ -333,7 +333,7 @@ export default function ClientsListingPage({
 			</div>
 
 			<Card className="overflow-hidden">
-				<div className="p-4 border-b border-slate-100 space-y-2">
+				<div className="p-4 border-b border-border space-y-2">
 					{/* Agent filter */}
 					<div className="flex items-center gap-2">
 						<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
@@ -562,7 +562,7 @@ export default function ClientsListingPage({
 
 					{/* Pagination */}
 					{(!isFirstPage || !isDone) && (
-						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-100">
+						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
 							{isFiltered && total > 0 && (
 								<span className="text-xs text-muted-foreground mr-auto">
 									Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}

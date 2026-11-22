@@ -11,10 +11,10 @@ import {
 
 function Dashboard() {
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 animate-slideIn">
+		<div className="workspace-page max-w-7xl space-y-6 animate-slideIn">
 			{/* Welcome Section */}
 			<div>
-				<h2 className="text-3xl font-bold tracking-tight">Welcome back!</h2>
+				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Welcome back!</h2>
 				<p className="text-muted-foreground">
 					Here's what's happening with your account today.
 				</p>

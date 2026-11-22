@@ -39,17 +39,16 @@ export default async function QuotationCreatePage({
 	const hasUnavailableClient =
 		query.client_id !== undefined && initialClientId === undefined;
 
-	if (availability.frozen && !availability.enabled) return <div role="status" className="col-span-full mx-auto max-w-3xl p-6">Quotation saves are temporarily unavailable during revision maintenance. No quotation has been created.</div>;
+	if (availability.frozen && !availability.enabled) return <div role="status" className="workspace-page max-w-4xl">Quotation saves are temporarily unavailable during revision maintenance. No quotation has been created.</div>;
 
 	return (
 		<>
 			{hasUnavailableClient && (
-				<p
-					role="status"
-					className="col-span-12 mx-2 mt-6 rounded-lg border bg-muted px-4 py-3 text-sm text-muted-foreground sm:mx-4 lg:mx-auto lg:w-185"
-				>
-					The requested client could not be selected. Please select a client below.
-				</p>
+				<div className="workspace-page max-w-4xl pb-0 lg:pb-0">
+					<p role="status" className="rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground">
+						The requested client could not be selected. Please select a client below.
+					</p>
+				</div>
 			)}
 			<QuotationBuilder
 				key={JSON.stringify(query.client_id ?? null)}

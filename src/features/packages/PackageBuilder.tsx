@@ -73,7 +73,7 @@ const PackageBuilderHeader = ({
 				<ChevronLeft className="w-5 h-5" />
 			</Button>
 		)}
-		<h2 className="text-2xl font-bold tracking-tight">
+		<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 			{pid ? "Edit Package" : "Create Package"}
 		</h2>
 	</div>
@@ -406,7 +406,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	);
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 animate-slideIn">
+		<div className="workspace-page max-w-5xl space-y-6 animate-slideIn">
 			<PackageBuilderHeader
 				pid={packageId ?? undefined}
 				onBack={goToPreviousStep}
