@@ -162,7 +162,7 @@ export default function DuplicatesPage() {
 									<CardTitle className="text-base">
 										{dup.clientName} × {dup.count} copies
 									</CardTitle>
-									<p className="text-sm text-muted-foreground">
+									<p className="wrap-anywhere text-sm text-muted-foreground">
 										Package: {dup.packageId} | Flight: {dup.flightId} | Amount:{" "}
 										{dup.totalAmount.toLocaleString("ms-MY", {
 											style: "currency",
@@ -178,9 +178,9 @@ export default function DuplicatesPage() {
 												{dup.quotationIds.map((id, i) => (
 													<div
 														key={id}
-														className="flex items-center justify-between bg-muted p-2 rounded"
+														className="flex flex-col items-start gap-2 rounded-md bg-muted px-3 py-2 sm:flex-row sm:items-center"
 													>
-														<code className="text-xs font-mono flex-1">
+														<code className="min-w-0 flex-1 wrap-anywhere font-mono text-xs">
 															{id} ({dup.createdDates[i]})
 														</code>
 														<Button
@@ -188,7 +188,7 @@ export default function DuplicatesPage() {
 															variant="destructive"
 															size="sm"
 															disabled={isDeleting === id}
-															className="ml-2"
+															className="self-end sm:self-auto"
 															onClick={() => setConfirmId(id)}
 														>
 															{isDeleting === id ? "Deleting..." : "Delete"}
@@ -197,7 +197,7 @@ export default function DuplicatesPage() {
 												))}
 											</div>
 										</div>
-										<p className="text-xs text-amber-600 mt-4">
+										<p className="mt-4 text-xs text-amber-800 dark:text-amber-300">
 											⚠️ Keep the earliest, review and delete the rest
 										</p>
 									</div>
