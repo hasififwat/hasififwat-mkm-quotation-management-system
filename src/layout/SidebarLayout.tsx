@@ -2,7 +2,7 @@
 
 import { useAuthActions } from "@convex-dev/auth/react";
 import { FileText, Home, LogOut, Menu, Package, Plane, RefreshCw, Users } from "lucide-react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
@@ -103,8 +103,11 @@ export function SidebarLayout({
 	};
 
 	return (
-		<SidebarProvider>
-			<Sidebar className="border-sidebar-border">
+		<SidebarProvider
+			className="print:block print:min-h-0 print:[&>[data-slot=sidebar]]:hidden"
+			style={{ "--sidebar-width": "15rem" } as CSSProperties}
+		>
+			<Sidebar variant="floating" className="pr-0 lg:p-4 lg:pr-0">
 				<SidebarHeader className="h-16 shrink-0 justify-center border-b border-sidebar-border px-4 py-0">
 					<div className="flex items-center gap-3">
 						<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
@@ -163,8 +166,8 @@ export function SidebarLayout({
 					</div>
 				</SidebarFooter>
 			</Sidebar>
-			<SidebarInset className="overflow-hidden">
-				<header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b bg-card px-4 sm:gap-4 sm:px-6 print:hidden">
+			<SidebarInset className="min-w-0 overflow-clip md:m-2 md:rounded-lg md:bg-card md:shadow-sm md:ring-1 md:ring-border lg:m-4 print:m-0 print:overflow-visible print:rounded-none print:bg-background print:shadow-none print:ring-0">
+				<header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b bg-card px-4 sm:gap-4 sm:px-6 md:h-16 print:hidden">
 					<SidebarTrigger className="size-10">
 						<Menu className="size-5" />
 					</SidebarTrigger>
@@ -173,7 +176,7 @@ export function SidebarLayout({
 					</div>
 					<ThemeToggle />
 				</header>
-				<main className="grid grid-cols-12  w-full">{children}</main>
+				<div className="grid w-full grid-cols-12">{children}</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
