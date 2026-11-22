@@ -6,6 +6,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { TableSkeletonRows } from "~/components/loading/TableSkeletonRows";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -196,6 +197,8 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 	);
 }
 
+export type ClientLoadStatus = "loading" | "loaded" | "failed";
+
 interface Props {
 	clients: ClientWithStats[];
 	isDone: boolean;
@@ -206,7 +209,7 @@ interface Props {
 	allPics: string[];
 	offset: number;
 	total: number;
-	isLoading?: boolean;
+	loadStatus: ClientLoadStatus;
 }
 
 export default function ClientsListingPage({
@@ -219,11 +222,12 @@ export default function ClientsListingPage({
 	allPics,
 	offset,
 	total,
-	isLoading = false,
+	loadStatus,
 }: Props) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const navigate = (url: string) => router.push(url);
+	const isLoading = loadStatus === "loading";
 
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 	const [agentFilterOpen, setAgentFilterOpen] = useState(false);
@@ -433,7 +437,15 @@ export default function ClientsListingPage({
 				</div>
 
 				<CardContent className="p-0">
-					{clients.length === 0 ? (
+					<p role="status" className="sr-only">
+						{isLoading ? "Loading clients…" : ""}
+					</p>
+					{loadStatus === "failed" ? (
+						<p role="alert" className="px-4 py-4 text-center text-sm text-muted-foreground">
+							Unable to load clients.
+						</p>
+					) : null}
+					{clients.length === 0 && loadStatus === "loaded" ? (
 						<div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
 							<Users className="h-8 w-8 opacity-30" />
 							<p className="text-sm">
@@ -442,7 +454,7 @@ export default function ClientsListingPage({
 									: "No clients yet."}
 							</p>
 						</div>
-					) : (
+					) : isLoading || clients.length > 0 ? (
 						<div className="@container">
 							<Table className="min-w-full">
 								<TableHeader>
@@ -455,7 +467,8 @@ export default function ClientsListingPage({
 										<TableHead className="w-10" />
 									</TableRow>
 								</TableHeader>
-								<TableBody>
+								<TableBody aria-busy={isLoading}>
+									{isLoading && clients.length === 0 ? <TableSkeletonRows columns={6} /> : null}
 									{clients.map((client) => {
 										const isOpen = expandedId === client.id;
 										return (
@@ -558,12 +571,12 @@ export default function ClientsListingPage({
 								</TableBody>
 							</Table>
 						</div>
-					)}
+					) : null}
 
 					{/* Pagination */}
 					{(!isFirstPage || !isDone) && (
 						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
-							{isFiltered && total > 0 && (
+							{loadStatus === "loaded" && isFiltered && total > 0 && (
 								<span className="text-xs text-muted-foreground mr-auto">
 									Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}
 								</span>
@@ -582,7 +595,7 @@ export default function ClientsListingPage({
 								variant="outline"
 								size="sm"
 								onClick={handleNextPage}
-								disabled={isDone || isLoading}
+								disabled={isDone || loadStatus !== "loaded"}
 								className="gap-1"
 							>
 								Next

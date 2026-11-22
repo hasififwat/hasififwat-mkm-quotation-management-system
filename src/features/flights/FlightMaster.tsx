@@ -11,6 +11,7 @@ export default function FlightMaster() {
 	const YEAR_KEY = "2026/2027";
 
 	const [_flights, setFlights] = useState<FlightData[]>([]);
+	const [pendingImports, setPendingImports] = useState(0);
 	const [_searchTerm, _setSearchTerm] = useState("");
 	// Fix: Added useRef to handle hidden file input trigger as Button does not support asChild
 	const _fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,10 +20,13 @@ export default function FlightMaster() {
 		const file = e.target.files?.[0];
 		if (!file) return;
 
+		setPendingImports((pending) => pending + 1);
+		const finishImport = () => setPendingImports((pending) => pending - 1);
 		Papa.parse(file, {
 			// This function runs on every header name found
 
 			complete: (results) => {
+				finishImport();
 				const columns = results.data[5] as string[];
 				const filteredColumns = columns.filter(
 					(col, index) =>
@@ -168,6 +172,7 @@ export default function FlightMaster() {
 				// setFlights(tableData as FlightRecord[]);
 				setFlights(filteredFinalTableData);
 			},
+			error: finishImport,
 		});
 	};
 
@@ -190,7 +195,7 @@ export default function FlightMaster() {
 				Import Schedule
 			</Button>
 			<div>
-				<FlightListings data={_flights} />
+				<FlightListings data={_flights} isLoading={pendingImports > 0} />
 			</div>
 		</div>
 	);

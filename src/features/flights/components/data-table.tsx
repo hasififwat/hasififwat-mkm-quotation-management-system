@@ -6,8 +6,8 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Loader2 } from "lucide-react";
 import { useCallback } from "react";
+import { TableSkeletonRows } from "@/components/loading/TableSkeletonRows";
 // import { Button } from "@/components/ui/button";
 // import {
 // 	DropdownMenu,
@@ -167,8 +167,13 @@ export function DataTable<TData, TValue>({
 		return flexRender(cell.column.columnDef.cell, cell.getContext());
 	}, []);
 
+	const rows = table.getRowModel().rows;
+
 	return (
 		<div className="overflow-x-auto min-w-full">
+			<p role="status" className="sr-only">
+				{isLoading ? "Loading flight file rows…" : ""}
+			</p>
 			<Table className="min-w-full">
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
@@ -188,18 +193,11 @@ export function DataTable<TData, TValue>({
 						</TableRow>
 					))}
 				</TableHeader>
-				<TableBody>
-					{isLoading ? (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
-								<div className="inline-flex items-center gap-2 text-muted-foreground">
-									<Loader2 className="h-4 w-4 animate-spin" />
-									Loading data...
-								</div>
-							</TableCell>
-						</TableRow>
-					) : table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
+				<TableBody aria-busy={isLoading}>
+					{isLoading && rows.length === 0 ? (
+						<TableSkeletonRows columns={table.getVisibleLeafColumns().length} />
+					) : rows.length > 0 ? (
+						rows.map((row) => (
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && "selected"}

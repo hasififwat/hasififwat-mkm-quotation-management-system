@@ -23,13 +23,13 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Eye,
-	Loader2,
 	MoreHorizontal,
 	PencilIcon,
 } from "lucide-react";
 import { Fragment, useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { TableSkeletonRows } from "@/components/loading/TableSkeletonRows";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -304,17 +304,15 @@ export function DataTable<TData, TValue>({
 		[renderPackageCell, renderDropdownMenu, renderAmount, archived],
 	);
 
+	const rows = table.getRowModel().rows;
+	const visibleColCount = table.getVisibleLeafColumns().length;
+
 	return (
 		<div className="overflow-x-auto min-w-full">
+			<p role="status" className="sr-only">
+				{isLoading ? "Loading quotations…" : ""}
+			</p>
 			<div className="relative">
-				{isLoading && (
-					<div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[1px]">
-						<div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
-							<Loader2 className="h-4 w-4 animate-spin" />
-							Loading...
-						</div>
-					</div>
-				)}
 				<Table className="min-w-full">
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -332,9 +330,11 @@ export function DataTable<TData, TValue>({
 							</TableRow>
 						))}
 					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
+					<TableBody aria-busy={isLoading}>
+						{isLoading && rows.length === 0 ? (
+							<TableSkeletonRows columns={visibleColCount} />
+						) : rows.length > 0 ? (
+							rows.map((row) => (
 								<Fragment key={row.id}>
 									<TableRow data-state={row.getIsSelected() && "selected"}>
 										{row.getVisibleCells().map((cell) => (
@@ -361,7 +361,7 @@ export function DataTable<TData, TValue>({
 						) : (
 							<TableRow>
 								<TableCell
-									colSpan={columns.length}
+									colSpan={visibleColCount}
 									className="h-24 text-center"
 								>
 									No quotations found.

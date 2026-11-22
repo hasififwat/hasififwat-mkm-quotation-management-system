@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import ClientsListingPage, {
+	type ClientLoadStatus,
 	type ClientWithStats,
 } from "~/features/clients/ClientsListingPage";
 
@@ -29,14 +30,14 @@ export default function ClientsPage() {
 	const [continueCursor, setContinueCursor] = useState<string | null>(null);
 	const [allPics, setAllPics] = useState<string[]>([]);
 	const [total, setTotal] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);
+	const [loadStatus, setLoadStatus] = useState<ClientLoadStatus>("loading");
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
 		let cancelled = false;
 
 		const load = async () => {
-			setIsLoading(true);
+			setLoadStatus("loading");
 			try {
 				const [allPicsResult, rawClients] = await Promise.all([
 					http.query(api.clients.getAgentNames, {}),
@@ -86,8 +87,9 @@ export default function ClientsPage() {
 					setContinueCursor(result.isDone ? null : (result.continueCursor ?? null));
 					setTotal(0);
 				}
-			} finally {
-				if (!cancelled) setIsLoading(false);
+				setLoadStatus("loaded");
+			} catch {
+				if (!cancelled) setLoadStatus("failed");
 			}
 		};
 
@@ -108,7 +110,7 @@ export default function ClientsPage() {
 			allPics={allPics}
 			offset={offset}
 			total={total}
-			isLoading={isLoading}
+			loadStatus={loadStatus}
 		/>
 	);
 }

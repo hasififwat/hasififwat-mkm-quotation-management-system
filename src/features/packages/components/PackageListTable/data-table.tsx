@@ -28,6 +28,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 
+import { TableSkeletonRows } from "@/components/loading/TableSkeletonRows";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -393,9 +394,13 @@ export function DataTable<TData, TValue>({
 
 	const [seasonNavOpen, setSeasonNavOpen] = useState(false);
 	const visibleColCount = table.getVisibleLeafColumns().length;
+	const rows = table.getRowModel().rows;
 
 	return (
 		<div className="overflow-hidden">
+			<p role="status" className="sr-only">
+				{isLoading ? "Loading packages…" : ""}
+			</p>
 			{orderedSeasons.length > 1 && (
 				<div className="fixed bottom-6 right-4 z-50 flex flex-col gap-1.5 items-end">
 					{seasonNavOpen && (
@@ -468,18 +473,11 @@ export function DataTable<TData, TValue>({
 							</TableRow>
 						))}
 					</TableHeader>
-					<TableBody>
-						{isLoading ? (
-							<TableRow>
-								<TableCell colSpan={visibleColCount} className="h-24 text-center">
-									<div className="inline-flex items-center gap-2 text-muted-foreground">
-										<Loader2 className="h-4 w-4 animate-spin" />
-										Loading data...
-									</div>
-								</TableCell>
-							</TableRow>
-						) : table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => {
+					<TableBody aria-busy={isLoading}>
+						{isLoading && rows.length === 0 ? (
+							<TableSkeletonRows columns={visibleColCount} />
+						) : rows.length > 0 ? (
+							rows.map((row) => {
 								if (row.getIsGrouped()) {
 									const season = (row.getValue("season") as string | undefined) ?? "";
 									const isExpanded = row.getIsExpanded();
