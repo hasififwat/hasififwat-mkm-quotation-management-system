@@ -71,6 +71,7 @@ const SidebarNavLink = ({
 		<SidebarMenuItem key={item.title}>
 			<SidebarMenuButton
 				asChild
+				className="h-9 gap-3 px-3 font-medium [&>svg]:text-muted-foreground hover:[&>svg]:text-sidebar-accent-foreground focus-visible:bg-sidebar-accent focus-visible:text-sidebar-accent-foreground focus-visible:[&>svg]:text-sidebar-accent-foreground"
 				onClick={() => isMobile && setOpenMobile(false)}
 			>
 				<Link href={item.url}>
@@ -103,19 +104,23 @@ export function SidebarLayout({
 
 	return (
 		<SidebarProvider>
-			<Sidebar>
-				<SidebarHeader className="border-b px-6 py-4">
-					<div className="flex items-center gap-2">
-						<div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+			<Sidebar className="border-sidebar-border">
+				<SidebarHeader className="h-16 shrink-0 justify-center border-b border-sidebar-border px-4 py-0">
+					<div className="flex items-center gap-3">
+						<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 							<Home className="size-4" />
 						</div>
-						<span className="text-lg font-semibold">MKM Quotation</span>
+						<span className="text-base font-semibold tracking-tight">
+							MKM Quotation
+						</span>
 					</div>
 				</SidebarHeader>
 
 				<SidebarContent>
-					<SidebarGroup>
-						<SidebarGroupLabel>Navigation</SidebarGroupLabel>
+					<SidebarGroup className="px-3 py-4">
+						<SidebarGroupLabel className="px-3 text-muted-foreground">
+							Navigation
+						</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{menuItems.map((item) => (
@@ -126,20 +131,20 @@ export function SidebarLayout({
 					</SidebarGroup>
 				</SidebarContent>
 
-				<SidebarFooter className="border-t p-4">
+				<SidebarFooter className="border-t border-sidebar-border p-3">
 					<div className="flex flex-col gap-2">
-						<div className="flex items-center gap-2 px-2 py-1.5">
-							<div className="flex size-8 items-center justify-center rounded-full bg-muted">
+						<div className="flex items-start gap-3 rounded-lg bg-muted/60 px-3 py-2.5">
+							<div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground">
 								<span className="text-sm font-medium">
 									{profile?.full_name
 										? profile.full_name.charAt(0).toUpperCase()
 										: "U"}
 								</span>
 							</div>
-							<div className="flex-1 overflow-hidden">
-								<div className="text-sm font-medium truncate">
+							<div className="min-w-0 flex-1">
+								<div className="text-sm font-medium leading-snug wrap-anywhere">
 									{profile?.full_name || "User"}
-									<p className="text-xs text-muted-foreground">
+									<p className="text-xs font-normal leading-snug text-muted-foreground">
 										{profile?.email || ""}
 									</p>
 								</div>
@@ -150,17 +155,17 @@ export function SidebarLayout({
 							variant="outline"
 							size="sm"
 							onClick={handleSignOut}
-							className="w-full justify-start"
+							className="w-full justify-start px-3"
 						>
-							<LogOut className="size-4 mr-2" />
+							<LogOut className="size-4 text-muted-foreground" />
 							Sign Out
 						</Button>
 					</div>
 				</SidebarFooter>
 			</Sidebar>
 			<SidebarInset className="overflow-hidden">
-				<header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6 print:hidden">
-					<SidebarTrigger>
+				<header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b bg-card px-4 sm:gap-4 sm:px-6 print:hidden">
+					<SidebarTrigger className="size-10">
 						<Menu className="size-5" />
 					</SidebarTrigger>
 					<div className="flex-1">
