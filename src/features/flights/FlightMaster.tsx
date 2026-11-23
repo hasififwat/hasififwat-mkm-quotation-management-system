@@ -194,7 +194,7 @@ export default function FlightMaster() {
 			<Button onClick={() => _fileInputRef.current?.click()}>
 				Import Schedule
 			</Button>
-			<div>
+			<div className="mt-4">
 				<FlightListings data={_flights} isLoading={pendingImports > 0} />
 			</div>
 		</div>
