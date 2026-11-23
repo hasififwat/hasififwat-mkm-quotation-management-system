@@ -13,11 +13,11 @@ export default async function QuotationHistoryPage({params}: {params: Promise<{q
   const {qid} = await params;
   const client = await getServerConvexClient();
   const details = await client.query(api.quotations.getQuotationFullDetails, {target_quotation_id: qid});
-  if (!details?.revision_context.family_id) return <section className="col-span-full space-y-3 p-6"><h1 className="text-2xl font-semibold">Revision history</h1><p>Revision history is unavailable for this legacy quotation.</p><Link className="underline" href={`/quotations/review/${qid}`}>View saved quotation</Link></section>;
+  if (!details?.revision_context.family_id) return <section className="workspace-page max-w-5xl space-y-3"><h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Revision history</h1><p>Revision history is unavailable for this legacy quotation.</p><Link className="underline" href={`/quotations/review/${qid}`}>View saved quotation</Link></section>;
   const {family, revisions} = await client.query(historyQuery, {family_id: details.revision_context.family_id});
   const references = new Map(revisions.map(row => [String(row._id), revisionReference(row)]));
-  return <section className="col-span-full mx-auto w-full max-w-5xl space-y-6 p-4 md:p-6">
-    <header className="space-y-3"><h1 className="text-2xl font-semibold">Revision history</h1><p>{family.hijri_year}-{String(family.sequence_num).padStart(4, "0")} · {family.archived ? "Archived family" : "Current family"}</p>
+  return <section className="workspace-page max-w-5xl space-y-6">
+    <header className="space-y-3"><h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Revision history</h1><p>{family.hijri_year}-{String(family.sequence_num).padStart(4, "0")} · {family.archived ? "Archived family" : "Current family"}</p>
       <p className="text-sm text-muted-foreground">Earliest retained quotation {revisionDate(details.revision_context.family_created_at)} in Kuala Lumpur time. Each link opens its exact saved revision.</p>
       <div className="flex flex-wrap gap-4"><Link className="underline" href={`/quotations/review/${family.current_revision_id}`}>View current revision</Link>{!family.archived && <Link className="underline" href={`/quotations/edit/${family.current_revision_id}`}>Edit current revision</Link>}<Link className="underline" href="/quotations">Quotations</Link></div>
     </header>

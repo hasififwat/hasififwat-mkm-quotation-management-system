@@ -8,10 +8,10 @@ export function SavedRevisionReview({details, saved, source}: {details: Quotatio
   const doc = details.saved_document;
   const rows = [...details.items.selected_rooms.map(item => ({...item, name: item.room_type, kind: "Room"})),
     ...details.items.adds_ons.map(item => ({...item, kind: "Add-on"})), ...details.items.discounts.map(item => ({...item, kind: "Discount"}))];
-  return <article className="col-span-full mx-auto w-full max-w-5xl space-y-6 p-4 md:p-6">
+  return <article className="workspace-page max-w-5xl space-y-6">
     {saved && <p role="status" className="rounded border bg-muted p-3">Revision {details.reference_number} saved. PDF preparation has its own status below.</p>}
     <header className="space-y-3"><p className="text-sm text-muted-foreground">{context.is_current ? "Current revision" : "Historical revision"} · Saved status {details.status}</p>
-      <h1 className="break-words text-2xl font-semibold">{details.reference_number}</h1>
+      <h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">{details.reference_number}</h1>
       {!context.is_current && <p>This is an exact saved revision. A newer revision exists. This view is read-only.</p>}
       <nav className="flex flex-wrap gap-4"><Link className="underline" href="/quotations">Quotations</Link><Link className="underline" href={`/quotations/${details.id}/history`}>Revision history</Link>
         {context.can_append ? <Link className="underline" href={`/quotations/edit/${details.id}`}>Edit current revision</Link> : !context.is_current ? <Link className="underline" href={`/quotations/review/${context.current_revision_id}`}>View current revision</Link> : null}</nav>

@@ -2,9 +2,9 @@
 
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Quotation } from "./columns";
 
 function formatDate(isoDate: string): string {
@@ -127,9 +127,16 @@ export function QuotationExpandedRow({ quotation }: Props) {
 			{items === undefined ? (
 				<>
 					<Separator />
-					<div className="flex items-center gap-2 text-xs text-muted-foreground">
-						<Loader2 className="h-3.5 w-3.5 animate-spin" />
-						Loading items...
+					<p role="status" className="sr-only">Loading quotation items…</p>
+					<div aria-hidden="true" className="grid grid-cols-2 gap-6">
+						<div className="space-y-2">
+							<Skeleton className="h-3 w-24 max-w-full" />
+							<Skeleton className="h-4 w-4/5" />
+						</div>
+						<div className="space-y-2">
+							<Skeleton className="h-3 w-16 max-w-full" />
+							<Skeleton className="h-4 w-3/4" />
+						</div>
 					</div>
 				</>
 			) : hasItems ? (

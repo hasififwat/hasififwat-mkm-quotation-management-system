@@ -3,9 +3,11 @@
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
+import { TableSkeletonRows } from "~/components/loading/TableSkeletonRows";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { SeasonBadge } from "~/components/ui/season-badge";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -50,21 +52,24 @@ function PublishedBadge({ status }: { status: string }) {
 export default function PackageStatsPage() {
 	const data = useQuery(api.packages.listWithQuotationCounts);
 
-	const total = data?.reduce((sum, p) => sum + p.total, 0) ?? 0;
-	const usedCount = data?.filter((p) => p.total > 0).length ?? 0;
-	const publishedCount = data?.filter((p) => p.status === "published").length ?? 0;
+	const total = data?.reduce((sum, p) => sum + p.total, 0);
+	const usedCount = data?.filter((p) => p.total > 0).length;
+	const publishedCount = data?.filter((p) => p.status === "published").length;
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div>
-				<h2 className="text-xl md:text-2xl font-bold tracking-tight">Package Usage</h2>
+				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Package Usage</h2>
 				<p className="text-muted-foreground text-xs md:text-sm">
 					How many quotations have been created per package.
 				</p>
 			</div>
 
+			<p role="status" className="sr-only">
+				{data === undefined ? "Loading package usage…" : ""}
+			</p>
 			<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-				<SummaryCard label="Total Packages" value={data?.length ?? "—"} />
+				<SummaryCard label="Total Packages" value={data?.length} />
 				<SummaryCard label="Published" value={publishedCount} />
 				<SummaryCard label="Total Quotations" value={total} />
 				<SummaryCard label="With Quotations" value={usedCount} />
@@ -77,73 +82,74 @@ export default function PackageStatsPage() {
 					</p>
 				</CardHeader>
 				<CardContent className="p-0">
-					{data === undefined ? (
-						<div className="p-8 text-center text-sm text-muted-foreground">Loading…</div>
-					) : (
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>Package</TableHead>
-									<TableHead>Year</TableHead>
-									<TableHead>Season</TableHead>
-									<TableHead>Published</TableHead>
-									<TableHead className="text-right">Total</TableHead>
-									<TableHead>By Status</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{data.map((pkg) => (
-									<TableRow key={pkg.id}>
-										<TableCell className="font-medium max-w-48">
-											<Link
-												href={`/quotations?package_id=${pkg.id}`}
-												className="hover:underline hover:text-primary line-clamp-2"
-											>
-												{pkg.name}
-											</Link>
-										</TableCell>
-										<TableCell className="text-muted-foreground text-xs whitespace-nowrap">
-											{pkg.year}
-										</TableCell>
-										<TableCell>
-											<SeasonBadge season={pkg.season ?? undefined} />
-										</TableCell>
-										<TableCell>
-											<PublishedBadge status={pkg.status} />
-										</TableCell>
-										<TableCell className="text-right">
-											<span className={`font-semibold tabular-nums ${pkg.total === 0 ? "text-muted-foreground" : ""}`}>
-												{pkg.total}
-											</span>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Package</TableHead>
+								<TableHead>Year</TableHead>
+								<TableHead>Season</TableHead>
+								<TableHead>Published</TableHead>
+								<TableHead className="text-right">Total</TableHead>
+								<TableHead>By Status</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody aria-busy={data === undefined}>
+								{data === undefined ? <TableSkeletonRows columns={6} /> : null}
+								{data?.map((pkg) => (
+								<TableRow key={pkg.id}>
+									<TableCell className="font-medium max-w-48">
+										<Link
+											href={`/quotations?package_id=${pkg.id}`}
+											className="hover:underline hover:text-primary line-clamp-2"
+										>
+											{pkg.name}
+										</Link>
+									</TableCell>
+									<TableCell className="text-muted-foreground text-xs whitespace-nowrap">
+										{pkg.year}
+									</TableCell>
+									<TableCell>
+										<SeasonBadge season={pkg.season ?? undefined} />
+									</TableCell>
+									<TableCell>
+										<PublishedBadge status={pkg.status} />
+									</TableCell>
+									<TableCell className="text-right">
+										<span className={`font-semibold tabular-nums ${pkg.total === 0 ? "text-muted-foreground" : ""}`}>
+											{pkg.total}
+										</span>
                                         <Link href={`/quotations?package_id=${pkg.id}&visibility=history`} className="block text-xs text-primary hover:underline">{pkg.historical_total} historical revisions</Link>
-										</TableCell>
-										<TableCell>
-											{pkg.total === 0 ? (
-												<span className="text-xs text-muted-foreground">No quotations yet</span>
-											) : (
-												<div className="flex flex-wrap gap-1">
-													{QUOTATION_STATUSES.map((s) => (
-														<StatusPill key={s} count={pkg.by_status[s]} status={s} />
-													))}
-												</div>
-											)}
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					)}
+									</TableCell>
+									<TableCell>
+										{pkg.total === 0 ? (
+											<span className="text-xs text-muted-foreground">No quotations yet</span>
+										) : (
+											<div className="flex flex-wrap gap-1">
+												{QUOTATION_STATUSES.map((s) => (
+													<StatusPill key={s} count={pkg.by_status[s]} status={s} />
+												))}
+											</div>
+										)}
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
 				</CardContent>
 			</Card>
 		</div>
 	);
 }
 
-function SummaryCard({ label, value }: { label: string; value: number | string }) {
+function SummaryCard({ label, value }: { label: string; value: number | undefined }) {
 	return (
 		<Card className="p-4 space-y-1">
 			<p className="text-xs text-muted-foreground">{label}</p>
-			<p className="text-2xl font-bold tabular-nums">{value}</p>
+			{value === undefined ? (
+				<Skeleton aria-hidden="true" className="h-8 w-14" />
+			) : (
+				<p className="text-2xl font-bold tabular-nums">{value}</p>
+			)}
 		</Card>
 	);
 }

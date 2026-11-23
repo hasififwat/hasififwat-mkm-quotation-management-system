@@ -106,13 +106,13 @@ export default function QuotationsPage() {
 	};
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
-					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 						Travel Quotations
 					</h2>
-					<p className="text-slate-500 text-xs md:text-sm">
+					<p className="text-muted-foreground text-xs md:text-sm">
 						Current quotation families and saved history.
 					</p>
 				</div>
@@ -127,8 +127,8 @@ export default function QuotationsPage() {
                 <Link href="/quotations" aria-current={visibility === "current" ? "page" : undefined}>Current families</Link>
                 <Link href="/quotations?visibility=archived" aria-current={visibility === "archived" ? "page" : undefined}>Archived families</Link>
             </div>
-            <Card className="overflow-hidden">
-				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100 space-y-2">
+			<Card className="gap-0 overflow-hidden py-0">
+				<CardHeader className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-5 [.border-b]:pb-4">
 					{/* Fields visibility button row */}
 					<div className="flex justify-start">
 						<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>
@@ -213,11 +213,11 @@ export default function QuotationsPage() {
 						</Popover>
 					</div>
 					{/* Search bar */}
-					<form onSubmit={(e) => e.preventDefault()} className="relative">
+					<form onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1">
 						{isSearchLoading ? (
-							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 animate-spin" />
+							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
 						) : (
-							<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+							<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
 						)}
 						<Input
 							name="q"

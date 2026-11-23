@@ -121,7 +121,7 @@ export default function FlightDetails({
 					fields.map((field, index) => (
 						<div
 							key={field.id}
-							className="p-4 border rounded-lg space-y-4 bg-muted/30"
+							className="@container space-y-4 rounded-lg border bg-muted/30 p-4"
 						>
 							<div className="flex items-center justify-between">
 								<span className="font-medium text-sm text-muted-foreground">
@@ -148,7 +148,7 @@ export default function FlightDetails({
 							/>
 
 							{/* Airline + Month row */}
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 gap-4 @min-[20rem]:grid-cols-2">
 								{/* Airline Select */}
 								<Controller
 									name={`flights.${index}.code`}
@@ -208,7 +208,7 @@ export default function FlightDetails({
 							</div>
 
 							{/* Dates + Sectors */}
-							<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+							<div className="grid grid-cols-1 gap-4 @min-[20rem]:grid-cols-2 @min-[44rem]:grid-cols-4">
 								{/* Departure Date */}
 								<Controller
 									name={`flights.${index}.departure`}

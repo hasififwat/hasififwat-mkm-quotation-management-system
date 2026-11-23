@@ -15,6 +15,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Duplicate = {
 	clientName: string;
@@ -30,7 +31,7 @@ export default function DuplicatesPage() {
 	const http = useConvex();
 	const { isAuthenticated } = useConvexAuth();
 	const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const [loadStatus, setLoadStatus] = useState<"loading" | "loaded" | "failed">("loading");
 	const [isDeleting, setIsDeleting] = useState<string | null>(null);
 	const [confirmId, setConfirmId] = useState<string | null>(null);
 	const [deleteResult, setDeleteResult] = useState<{
@@ -42,12 +43,14 @@ export default function DuplicatesPage() {
 		if (!isAuthenticated) return;
 		let cancelled = false;
 		const load = async () => {
-			setIsLoading(true);
+			setLoadStatus("loading");
 			try {
 				const result = await http.query(api.quotations.findDuplicates, {});
-				if (!cancelled) setDuplicates(result as Duplicate[]);
-			} finally {
-				if (!cancelled) setIsLoading(false);
+				if (cancelled) return;
+				setDuplicates(result as Duplicate[]);
+				setLoadStatus("loaded");
+			} catch {
+				if (!cancelled) setLoadStatus("failed");
 			}
 		};
 		void load();
@@ -81,8 +84,10 @@ export default function DuplicatesPage() {
 		}
 	};
 
+	const showSkeleton = loadStatus === "loading" && duplicates.length === 0;
+
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			{/* Single confirmation dialog controlled by state */}
 			<Dialog
 				open={confirmId !== null}
@@ -115,13 +120,23 @@ export default function DuplicatesPage() {
 				</DialogContent>
 			</Dialog>
 			<div>
-				<h2 className="text-2xl font-bold tracking-tight">
+				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 					Duplicate Quotations
 				</h2>
-				<p className="text-slate-500 text-sm">
-					Found {isLoading ? "…" : duplicates.length} duplicate group
-					{!isLoading && duplicates.length !== 1 ? "s" : ""}
+				<p role="status" className="sr-only">
+					{loadStatus === "loading" ? "Loading duplicate quotations…" : ""}
 				</p>
+				{showSkeleton ? (
+					<Skeleton aria-hidden="true" className="my-1 h-4 w-44" />
+				) : loadStatus === "failed" ? (
+					<p role="alert" className="text-muted-foreground text-sm">
+						Unable to load duplicate quotations.
+					</p>
+				) : (
+					<p className="text-muted-foreground text-sm">
+						Found {duplicates.length} duplicate group{duplicates.length !== 1 ? "s" : ""}
+					</p>
+				)}
 			</div>
 
 			{deleteResult && (
@@ -144,7 +159,18 @@ export default function DuplicatesPage() {
 				</Card>
 			)}
 
-			{duplicates.length === 0 ? (
+			{showSkeleton ? (
+				<Card aria-hidden="true">
+					<CardHeader>
+						<Skeleton className="h-4 w-40" />
+						<Skeleton className="h-4 w-full max-w-xs" />
+					</CardHeader>
+					<CardContent className="space-y-2">
+						<Skeleton className="h-9 w-full" />
+						<Skeleton className="h-9 w-full" />
+					</CardContent>
+				</Card>
+			) : loadStatus === "loaded" && duplicates.length === 0 ? (
 				<Card>
 					<CardContent className="pt-6">
 						<p className="text-center text-muted-foreground">
@@ -152,7 +178,7 @@ export default function DuplicatesPage() {
 						</p>
 					</CardContent>
 				</Card>
-			) : (
+			) : duplicates.length > 0 ? (
 				<div className="space-y-4">
 					{duplicates.map((dup) => {
 						const groupKey = `${dup.clientName}|${dup.packageId}|${dup.flightId}|${dup.totalAmount}`;
@@ -162,7 +188,7 @@ export default function DuplicatesPage() {
 									<CardTitle className="text-base">
 										{dup.clientName} × {dup.count} copies
 									</CardTitle>
-									<p className="text-sm text-muted-foreground">
+									<p className="wrap-anywhere text-sm text-muted-foreground">
 										Package: {dup.packageId} | Flight: {dup.flightId} | Amount:{" "}
 										{dup.totalAmount.toLocaleString("ms-MY", {
 											style: "currency",
@@ -178,9 +204,9 @@ export default function DuplicatesPage() {
 												{dup.quotationIds.map((id, i) => (
 													<div
 														key={id}
-														className="flex items-center justify-between bg-muted p-2 rounded"
+														className="flex flex-col items-start gap-2 rounded-md bg-muted px-3 py-2 sm:flex-row sm:items-center"
 													>
-														<code className="text-xs font-mono flex-1">
+														<code className="min-w-0 flex-1 wrap-anywhere font-mono text-xs">
 															{id} ({dup.createdDates[i]})
 														</code>
 														<Button
@@ -188,7 +214,7 @@ export default function DuplicatesPage() {
 															variant="destructive"
 															size="sm"
 															disabled={isDeleting === id}
-															className="ml-2"
+															className="self-end sm:self-auto"
 															onClick={() => setConfirmId(id)}
 														>
 															{isDeleting === id ? "Deleting..." : "Delete"}
@@ -197,7 +223,7 @@ export default function DuplicatesPage() {
 												))}
 											</div>
 										</div>
-										<p className="text-xs text-amber-600 mt-4">
+										<p className="mt-4 text-xs text-amber-800 dark:text-amber-300">
 											⚠️ Keep the earliest, review and delete the rest
 										</p>
 									</div>
@@ -206,7 +232,7 @@ export default function DuplicatesPage() {
 						);
 					})}
 				</div>
-			)}
+			) : null}
 		</div>
 	);
 }

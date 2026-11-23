@@ -887,14 +887,14 @@ export default function QuotationBuilder({
 	};
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 lg:mx-auto space-y-6 animate-slideIn">
+		<div className="workspace-page max-w-4xl space-y-6 animate-slideIn">
 			<div className="flex items-center gap-4">
 				<Link href="/quotations" className="text-sm text-muted-foreground">
 					<Button variant="ghost" size="icon">
 						<ChevronLeft className="w-5 h-5" />
 					</Button>
 				</Link>
-				<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 					{qid ? "Edit Quotation" : "Create Quotation"}
 				</h2>
 			</div>

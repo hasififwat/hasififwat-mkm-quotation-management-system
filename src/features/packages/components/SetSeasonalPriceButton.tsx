@@ -128,7 +128,7 @@ export default function SetSeasonalPriceButton() {
 					<Button variant="outline" className="relative">
 						Set Seasonal Price
 						{missingSeasonCount > 0 && (
-							<span className="absolute -top-2 -right-2 inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-destructive px-1 text-xs font-semibold text-destructive-foreground">
+							<span className="absolute -top-2 -right-2 inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-semibold text-primary-foreground">
 								{missingSeasonCount}
 							</span>
 						)}

@@ -15,6 +15,9 @@ import {
 import { Field, FieldGroup, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 
+const inputClassName =
+	"h-12 rounded-lg bg-muted/35 focus-visible:border-primary focus-visible:ring-primary/50 dark:bg-background";
+
 export function LoginForm() {
 	const { signIn } = useAuthActions();
 	const { isAuthenticated } = useConvexAuth();
@@ -48,45 +51,55 @@ export function LoginForm() {
 
 	return (
 		<div>
-			<Card>
-				<CardHeader>
-					<CardTitle>Login to your account</CardTitle>
-					<CardDescription>
+			<Card className="gap-8 rounded-3xl py-7 shadow-xl shadow-foreground/8 sm:py-9 dark:shadow-black/25">
+				<CardHeader className="px-5 before:mb-2 before:h-1 before:w-8 before:rounded-full before:bg-primary sm:px-8">
+					<CardTitle className="text-3xl leading-tight tracking-tight text-balance sm:text-4xl">
+						Login to your account
+					</CardTitle>
+					<CardDescription className="text-base leading-relaxed">
 						Enter your email below to login to your account
 					</CardDescription>
 				</CardHeader>
-				<CardContent>
+				<CardContent className="px-5 sm:px-8">
 					<form onSubmit={handleSubmit}>
-						<FieldGroup>
-							<Field>
+						<FieldGroup className="gap-5">
+							<Field className="gap-2">
 								<FieldLabel htmlFor="email">Email</FieldLabel>
 								<Input
 									id="email"
 									name="email"
 									type="email"
 									placeholder="m@example.com"
+									className={inputClassName}
 									required
 									disabled={isSubmitting}
 								/>
 							</Field>
 
-							<Field>
+							<Field className="gap-2">
 								<FieldLabel htmlFor="password">Password</FieldLabel>
 								<Input
 									id="password"
 									name="password"
 									type="password"
+									className={inputClassName}
 									required
 									disabled={isSubmitting}
 								/>
 							</Field>
 
 							{error && (
-								<div className="text-sm text-red-500 font-medium">{error}</div>
+								<div className="rounded-lg border border-destructive/30 bg-destructive/8 px-3 py-2.5 text-sm leading-relaxed font-medium wrap-anywhere">
+									{error}
+								</div>
 							)}
 
 							<Field>
-								<Button type="submit" disabled={isSubmitting} className="w-full">
+								<Button
+									type="submit"
+									disabled={isSubmitting}
+									className="h-12 w-full rounded-lg text-base font-semibold shadow-xs"
+								>
 									{isSubmitting ? "Logging in..." : "Login"}
 								</Button>
 							</Field>

@@ -6,14 +6,15 @@ import type { FlightData } from "./schema";
 
 interface Props {
 	data: FlightData[];
+	isLoading?: boolean;
 }
 
-const FlightListings: React.FC<Props> = ({ data }) => {
+const FlightListings: React.FC<Props> = ({ data, isLoading }) => {
 	// Logic for preview can be added here later
 
 	return (
 		<div>
-			<DataTable columns={columns} data={data} />
+			<DataTable columns={columns} data={data} isLoading={isLoading} />
 		</div>
 	);
 };

@@ -6,6 +6,7 @@ import { Printer } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import PDFPreview from "~/features/quotation/components/PDFPreview";
+import { QuotationPdfSkeleton } from "~/features/quotation/components/QuotationPdfSkeleton";
 
 import type { QuotationFullDetails } from "./types";
 
@@ -39,8 +40,11 @@ export default function PdfPreviewPane({
 				<>
 					<div className="hidden md:flex w-full flex-1 flex-col items-center">
 						{loading && (
-							<div className="flex items-center justify-center h-screen text-muted-foreground text-sm">
-								Generating PDF…
+							<div className="flex min-h-screen w-full flex-1 flex-col items-center gap-3 p-4">
+								<p role="status" className="text-sm text-muted-foreground">
+									Generating PDF…
+								</p>
+								<QuotationPdfSkeleton className="flex-1" />
 							</div>
 						)}
 						{error && (
@@ -57,7 +61,7 @@ export default function PdfPreviewPane({
 						)}
 					</div>
 
-					<div className="fixed bottom-8 right-8 z-50">
+					<div className="fixed right-4 bottom-4 z-50 sm:right-8 sm:bottom-8">
 						<Button
 							size="lg"
 							className="shadow-xl"

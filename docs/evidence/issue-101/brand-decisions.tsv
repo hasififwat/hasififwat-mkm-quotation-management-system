@@ -1,0 +1,5 @@
+iteration	hypothesis	before	after	contrast_gate	decision
+1	Match primary actions and focus to the logo blue	0/6	2/6	20/20	kept
+2	Use a quiet red tint for secondary treatments	2/6	4/6	20/20	kept
+3	Use blue for the routine pricing count	4/6	6/6	20/20	kept
+4	Replace the provisional periwinkle with a richer dark royal blue	6/6	6/6	20/20	kept after user feedback

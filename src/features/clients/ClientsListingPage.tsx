@@ -6,6 +6,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { TableSkeletonRows } from "~/components/loading/TableSkeletonRows";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -164,7 +165,7 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 					{q.status.charAt(0).toUpperCase() + q.status.slice(1)}
 				</Badge>
 			</td>
-			<td className="py-2 pr-4 text-right font-mono">
+			<td className="py-2 pr-4 text-right font-mono whitespace-nowrap">
 				{formatCurrency(q.total_amount)}
 			</td>
 			<td className="py-2 pr-4 text-muted-foreground whitespace-nowrap">
@@ -196,6 +197,8 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 	);
 }
 
+export type ClientLoadStatus = "loading" | "loaded" | "failed";
+
 interface Props {
 	clients: ClientWithStats[];
 	isDone: boolean;
@@ -206,7 +209,7 @@ interface Props {
 	allPics: string[];
 	offset: number;
 	total: number;
-	isLoading?: boolean;
+	loadStatus: ClientLoadStatus;
 }
 
 export default function ClientsListingPage({
@@ -219,11 +222,12 @@ export default function ClientsListingPage({
 	allPics,
 	offset,
 	total,
-	isLoading = false,
+	loadStatus,
 }: Props) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const navigate = (url: string) => router.push(url);
+	const isLoading = loadStatus === "loading";
 
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 	const [agentFilterOpen, setAgentFilterOpen] = useState(false);
@@ -314,13 +318,13 @@ export default function ClientsListingPage({
 	}
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
-					<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 						Clients
 					</h2>
-					<p className="text-slate-500 text-xs md:text-sm">
+					<p className="text-muted-foreground text-xs md:text-sm">
 						Manage clients and current quotations. Open a client to view historical and archived revisions.
 					</p>
 				</div>
@@ -332,8 +336,8 @@ export default function ClientsListingPage({
 				</Button>
 			</div>
 
-			<Card className="overflow-hidden">
-				<div className="p-4 border-b border-slate-100 space-y-2">
+			<Card className="gap-0 overflow-hidden py-0">
+				<div className="flex flex-col gap-3 border-b bg-muted/40 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
 					{/* Agent filter */}
 					<div className="flex items-center gap-2">
 						<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
@@ -416,7 +420,7 @@ export default function ClientsListingPage({
 					</div>
 
 					{/* Search */}
-					<div className="relative">
+					<div className="relative min-w-0 flex-1">
 						{isLoading ? (
 							<Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
 						) : (
@@ -433,7 +437,15 @@ export default function ClientsListingPage({
 				</div>
 
 				<CardContent className="p-0">
-					{clients.length === 0 ? (
+					<p role="status" className="sr-only">
+						{isLoading ? "Loading clients…" : ""}
+					</p>
+					{loadStatus === "failed" ? (
+						<p role="alert" className="px-4 py-4 text-center text-sm text-muted-foreground">
+							Unable to load clients.
+						</p>
+					) : null}
+					{clients.length === 0 && loadStatus === "loaded" ? (
 						<div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
 							<Users className="h-8 w-8 opacity-30" />
 							<p className="text-sm">
@@ -442,8 +454,8 @@ export default function ClientsListingPage({
 									: "No clients yet."}
 							</p>
 						</div>
-					) : (
-						<div className="overflow-x-auto">
+					) : isLoading || clients.length > 0 ? (
+						<div className="@container">
 							<Table className="min-w-full">
 								<TableHeader>
 									<TableRow>
@@ -455,7 +467,8 @@ export default function ClientsListingPage({
 										<TableHead className="w-10" />
 									</TableRow>
 								</TableHeader>
-								<TableBody>
+								<TableBody aria-busy={isLoading}>
+									{isLoading && clients.length === 0 ? <TableSkeletonRows columns={6} /> : null}
 									{clients.map((client) => {
 										const isOpen = expandedId === client.id;
 										return (
@@ -503,14 +516,14 @@ export default function ClientsListingPage({
 
 												{isOpen && (
 													<TableRow className="hover:bg-transparent">
-														<TableCell colSpan={6} className="p-0 border-b-0">
-															<div className="border-l-4 border-primary/40 bg-muted/20 px-6 py-4">
-																<div className="flex items-center justify-between gap-3 mb-3">
+														<TableCell colSpan={6} className="border-b-0 p-0 whitespace-normal wrap-anywhere">
+															<div className="border-l-4 border-primary/40 bg-muted/20 px-4 py-4 @min-[40rem]:px-6">
+																<div className="mb-3 flex flex-col items-start gap-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
 																	<p className="text-sm font-medium">Current quotations</p>
 																	<Link href={`/clients/${client.id}`} className="text-sm text-primary hover:underline">View client and history ({client.historical_quotation_count})</Link>
 																</div>
 																{client.quotations.length === 0 ? (
-																	<div className="flex items-center justify-between py-2">
+																	<div className="flex flex-col items-start gap-2 py-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
 																		<p className="text-sm text-muted-foreground">
 																			No current quotations.
 																		</p>
@@ -558,12 +571,12 @@ export default function ClientsListingPage({
 								</TableBody>
 							</Table>
 						</div>
-					)}
+					) : null}
 
 					{/* Pagination */}
 					{(!isFirstPage || !isDone) && (
-						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-100">
-							{isFiltered && total > 0 && (
+						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
+							{loadStatus === "loaded" && isFiltered && total > 0 && (
 								<span className="text-xs text-muted-foreground mr-auto">
 									Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}
 								</span>
@@ -582,7 +595,7 @@ export default function ClientsListingPage({
 								variant="outline"
 								size="sm"
 								onClick={handleNextPage}
-								disabled={isDone || isLoading}
+								disabled={isDone || loadStatus !== "loaded"}
 								className="gap-1"
 							>
 								Next

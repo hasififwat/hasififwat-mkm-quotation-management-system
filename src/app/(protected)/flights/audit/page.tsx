@@ -4,8 +4,10 @@ import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Plane, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { TableSkeletonRows } from "~/components/loading/TableSkeletonRows";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
+import { Skeleton } from "~/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
@@ -13,20 +15,21 @@ const SOURCE_OPTIONS = ["all", "sync", "manual"] as const;
 type SourceFilter = (typeof SOURCE_OPTIONS)[number];
 
 export default function FlightAuditPage() {
-  const flights = useQuery(api.packageFlights.listAll) ?? [];
+  const flights = useQuery(api.packageFlights.listAll);
+  const isLoading = flights === undefined;
 
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>("all");
   const [seasonFilter, setSeasonFilter] = useState("all");
 
   const seasons = useMemo(() => {
-    const s = new Set(flights.map((f) => f.package_season).filter(Boolean));
+    const s = new Set(flights?.map((f) => f.package_season).filter(Boolean));
     return ["all", ...Array.from(s).sort()];
   }, [flights]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return flights.filter((f) => {
+    return flights?.filter((f) => {
       if (sourceFilter !== "all" && (f.source ?? "manual") !== sourceFilter) return false;
       if (seasonFilter !== "all" && f.package_season !== seasonFilter) return false;
       if (q) {
@@ -39,35 +42,44 @@ export default function FlightAuditPage() {
         );
       }
       return true;
-    });
+    }) ?? [];
   }, [flights, search, sourceFilter, seasonFilter]);
 
-  const syncCount   = flights.filter((f) => (f.source ?? "manual") === "sync").length;
-  const manualCount = flights.filter((f) => (f.source ?? "manual") === "manual").length;
+  const syncCount   = flights?.filter((f) => (f.source ?? "manual") === "sync").length;
+  const manualCount = flights?.filter((f) => (f.source ?? "manual") === "manual").length;
 
   return (
-    <div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-6 pb-10 animate-fadeIn">
+    <div className="workspace-page max-w-7xl space-y-6 animate-fadeIn">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Plane className="w-6 h-6 text-muted-foreground" />
         <div>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight">Flight Audit</h2>
+          <h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Flight Audit</h2>
           <p className="text-sm text-muted-foreground">All flights in the database</p>
         </div>
       </div>
 
       {/* Summary tiles */}
+      <p role="status" className="sr-only">
+        {isLoading ? "Loading flight audit…" : ""}
+      </p>
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border p-4 text-center">
-          <p className="text-2xl font-bold">{flights.length}</p>
+          {isLoading ? <Skeleton aria-hidden="true" className="mx-auto h-8 w-12" /> : (
+            <p className="text-2xl font-bold">{flights.length}</p>
+          )}
           <p className="text-xs text-muted-foreground mt-0.5">Total flights</p>
         </div>
         <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-4 text-center">
-          <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{syncCount}</p>
+          {isLoading ? <Skeleton aria-hidden="true" className="mx-auto h-8 w-12" /> : (
+            <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{syncCount}</p>
+          )}
           <p className="text-xs text-muted-foreground mt-0.5">From MFF sync</p>
         </div>
         <div className="rounded-lg border bg-amber-50 dark:bg-amber-950/20 p-4 text-center">
-          <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{manualCount}</p>
+          {isLoading ? <Skeleton aria-hidden="true" className="mx-auto h-8 w-12" /> : (
+            <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{manualCount}</p>
+          )}
           <p className="text-xs text-muted-foreground mt-0.5">Manually added</p>
         </div>
       </div>
@@ -117,7 +129,7 @@ export default function FlightAuditPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border overflow-x-auto">
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -131,14 +143,16 @@ export default function FlightAuditPage() {
               <TableHead>Source</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {filtered.length === 0 && (
+          <TableBody aria-busy={isLoading}>
+            {isLoading ? (
+              <TableSkeletonRows columns={8} />
+            ) : filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
                   No flights found
                 </TableCell>
               </TableRow>
-            )}
+            ) : null}
             {filtered
               .slice()
               .sort((a, b) => a.package_name.localeCompare(b.package_name) || a.departure_date.localeCompare(b.departure_date))
@@ -146,13 +160,13 @@ export default function FlightAuditPage() {
                 const source = f.source ?? "manual";
                 return (
                   <TableRow key={f._id}>
-                    <TableCell className="font-medium text-sm">{f.package_name}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{f.package_season}</TableCell>
-                    <TableCell className="text-sm">{f.flight || <span className="text-muted-foreground/50">—</span>}</TableCell>
+                    <TableCell className="min-w-36 max-w-64 whitespace-normal wrap-anywhere text-sm font-medium">{f.package_name}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere text-xs text-muted-foreground">{f.package_season}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere text-sm">{f.flight || <span className="text-muted-foreground/50">—</span>}</TableCell>
                     <TableCell className="text-sm tabular-nums">{f.departure_date}</TableCell>
-                    <TableCell className="text-xs font-mono">{f.departure_sector}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere font-mono text-xs">{f.departure_sector}</TableCell>
                     <TableCell className="text-sm tabular-nums">{f.return_date}</TableCell>
-                    <TableCell className="text-xs font-mono">{f.return_sector}</TableCell>
+                    <TableCell className="max-w-40 whitespace-normal wrap-anywhere font-mono text-xs">{f.return_sector}</TableCell>
                     <TableCell>
                       <TooltipProvider>
                         <Tooltip>
@@ -181,7 +195,7 @@ export default function FlightAuditPage() {
         </Table>
       </div>
 
-      {filtered.length > 0 && (
+      {flights && filtered.length > 0 && (
         <p className="text-xs text-muted-foreground text-right">
           Showing {filtered.length} of {flights.length} flights
         </p>

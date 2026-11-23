@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Button } from "~/components/ui/button";
+import { QuotationPdfSkeleton } from "./QuotationPdfSkeleton";
 
 export function SavedQuotationPdf({revisionId}: {revisionId: string}) {
   const status = useQuery(api.quotationPdfArtifacts.status, {revision_id: revisionId as Id<"quotations">});
@@ -13,7 +14,10 @@ export function SavedQuotationPdf({revisionId}: {revisionId: string}) {
   const url = `/api/quotations/${encodeURIComponent(revisionId)}/pdf`;
   return <section className="space-y-4 rounded-lg border p-4" aria-label="Issued PDF">
     <h2 className="text-lg font-semibold">Issued PDF</h2>
-    {!status || status.kind === "pending" || status.kind === "running" ? <p role="status">The revision is saved. Its PDF is being prepared. You can leave this page and return later.</p>
+    {!status || status.kind === "pending" || status.kind === "running" ? <>
+      <p role="status">The revision is saved. Its PDF is being prepared. You can leave this page and return later.</p>
+      <QuotationPdfSkeleton className="md:h-[760px]" />
+    </>
       : status.kind === "missing_original" ? <p role="status">The original PDF was not recorded. It cannot be regenerated as an issued original.</p>
       : status.kind === "failed" ? <div className="space-y-3"><p role="alert">The revision is saved, but its PDF could not be prepared. Retry prepares the PDF only and creates no revision.</p>
         <Button type="button" disabled={retryState === "pending"} onClick={async () => {

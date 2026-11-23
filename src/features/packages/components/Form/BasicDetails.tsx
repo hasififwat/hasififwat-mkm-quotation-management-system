@@ -28,14 +28,14 @@ export default function BasicDetails({
 }) {
 	const { control } = useFormContext<IPackageDetailsForm>();
 	return (
-		<Card hidden={currentStep !== "basic"}>
-			<CardHeader>
-				<CardTitle>Basic Details</CardTitle>
+		<Card hidden={currentStep !== "basic"} className="gap-0 overflow-clip py-0">
+			<CardHeader className="gap-1 border-b px-4 pt-5 [.border-b]:bg-muted/35 [.border-b]:pb-5 sm:px-6">
+				<CardTitle className="leading-5 tracking-tight">Basic Details</CardTitle>
 				<CardDescription>
 					Package name, duration, and transportation information.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="grid grid-cols-1 gap-4">
+			<CardContent className="grid grid-cols-1 gap-4 p-4 sm:px-6 sm:py-5">
 				<Controller
 					name="name"
 					control={control}
@@ -107,7 +107,7 @@ export default function BasicDetails({
 					)}
 				/>
 			</CardContent>
-			<CardFooter className="flex justify-between">
+			<CardFooter className="justify-between gap-3 border-t bg-muted/35 px-4 pb-3.5 [.border-t]:pt-3.5 sm:px-6">
 				<Link href="/packages" className="text-sm text-muted-foreground">
 					<Button variant="ghost" type="button">
 						Cancel

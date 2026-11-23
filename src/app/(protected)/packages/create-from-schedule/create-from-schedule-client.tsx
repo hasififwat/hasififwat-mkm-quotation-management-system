@@ -78,14 +78,14 @@ function PackageCreateFromScheduleContent() {
 	};
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
 			<TooltipProvider>
 				<div className="space-y-4">
 					<div>
-						<h2 className="text-xl md:text-2xl font-bold tracking-tight">
+						<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
 							Import Package from Flight Schedule
 						</h2>
-						<p className="text-slate-500 text-xs md:text-sm">
+						<p className="text-muted-foreground text-xs md:text-sm">
 							Create a new travel package based on existing flight schedules.
 						</p>
 					</div>
@@ -168,13 +168,13 @@ function PackageCreateFromScheduleContent() {
 
 				{packageData && packageData.length > 0 && (
 					<Card>
-						<CardHeader>
+						<CardHeader className="has-data-[slot=card-action]:grid-cols-1 lg:has-data-[slot=card-action]:grid-cols-[1fr_auto]">
 							<CardTitle>Extracted Packages</CardTitle>
 							<CardDescription>
 								{packageData.length} packages found in the uploaded file.
 							</CardDescription>
-							<CardAction>
-								<div className="flex items-center gap-2">
+							<CardAction className="col-start-1 row-span-1 row-start-3 justify-self-stretch lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:justify-self-end">
+								<div className="flex flex-wrap items-center gap-2">
 									<SetSeasonalPriceButton />
 									<SelectPackageButton />
 								</div>

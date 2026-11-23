@@ -58,7 +58,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 	const totalQuotedValue = client.total_quoted_value;
 
 	return (
-		<div className="col-span-12 py-6 mx-2 sm:mx-4 lg:w-185 xl:w-250 lg:mx-auto space-y-4 md:space-y-6 animate-fadeIn pb-10">
+		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
 			{/* Back nav */}
 			<Button variant="ghost" size="sm" asChild className="-ml-2 gap-1 text-muted-foreground">
 				<Link href="/clients">
@@ -76,7 +76,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 								<User className="h-5 w-5 text-primary" />
 							</div>
 							<div>
-								<CardTitle className="text-lg">{client.name}</CardTitle>
+								<CardTitle className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">{client.name}</CardTitle>
 								{client.phone_number && (
 									<div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
 										<Phone className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 
 			{/* Quotation timeline */}
 			<Card className="overflow-hidden">
-				<CardHeader className="p-4 md:p-6 pb-3 border-b border-slate-100">
+				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border">
 					<CardTitle className="text-base">
 						Current Quotations
 						<span className="ml-2 text-sm font-normal text-muted-foreground">
