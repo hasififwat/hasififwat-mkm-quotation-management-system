@@ -125,21 +125,21 @@ function PackageEditorPanel() {
 						</div>
 					</div>
 				</div>
-				<div className={cn(panel, "min-w-0 space-y-6 p-6 @min-[52rem]:col-start-1 @min-[52rem]:row-start-1")}>
-					<div className="space-y-2">
-						<Skeleton className="h-4 w-24 max-w-full" />
+				<div className={cn(panel, "min-w-0 overflow-clip @min-[52rem]:col-start-1 @min-[52rem]:row-start-1")}>
+					<div className="space-y-1 border-b bg-muted/35 px-4 py-5 sm:px-6">
+						<Skeleton className="h-5 w-24 max-w-full" />
 						<Skeleton className="h-5 w-80 max-w-full" />
 					</div>
-					<div className="grid gap-4">
+					<div className="grid gap-4 p-4 sm:px-6 sm:py-5">
 						{Array.from({ length: 4 }, (_, field) => (
 							<div key={field} className="min-w-0 space-y-3">
-								<Skeleton className="h-3 w-20 max-w-full" />
+								<Skeleton className="h-5 w-20 max-w-full" />
 								<Skeleton className="h-9 w-full" />
-								{field === 2 && <Skeleton className="h-4 w-36 max-w-full" />}
+								{field === 2 && <Skeleton className="h-5 w-36 max-w-full" />}
 							</div>
 						))}
 					</div>
-					<div className="flex justify-between gap-3">
+					<div className="flex justify-between gap-3 border-t bg-muted/35 px-4 py-3.5 sm:px-6">
 						<Skeleton className="h-9 w-16" />
 						<Skeleton className="h-9 w-20" />
 					</div>
