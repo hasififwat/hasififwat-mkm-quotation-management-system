@@ -1,0 +1,181 @@
+.demo {
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: 1rem;
+	background: var(--card);
+	box-shadow: 0 12px 36px -24px color-mix(in srgb, var(--foreground) 30%, transparent);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 3.5rem;
+	padding-inline: clamp(0.75rem, 3vw, 1.25rem);
+	border-bottom: 1px solid var(--border);
+	font-size: 0.875rem;
+}
+
+.sampleLabel {
+	margin-left: 0.125rem;
+	padding: 0.125rem 0.5rem;
+	border-radius: 1rem;
+	background: var(--accent);
+	color: var(--accent-foreground);
+	font-size: 0.6875rem;
+	font-weight: 600;
+}
+
+.playback {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	margin-left: auto;
+	border-radius: 0.5rem;
+	color: var(--muted-foreground);
+}
+
+.playback:hover {
+	background: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.playback svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.body {
+	min-height: 14rem;
+	padding: 1.25rem clamp(0.875rem, 3vw, 1.5rem);
+	background: var(--background);
+}
+
+.title {
+	font-size: 1.25rem;
+	font-weight: 650;
+	letter-spacing: -0.04em;
+	line-height: 1.2;
+}
+
+.description {
+	margin-top: 0.375rem;
+	color: var(--muted-foreground);
+	font-size: 0.8125rem;
+	line-height: 1.45;
+}
+
+.details {
+	margin-top: 1rem;
+	border: 1px solid var(--border);
+	border-radius: 0.625rem;
+	background: var(--card);
+}
+
+.selected {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.625rem 0.75rem;
+	font-size: 0.875rem;
+}
+
+.summary {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 0.375rem 0.875rem;
+	padding: 0.625rem 0.75rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.summary dt {
+	color: var(--muted-foreground);
+	font-size: 0.6875rem;
+}
+
+.summary dd {
+	margin-top: 0.125rem;
+	font-size: 0.8125rem;
+	font-weight: 650;
+}
+
+.summary dd.total {
+	color: var(--primary);
+	font-size: 1rem;
+	letter-spacing: -0.035em;
+}
+
+.steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.25rem;
+	padding: 0.375rem;
+	border-top: 1px solid var(--border);
+}
+
+.steps button {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.375rem;
+	min-height: 2.75rem;
+	border-radius: 0.5rem;
+	color: var(--muted-foreground);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.steps button[aria-pressed="true"],
+.steps button:hover {
+	background: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.steps button span {
+	font-size: 0.6875rem;
+	font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.steps button[data-autoplay="true"]::after {
+		position: absolute;
+		right: 0.5rem;
+		bottom: 0.3rem;
+		left: 0.5rem;
+		height: 2px;
+		border-radius: 1px;
+		background: var(--primary);
+		content: "";
+		transform-origin: left;
+		animation: stepProgress var(--step-duration) linear both;
+	}
+
+	.stage {
+		animation: reveal 340ms ease-out both;
+	}
+
+	.details {
+		animation: reveal 380ms 100ms ease-out both;
+	}
+
+	@keyframes reveal {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes stepProgress {
+		from { transform: scaleX(0); }
+		to { transform: scaleX(1); }
+	}
+}

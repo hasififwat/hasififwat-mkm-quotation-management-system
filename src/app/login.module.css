@@ -1,5 +1,16 @@
 .page {
-	--preview-background: color-mix(in srgb, var(--muted) 70%, var(--background));
+	--background: #fbf8f2;
+	--preview-background: #f0e9df;
+	--card: #fffdf9;
+	--foreground: #2c241e;
+	--muted-foreground: #6d5f53;
+	--border: #dfd4c5;
+	--input: #9b8b7d;
+	--primary: #91452f;
+	--primary-foreground: #fffaf4;
+	--accent: #f3e6db;
+	--accent-foreground: #723b2b;
+	--ring: #91452f;
 	--page-gutter: clamp(1rem, 4vw, 3.5rem);
 	position: relative;
 	display: grid;
@@ -8,6 +19,22 @@
 	min-height: 100svh;
 	padding: 1.25rem var(--page-gutter) 2.5rem;
 	background: linear-gradient(var(--preview-background) 16.5rem, var(--background) 16.5rem);
+	color: var(--foreground);
+}
+
+:global(.dark) .page {
+	--background: #25201d;
+	--preview-background: #342923;
+	--card: #2e2520;
+	--foreground: #f6eae0;
+	--muted-foreground: #cbb9a9;
+	--border: #504138;
+	--input: #857468;
+	--primary: #ecab90;
+	--primary-foreground: #352019;
+	--accent: #493429;
+	--accent-foreground: #ffceb9;
+	--ring: #ecab90;
 }
 
 .header {
@@ -41,14 +68,12 @@
 }
 
 .headline {
-	font-size: clamp(2rem, 6vw, 3.25rem);
-	font-weight: 700;
-	line-height: 1.07;
+	font: 400 clamp(2.25rem, 6vw, 3.5rem) / 1.04 Georgia, "Times New Roman", serif;
 	letter-spacing: -0.055em;
 	text-wrap: balance;
 }
 
-.headline span {
+.headline em {
 	display: block;
 	color: var(--primary);
 }
@@ -114,7 +139,7 @@
 	}
 
 	.headline {
-		font-size: clamp(2.75rem, 4.35vw, 4.25rem);
+		font-size: clamp(3rem, 4.8vw, 4.6rem);
 	}
 
 	.preview {
