@@ -6,6 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
@@ -179,24 +180,29 @@ export function SidebarLayout({
 						<Menu className="size-5" />
 					</SidebarTrigger>
 					{packageEditorTitle ? (
-						<nav aria-label="Breadcrumb" className="min-w-0 flex-1">
-							<ol className="flex items-center gap-1 text-sm sm:gap-2 sm:text-base">
-								<li className="shrink-0">
-									<Link
-										href="/packages"
-										className="text-muted-foreground hover:text-foreground hover:underline focus-visible:underline"
-									>
-										Packages
-									</Link>
-								</li>
-								<li className="flex min-w-0 items-center gap-1 sm:gap-2">
-									<ChevronRight aria-hidden="true" className="size-3 shrink-0 text-muted-foreground sm:size-4" />
-									<h1 aria-current="page" className="min-w-0 wrap-anywhere leading-tight font-semibold sm:text-lg">
-										{packageEditorTitle}
-									</h1>
-								</li>
-							</ol>
-						</nav>
+						<>
+							<Separator orientation="vertical" className="hidden data-[orientation=vertical]:h-4 sm:block" />
+							<nav aria-label="Breadcrumb" className="min-w-0 flex-1">
+								<ol className="flex items-center gap-1">
+									<li className="shrink-0">
+										<Button
+											asChild
+											variant="ghost"
+											size="sm"
+											className="px-2 text-muted-foreground max-[360px]:px-1 max-[360px]:text-xs"
+										>
+											<Link href="/packages">Packages</Link>
+										</Button>
+									</li>
+									<li className="flex min-w-0 items-center gap-1">
+										<ChevronRight aria-hidden="true" className="size-3 shrink-0 text-muted-foreground" />
+										<h1 aria-current="page" className="min-w-0 wrap-anywhere text-sm leading-tight font-semibold max-[360px]:text-xs">
+											{packageEditorTitle}
+										</h1>
+									</li>
+								</ol>
+							</nav>
+						</>
 					) : (
 						<div className="flex-1">
 							{title && <h1 className="text-lg font-semibold">{title}</h1>}
