@@ -1,10 +1,10 @@
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { randomUUID } from 'node:crypto';
+import { seedRevisionPasswordAccount } from '../helpers/local-password-fixture.mjs';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 if (!process.env.REVISION_UI_RUN_DIR) throw new Error('Set REVISION_UI_RUN_DIR to an owned external fixture directory');
 const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR);
 if (runDir.split(path.sep).includes('.next')) throw new Error('REVISION_UI_RUN_DIR must be outside .next');
@@ -14,8 +14,9 @@ const account = JSON.parse(await readFile(run.fixtureAccountPath, 'utf8'));
 const { api } = await import(pathToFileURL(path.join(run.sourceDir, 'convex/_generated/api.js')).href);
 const { form, normalize } = await import(pathToFileURL(path.join(run.sourceDir, 'scripts/helpers/submission-fixtures.mjs')).href);
 const client = new ConvexHttpClient(run.url);
-const signedIn = await client.action(api.auth.signIn, { provider: 'password', params: { ...account, flow: 'signUp' } });
-if (!signedIn.tokens?.token) throw new Error('Fixture signup did not return a session');
+await seedRevisionPasswordAccount(run, account);
+const signedIn = await client.action(api.auth.signIn, { provider: 'password', params: { ...account, flow: 'signIn' } });
+if (!signedIn.tokens?.token) throw new Error('Fixture sign-in did not return a session');
 await writeFile(path.join(runDir, '.session.json'), JSON.stringify(signedIn.tokens));
 await chmod(path.join(runDir, '.session.json'), 0o600);
 client.setAuth(signedIn.tokens.token);

@@ -1,7 +1,8 @@
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { v, type Infer } from "convex/values";
+import type { DataModel, Id } from "./_generated/dataModel";
+import { internalMutation, mutation, query, type ActionCtx, type MutationCtx } from "./_generated/server";
 
 export const getMyProfile = query({
 	args: {},
@@ -33,47 +34,75 @@ export const getMyProfile = query({
 	},
 });
 
-export const createUserAccount = mutation({
-	args: {
-		email: v.string(),
-		password: v.string(),
-		fullName: v.string(),
-		branch: v.string(),
-		unit: v.optional(v.string()),
-	},
-	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) throw new Error("Not authenticated");
+const passwordAccountArgs = v.object({
+	email: v.string(),
+	password: v.string(),
+	fullName: v.string(),
+	branch: v.string(),
+	unit: v.optional(v.string()),
+});
 
-		const now = new Date().toISOString();
+async function writePasswordAccount(
+	ctx: MutationCtx,
+	args: Infer<typeof passwordAccountArgs>,
+): Promise<Id<"users">> {
+	if (args.password.length < 8) {
+		throw new Error("Password must be at least 8 characters long");
+	}
 
-		await createAccount(ctx as any, {
-			provider: "password",
-			account: {
-				id: args.email,
-				secret: args.password,
-			},
-			profile: {
-				email: args.email,
-				name: args.fullName,
-			},
+	const now = new Date().toISOString();
+	const accountContext: Pick<ActionCtx, "runMutation"> = ctx;
+	const { user } = await createAccount<DataModel>(accountContext as ActionCtx, {
+		provider: "password",
+		account: {
+			id: args.email,
+			secret: args.password,
+		},
+		profile: {
+			email: args.email,
+			name: args.fullName,
+		},
+	});
+	if (!user) throw new Error("This password account has no user record. Use a new email.");
+
+	const existing = await ctx.db
+		.query("profiles")
+		.withIndex("by_email", (q) => q.eq("email", args.email))
+		.unique();
+
+	if (!existing) {
+		await ctx.db.insert("profiles", {
+			email: args.email,
+			full_name: args.fullName,
+			branch: args.branch,
+			unit: args.unit,
+			updated_at: now,
 		});
+	}
+	return user._id;
+}
 
-		const existing = await ctx.db
-			.query("profiles")
-			.withIndex("by_email", (q) => q.eq("email", args.email))
-			.unique();
+export const createUserAccount = mutation({
+	args: passwordAccountArgs,
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId) throw new Error("Not authenticated");
 
-		if (!existing) {
-			await ctx.db.insert("profiles", {
-				email: args.email,
-				full_name: args.fullName,
-				branch: args.branch,
-				unit: args.unit,
-				updated_at: now,
-			});
+		const adminUserIds = new Set(
+			(process.env.MKM_ACCOUNT_ADMIN_USER_IDS ?? "").split(",").map((id) => id.trim()),
+		);
+		if (!adminUserIds.has(userId) || !(await ctx.db.get("users", userId))) {
+			throw new Error("Administrator access required");
 		}
+
+		await writePasswordAccount(ctx, args);
 	},
+});
+
+export const provisionPasswordAccount = internalMutation({
+	args: passwordAccountArgs,
+	returns: v.id("users"),
+	handler: writePasswordAccount,
 });
 
 export const createProfileForEmail = mutation({
