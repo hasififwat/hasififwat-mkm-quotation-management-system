@@ -19,6 +19,8 @@ Use the integrated schema, artifact scheduler, Node worker, HTTP route, readers,
 
 ## Inventory before freeze
 
+For routine duplicate cleanup before the freeze, open the saved records from `/quotations/duplicates` and compare them before choosing **Archive**. Archive preserves the quotation and its save receipt. Inventory still checks archived records for reference conflicts and reports `orphan_reference` for receipts whose quotations were permanently removed. A completed backfill confirms the quotation scan. Review receipt inventory separately before cutover.
+
 Page `quotationFamilyMigration.inventory` with `cursor: null`, then each returned `continueCursor`, and `limit` from 1 to 50. Inspect quotations, quotation_items, quotation_logs, quotation_create_receipts, and quotation_families. Keep each page and the source SHA.
 
 Stop on ambiguous shared base references, duplicate references, partial membership, inconsistent family pointers, receipt mismatches, or orphan ownership. Do not coalesce rows automatically. A singleton R3 retains R3 and unknown predecessors. Missing live references, snapshots, room labels, or original PDFs remain explicit gaps. Do not reconstruct predecessor quotations or label a new legacy reconstruction as an originally issued PDF.

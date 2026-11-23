@@ -1,6 +1,6 @@
 import { quotationRefreshToken, snapshotRefreshToken } from "./lib/quotationRefreshToken";
 import { SNAPSHOT_REFRESH_CONFLICT, SNAPSHOT_REFRESH_CONFLICT_MESSAGE } from "../src/domain/snapshot-refresh-review";
-import { readCurrentQuotations, quotationMatches, currentPage } from "./lib/currentQuotations";
+import { readCurrentQuotations, quotationMatches, quotationReference, currentPage } from "./lib/currentQuotations";
 import { canonicalClientId } from "./lib/clientCanonical";
 import { readSavedQuotation, revisionContext } from "./lib/savedQuotation";
 import { saveCommand, saveRevision } from "./quotationRevisionSaves";
@@ -368,9 +368,11 @@ export const findDuplicates = query({
 					packageId,
 					flightId,
 					totalAmount: Number.parseFloat(totalAmount),
-					count: items.length,
-					quotationIds: items.map((q) => String(q._id)),
-					createdDates: items.map((q) => q.created_at).sort(),
+					candidates: items.map((q) => ({
+						id: q._id,
+						reference: quotationReference(q),
+						createdAt: q.created_at,
+					})),
 				};
 			});
 

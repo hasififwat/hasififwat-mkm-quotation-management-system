@@ -97,14 +97,13 @@ The arrows describe calls and data dependencies traced through [`QuotationBuilde
 | Diagnosis | Distinguish query failure, PDF blob generation, desktop iframe display, mobile HTML layout, and browser file saving. None of those runtime outcomes was exercised in this investigation. |
 
 <a id="quote-007"></a>
-### QUOTE-007. Find duplicate groups and delete records
+### QUOTE-007. Review and archive possible duplicates
 
 | Field | Reference |
 | --- | --- |
-| Entry and grouping | `/quotations/duplicates` calls [`findDuplicates`](../../convex/quotations.ts#L330) through an unauthenticated HTTP client. It groups all quotations, including archived rows, by exact client name, package ID, flight ID, and total amount. Groups with at least two rows are returned. Items, status, notes, and client ID do not participate. |
-| Delete and effect | The page asks for confirmation before calling [`deleteById`](../../convex/quotations.ts#L1460). That mutation deletes the chosen quotation, its items, and its logs, and returns deletion counts. It accepts any existing quotation ID, without checking duplicate membership. There is no recovery operation. |
-| Outcome and failure | Success displays a result and reloads the page after 1.5 seconds. Mutation failure displays its message. Initial query failure has no dedicated error state. `findDuplicates` sorts `createdDates` separately from `quotationIds`, while the page pairs both arrays by index. A displayed date can therefore belong to a different quotation, which matters when choosing the earliest record. |
-| Diagnosis | Matching totals do not establish identical quotations. The relevant source is [`DuplicatesPage`](../../src/app/(protected)/quotations/duplicates/page.tsx), plus the stored records and items. No duplicate deletion was performed for this map. |
+| Entry and grouping | `/quotations/duplicates` calls the authenticated `findDuplicates` query. It groups current legacy quotations by exact client name, package ID, flight ID, and total amount, and shows groups with at least two candidates. Open a candidate by its quotation reference. Each row shows the saved date for that record. |
+| Archive and effect | [`DuplicatesPage`](../../src/app/(protected)/quotations/duplicates/page.tsx) asks staff to confirm the selected reference before calling `archiveQuotation`. The saved record remains available in the archived list. The page reports the result and removes a group from suggestions when fewer than two candidates remain. |
+| Diagnosis | Compare the saved quotations before archiving. Matching group fields can hide differences in items, notes, status, or client ID. |
 
 <a id="quote-008"></a>
 ### QUOTE-008. Backend maintenance and count
