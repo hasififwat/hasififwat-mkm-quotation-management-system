@@ -2,6 +2,8 @@
 
 import { api } from "convex/_generated/api";
 import { useConvex, useConvexAuth } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -16,25 +18,19 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { revisionDate } from "@/features/quotation/revision-display";
 
-type Duplicate = {
-	clientName: string;
-	packageId: string;
-	flightId: string;
-	totalAmount: number;
-	count: number;
-	quotationIds: string[];
-	createdDates: string[];
-};
+type DuplicateGroup = FunctionReturnType<typeof api.quotations.findDuplicates>[number];
+type Candidate = DuplicateGroup["candidates"][number];
 
 export default function DuplicatesPage() {
-	const http = useConvex();
+	const convex = useConvex();
 	const { isAuthenticated } = useConvexAuth();
-	const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
+	const [duplicates, setDuplicates] = useState<DuplicateGroup[]>([]);
 	const [loadStatus, setLoadStatus] = useState<"loading" | "loaded" | "failed">("loading");
-	const [isDeleting, setIsDeleting] = useState<string | null>(null);
-	const [confirmId, setConfirmId] = useState<string | null>(null);
-	const [deleteResult, setDeleteResult] = useState<{
+	const [archivingId, setArchivingId] = useState<Candidate["id"] | null>(null);
+	const [confirmCandidate, setConfirmCandidate] = useState<Candidate | null>(null);
+	const [archiveResult, setArchiveResult] = useState<{
 		success: boolean;
 		message: string;
 	} | null>(null);
@@ -45,9 +41,9 @@ export default function DuplicatesPage() {
 		const load = async () => {
 			setLoadStatus("loading");
 			try {
-				const result = await http.query(api.quotations.findDuplicates, {});
+				const result = await convex.query(api.quotations.findDuplicates, {});
 				if (cancelled) return;
-				setDuplicates(result as Duplicate[]);
+				setDuplicates(result);
 				setLoadStatus("loaded");
 			} catch {
 				if (!cancelled) setLoadStatus("failed");
@@ -57,30 +53,34 @@ export default function DuplicatesPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [http, isAuthenticated]);
+	}, [convex, isAuthenticated]);
 
-	const handleDelete = async (quotationId: string) => {
+	const handleArchive = async (candidate: Candidate) => {
+		if (archivingId !== null) return;
+		setConfirmCandidate(null);
+		setArchivingId(candidate.id);
+		setArchiveResult(null);
 		try {
-			setConfirmId(null);
-			setIsDeleting(quotationId);
-			await http.mutation(api.quotations.deleteById, {
-				quotationId,
+			await convex.mutation(api.quotations.archiveQuotation, {
+				id: candidate.id,
 			});
-			setDeleteResult({
+			setDuplicates((groups) => groups
+				.map((group) => ({
+					...group,
+					candidates: group.candidates.filter((row) => row.id !== candidate.id),
+				}))
+				.filter((group) => group.candidates.length >= 2));
+			setArchiveResult({
 				success: true,
-				message: `Quotation ${quotationId} deleted successfully`,
+				message: `Quotation ${candidate.reference} archived successfully.`,
 			});
-			// Refresh the page after successful delete
-			setTimeout(() => {
-				window.location.reload();
-			}, 1500);
-		} catch (error) {
-			setDeleteResult({
+		} catch {
+			setArchiveResult({
 				success: false,
-				message: `Failed to delete: ${error instanceof Error ? error.message : "Unknown error"}`,
+				message: `Could not archive quotation ${candidate.reference}. Reload this page to check its status.`,
 			});
 		} finally {
-			setIsDeleting(null);
+			setArchivingId(null);
 		}
 	};
 
@@ -88,20 +88,17 @@ export default function DuplicatesPage() {
 
 	return (
 		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
-			{/* Single confirmation dialog controlled by state */}
 			<Dialog
-				open={confirmId !== null}
+				open={confirmCandidate !== null}
 				onOpenChange={(open) => {
-					if (!open) setConfirmId(null);
+					if (!open) setConfirmCandidate(null);
 				}}
 			>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Delete Quotation?</DialogTitle>
+						<DialogTitle>Archive Quotation?</DialogTitle>
 						<DialogDescription>
-							This will permanently delete quotation{" "}
-							<strong>{confirmId}</strong> and all associated items and logs.
-							This action cannot be undone.
+							Quotation <strong>{confirmCandidate?.reference}</strong> will move to the archived list. Its saved details will remain available.
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter className="gap-2">
@@ -110,11 +107,10 @@ export default function DuplicatesPage() {
 						</DialogClose>
 						<Button
 							type="button"
-							variant="destructive"
-							disabled={isDeleting !== null}
-							onClick={() => confirmId && handleDelete(confirmId)}
+							disabled={archivingId !== null}
+							onClick={() => confirmCandidate && handleArchive(confirmCandidate)}
 						>
-							{isDeleting ? "Deleting..." : "Delete"}
+							Archive
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -139,21 +135,22 @@ export default function DuplicatesPage() {
 				)}
 			</div>
 
-			{deleteResult && (
+			{archiveResult && (
 				<Card
 					className={
-						deleteResult.success
+						archiveResult.success
 							? "border-green-200 bg-green-50"
 							: "border-red-200 bg-red-50"
 					}
 				>
 					<CardContent className="pt-6">
 						<p
+							role={archiveResult.success ? "status" : "alert"}
 							className={
-								deleteResult.success ? "text-green-700" : "text-red-700"
+								archiveResult.success ? "text-green-700" : "text-red-700"
 							}
 						>
-							{deleteResult.message}
+							{archiveResult.message}
 						</p>
 					</CardContent>
 				</Card>
@@ -186,7 +183,7 @@ export default function DuplicatesPage() {
 							<Card key={groupKey}>
 								<CardHeader>
 									<CardTitle className="text-base">
-										{dup.clientName} × {dup.count} copies
+										{dup.clientName} × {dup.candidates.length} candidates
 									</CardTitle>
 									<p className="wrap-anywhere text-sm text-muted-foreground">
 										Package: {dup.packageId} | Flight: {dup.flightId} | Amount:{" "}
@@ -199,32 +196,41 @@ export default function DuplicatesPage() {
 								<CardContent>
 									<div className="space-y-2">
 										<div>
-											<p className="text-sm font-medium mb-2">Quotation IDs:</p>
+											<p className="text-sm font-medium mb-2">Saved quotations:</p>
 											<div className="space-y-2">
-												{dup.quotationIds.map((id, i) => (
+												{dup.candidates.map((candidate) => (
 													<div
-														key={id}
+														key={candidate.id}
 														className="flex flex-col items-start gap-2 rounded-md bg-muted px-3 py-2 sm:flex-row sm:items-center"
 													>
-														<code className="min-w-0 flex-1 wrap-anywhere font-mono text-xs">
-															{id} ({dup.createdDates[i]})
-														</code>
+														<div className="min-w-0 flex-1 wrap-anywhere text-sm">
+															<Link
+																href={`/quotations/review/${candidate.id}`}
+																className="font-medium underline underline-offset-4"
+															>
+																{candidate.reference}
+															</Link>
+															<p className="text-xs text-muted-foreground">
+																Saved at (Kuala Lumpur): {revisionDate(candidate.createdAt)}
+															</p>
+														</div>
 														<Button
 															type="button"
-															variant="destructive"
+																	variant="outline"
 															size="sm"
-															disabled={isDeleting === id}
+																	aria-label={`Archive ${candidate.reference}`}
+															disabled={archivingId !== null}
 															className="self-end sm:self-auto"
-															onClick={() => setConfirmId(id)}
+															onClick={() => setConfirmCandidate(candidate)}
 														>
-															{isDeleting === id ? "Deleting..." : "Delete"}
+															{archivingId === candidate.id ? "Archiving..." : "Archive"}
 														</Button>
 													</div>
 												))}
 											</div>
 										</div>
 										<p className="mt-4 text-xs text-amber-800 dark:text-amber-300">
-											⚠️ Keep the earliest, review and delete the rest
+											Open and compare the saved quotations before deciding which to archive.
 										</p>
 									</div>
 								</CardContent>

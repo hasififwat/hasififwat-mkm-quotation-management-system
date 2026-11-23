@@ -135,18 +135,25 @@ test('archive requires auth and release, preserves exact history and source rows
   assert.equal(archived.page[0].id, current[0].id);
 });
 
-test('duplicate deletion suggestions exclude every family revision and archived legacy rows', async () => {
+test('duplicate suggestions keep each legacy reference and saved date with its ID', async () => {
   const { s } = await fixture(2);
   assert.deepEqual(plain(await quotations.findDuplicates._handler(s.ctx, {})), []);
   const source = s.tables.quotations[0];
-  for (const id of ['legacy-a', 'legacy-b', 'legacy-archived']) {
-    const legacy = { ...plain(source), _id: id, archived: id === 'legacy-archived' };
+  for (const [id, sequence, revision, date] of [
+    ['legacy-newer', 41, 1, '2026-11-22'],
+    ['legacy-older', 42, 0, '2026-11-21'],
+    ['legacy-archived', 43, 0, '2026-11-20'],
+  ]) {
+    const legacy = { ...plain(source), _id: id, hijri_year: '1448H', sequence_num: sequence, revision, created_at: date, archived: id === 'legacy-archived' };
     for (const key of ['family_id', 'frozen_document', 'document_schema_version']) delete legacy[key];
     s.tables.quotations.push(legacy);
   }
   const suggestions = await quotations.findDuplicates._handler(s.ctx, {});
   assert.equal(suggestions.length, 1);
-  assert.deepEqual([...suggestions[0].quotationIds].sort(), ['legacy-a', 'legacy-b']);
+  assert.deepEqual(plain(suggestions[0]).candidates, [
+    { id: 'legacy-newer', reference: '1448H-0041-R1', createdAt: '2026-11-22' },
+    { id: 'legacy-older', reference: '1448H-0042', createdAt: '2026-11-21' },
+  ]);
 });
 
 test('ungrouped legacy compatibility and canonical client pagination survive alias suppression', async () => {
