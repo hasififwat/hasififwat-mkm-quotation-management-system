@@ -1,0 +1,22 @@
+{
+  "simultaneousFirstSaves": {
+    "independentReferences": true,
+    "openInquiries": 1,
+    "staleDraftRetriedIntoExistingInquiry": true
+  },
+  "inactivity": {
+    "milliseconds": 1209600000,
+    "beforeDeadlineOpen": true,
+    "atDeadlineClosed": true,
+    "repeatedExpiryNoEffect": true
+  },
+  "followUp": {
+    "beforeOldDeadline": true,
+    "oldDeadlineIgnored": true,
+    "expiredAtNewDeadline": true,
+    "repeatedFollowUpNoEffect": true
+  },
+  "scheduler": {
+    "productionExpiryInvoked": true
+  }
+}
