@@ -9,9 +9,12 @@ import {
 	useFieldArray,
 	useForm,
 	useFormContext,
+	useWatch,
 } from "react-hook-form";
 import { useConvex, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
+import type { InquiryDestination } from "../../../convex/lib/inquiryLifecycle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SearchableDropdown } from "~/components/SearchableDropdown";
@@ -713,6 +716,15 @@ export default function QuotationBuilder({
 	});
 
 	const { setValue, handleSubmit, trigger } = methods;
+	const selectedClientId = useWatch({ control: methods.control, name: "client_id" });
+	const reviewingInquiry = revisionEnabled && !qid && Boolean(selectedClientId);
+	const inquiry = useQuery(api.inquiries.destination, reviewingInquiry ? { client_id: selectedClientId as Id<"clients"> } : "skip");
+	const [reviewedInquiry, setReviewedInquiry] = useState<{ selectedClientId: string; destination: InquiryDestination } | null>(null);
+	const destination = inquiry?.destination;
+	const destinationReviewed = Boolean(reviewedInquiry && destination && reviewedInquiry.selectedClientId === selectedClientId &&
+		reviewedInquiry.destination.canonical_client_id === destination.canonical_client_id &&
+		reviewedInquiry.destination.inquiry_id === destination.inquiry_id && reviewedInquiry.destination.cycle === destination.cycle);
+	const lockedClient = revisionSource?.revision_context.inquiry ? revisionSource.saved_document.client_name : null;
 
 	const option = packageOptions.map((pkg) => ({
 		id: String(pkg._id),
@@ -822,6 +834,7 @@ export default function QuotationBuilder({
 			const result = await saveRevisionAttempt(attempt);
 			setRevisionSession(finishRevisionAttempt(attempt, result, recovering));
 			if (result.kind === "rejected") {
+				if (result.conflict === "inquiry") setReviewedInquiry(null);
 				if (result.conflict === "stale" && qid) {
 					try { const current = await convex.query(api.quotations.getQuotationFullDetails, {target_quotation_id: qid}); setStaleCurrentId(current?.revision_context.current_revision_id ?? null); } catch {}
 				}
@@ -851,7 +864,10 @@ export default function QuotationBuilder({
 		if (revisionEnabled) {
 			if (revisionLocked || revisionFlight.current) return;
 			try {
-				const attempt = beginRevisionAttempt(data, revisionSource, selectionMode === "retain" ? {mode: "retain"} : {mode: "replace", catalog: selectedPackage}, crypto.randomUUID(), revisionActor ?? "");
+				if (!qid && (!destinationReviewed || reviewedInquiry?.selectedClientId !== data.client_id)) {
+					throw new Error("Review the Inquiry destination before saving. Your draft is kept.");
+				}
+				const attempt = beginRevisionAttempt(data, revisionSource, selectionMode === "retain" ? {mode: "retain"} : {mode: "replace", catalog: selectedPackage}, crypto.randomUUID(), revisionActor ?? "", qid ? undefined : reviewedInquiry?.destination);
 				await commitRevision(attempt);
 			} catch (error) { setRevisionSession({kind: "rejected", message: error instanceof Error ? error.message : "Your draft is retained. Review its details before saving."}); }
 			return;
@@ -909,6 +925,17 @@ export default function QuotationBuilder({
 			</div>
 
 			{revisionEnabled && <p className="rounded-lg border bg-muted p-4 text-sm">{revisionSource ? `Editing ${revisionSource.reference_number}. ` : ""}Every intentional Save creates a new draft revision, including an unchanged save. Earlier revisions and issued PDFs stay unchanged. Cancel creates no revision.</p>}
+			{reviewingInquiry && <section aria-label="Inquiry destination" className="space-y-2 rounded-lg border p-4 text-sm">
+				<p className="font-medium">Inquiry destination</p>
+				{inquiry ? <>
+					<p>{destination?.inquiry_id ? `Join the open Inquiry for ${inquiry.client_name}.` : `Start an Inquiry for ${inquiry.client_name}.`}</p>
+					{destinationReviewed ? <p className="text-muted-foreground">Destination reviewed</p>
+						: <Button type="button" variant="outline" size="sm" disabled={revisionLocked} onClick={() => {
+							setReviewedInquiry({ selectedClientId, destination: inquiry.destination });
+							if (revisionSession.kind === "rejected" && revisionSession.conflict === "inquiry") setRevisionSession({ kind: "editing" });
+						}}>Use this destination</Button>}
+				</> : <p role="status">{inquiry === null ? "Inquiry saves are temporarily unavailable." : "Checking the Inquiry destination…"}</p>}
+			</section>}
 			{revisionSession.kind === "uncertain" || revisionSession.kind === "rejected" ? <div role="alert" className="space-y-3 rounded-lg border border-destructive p-4 text-sm"><p>{revisionSession.message}</p>
 				{revisionSession.kind === "uncertain" && <Button type="button" onClick={() => { if (revisionSession.kind === "uncertain") void commitRevision(revisionSession.attempt, true); }}>Retry this save</Button>}
 				{revisionSession.kind === "rejected" && revisionSession.conflict === "selection" && <Button type="button" variant="outline" onClick={reviewLatestPackage}>Review latest package</Button>}
@@ -1195,26 +1222,31 @@ export default function QuotationBuilder({
 										>
 											<div className="flex items-center justify-between">
 												<FieldLabel htmlFor="client_id">Client Name</FieldLabel>
-												<CreateClientModal
+												{lockedClient === null && <CreateClientModal
 													onSuccess={(client) => {
 														setInlineClients((clients) => ({
 															...clients,
 															[client.id]: client,
 														}));
-														field.onChange(client.id);
+													setReviewedInquiry(null);
+													field.onChange(client.id);
 													}}
-												/>
+											/>}
 											</div>
-											<SearchableDropdown
+											{lockedClient !== null ? <>
+												<Input id="client_id" value={lockedClient} readOnly />
+												<FieldDescription>To correct the client, close this option and create a quotation for the correct client.</FieldDescription>
+											</> : <SearchableDropdown
 												options={clientOptions}
 												placeholder="Select a client"
 												optionValueKey="id"
 												optionsLabelKey="name"
 												value={field.value}
 												handleSelect={(selectedId) => {
+													setReviewedInquiry(null);
 													field.onChange(selectedId);
 												}}
-											/>
+											/>}
 											{fieldState.invalid && (
 												<FieldError errors={[fieldState.error]} />
 											)}

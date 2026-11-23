@@ -2,9 +2,11 @@
 
 import { ChevronLeft, Eye, FileText, PencilIcon, Phone, Plus, User } from "lucide-react";
 import Link from "next/link";
+import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import InquiryComparison from "./InquiryComparison";
 
 type ClientQuotation = {
 	id: string;
@@ -20,6 +22,7 @@ type ClientQuotation = {
 	client_name: string;
 	archived: boolean;
 	current_revision_id: string | null;
+	inquiry_id?: Id<"inquiries">;
 };
 
 type ClientDetail = {
@@ -56,6 +59,7 @@ function formatCurrency(amount: number) {
 
 export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 	const totalQuotedValue = client.total_quoted_value;
+	const standaloneQuotations = client.quotations.filter(quotation => !quotation.inquiry_id);
 
 	return (
 		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
@@ -111,18 +115,19 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 				</CardContent>
 			</Card>
 
-			{/* Quotation timeline */}
-			<Card className="overflow-hidden">
+			<InquiryComparison clientId={client.id as Id<"clients">} />
+
+			{(standaloneQuotations.length > 0 || client.quotations.length === 0) && <Card className="overflow-hidden">
 				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border">
 					<CardTitle className="text-base">
 						Current Quotations
 						<span className="ml-2 text-sm font-normal text-muted-foreground">
-							({client.quotations.length})
+							({standaloneQuotations.length})
 						</span>
 					</CardTitle>
 				</CardHeader>
 				<CardContent className="p-4 md:p-6">
-					{client.quotations.length === 0 ? (
+					{standaloneQuotations.length === 0 ? (
 						<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
 							<p className="text-sm">No current quotations for this client.</p>
 							<Button asChild size="sm" variant="outline">
@@ -133,7 +138,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						</div>
 					) : (
 						<ol className="relative border-l border-border ml-3">
-							{client.quotations.map((q) => (
+							{standaloneQuotations.map((q) => (
 								<li key={q.id} className="mb-8 ml-6 last:mb-0">
 									{/* Timeline dot */}
 									<span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border ring-4 ring-background">
@@ -192,7 +197,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						</ol>
 					)}
 				</CardContent>
-			</Card>
+			</Card>}
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-base">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>

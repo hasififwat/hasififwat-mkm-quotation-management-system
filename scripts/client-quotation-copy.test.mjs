@@ -13,7 +13,8 @@ test('copied quotation keeps its saved client name after canonical client associ
   s.tables.quotation_revision_release.push({_id:'release',key:'revision-v1',enabled:true});
   s.tables.quotation_family_migrations.push({_id:'migration',key:'family-v1',done:true,cursor:null});
   const saves=load(path.resolve('convex/quotationRevisionSaves.ts'));
-  await saves.save._handler(s.ctx,{command:{operation:'create',request_key:crypto.randomUUID(),pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'replace',id:'client:1'},selection:{mode:'replace',package_id:pkg,flight_id:reviewed.flight_id,reviewed_context:reviewed.reviewed_context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}}});
+  const inquiry_destination = { canonical_client_id: 'client:1', inquiry_id: null, cycle: null };
+  await saves.save._handler(s.ctx,{command:{operation:'create',request_key:crypto.randomUUID(),pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'replace',id:'client:1'},selection:{mode:'replace',package_id:pkg,flight_id:reviewed.flight_id,reviewed_context:reviewed.reviewed_context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}, inquiry_destination}});
   const canonical=await s.ctx.db.insert('clients',{name:'Canonical Final',created_at:'2026-11-17',updated_at:'2026-11-17'});
   const clients=load(path.resolve('convex/clients.ts'));
   await clients.mergeClients._handler(s.ctx,{canonicalId:canonical,duplicateIds:['client:1']});

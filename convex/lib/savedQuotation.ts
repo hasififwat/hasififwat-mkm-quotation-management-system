@@ -1,6 +1,7 @@
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx } from "../_generated/server";
 import type { FrozenQuotationDocumentV1 } from "../quotationRevisionSaves";
+import { familyInquiryContext } from "./inquiryLifecycle";
 
 export const quotationBusinessTimeZone = "Asia/Kuala_Lumpur";
 
@@ -15,6 +16,7 @@ export type RevisionContext = {
   family_created_at: string;
   revision_issue_date: string | null;
   business_time_zone: typeof quotationBusinessTimeZone;
+  inquiry?: NonNullable<Awaited<ReturnType<typeof familyInquiryContext>>>;
 };
 
 function record(value: unknown): Record<string, unknown> {
@@ -116,8 +118,10 @@ export async function revisionContext(ctx: Pick<QueryCtx, "db">, quotation: Doc<
   if (quotation.family_id && !family) throw new Error("Quotation family not found");
   const first = family ? (await ctx.db.query("quotations").withIndex("by_family_revision", q => q.eq("family_id", family._id)).order("asc").take(1))[0] : quotation;
   const current = family?.current_revision_id ?? quotation._id;
+  const inquiry = family ? await familyInquiryContext(ctx, family) : null;
   return { state: !family ? "legacy" : current === quotation._id ? "current" : "historical",
-    can_append: !!family && !family.archived && current === quotation._id,
+    can_append: !!family && !family.archived && current === quotation._id && (!inquiry || inquiry.status === "active"),
+    ...(inquiry ? { inquiry } : {}),
     family_id: family?._id ?? null, source_revision_id: quotation._id,
     current_revision_id: current, expected_current_id: current, is_current: current === quotation._id,
     family_created_at: first?.created_at ?? quotation.created_at,

@@ -1,4 +1,5 @@
 import type { SaveCommand } from "../../../convex/quotationRevisionSaves";
+import type { InquiryDestination } from "../../../convex/lib/inquiryLifecycle";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { FunctionReturnType } from "convex/server";
 import type { api } from "convex/_generated/api";
@@ -11,7 +12,7 @@ export type RevisionSaveSession =
   | { kind: "editing" }
   | { kind: "pending"; attempt: RevisionAttempt }
   | { kind: "uncertain"; attempt: RevisionAttempt; message: string }
-  | { kind: "rejected"; message: string; conflict?: "stale" | "selection" }
+  | { kind: "rejected"; message: string; conflict?: "stale" | "selection" | "inquiry" }
   | { kind: "saved"; id: string; reference: string };
 
 export function beginRevisionAttempt(
@@ -20,6 +21,7 @@ export function beginRevisionAttempt(
   selection: { mode: "retain" } | { mode: "replace"; catalog: QuotationPackage | null },
   requestKey: string,
   actor: string,
+  inquiryDestination?: InquiryDestination,
 ): RevisionAttempt {
   if (!actor) throw new Error("Your sign-in identity is unavailable. Your draft is retained.");
   const rooms = values.selected_rooms.map(({room_type, price, pax}) => ({room_type, price, pax}));
@@ -45,8 +47,8 @@ export function beginRevisionAttempt(
     const context = source.revision_context;
     if (!context.can_append || !context.family_id) throw new Error("Only the current quotation can be edited.");
     command = { operation: "append", family_id: context.family_id, source_revision_id: context.source_revision_id,
-      expected_current_id: context.expected_current_id, ...fields };
-  } else command = {operation: "create", ...fields};
+      expected_current_id: context.expected_current_id, expected_inquiry_cycle: context.inquiry?.cycle, ...fields };
+  } else command = {operation: "create", inquiry_destination: inquiryDestination, ...fields};
   return Object.freeze({body: JSON.stringify({command, expected_actor: actor}), operation: command.operation});
 }
 

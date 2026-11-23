@@ -1,11 +1,12 @@
-import { associateClients, canonicalClientId } from "./lib/clientCanonical";
+import { canonicalClientId } from "./lib/clientCanonical";
+import { currentOptionState, mergeOpenInquiries } from "./lib/inquiryLifecycle";
 import { readCurrentQuotations } from "./lib/currentQuotations";
 import type { Doc, Id } from "./_generated/dataModel";
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
-import { v } from "convex/values";
-import { mutation, query, type QueryCtx } from "./_generated/server";
+import { ConvexError, v } from "convex/values";
+import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 
 async function requireClientActor(ctx: Pick<QueryCtx, "auth">): Promise<string> {
 	const userId = await getAuthUserId(ctx);
@@ -54,9 +55,10 @@ async function readClientAssociations(ctx: Pick<QueryCtx, "db">) {
 	const packagesById = new Map(packages.map(pkg => [String(pkg._id), pkg]));
 	const familiesById = new Map(families.map(family => [String(family._id), family]));
 	const currentIds = new Set(current.map(q => String(q._id)));
-	const summary = (q: Doc<"quotations">) => {
+	const summary = async (q: Doc<"quotations">) => {
 		const pkg = q.package_snapshot ?? (q.family_id || q.frozen_document ? null : packagesById.get(q.package_id));
 		const family = q.family_id ? familiesById.get(String(q.family_id)) : undefined;
+		const option = family?.inquiry_id ? await currentOptionState(ctx, q, family) : null;
 		return {
 			id: String(q._id),
 			family_id: q.family_id ?? null,
@@ -67,7 +69,8 @@ async function readClientAssociations(ctx: Pick<QueryCtx, "db">) {
 			saved_client_id: q.client_id,
 			client_name: q.client_name,
 			quotation_number: buildQuotationNumber(q.hijri_year, q.sequence_num, q.revision),
-			status: q.status,
+			status: option?.status ?? q.status,
+			...(option ? { inquiry_id: option.inquiry_id } : {}),
 			total_amount: q.total_amount,
 			package_provenance: q.package_snapshot ? "saved" as const : q.family_id || q.frozen_document ? "legacy_unknown" as const : "live_catalog" as const,
 			package_name: pkg?.name ?? "Unknown Package",
@@ -94,8 +97,8 @@ async function readClientAssociations(ctx: Pick<QueryCtx, "db">) {
 		bucket.push(q);
 		historyByClient.set(id, bucket);
 	}
-	const rows = clients.sort((a, b) => b.created_at.localeCompare(a.created_at) || String(b._id).localeCompare(String(a._id)))
-		.map(client => {
+	const rows = await Promise.all(clients.sort((a, b) => b.created_at.localeCompare(a.created_at) || String(b._id).localeCompare(String(a._id)))
+		.map(async client => {
 			const qs = (currentByClient.get(String(client._id)) ?? []).sort(newestFirst);
 			const historical = (historyByClient.get(String(client._id)) ?? []).sort(newestFirst);
 			return {
@@ -107,11 +110,11 @@ async function readClientAssociations(ctx: Pick<QueryCtx, "db">) {
 				quotation_count: qs.length,
 				total_quoted_value: qs.reduce((sum, q) => sum + Math.round(q.total_amount * 100), 0) / 100,
 				last_quotation_at: qs[0]?.created_at ?? null,
-				quotations: qs.map(summary),
+				quotations: await Promise.all(qs.map(summary)),
 				historical_quotation_count: historical.length,
-				historical_quotations: historical.map(summary),
+				historical_quotations: await Promise.all(historical.map(summary)),
 			};
-		});
+		}));
 	return { rows, canonicalId };
 }
 
@@ -250,6 +253,33 @@ export const findDuplicateClients = query({
 		};
 	},
 });
+
+async function associateClients(ctx: MutationCtx, actor: string, canonicalId: Id<"clients">, duplicateIds: Id<"clients">[]) {
+  if (duplicateIds.includes(canonicalId) || new Set(duplicateIds).size !== duplicateIds.length) throw new Error("Invalid duplicate client selection");
+  const canonical = await ctx.db.get(canonicalId);
+  if (!canonical) throw new Error("Canonical client not found");
+  const target = await canonicalClientId(ctx, canonicalId);
+  const targetClient = await ctx.db.get(target);
+  if (!targetClient) throw new Error("Canonical client not found");
+  const roots = await Promise.all(duplicateIds.map(async id => {
+    if (!await ctx.db.get(id)) throw new Error("Duplicate client not found");
+    if (id === target) throw new Error("Client merge would create an alias cycle");
+    const root = await canonicalClientId(ctx, id);
+    if (id !== root && root !== target) {
+      throw new ConvexError({ code: "CLIENT_MERGE_ALIAS_CHANGED", message: "A selected client has already been merged. Review the current client record before merging again." });
+    }
+    return root;
+  }));
+  const duplicates = [...new Set(roots.filter(id => id !== target))];
+  const now = Date.now();
+  if (duplicates.length) await mergeOpenInquiries(ctx, actor, target, duplicates, now);
+  for (const id of duplicates) {
+    await ctx.db.insert("client_aliases", {
+      alias_client_id: id, canonical_client_id: target, updated_by: actor, updated_at: new Date(now).toISOString(),
+    });
+  }
+  return {canonicalId: target, canonicalName: targetClient.name, relinkedQuotations: 0, removedClients: [] as string[], associatedClients: duplicateIds};
+}
 
 export const mergeClients = mutation({
 	args: {

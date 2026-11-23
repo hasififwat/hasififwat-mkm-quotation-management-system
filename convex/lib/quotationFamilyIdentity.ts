@@ -1,6 +1,14 @@
 import type { Doc, Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 
+export async function revisionReleaseMode(ctx: Pick<QueryCtx, "db">) {
+  const [release, migration] = await Promise.all([
+    ctx.db.query("quotation_revision_release").withIndex("by_key", q => q.eq("key", "revision-v1")).unique(),
+    ctx.db.query("quotation_family_migrations").withIndex("by_key", q => q.eq("key", "family-v1")).unique(),
+  ]);
+  return !migration ? "legacy" : !migration.done ? "migration" : !release?.enabled ? "maintenance" : "active";
+}
+
 export async function assertLegacyWritesAllowed(ctx: Pick<QueryCtx, "db">) {
   const migration = await ctx.db.query("quotation_family_migrations")
     .withIndex("by_key", (q) => q.eq("key", "family-v1")).unique();

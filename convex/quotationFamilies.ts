@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { query, mutation } from "./_generated/server";
+import { assertFamilyArchivable, familyInquiryContext } from "./lib/inquiryLifecycle";
 
 export const history = query({
   args: { family_id: v.id("quotation_families") },
@@ -9,7 +10,8 @@ export const history = query({
     const family = await ctx.db.get(family_id);
     if (!family) throw new Error("Quotation family not found");
     const revisions = await ctx.db.query("quotations").withIndex("by_family_revision", q => q.eq("family_id", family_id)).collect();
-    return {family, revisions: revisions.sort((a,b) => a.revision - b.revision)};
+    const inquiry = await familyInquiryContext(ctx, family);
+    return {family, revisions: revisions.sort((a,b) => a.revision - b.revision), ...(inquiry ? { inquiry } : {})};
   },
 });
 
@@ -23,6 +25,7 @@ export const archive = mutation({
     if (!release?.enabled || !migration?.done) throw new Error("Quotation revision release is inactive");
     const family = await ctx.db.get(family_id);
     if (!family) throw new Error("Quotation family not found");
+    assertFamilyArchivable(family);
     if (family.archived) return {family_id, archived: true};
     await ctx.db.patch(family_id, {archived: true});
     await ctx.db.insert("quotation_logs", {

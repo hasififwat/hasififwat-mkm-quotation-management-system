@@ -1,25 +1,23 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { makeFunctionReference } from "convex/server";
-import type { Doc, Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
 import { getServerConvexClient } from "~/lib/convex-server";
 import { revisionDate, revisionReference } from "~/features/quotation/revision-display";
-
-const historyQuery = makeFunctionReference<"query", {family_id: Id<"quotation_families">}, {family: Doc<"quotation_families">; revisions: Doc<"quotations">[]}>("quotationFamilies:history");
+import { inquiryClosureLabel, inquiryStatusLabel } from "~/features/quotation/inquiry-display";
 
 export default async function QuotationHistoryPage({params}: {params: Promise<{qid: string}>}) {
   const {qid} = await params;
   const client = await getServerConvexClient();
   const details = await client.query(api.quotations.getQuotationFullDetails, {target_quotation_id: qid});
   if (!details?.revision_context.family_id) return <section className="workspace-page max-w-5xl space-y-3"><h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Revision history</h1><p>Revision history is unavailable for this legacy quotation.</p><Link className="underline" href={`/quotations/review/${qid}`}>View saved quotation</Link></section>;
-  const {family, revisions} = await client.query(historyQuery, {family_id: details.revision_context.family_id});
+  const {family, revisions, inquiry} = await client.query(api.quotationFamilies.history, {family_id: details.revision_context.family_id});
   const references = new Map(revisions.map(row => [String(row._id), revisionReference(row)]));
   return <section className="workspace-page max-w-5xl space-y-6">
-    <header className="space-y-3"><h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Revision history</h1><p>{family.hijri_year}-{String(family.sequence_num).padStart(4, "0")} · {family.archived ? "Archived family" : "Current family"}</p>
+    <header className="space-y-3"><h1 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Revision history</h1><p>{family.hijri_year}-{String(family.sequence_num).padStart(4, "0")} · {inquiry ? inquiryStatusLabel[inquiry.status] : family.archived ? "Archived family" : "Current family"}</p>
+      {inquiry?.status === "closed" && <p>{inquiryClosureLabel[inquiry.reason]}</p>}
       <p className="text-sm text-muted-foreground">Earliest retained quotation {revisionDate(details.revision_context.family_created_at)} in Kuala Lumpur time. Each link opens its exact saved revision.</p>
-      <div className="flex flex-wrap gap-4"><Link className="underline" href={`/quotations/review/${family.current_revision_id}`}>View current revision</Link>{!family.archived && <Link className="underline" href={`/quotations/edit/${family.current_revision_id}`}>Edit current revision</Link>}<Link className="underline" href="/quotations">Quotations</Link></div>
+      <div className="flex flex-wrap gap-4"><Link className="underline" href={`/quotations/review/${family.current_revision_id}`}>View current revision</Link>{!family.archived && (!inquiry || inquiry.status === "active") && <Link className="underline" href={`/quotations/edit/${family.current_revision_id}`}>Edit current revision</Link>}<Link className="underline" href="/quotations">Quotations</Link></div>
     </header>
     {revisions.some(row => row.legacy_provenance === "legacy_unknown") && <p className="rounded-lg border bg-muted p-4 text-sm">Legacy provenance is unknown. This retained history does not establish a complete history before migration. Unknown actors, dates and sources remain not recorded.</p>}
     <ol className="space-y-4">{revisions.map(row => <li key={row._id} className="space-y-3 rounded-lg border p-4">

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { load, state, create, form, reviewedQuote, quotations, packages } from './helpers/submission-fixtures.mjs';
 const revisions = load(path.resolve('convex/quotationRevisionSaves.ts'));
+const migration = load(path.resolve('convex/quotationFamilyMigration.ts'));
 const clients = load(path.resolve('convex/clients.ts'));
 const families = () => load(path.resolve('convex/quotationFamilies.ts'));
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -14,12 +15,18 @@ async function fixture(count = 13) {
   Object.assign(s.tables.clients[0], { created_at: '2026-11-17', updated_at: '2026-11-17', phone_number: 'fixture' });
   const pkg = await create(s, form());
   const reviewed = await reviewedQuote(s, pkg, s.tables.package_flights[0]._id);
+  const original = [];
+  for (let i = 0; i < count; i++) {
+    original.push(await quotations.create._handler(s.ctx, { payload: { ...reviewed, request_key: randomUUID(), notes: 'zero', selected_rooms: [{ room_type: 'Quad', price: 100, pax: 1 }] } }));
+  }
+  await migration.freeze._handler(s.ctx, { acknowledgement: 'Reviewed cutover write freeze' });
+  await migration.backfill._handler(s.ctx, { expectedCursor: null, limit: 50, dryRun: false });
   s.tables.quotation_revision_release.push({ _id: 'release', key: 'revision-v1', enabled: true });
-  s.tables.quotation_family_migrations.push({ _id: 'migration', key: 'family-v1', done: true, cursor: null });
   const save = command => revisions.save._handler(s.ctx, { command });
   const current = [], old = [];
-  for (let i = 0; i < count; i++) {
-    const zero = await save({ operation: 'create', request_key: randomUUID(), pic_name: 'Fixture', branch: 'Fixture', notes: 'zero', client: { mode: 'replace', id: 'client:1' }, selection: { mode: 'replace', package_id: pkg, flight_id: reviewed.flight_id, reviewed_context: reviewed.reviewed_context, rooms: [{ room_type: 'Quad', price: 100, pax: 1 }] }, extras: { mode: 'replace', addons: [], discounts: [] } });
+  for (const quotation of original) {
+    const family = s.tables.quotation_families.find(row => row.current_revision_id === quotation.id);
+    const zero = { id: quotation.id, family_id: family._id };
     const one = await save(append(zero));
     const two = await save(append(one));
     old.push(zero, one); current.push(two);
