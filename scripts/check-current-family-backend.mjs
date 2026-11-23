@@ -32,9 +32,9 @@ try {
   await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0','@react-pdf/renderer':'4.9.0'}}));
   await fs.copyFile(path.join(repo,'convex.json'),path.join(root,'convex.json'));
   await fs.cp(path.join(repo,'src/features/quotation/pdf'),path.join(root,'src/features/quotation/pdf'),{recursive:true});
-  for (const file of ['schema.ts','quotations.ts','quotationFamilies.ts','packages.ts','lib/currentQuotations.ts','lib/packageEditSnapshot.ts','lib/packageReferences.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/quotationFamilyIdentity.ts','_generated/server.js','_generated/api.js','quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfAssetsV1.json','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfModel.ts']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  for (const file of ['inquiries.ts','lib/inquiryLifecycle.ts','lib/quotationRefreshToken.ts','schema.ts','quotations.ts','quotationFamilies.ts','packages.ts','lib/currentQuotations.ts','lib/packageEditSnapshot.ts','lib/packageReferences.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/quotationFamilyIdentity.ts','_generated/server.js','_generated/api.js','quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfAssetsV1.json','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfModel.ts']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
   await fs.mkdir(path.join(root,'src/domain'), {recursive:true});
-  for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts','package-edit-conflict.ts','package-sync-intent.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
+  for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts','package-edit-conflict.ts','package-sync-intent.ts','snapshot-refresh-review.ts','quotation-status.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
   await fs.writeFile(path.join(root,'convex/fixture.ts'), `
 import { internalMutation, internalQuery } from './_generated/server';
 import { saveRevision, saveCommand } from './quotationRevisionSaves';
@@ -43,7 +43,6 @@ import { v } from 'convex/values';
 export const seed = internalMutation({args:{},handler:async(ctx)=>{
 const now='2026-11-17';
 if(!await ctx.db.query('quotation_revision_release').unique())await ctx.db.insert('quotation_revision_release',{key:'revision-v1',enabled:true});
-if(!await ctx.db.query('quotation_family_migrations').unique())await ctx.db.insert('quotation_family_migrations',{key:'family-v1',done:true,cursor:null});
 const client=await ctx.db.insert('clients',{name:'Disposable revision fixture',phone_number:'fixture-phone',created_at:now,updated_at:now});
 const pkg=await ctx.db.insert('packages',{name:'Disposable',duration:'12 days',year:'2026/2027',status:'active',created_at:now,updated_at:now});
 const flight=await ctx.db.insert('package_flights',{package_id:pkg,month:'Nov',flight:'OUT',return_flight:'RETURN',departure_date:'2026-11-20',return_date:'2026-12-01',departure_sector:'KUL',return_sector:'JED',created_at:now});
@@ -69,7 +68,7 @@ export const missingGate=internalMutation({args:{},handler:async(ctx)=>{for(cons
 export const migration=internalMutation({args:{state:v.union(v.literal('missing'),v.literal('incomplete'),v.literal('complete'))},handler:async(ctx,{state})=>{const gate=await ctx.db.query('quotation_family_migrations').unique();if(state==='missing'){if(gate)await ctx.db.delete(gate._id);}else if(gate)await ctx.db.patch(gate._id,{done:state==='complete'});else await ctx.db.insert('quotation_family_migrations',{key:'family-v1',done:state==='complete',cursor:null});}});
 export const legacy=internalMutation({args:{id:v.id('quotations')},handler:async(ctx,{id})=>{const row=await ctx.db.get(id);const {_id,_creationTime,family_id,previous_revision_id,frozen_document,document_schema_version,...legacy}=row;return await ctx.db.insert('quotations',{...legacy,sequence_num:900,revision:0,archived:false});}});
 export const release=internalMutation({args:{enabled:v.boolean()},handler:async(ctx,{enabled})=>{const gate=await ctx.db.query('quotation_revision_release').unique();await ctx.db.patch(gate._id,{enabled});}});
-export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','client_aliases','clients','profiles','quotation_revision_release','quotation_family_migrations'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
+export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','client_aliases','clients','profiles','quotation_revision_release','quotation_family_migrations','inquiries','inquiry_events'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
 `);
   let ready = false;
   for (let i = 0; i < 100; i++) {
@@ -96,12 +95,28 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   const key=()=>crypto.randomUUID();
   const save = command => mutate('quotationRevisionSaves:save', {command});
-  const create=()=>({operation:'create',request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}});
+  const legacy=await mutate('quotations:create',{payload:{
+    request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',
+    client_id:seed.client,package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,
+    selected_rooms:[{room_type:'Quad',price:100,pax:1}],adds_ons:[],discounts:[],
+  }});
+  await mutate('quotationFamilyMigration:freeze',{acknowledgement:'Reviewed cutover write freeze'});
+  const migration=await mutate('quotationFamilyMigration:backfill',{expectedCursor:null,limit:10,dryRun:false});
+  assert.equal(migration.done,true);
+  assert.equal(migration.changed,1);
+  const family=(await client.query('fixture:dump',{})).quotation_families.find(row=>row.current_revision_id===legacy.id);
+  assert.ok(family);
+  assert.equal(family.inquiry_id,undefined);
+  const standalone={id:legacy.id,family_id:family._id};
+  const destination=async()=>(await client.query('inquiries:destination',{client_id:seed.client})).destination;
+  const create=async()=>({operation:'create',request_key:key(),inquiry_destination:await destination(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100,pax:1}]},extras:{mode:'replace',addons:[],discounts:[]}});
   const append=(base,changes={})=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes:'saved',client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'},...changes});
   const dump=()=>client.query('fixture:dump',{});
   const current=[],old=[];
   for(let i=0;i<13;i++){
-    const zero=await save(create());const one=await save(append(zero));const two=await save(append(one));
+    const zero=i===0?standalone:await save(await create());
+    const changes=i===0?{}:{expected_inquiry_cycle:(await destination()).cycle};
+    const one=await save(append(zero,changes));const two=await save(append(one,changes));
     old.push(zero,one);current.push(two);
   }
   const beforeReads=await dump();

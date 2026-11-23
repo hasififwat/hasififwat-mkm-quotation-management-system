@@ -4,6 +4,7 @@ import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import assert from 'node:assert/strict';
+import { setTimeout as delay } from 'node:timers/promises';
 import { ConvexHttpClient } from 'convex/browser';
 
 const repo = process.cwd();
@@ -21,9 +22,10 @@ try {
   await fs.mkdir(path.join(root,'convex/lib'), {recursive:true});
   await fs.mkdir(path.join(root,'convex/_generated'));
   await fs.symlink(path.join(repo,'node_modules'),path.join(root,'node_modules'));
-  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0'}}));
-  await fs.writeFile(path.join(root,'convex.json'), '{}');
-  for (const file of ['schema.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0','@react-pdf/renderer':'4.9.0'}}));
+  await fs.copyFile(path.join(repo,'convex.json'),path.join(root,'convex.json'));
+  await fs.cp(path.join(repo,'src/features/quotation/pdf'),path.join(root,'src/features/quotation/pdf'),{recursive:true});
+  for (const file of ['inquiries.ts','lib/inquiryLifecycle.ts','lib/clientCanonical.ts','lib/currentQuotations.ts','quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfModel.ts','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfAssetsV1.json','_generated/api.js','schema.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
   await fs.mkdir(path.join(root,'src/domain'), {recursive:true});
   for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
   await fs.writeFile(path.join(root,'convex/fixture.ts'), `
@@ -43,7 +45,7 @@ const context=quotationSelectionContext(await ctx.db.get(pkg),await ctx.db.query
 return {client,pkg,flight,context};}});
 export const rollback = internalMutation({args:{command:saveCommand},handler:async(ctx,{command})=>{await saveRevision(ctx,'fixture-actor',command);throw new Error('Injected failure after complete save');}});
 export const removeCatalog = internalMutation({args:{},handler:async(ctx)=>{for(const table of ['clients','packages','package_flights','package_rooms'] as const)for(const row of await ctx.db.query(table).collect())await ctx.db.delete(row._id);}});
-export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
+export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','inquiries','inquiry_events'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
 `);
   for(let i=0;i<100;i++) { try { if((await fetch(`${url}/version`)).ok) break; } catch {} await new Promise(r=>setTimeout(r,100)); }
   const deploy = spawn(path.join(repo,'node_modules/.bin/convex'),['dev','--once','--typecheck','disable','--codegen','disable'],{cwd:root,env:{...Object.fromEntries(Object.entries(process.env).filter(([key])=>!key.startsWith('CONVEX_'))),CONVEX_SELF_HOSTED_URL:url,CONVEX_SELF_HOSTED_ADMIN_KEY:adminKey},stdio:['ignore','pipe','pipe']});
@@ -52,23 +54,36 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   if(code!==0) throw new Error(`Local deployment failed. ${output.replaceAll(adminKey,'[redacted]')}`);
   const client = new ConvexHttpClient(url); client.setAdminAuth(adminKey);
   const seed=await client.mutation('fixture:seed',{});
+  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   const key=()=>crypto.randomUUID();
-  const create={operation:'create',request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100.1,pax:3}]},extras:{mode:'replace',addons:[{name:'Addon',price:0.2,pax:1}],discounts:[]}};
+  const destination=async client_id=>(await client.query('inquiries:destination',{client_id})).destination;
+  const create={operation:'create',request_key:key(),inquiry_destination:await destination(seed.client),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100.1,pax:3}]},extras:{mode:'replace',addons:[{name:'Addon',price:0.2,pax:1}],discounts:[]}};
   const dump=()=>client.query('fixture:dump',{});
   const empty=await dump();
-  await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:create}));
+  const anonymous=new ConvexHttpClient(url);
+  await assert.rejects(()=>anonymous.mutation('quotationRevisionSaves:save',{command:create}), /Not authenticated/);
   assert.deepEqual(await dump(),empty);
-  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:{...create,request_key:undefined}}));
   await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:{...create,selection:{...create.selection,rooms:[]}}}));
   assert.deepEqual(await dump(),empty);
-  const save=command=>client.mutation('quotationRevisionSaves:save',{command},{skipQueue:true});
+  async function mutate(operation, args) {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await client.mutation(operation, args, {skipQueue:true});
+      } catch (error) {
+        if (attempt >= 8 || !/TooManyWrites|OptimisticConcurrencyControlFailure/.test(String(error))) throw error;
+        await delay(500);
+      }
+    }
+  }
+  const save=command=>mutate('quotationRevisionSaves:save',{command});
   const zero=await save(create);
   assert.equal(zero.revision,0);
   assert.deepEqual(await save(create),zero);
   const first=await dump();
   assert.equal(first.quotations[0].total_amount,300.5);
-  const append=(base,notes='one')=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes,client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'}});
+  const inquiryCycle=(await destination(seed.client)).cycle;
+  const append=(base,notes='one')=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,expected_inquiry_cycle:inquiryCycle,pic_name:'Fixture',branch:'Fixture',notes,client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'}});
   const r1command=append(zero);
   const same=await Promise.all([save(r1command),save(r1command)]);
   assert.deepEqual(same[0],same[1]); const r1=same[0];assert.equal(r1.revision,1);
@@ -87,19 +102,23 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const races=await Promise.allSettled([save(append(r2,'race A')),save(append(r2,'race B'))]);
   assert.equal(races.filter(r=>r.status==='fulfilled').length,1);
   assert.equal(races.filter(r=>r.status==='rejected').length,1);
+  assert.match(String(races.find(r=>r.status==='rejected').reason),/QUOTATION_STALE_EDITOR/);
   const current=races.find(r=>r.status==='fulfilled').value;
-  const other=await save({...create,request_key:key()});
+  const newCreate=async()=>({...create,request_key:key(),inquiry_destination:await destination(seed.client)});
+  const other=await save(await newCreate());
   const independent=await Promise.all([save(append(current)),save(append(other))]);
   assert.equal(independent.length,2);
   const beforeFailure=await dump();
-  await assert.rejects(()=>client.mutation('fixture:rollback',{command:append(independent[0],'rollback')}));
+  await assert.rejects(()=>mutate('fixture:rollback',{command:append(independent[0],'rollback')}), /Injected failure after complete save/);
   assert.deepEqual(await dump(),beforeFailure);
-  await assert.rejects(()=>client.mutation('fixture:rollback',{command:{...create,request_key:key()}}));
+  const rollbackCreate=await newCreate();
+  await assert.rejects(()=>mutate('fixture:rollback',{command:rollbackCreate}), /Injected failure after complete save/);
   assert.deepEqual(await dump(),beforeFailure);
   await assert.rejects(()=>save({...append(independent[0]),family_id:other.family_id}));
   await assert.rejects(()=>save(append(zero)));
   assert.deepEqual(await dump(),beforeFailure);
   result.checks.push('Real concurrent distinct requests from one base yield one success and one conflict. Independent families progress. Injected failure after all writes rolls back quotation, items, pointer, receipt, log and counter. Forged and stale requests write nothing.');
+  const unavailableCreate=await newCreate();
   await client.mutation('fixture:removeCatalog',{});
   const retained=await save(append(independent[0],'catalog removed'));
   const afterRemoval=await dump();
@@ -108,7 +127,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.equal(JSON.parse(retainedRow.frozen_document).client_phone,'fixture-phone');
   assert.equal(JSON.parse(retainedRow.frozen_document).return_flight,'RETURN');
   assert.deepEqual(await save(create),zero);
-  await assert.rejects(()=>save({...create,request_key:key()}));
+  await assert.rejects(()=>save(unavailableCreate), /Client not found/);
   result.checks.push('Unavailable historical client, package, flight and rooms retain exact saved values without repricing. Frozen document preserves phone and return flight. Receipt replay succeeds after catalog deletion; new replacements reject.');
   result.runtime={node:process.version,convex:'1.45.0',url};
   result.source=execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();
