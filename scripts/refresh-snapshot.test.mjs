@@ -18,9 +18,10 @@ test("refresh sends the saved quotation ID and both reviewed tokens", async () =
     assert.equal(init.method, "POST");
     assert.equal(init.headers["Content-Type"], "application/json");
     assert.deepEqual(JSON.parse(init.body), { _intent: "refresh_snapshot", quotation_id: "quote:1", ...review });
-    return response(200, { success: true, refreshed: true });
+    return response(200, { success: true, refreshed: true, snapshot_refresh_token: "refreshed-token" });
   });
   assert.equal(result.status, "success");
+  assert.equal(result.snapshotRefreshToken, "refreshed-token");
 });
 
 for (const status of [400, 401, 403, 404, 409]) {
@@ -119,3 +120,19 @@ for (const latest of [false, true]) test(`opening ${latest ? 'latest' : 'loaded'
   finish({...review, changes:[]}); await Promise.all([first,second]);
   assert.deepEqual(states.map(state=>state.status),['reviewing','review']);
 });
+
+for (const oldToken of [review.expected_quotation_token, "older-draft-token"]) {
+  test(`refresh preserves the relation to the draft loaded at ${oldToken}`, async () => {
+    const loadedRefreshToken = { current: oldToken };
+    const js = ts.transpile(`const handler = ${callback}`, { target: ts.ScriptTarget.ES2022 });
+    const handler = vm.runInNewContext(`${js}; handler`, {
+      qid: "quote:1", refreshRequest: { current: false }, refreshState: { status: "review", review },
+      loadedRefreshToken,
+      refreshQuotationSnapshot: async () => ({ status: "success", snapshotRefreshToken: "refreshed-token" }),
+      setRefreshState() {},
+      router: { refresh() {} },
+    });
+    await handler();
+    assert.equal(loadedRefreshToken.current, oldToken === review.expected_quotation_token ? "refreshed-token" : oldToken);
+  });
+}

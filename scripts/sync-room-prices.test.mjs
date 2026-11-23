@@ -45,7 +45,7 @@ test('price-only upload plans old/new review and persists without changing histo
   assert.equal(f.s.tables.package_rooms[0].room_type, 'Quad');
   equal({quotes: f.s.tables.quotations, items: f.s.tables.quotation_items}, before);
   const edit = await quotations.getQuotationForEdit._handler(f.s.ctx, {target_quotation_id: q.id});
-  await quotations.update._handler(f.s.ctx, {payload: {...quotePayload(f.id, f.fid), ...edit, id: q.id}});
+  await quotations.update._handler(f.s.ctx, {payload: {...quotePayload(f.id, f.fid), ...edit, id: q.id, expected_quotation_token: edit.snapshot_refresh_token}});
   assert.equal(f.s.tables.quotations[0].total_amount, 1200);
   equal((await plan(f)).plan.packagesToUpdate, []);
 });

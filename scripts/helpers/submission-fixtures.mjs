@@ -76,6 +76,11 @@ export async function read(s, id) { return packages.getById._handler(s.ctx, {id}
 export async function save(s, data) { return packages.updatePackage._handler(s.ctx, {id:data._id, expectedEditToken:data.editToken, payload:normalize(data)}); }
 export function quotePayload(package_id, flight_id, room_type='Quad', price=1200) { return {pic_name:'Fixture staff',branch:'Fixture',client_id:'client:1',package_id,flight_id,selected_rooms:[{room_type,price,pax:1}],adds_ons:[],discounts:[]}; }
 
+export async function quotationEditToken(s, id) {
+  const editor = await quotations.getQuotationForEdit._handler(s.ctx, { target_quotation_id: id });
+  return editor.snapshot_refresh_token;
+}
+
 export async function reviewedQuote(s, ...args) {
   const payload = quotePayload(...args);
   const displayed = (await packages.listWithRooms._handler(s.ctx, {})).find(pkg => pkg._id === payload.package_id);

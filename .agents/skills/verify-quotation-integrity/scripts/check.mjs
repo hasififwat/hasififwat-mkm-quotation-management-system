@@ -18,6 +18,7 @@ const authServer = await import("@convex-dev/auth/server");
 const sourcePath = path.join(repo, "convex/quotations.ts");
 const loadSupporting = typescriptLoader(repo);
 const { quotationSelectionContext } = loadSupporting(path.join(repo, "src/domain/quotation-selection-context.ts"));
+const { quotationRefreshToken } = loadSupporting(path.join(repo, "convex/lib/quotationRefreshToken.ts"));
 const args = process.argv.slice(2);
 const outIndex = args.indexOf("--out");
 const output = outIndex < 0
@@ -167,15 +168,17 @@ async function check(source) {
     };
     if (input.operation === "create") {
       payload.request_key = "d5b28771-25d5-4dca-915f-29a006947747";
-      const pkg = state.tables.packages.find(row => row._id === input.package_id);
-      if (pkg) payload.reviewed_context = quotationSelectionContext(
-        pkg,
-        state.tables.package_rooms.filter(row => row.package_id === pkg._id),
-        state.tables.package_flights.filter(row => row.package_id === pkg._id),
-        state.tables.package_hotels.filter(row => row.package_id === pkg._id),
-        state.tables.package_meals,
-      );
+    } else {
+      payload.expected_quotation_token = await quotationRefreshToken(state.tables.quotations[0], state.tables.quotation_items);
     }
+    const pkg = state.tables.packages.find(row => row._id === input.package_id);
+    if (pkg) payload.reviewed_context = quotationSelectionContext(
+      pkg,
+      state.tables.package_rooms,
+      state.tables.package_flights,
+      state.tables.package_hotels,
+      state.tables.package_meals,
+    );
     const refsValid = input.client_id === "c1" && input.room_type === "quad" &&
       ((input.package_id === "p1" && input.flight_id === "f1") || (input.package_id === "p2" && input.flight_id === "f2"));
     let response;

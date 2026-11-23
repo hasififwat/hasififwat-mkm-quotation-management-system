@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { quotations, state, create, form, reviewedQuote } from './helpers/submission-fixtures.mjs';
+import { quotations, state, create, form, quotationEditToken, reviewedQuote } from './helpers/submission-fixtures.mjs';
 
 for (const [name, operation] of Object.entries(quotations)) {
   if (!operation?._handler) continue;
@@ -26,7 +26,8 @@ test('session actor owns create and update audit records while PIC stays editabl
   assert.equal(s.tables.quotation_logs[0].performed_by, 'fixture-staff');
   s.ctx.auth.getUserIdentity = async () => ({subject:'second-staff|session-two'});
   delete payload.reviewed_context;
-  await quotations.update._handler(s.ctx, {payload:{...payload,id:saved.id,pic_name:'New PIC'}});
+  const expected_quotation_token = await quotationEditToken(s, saved.id);
+  await quotations.update._handler(s.ctx, {payload:{...payload,id:saved.id,pic_name:'New PIC',expected_quotation_token}});
   assert.equal(row.created_by, 'fixture-staff');
   assert.equal(row.pic_name, 'New PIC');
   assert.equal(s.tables.quotation_logs.at(-1).performed_by, 'second-staff');

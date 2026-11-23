@@ -2,7 +2,7 @@ import { SNAPSHOT_REFRESH_CONFLICT, SNAPSHOT_REFRESH_CONFLICT_MESSAGE, type Snap
 export type RefreshSnapshotResult =
 	| { status: "conflict"; message: string }
 	| { status: "unavailable"; message: string }
-	| { status: "success" }
+	| { status: "success"; snapshotRefreshToken?: string }
 	| { status: "failure"; message: string }
 	| { status: "uncertain"; httpStatus?: number };
 
@@ -52,7 +52,12 @@ export async function refreshQuotationSnapshot(
 			"success" in body && body.success === true &&
 			"refreshed" in body && body.refreshed === true
 		) {
-			return { status: "success" };
+			return {
+				status: "success",
+				snapshotRefreshToken: "snapshot_refresh_token" in body && typeof body.snapshot_refresh_token === "string"
+					? body.snapshot_refresh_token
+					: undefined,
+			};
 		}
 	} catch {
 		return { status: "uncertain" };

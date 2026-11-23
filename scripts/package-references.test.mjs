@@ -32,7 +32,7 @@ test('room ID churn permits reopening and saving a quotation with unchanged type
   await save(s,data);assert.notEqual(s.tables.package_rooms[0]._id,oldRoom);
   const reopened=await quotations.getQuotationForEdit._handler(s.ctx,{target_quotation_id:qid});
   assert.equal(reopened.selected_rooms[0].room_type,'Quad');
-  await quotations.update._handler(s.ctx,{payload:{...quotePayload(id,reopened.flight_id),...reopened,id:qid}});
+  await quotations.update._handler(s.ctx,{payload:{...quotePayload(id,reopened.flight_id),...reopened,id:qid,expected_quotation_token:reopened.snapshot_refresh_token}});
   assert.equal(s.tables.quotations[0].total_amount,1200);
   assert.equal(s.tables.quotation_items.find(i=>i.item_type==='room').package_room_id,s.tables.package_rooms[0]._id);
 });

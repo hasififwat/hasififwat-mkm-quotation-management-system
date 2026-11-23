@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 import { test } from "node:test";
-import { load, state, form, create, reviewedQuote, quotations } from "./helpers/submission-fixtures.mjs";
+import { load, state, form, create, quotationEditToken, reviewedQuote, quotations } from "./helpers/submission-fixtures.mjs";
 const { quotationFormSchema } = load(path.resolve("src/features/quotation/schema.ts"));
 
 for (const section of ["adds_ons", "discounts"]) {
@@ -15,7 +15,11 @@ for (const section of ["adds_ons", "discounts"]) {
       test(`${writer} rejects ${section} description ${JSON.stringify(name)} before any write`, async () => {
         const s=state(); const id=await create(s,form());
         const payload=await reviewedQuote(s,id,s.tables.package_flights[0]._id);
-        if(writer === "update") { payload.id=(await quotations.create._handler(s.ctx,{payload})).id; delete payload.reviewed_context; }
+        if (writer === "update") {
+          payload.id = (await quotations.create._handler(s.ctx, {payload})).id;
+          payload.expected_quotation_token = await quotationEditToken(s, payload.id);
+          delete payload.reviewed_context;
+        }
         payload[section]=[{name,price:50,pax:1}];
         const before=JSON.stringify(s.tables); s.operations.length=0;
         await assert.rejects(quotations[writer]._handler(s.ctx,{payload}), /description/i);
@@ -30,6 +34,7 @@ for (const section of ["adds_ons", "discounts"]) {
       payload[section]=[{name:"  Airport transfer  ",price,pax:2}];
       const parsed=quotationFormSchema.parse(payload); assert.equal(parsed[section][0].price,price);
       payload.id=(await quotations.create._handler(s.ctx,{payload})).id; delete payload.reviewed_context;
+      payload.expected_quotation_token = await quotationEditToken(s, payload.id);
       await quotations.update._handler(s.ctx,{payload});
       const items=s.tables.quotation_items.filter(i=>i.item_type!=="room");
       assert.equal(items.length,1); assert.equal(items[0].description,payload[section][0].name);

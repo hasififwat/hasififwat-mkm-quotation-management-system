@@ -31,7 +31,7 @@ async function reopenAndSave(f) {
   const edit=await quotations.getQuotationForEdit._handler(f.s.ctx,{target_quotation_id:f.qid});
   assert.equal(edit.flight_id,f.fid);
   assert.ok(!edit.stale_fields.includes('flight.removed'));
-  await quotations.update._handler(f.s.ctx,{payload:{...quotePayload(f.id,f.fid),...edit,id:f.qid}});
+  await quotations.update._handler(f.s.ctx,{payload:{...quotePayload(f.id,f.fid),...edit,id:f.qid,expected_quotation_token:edit.snapshot_refresh_token}});
 }
 for(const reject of [false,true]) test(`edited flight ${reject?'rejection':'success'} preserves quotation selection`,async()=>{
   const f=await fixture(); const before=structuredClone(f.s.tables.quotations[0]); const original=structuredClone(f.s.tables.package_flights[0]);

@@ -9,8 +9,8 @@ async function fixture() {
   data.flights.push({ ...data.flights[0], departure: "2027-01-01" });
   const packageId = await create(s, data);
   const [original, replacement] = s.tables.package_flights;
-  const payload = await reviewedQuote(s, packageId, original._id);
-  const { id } = await quotations.create._handler(s.ctx, { payload });
+  const { reviewed_context, ...payload } = await reviewedQuote(s, packageId, original._id);
+  const { id } = await quotations.create._handler(s.ctx, { payload: { ...payload, reviewed_context } });
   const edit = () => quotations.getQuotationForEdit._handler(s.ctx, { target_quotation_id: id });
   const review = () => quotations.getQuotationFullDetails._handler(s.ctx, { target_quotation_id: id });
   const catalogue = async () => (await packages.listWithRooms._handler(s.ctx, {})).find(pkg => pkg._id === packageId);
@@ -53,6 +53,22 @@ test("legacy Save rejects a stale draft and preserves the other editor's note an
   assert.equal(saved.total_amount, 1200);
 });
 
+test("legacy Save without an editor token rejects without writes", async () => {
+  const f = await fixture();
+  await rejectsWithoutWrites(f.s, () => f.save({ notes: "Unsaved note" }), "QUOTATION_STALE_EDITOR");
+});
+
+test("legacy Save detects a saved item change without a quotation timestamp change", async () => {
+  const f = await fixture();
+  const draft = await f.edit();
+  const item = f.s.tables.quotation_items[0];
+  await f.s.ctx.db.patch(item._id, { original_price: 1300, unit_price: 1300 });
+
+  await rejectsWithoutWrites(f.s, () => f.save({
+    expected_quotation_token: draft.snapshot_refresh_token,
+  }), "QUOTATION_STALE_EDITOR");
+});
+
 test("legacy Save rejects an unreviewed replacement date and saves the reviewed date and entered price", async () => {
   const f = await fixture();
   const draft = await f.edit();
@@ -80,3 +96,34 @@ test("legacy Save rejects an unreviewed replacement date and saves the reviewed 
   assert.equal(saved.selected_flight.departure_date, "2027-01-03");
   assert.equal(saved.total_amount, 2700);
 });
+
+test("legacy Save with retained snapshots does not require current package review", async () => {
+  const f = await fixture();
+  const draft = await f.edit();
+  const [row] = f.s.tables.quotations;
+  const snapshots = structuredClone([row.package_snapshot, row.flight_snapshot, row.hotels_snapshot]);
+  f.s.tables.packages[0].name = "Current package";
+  f.s.tables.package_rooms[0].price = 2500;
+  f.s.tables.package_hotels[0].name = "Current hotel";
+  await f.reschedule(f.original, "2027-01-08");
+
+  const result = await f.save({ expected_quotation_token: draft.snapshot_refresh_token, notes: "Keep the original itinerary" });
+  assert.equal(result.total_amount, 1200);
+  assert.deepEqual([row.package_snapshot, row.flight_snapshot, row.hotels_snapshot], snapshots);
+});
+
+for (const missing of ["package_snapshot", "flight_snapshot", "hotels_snapshot"]) {
+  test(`legacy Save filling a missing ${missing} requires current package review`, async () => {
+    const f = await fixture();
+    const [row] = f.s.tables.quotations;
+    const savedSnapshot = structuredClone(row[missing]);
+    await f.s.ctx.db.patch(f.id, { [missing]: undefined });
+    const draft = await f.edit();
+    const payload = { expected_quotation_token: draft.snapshot_refresh_token };
+
+    await rejectsWithoutWrites(f.s, () => f.save(payload), "QUOTATION_SELECTION_CONFLICT");
+    const current = await f.catalogue();
+    await f.save({ ...payload, reviewed_context: current.creation_context });
+    assert.deepEqual(row[missing], savedSnapshot);
+  });
+}

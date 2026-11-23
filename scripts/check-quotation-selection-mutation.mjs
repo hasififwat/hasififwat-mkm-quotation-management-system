@@ -17,7 +17,11 @@ function findGuard(node) {
   if (ts.isIfStatement(node) && node.expression.getText(ast).includes("args.payload.reviewed_context")) guards.push(node);
   ts.forEachChild(node, findGuard);
 }
-findGuard(ast);
+const createMutation = ast.statements.filter(ts.isVariableStatement)
+  .flatMap(statement => statement.declarationList.declarations)
+  .find(({ name }) => ts.isIdentifier(name) && name.text === "create");
+assert.ok(createMutation, "Cannot find the actual creation mutation");
+findGuard(createMutation);
 assert.equal(guards.length, 1, "Review the real creation-context guard before updating this mutation check");
 const guard = guards[0];
 const mutant = source.slice(0, guard.getStart(ast)) + source.slice(guard.end);
