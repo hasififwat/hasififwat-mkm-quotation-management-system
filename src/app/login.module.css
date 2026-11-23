@@ -36,19 +36,27 @@
 	text-align: center;
 }
 
-.intro > p:last-child {
-	margin-inline: auto;
-}
-
 .headline {
-	font: 400 clamp(2.25rem, 6vw, 3.5rem) / 1.04 Georgia, "Times New Roman", serif;
-	letter-spacing: -0.055em;
+	font-size: 2rem;
+	font-weight: 600;
+	letter-spacing: -0.04em;
+	line-height: 1.08;
 	text-wrap: balance;
 }
 
-.headline em {
+.headline span {
 	display: block;
 	color: var(--primary);
+}
+
+.explanation {
+	max-width: 34rem;
+	margin-inline: auto;
+	margin-top: 1rem;
+	color: var(--muted-foreground);
+	font-size: 1rem;
+	line-height: 1.5;
+	text-wrap: balance;
 }
 
 .form {
@@ -107,12 +115,13 @@
 		text-align: left;
 	}
 
-	.intro > p:last-child {
-		margin-inline: 0;
+	.headline {
+		font-size: clamp(2.75rem, 4vw, 3.5rem);
 	}
 
-	.headline {
-		font-size: clamp(3rem, 4.8vw, 4.6rem);
+	.explanation {
+		margin-inline: 0;
+		margin-top: 1.25rem;
 	}
 
 	.preview {

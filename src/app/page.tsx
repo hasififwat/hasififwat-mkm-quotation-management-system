@@ -16,9 +16,9 @@ export default function Login() {
 
 			<div className={styles.intro}>
 				<p className={styles.headline}>
-					Umrah packages, <em>ready to quote.</em>
+					Umrah packages, <span>ready to quote.</span>
 				</p>
-				<p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground lg:mt-5 lg:text-lg">
+				<p className={styles.explanation}>
 					See how a package becomes a quotation for your client.
 				</p>
 			</div>
