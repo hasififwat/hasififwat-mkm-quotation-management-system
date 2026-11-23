@@ -1,0 +1,215 @@
+{
+  "localPreview": "http://127.0.0.1:3509/",
+  "baselineCommit": "8e95f0475e676f4fffa313c9a62f50e1abef25b3",
+  "testedCodeCommit": "6e5b26f8343c5a240978c878a426ef39ee78508a",
+  "chromium": "157.0.8103.79",
+  "desktop1280": {
+    "before": {
+      "headline": {
+        "family": "Georgia, \"Times New Roman\", serif",
+        "size": 61.44,
+        "weight": 400,
+        "style": "normal"
+      },
+      "accent": {
+        "family": "Georgia, \"Times New Roman\", serif",
+        "size": 61.44,
+        "weight": 400,
+        "style": "italic"
+      },
+      "support": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 18,
+        "weight": 400,
+        "style": "normal"
+      },
+      "supportLines": 2,
+      "stage": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 20,
+        "weight": 650,
+        "style": "normal"
+      },
+      "stageSupport": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 13,
+        "weight": 400,
+        "style": "normal"
+      },
+      "label": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 11,
+        "weight": 400,
+        "style": "normal"
+      },
+      "value": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 13,
+        "weight": 650,
+        "style": "normal"
+      },
+      "total": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 16,
+        "weight": 650,
+        "style": "normal"
+      }
+    },
+    "after": {
+      "headline": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 51.2,
+        "weight": 600,
+        "style": "normal"
+      },
+      "accent": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 51.2,
+        "weight": 600,
+        "style": "normal"
+      },
+      "support": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 16,
+        "weight": 400,
+        "style": "normal"
+      },
+      "supportLines": 1,
+      "stage": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 22,
+        "weight": 650,
+        "style": "normal"
+      },
+      "stageSupport": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 14,
+        "weight": 400,
+        "style": "normal"
+      },
+      "label": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 12,
+        "weight": 400,
+        "style": "normal"
+      },
+      "value": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 14,
+        "weight": 650,
+        "style": "normal"
+      },
+      "total": {
+        "family": "Inter, \"Inter Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "size": 20,
+        "weight": 700,
+        "style": "normal"
+      }
+    }
+  },
+  "renderedCases": [
+    {
+      "width": 320,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#253ad0"
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "noHorizontalOverflow": true,
+      "demoHeight": 355,
+      "stableAcrossSteps": true,
+      "primary": "#7396ff"
+    }
+  ],
+  "autoplay": [
+    "Package",
+    "Pricing",
+    "Review"
+  ],
+  "productionBuild": "Next.js 16.3.4, exit code 0",
+  "scopedEslint": "Exit code 0"
+}

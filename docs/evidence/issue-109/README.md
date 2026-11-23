@@ -1,12 +1,18 @@
 # MKM sign-in verification
 
-## Animated quotation demo
+## Right-side typography
 
-The production build of `f3f9d5e8081d2bb260bdf2b4177e736d7ff820da` ran at `http://127.0.0.1:3509/`. The demo uses a fictional 12-day Umrah package to show package selection, room pricing, and quotation review. The page uses MKM's shared blue palette in light and dark mode.
+The production build of `6e5b26f8343c5a240978c878a426ef39ee78508a` ran at `http://127.0.0.1:3509/`. The headline uses the app's Inter font. The demo gives more weight to the stage heading and the quotation total, and uses larger supporting text and detail labels.
 
 ![The sign-in screen cycles through the three quotation demo steps](quotation-demo.gif)
 
-[Desktop review](desktop-review.png) · [Phone pricing in dark mode](phone-pricing-dark.png) · [Verification results](demo-verification.json)
+[Before on desktop](before-typography.png) · [After on desktop](desktop-review.png) · [After on a phone in dark mode](phone-pricing-dark.png) · [Typography verification](typography-verification.json)
+
+Chromium checked all three demo steps in both themes at 320, 390, 768, 1,024, 1,280, and 1,440 CSS pixels. The demo kept the same height between steps at each width. Autoplay went through all three steps and showed the RM 15,800.00 total.
+
+## Animated quotation demo
+
+The palette and playback verification ran against production build `f3f9d5e8081d2bb260bdf2b4177e736d7ff820da` at `http://127.0.0.1:3509/`. The demo uses a fictional 12-day Umrah package to show package selection, room pricing, and quotation review. [Verification results](demo-verification.json)
 
 Chromium checked the rendered colors of the sign-in button, headline accent, and selected demo step in both themes. It also verified autoplay, pause and resume, manual step selection, and the RM 15,800.00 total. On a narrow phone, playback waited until the demo entered the viewport. With reduced motion, the demo started paused and manual step changes appeared immediately.
 
