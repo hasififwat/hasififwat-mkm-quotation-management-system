@@ -4,18 +4,22 @@ import { isPackageEditConflict } from "~/domain/package-edit-conflict";
 import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft } from "lucide-react";
+import { ChevronDown, ChevronLeft } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { FormProvider, useForm, type FieldErrors, type FieldPath } from "react-hook-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-	Card,
-	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import BasicDetails from "./components/Form/BasicDetails";
 import FlightDetails from "./components/Form/FlightDetails";
 import HotelDetailsSection from "./components/Form/HotelDetails";
@@ -79,38 +83,62 @@ const PackageBuilderHeader = ({
 );
 
 const PackageStepNavigation = ({
-	currentStep,
+	currentIndex,
+	open,
+	onOpenChange,
 	onStepChange,
 }: {
-	currentStep: Step;
+	currentIndex: number;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
 	onStepChange: (step: Step) => void;
 }) => (
-	<Card>
-		<CardContent className="@container">
-			<div className="grid grid-cols-3 gap-x-1 gap-y-2 @min-[40rem]:grid-cols-6">
-				{STEPS.map((step, index) => (
-					<button
-						key={step.id}
-						type="button"
-						onClick={() => onStepChange(step.id)}
-						className={`flex min-w-0 flex-col items-center gap-1 rounded-md py-1 text-center transition-colors ${
-							currentStep === step.id && "text-primary font-semibold"
-						}`}
-					>
-						<span
-							className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-sm transition-colors ${
-								currentStep === step.id &&
-								"border-primary bg-primary text-primary-foreground"
-							}`}
-						>
-							{index + 1}
-						</span>
-						<span className="max-w-full wrap-anywhere text-sm">{step.label}</span>
-					</button>
-				))}
-			</div>
-		</CardContent>
-	</Card>
+	<Collapsible
+		open={open}
+		onOpenChange={onOpenChange}
+		className="min-w-0 rounded-lg border bg-card @min-[52rem]:sticky @min-[52rem]:top-20 @min-[52rem]:col-start-2 @min-[52rem]:row-start-1 @min-[52rem]:self-start @min-[52rem]:rounded-xl @min-[52rem]:bg-sidebar @min-[52rem]:shadow-xs"
+	>
+		<CollapsibleTrigger className="group flex min-h-11 w-full min-w-0 items-center gap-2 rounded-[inherit] px-3 py-2 text-left text-sm font-semibold hover:bg-accent @min-[52rem]:hidden">
+			<span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full border bg-card text-xs">
+				{currentIndex + 1}
+			</span>
+			<span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2">
+				<span className="min-w-0 wrap-anywhere">{STEPS[currentIndex].label}</span>
+				<span className="whitespace-nowrap text-xs text-muted-foreground">
+					Step {currentIndex + 1} of {STEPS.length}
+				</span>
+			</span>
+			<ChevronDown aria-hidden="true" className="size-4 shrink-0 text-muted-foreground group-data-[state=open]:rotate-180" />
+		</CollapsibleTrigger>
+		<CollapsibleContent asChild forceMount>
+			<nav
+				aria-label="Package steps"
+				className="min-w-0 p-3 @max-[52rem]:data-[state=closed]:hidden @max-[52rem]:border-t"
+			>
+				<div className="mb-3 hidden items-center justify-between gap-2 px-2 text-sm @min-[52rem]:flex">
+					<span className="font-semibold">Package steps</span>
+					<span className="text-xs text-muted-foreground">{currentIndex + 1} of {STEPS.length}</span>
+				</div>
+				<ol className="min-w-0 space-y-1">
+					{STEPS.map((step, index) => (
+						<li key={step.id} className="min-w-0">
+							<button
+								type="button"
+								aria-current={currentIndex === index ? "step" : undefined}
+								onClick={() => onStepChange(step.id)}
+								className="group flex min-h-10 w-full min-w-0 items-center gap-2 rounded-md px-2 py-1 text-left text-sm leading-tight font-medium hover:bg-muted aria-[current=step]:bg-accent aria-[current=step]:font-semibold aria-[current=step]:text-accent-foreground"
+							>
+								<span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full border bg-card text-xs group-aria-[current=step]:border-primary group-aria-[current=step]:bg-primary group-aria-[current=step]:text-primary-foreground">
+									{index + 1}
+								</span>
+								<span className="min-w-0 wrap-anywhere">{step.label}</span>
+							</button>
+						</li>
+					))}
+				</ol>
+			</nav>
+		</CollapsibleContent>
+	</Collapsible>
 );
 type PackageBuilderProps = {
 	initialData: IPackageDetailsForm;
@@ -141,6 +169,9 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	const { setValue, getValues, trigger, setFocus } = methods;
 
 	const [currentStep, setCurrentStep] = useState<Step>("basic");
+	const [stepsOpen, setStepsOpen] = useState(false);
+	const currentIndex = STEPS.findIndex((step) => step.id === currentStep);
+	const formRef = useRef<HTMLFormElement>(null);
 
 	const [submissionErrors, setSubmissionErrors] = useState<string[]>([]);
 	const [focusRequest, setFocusRequest] = useState<{ path: FieldPath<IPackageDetailsForm> } | null>(null);
@@ -154,7 +185,8 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	}, [focusRequest, setFocus]);
 
 	useEffect(() => {
-		if (saveState.kind === "saved" && document.activeElement === document.body) {
+		const activeElement = document.activeElement;
+		if (saveState.kind === "saved" && (activeElement === document.body || activeElement === formRef.current)) {
 			savedPackageLinkRef.current?.focus({ preventScroll: true });
 			saveConfirmationRef.current?.scrollIntoView({ block: "nearest" });
 		}
@@ -201,7 +233,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 					if (!durationValue || durationValue.trim().length === 0) {
 						setFocus("duration");
 					} else {
-						setFocus("year");
+						formRef.current?.querySelector<HTMLButtonElement>("#year")?.focus();
 					}
 				}
 				return false;
@@ -241,27 +273,40 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 		}
 	};
 
+	const navigateToStep = (step: Step) => {
+		flushSync(() => {
+			setCurrentStep(step);
+			setStepsOpen(false);
+		});
+		const form = formRef.current;
+		if (!form) return;
+
+		form.focus({ preventScroll: true });
+		const top = form.getBoundingClientRect().top;
+		const scrollMargin = Number.parseFloat(getComputedStyle(form).scrollMarginTop);
+		if (top < scrollMargin || top >= window.innerHeight) {
+			form.scrollIntoView({ block: "start" });
+		}
+	};
+
 	const goToNextStep = async () => {
 		const isCurrentStepValid = await validateCurrentStep();
 		if (!isCurrentStepValid) {
 			return;
 		}
 
-		const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
 		if (currentIndex < STEPS.length - 1) {
-			setCurrentStep(STEPS[currentIndex + 1].id);
+			navigateToStep(STEPS[currentIndex + 1].id);
 		}
 	};
 
 	const goToPreviousStep = () => {
-		const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
 		if (currentIndex > 0) {
-			setCurrentStep(STEPS[currentIndex - 1].id);
+			navigateToStep(STEPS[currentIndex - 1].id);
 		}
 	};
 
 	const handleStepChange = async (nextStep: Step) => {
-		const currentIndex = STEPS.findIndex((step) => step.id === currentStep);
 		const nextIndex = STEPS.findIndex((step) => step.id === nextStep);
 
 		if (nextIndex > currentIndex) {
@@ -271,7 +316,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 			}
 		}
 
-		setCurrentStep(nextStep);
+		navigateToStep(nextStep);
 	};
 
 	const _onSubmit = async (data: IPackageDetails) => {
@@ -403,122 +448,130 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	);
 
 	return (
-		<div className="workspace-page max-w-5xl space-y-6 animate-slideIn">
+		<div className="workspace-page max-w-6xl space-y-6 animate-slideIn">
 			<PackageBuilderHeader
 				pid={packageId ?? undefined}
 				onBack={goToPreviousStep}
 				isFirstStep={currentStep === "basic"}
 			/>
 
-			{/* Step Navigation Header */}
-			<PackageStepNavigation
-				currentStep={currentStep}
-				onStepChange={handleStepChange}
-			/>
+			<div className="@container min-w-0">
+				<div className="grid min-w-0 grid-cols-1 gap-3 @min-[52rem]:grid-cols-[minmax(0,1fr)_14rem] @min-[52rem]:gap-6">
+					<PackageStepNavigation
+						currentIndex={currentIndex}
+						open={stepsOpen}
+						onOpenChange={setStepsOpen}
+						onStepChange={handleStepChange}
+					/>
 
-			<form
-				className="flex flex-col gap-6"
-				noValidate
-				onSubmit={(event) => {
-					if (currentStep !== "preview" || saveBlocked) {
-						event.preventDefault();
-						return;
-					}
-					return methods.handleSubmit(_onSubmit, onInvalid)(event);
-				}}
-			>
-				{(saveState.kind === "unknown" || saveState.kind === "rejected" || saveState.kind === "conflict") && (
-					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm space-y-3">
-						<p className="font-semibold">{saveState.message}</p>
-						{saveState.kind === "conflict" && <Link className="underline" href={`/packages/edit/${packageId}`} target="_blank" rel="noopener noreferrer">Open latest package in another tab</Link>}
-						{saveState.kind === "unknown" && <p>Saving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.</p>}
-						<div className="flex gap-4 items-center">
-							<Button type="button" variant="outline" onClick={downloadDraft}>Download complete draft</Button>
-							<a className="underline" href={`/packages?q=${encodeURIComponent(attemptedDraft?.name ?? "")}`} target="_blank" rel="noopener noreferrer">Check Packages in a new tab</a>
+					<form
+						ref={formRef}
+						tabIndex={-1}
+						aria-label={STEPS[currentIndex].label}
+						className="flex min-w-0 scroll-mt-32 flex-col gap-6 @min-[52rem]:col-start-1 @min-[52rem]:row-start-1 @min-[52rem]:scroll-mt-20"
+						noValidate
+						onSubmit={(event) => {
+							if (currentStep !== "preview" || saveBlocked) {
+								event.preventDefault();
+								return;
+							}
+							return methods.handleSubmit(_onSubmit, onInvalid)(event);
+						}}
+					>
+						{(saveState.kind === "unknown" || saveState.kind === "rejected" || saveState.kind === "conflict") && (
+							<div role="alert" className="rounded-lg border border-destructive p-4 text-sm space-y-3">
+								<p className="font-semibold">{saveState.message}</p>
+								{saveState.kind === "conflict" && <Link className="underline" href={`/packages/edit/${packageId}`} target="_blank" rel="noopener noreferrer">Open latest package in another tab</Link>}
+								{saveState.kind === "unknown" && <p>Saving again is blocked because the first request may have saved. Check Packages in another tab and open the saved record if present. An empty list does not prove the save failed. Download your draft before leaving or reloading this page.</p>}
+								<div className="flex gap-4 items-center">
+									<Button type="button" variant="outline" onClick={downloadDraft}>Download complete draft</Button>
+									<a className="underline" href={`/packages?q=${encodeURIComponent(attemptedDraft?.name ?? "")}`} target="_blank" rel="noopener noreferrer">Check Packages in a new tab</a>
+								</div>
+							</div>
+						)}
+						{submissionErrors.length > 0 && (
+							<div role="alert" className="rounded-lg border border-destructive p-4 text-sm text-destructive">
+								<p className="font-semibold">Correct these fields before saving.</p>
+								<ul className="list-disc pl-5">{submissionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul>
+							</div>
+						)}
+						<fieldset disabled={saveState.kind === "saving" || saveState.kind === "saved"} className="space-y-6 min-w-0">
+							<FormProvider {...methods}>
+								<BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
+
+								<HotelDetailsSection
+									currentStep={currentStep}
+									goToNextStep={goToNextStep}
+									goToPreviousStep={goToPreviousStep}
+									renderCardHeader={() =>
+										renderCardHeader(
+											"Hotels & Meals",
+											"Select hotels for each city and specify included meals.",
+											"hotels",
+										)
+									}
+								/>
+								<ExclusionInclusionDetails
+									currentStep={currentStep}
+									goToNextStep={goToNextStep}
+									goToPreviousStep={goToPreviousStep}
+									renderCardHeader={(title, description, settingKey) =>
+										renderCardHeader(title, description, settingKey)
+									}
+								/>
+
+								<RoomDetails
+									currentStep={currentStep}
+									goToNextStep={goToNextStep}
+									goToPreviousStep={goToPreviousStep}
+									renderCardHeader={() =>
+										renderCardHeader(
+											"Rooms",
+											"Specify the room details for the package.",
+											"rooms",
+										)
+									}
+								/>
+
+								<FlightDetails
+									currentStep={currentStep}
+									goToNextStep={goToNextStep}
+									goToPreviousStep={goToPreviousStep}
+								/>
+
+								{currentStep === "preview" && (
+									<PackagePreviewCard
+										getValues={getValues}
+										onPrevious={goToPreviousStep}
+										savePending={saveState.kind === "saving"}
+										saveBlocked={saveBlocked}
+									/>
+								)}
+							</FormProvider>
+						</fieldset>
+						<div
+							ref={saveConfirmationRef}
+							className={saveState.kind === "saved"
+								? "flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 text-card-foreground"
+								: "sr-only"}
+						>
+							<p role="status" aria-atomic="true" className="text-sm font-semibold">
+								{saveState.kind === "saved" ? "Package saved successfully." : ""}
+							</p>
+							{saveState.kind === "saved" && (
+								<div className="flex flex-wrap items-center gap-2">
+									<Button asChild size="sm">
+										<a ref={savedPackageLinkRef} href={`/packages/edit/${saveState.packageId}`}>View saved package</a>
+									</Button>
+									<Button asChild size="sm" variant="outline">
+										<Link href="/packages">Back to Packages</Link>
+									</Button>
+								</div>
+							)}
 						</div>
-					</div>
-				)}
-				{submissionErrors.length > 0 && (
-					<div role="alert" className="rounded-lg border border-destructive p-4 text-sm text-destructive">
-						<p className="font-semibold">Correct these fields before saving.</p>
-						<ul className="list-disc pl-5">{submissionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul>
-					</div>
-				)}
-				<fieldset disabled={saveState.kind === "saving" || saveState.kind === "saved"} className="space-y-6 min-w-0">
-				<FormProvider {...methods}>
-					<BasicDetails currentStep={currentStep} goToNextStep={goToNextStep} />
-
-					<HotelDetailsSection
-						currentStep={currentStep}
-						goToNextStep={goToNextStep}
-						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={() =>
-							renderCardHeader(
-								"Hotels & Meals",
-								"Select hotels for each city and specify included meals.",
-								"hotels",
-							)
-						}
-					/>
-					<ExclusionInclusionDetails
-						currentStep={currentStep}
-						goToNextStep={goToNextStep}
-						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={(title, description, settingKey) =>
-							renderCardHeader(title, description, settingKey)
-						}
-					/>
-
-					<RoomDetails
-						currentStep={currentStep}
-						goToNextStep={goToNextStep}
-						goToPreviousStep={goToPreviousStep}
-						renderCardHeader={() =>
-							renderCardHeader(
-								"Rooms",
-								"Specify the room details for the package.",
-								"rooms",
-							)
-						}
-					/>
-
-					<FlightDetails
-						currentStep={currentStep}
-						goToNextStep={goToNextStep}
-						goToPreviousStep={goToPreviousStep}
-					/>
-
-					{currentStep === "preview" && (
-						<PackagePreviewCard
-							getValues={getValues}
-							onPrevious={goToPreviousStep}
-							savePending={saveState.kind === "saving"}
-							saveBlocked={saveBlocked}
-						/>
-					)}
-				</FormProvider>
-				</fieldset>
-				<div
-					ref={saveConfirmationRef}
-					className={saveState.kind === "saved"
-						? "flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 text-card-foreground"
-						: "sr-only"}
-				>
-					<p role="status" aria-atomic="true" className="text-sm font-semibold">
-						{saveState.kind === "saved" ? "Package saved successfully." : ""}
-					</p>
-					{saveState.kind === "saved" && (
-						<div className="flex flex-wrap items-center gap-2">
-							<Button asChild size="sm">
-								<a ref={savedPackageLinkRef} href={`/packages/edit/${saveState.packageId}`}>View saved package</a>
-							</Button>
-							<Button asChild size="sm" variant="outline">
-								<Link href="/packages">Back to Packages</Link>
-							</Button>
-						</div>
-					)}
+					</form>
 				</div>
-			</form>
+			</div>
 		</div>
 	);
 };

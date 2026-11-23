@@ -15,8 +15,8 @@ type WorkspaceScreen = {
 	| { kind: "list"; columns: number; action?: boolean }
 	| { kind: "dashboard"; columns?: number }
 	| { kind: "import"; uploads: number }
-	| { kind: "editor"; steps?: 3 | 6 }
-	| { kind: "detail" | "document" }
+	| { kind: "editor"; steps?: 3 }
+	| { kind: "package-editor" | "detail" | "document" }
 );
 
 const screens: readonly [RegExp, WorkspaceScreen][] = [
@@ -27,7 +27,7 @@ const screens: readonly [RegExp, WorkspaceScreen][] = [
 	[/^\/flights\/audit$/, { kind: "list", label: "flight audit", columns: 8 }],
 	[/^\/dashboard$/, { kind: "dashboard", label: "dashboard" }],
 	[/^\/packages\/stats$/, { kind: "dashboard", label: "package usage", columns: 6 }],
-	[/^\/packages\/(?:create|edit\/[^/]+)$/, { kind: "editor", label: "package editor", width: "max-w-5xl", steps: 6 }],
+	[/^\/packages\/(?:create|edit\/[^/]+)$/, { kind: "package-editor", label: "package editor", width: "max-w-6xl" }],
 	[/^\/quotations\/(?:create|edit\/[^/]+)$/, { kind: "editor", label: "quotation editor", width: "max-w-4xl", steps: 3 }],
 	[/^\/clients\/create$/, { kind: "editor", label: "client form", width: "max-w-lg" }],
 	[/^\/packages\/create-from-schedule$/, { kind: "import", label: "flight schedule import", uploads: 1, width: "max-w-5xl" }],
@@ -67,12 +67,12 @@ function TablePanel({ columns, search = false }: { columns: number; search?: boo
 	);
 }
 
-function EditorPanel({ steps }: { steps?: 3 | 6 }) {
+function EditorPanel({ steps }: { steps?: 3 }) {
 	return (
 		<>
 			{steps ? (
 				<div className={cn(panel, "@container p-4 sm:p-6")}>
-					<div className={cn("grid grid-cols-3 gap-3", steps === 6 && "@min-[40rem]:grid-cols-6")}>
+					<div className="grid grid-cols-3 gap-3">
 						{Array.from({ length: steps }, (_, step) => (
 							<div key={step} className="flex min-w-0 flex-col items-center gap-2">
 								<Skeleton className="size-8 rounded-full" />
@@ -94,6 +94,58 @@ function EditorPanel({ steps }: { steps?: 3 | 6 }) {
 				</div>
 			</div>
 		</>
+	);
+}
+
+function PackageEditorPanel() {
+	return (
+		<div className="@container min-w-0">
+			<div className="grid min-w-0 grid-cols-1 gap-3 @min-[52rem]:grid-cols-[minmax(0,1fr)_14rem] @min-[52rem]:gap-6">
+				<div className="min-w-0 rounded-lg border bg-card @min-[52rem]:sticky @min-[52rem]:top-20 @min-[52rem]:col-start-2 @min-[52rem]:row-start-1 @min-[52rem]:self-start @min-[52rem]:rounded-xl @min-[52rem]:bg-sidebar @min-[52rem]:shadow-xs">
+					<div className="flex min-h-11 min-w-0 items-center gap-2 px-3 py-2 @min-[52rem]:hidden">
+						<Skeleton className="size-6 shrink-0 rounded-full" />
+						<div className="flex min-w-0 flex-1 items-center gap-2">
+							<Skeleton className="h-4 w-24" />
+							<Skeleton className="h-3 w-16" />
+						</div>
+						<Skeleton className="size-4 shrink-0" />
+					</div>
+					<div className="hidden min-w-0 p-3 @min-[52rem]:block">
+						<div className="mb-3 flex h-5 items-center justify-between gap-2 px-2">
+							<Skeleton className="h-4 w-24" />
+							<Skeleton className="h-3 w-8" />
+						</div>
+						<div className="space-y-1">
+							{Array.from({ length: 6 }, (_, step) => (
+								<div key={step} className="flex min-h-10 min-w-0 items-center gap-2 px-2">
+									<Skeleton className="size-6 shrink-0 rounded-full" />
+									<Skeleton className="h-4 w-24 max-w-full" />
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+				<div className={cn(panel, "min-w-0 space-y-6 p-6 @min-[52rem]:col-start-1 @min-[52rem]:row-start-1")}>
+					<div className="space-y-2">
+						<Skeleton className="h-4 w-24 max-w-full" />
+						<Skeleton className="h-5 w-80 max-w-full" />
+					</div>
+					<div className="grid gap-4">
+						{Array.from({ length: 4 }, (_, field) => (
+							<div key={field} className="min-w-0 space-y-3">
+								<Skeleton className="h-3 w-20 max-w-full" />
+								<Skeleton className="h-9 w-full" />
+								{field === 2 && <Skeleton className="h-4 w-36 max-w-full" />}
+							</div>
+						))}
+					</div>
+					<div className="flex justify-between gap-3">
+						<Skeleton className="h-9 w-16" />
+						<Skeleton className="h-9 w-20" />
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }
 
@@ -153,6 +205,8 @@ function ScreenPanel({ screen }: { screen: WorkspaceScreen }) {
 			return <TablePanel columns={screen.columns} search />;
 		case "editor":
 			return <EditorPanel steps={screen.steps} />;
+		case "package-editor":
+			return <PackageEditorPanel />;
 		case "import":
 			return <ImportPanel uploads={screen.uploads} />;
 		case "dashboard":
@@ -167,14 +221,20 @@ function ScreenPanel({ screen }: { screen: WorkspaceScreen }) {
 export function WorkspaceSkeleton() {
 	const pathname = usePathname().replace(/\/$/, "");
 	const screen = screens.find(([path]) => path.test(pathname))?.[1] ?? defaultScreen;
+	const isPackageEditor = screen.kind === "package-editor";
 
 	return (
 		<div className={cn("workspace-page", screen.width ?? "max-w-7xl")}>
 			<p role="status" className="sr-only">
 				Loading {screen.label}…
 			</p>
-			<div aria-hidden="true" className="space-y-4 md:space-y-6">
-				{screen.kind !== "document" ? (
+			<div aria-hidden="true" className={isPackageEditor ? "space-y-6" : "space-y-4 md:space-y-6"}>
+				{isPackageEditor ? (
+					<div className="flex min-w-0 items-center gap-4">
+						<Skeleton className="size-9 shrink-0" />
+						<Skeleton className="h-7 w-40 max-w-full md:h-8" />
+					</div>
+				) : screen.kind !== "document" ? (
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="min-w-0 flex-1 space-y-2">
 							<Skeleton className="h-7 w-48 max-w-full" />
