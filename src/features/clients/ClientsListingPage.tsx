@@ -19,6 +19,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import { TableToolbar } from "~/components/ui/table-toolbar";
 import { cn } from "~/lib/utils";
 
 type ClientQuotation = {
@@ -337,104 +338,93 @@ export default function ClientsListingPage({
 			</div>
 
 			<Card className="gap-0 overflow-hidden py-0">
-				<div className="flex flex-col gap-3 border-b bg-muted/40 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
-					{/* Agent filter */}
-					<div className="flex items-center gap-2">
-						<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									size="sm"
-									className={cn(
-										"gap-2 h-8 text-xs",
-										picFilters.length > 0 && "border-primary text-primary",
-									)}
-								>
-									<SlidersHorizontal className="h-3.5 w-3.5" />
-									Agent
-									{picFilters.length > 0 && (
-										<Badge variant="secondary" className="h-4 px-1 text-[10px]">
-											{picFilters.length}
-										</Badge>
-									)}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-56 p-0" align="start">
-								<div className="flex items-center gap-2 px-3 py-2 border-b">
-									<Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-									<input
-										type="text"
-										placeholder="Search agents..."
-										value={agentSearch}
-										onChange={(e) => setAgentSearch(e.target.value)}
-										className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
-									/>
-								</div>
-								<div className="max-h-64 overflow-y-auto py-1">
-									{allPics
-										.filter((pic) =>
-											pic.toLowerCase().includes(agentSearch.toLowerCase()),
-										)
-										.map((pic) => {
-											const isActive = picFilters.includes(pic);
-											return (
-												<label
-													key={pic}
-													className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
-												>
-													<span>{pic}</span>
-													<button
-														type="button"
-														role="switch"
-														aria-checked={isActive}
-														onClick={() => handleTogglePic(pic)}
-														className={cn(
-															"relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
-															isActive ? "bg-primary" : "bg-muted-foreground/30",
-														)}
-													>
-														<span
-															className={cn(
-																"inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
-																isActive ? "translate-x-4" : "translate-x-0.5",
-															)}
-														/>
-													</button>
-												</label>
-											);
-										})}
-								</div>
-								{picFilters.length > 0 && (
-									<div className="border-t">
-										<button
-											type="button"
-											onClick={handleClearPics}
-											className="w-full py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-										>
-											Clear filter
-										</button>
-									</div>
+				<TableToolbar
+					search={{
+						label: "Search clients",
+						placeholder: "Name or phone number",
+						value: localSearch,
+						onChange: (event) => setLocalSearch(event.target.value),
+						isLoading,
+					}}
+				>
+					<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
+						<PopoverTrigger asChild>
+							<Button
+								variant="outline"
+								size="sm"
+								className={cn(
+									"gap-2 h-8 text-xs",
+									picFilters.length > 0 && "border-primary text-primary",
 								)}
-							</PopoverContent>
-						</Popover>
-					</div>
-
-					{/* Search */}
-					<div className="relative min-w-0 flex-1">
-						{isLoading ? (
-							<Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
-						) : (
-							<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-						)}
-						<input
-							type="text"
-							placeholder="Search by name or phone number..."
-							value={localSearch}
-							onChange={(e) => setLocalSearch(e.target.value)}
-							className="w-full rounded-md border border-input bg-background pl-9 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-						/>
-					</div>
-				</div>
+							>
+								<SlidersHorizontal className="h-3.5 w-3.5" />
+								Agent
+								{picFilters.length > 0 && (
+									<Badge variant="secondary" className="h-4 px-1 text-[10px]">
+										{picFilters.length}
+									</Badge>
+								)}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-56 p-0" align="start">
+							<div className="flex items-center gap-2 px-3 py-2 border-b">
+								<Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+								<input
+									type="text"
+									placeholder="Search agents..."
+									value={agentSearch}
+									onChange={(e) => setAgentSearch(e.target.value)}
+									className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+								/>
+							</div>
+							<div className="max-h-64 overflow-y-auto py-1">
+								{allPics
+									.filter((pic) =>
+										pic.toLowerCase().includes(agentSearch.toLowerCase()),
+									)
+									.map((pic) => {
+										const isActive = picFilters.includes(pic);
+										return (
+											<label
+												key={pic}
+												className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
+											>
+												<span>{pic}</span>
+												<button
+													type="button"
+													role="switch"
+													aria-checked={isActive}
+													onClick={() => handleTogglePic(pic)}
+													className={cn(
+														"relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
+														isActive ? "bg-primary" : "bg-muted-foreground/30",
+													)}
+												>
+													<span
+														className={cn(
+															"inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
+															isActive ? "translate-x-4" : "translate-x-0.5",
+														)}
+													/>
+												</button>
+											</label>
+										);
+									})}
+							</div>
+							{picFilters.length > 0 && (
+								<div className="border-t">
+									<button
+										type="button"
+										onClick={handleClearPics}
+										className="w-full py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+									>
+										Clear filter
+									</button>
+								</div>
+							)}
+						</PopoverContent>
+					</Popover>
+				</TableToolbar>
 
 				<CardContent className="p-0">
 					<p role="status" className="sr-only">

@@ -6,7 +6,10 @@ import type { FunctionReturnType } from "node_modules/convex/dist/esm-types/serv
 import { useCallback, useMemo, useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { TableToolbar } from "~/components/ui/table-toolbar";
+import { useDebouncedSearch } from "~/hooks/useDebounce";
 import { cn } from "~/lib/utils";
 import { columns } from "./components/PackageListTable/columns";
 import { DataTable } from "./components/PackageListTable/data-table";
@@ -15,6 +18,7 @@ import PackagePreviewModal from "./PackagePreviewModal";
 interface Props {
 	data: FunctionReturnType<typeof api.packages.listWithRooms>; // Receives data from parent
 	isLoading?: boolean;
+	searchTerm: string;
 }
 
 type PackageWithRooms = FunctionReturnType<
@@ -26,7 +30,8 @@ const STATUS_OPTIONS = [
 	{ value: "unpublished", label: "Unpublished" },
 ];
 
-const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
+const PackageList: React.FC<Props> = ({ data, isLoading = false, searchTerm }) => {
+	const searchProps = useDebouncedSearch(searchTerm);
 	const [previewPackage, setPreviewPackage] = useState<PackageWithRooms | null>(null);
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 	const [seasonFilterOpen, setSeasonFilterOpen] = useState(false);
@@ -53,7 +58,10 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 		);
 	}, []);
 
-	const handleClearSeasons = useCallback(() => setSelectedSeasons([]), []);
+	const handleClearSeasons = useCallback(() => {
+		setSelectedSeasons([]);
+		if (seasons.length === 0) setSeasonFilterOpen(false);
+	}, [seasons.length]);
 
 	const handleToggleStatus = useCallback((status: string) => {
 		setSelectedStatuses((prev) =>
@@ -69,73 +77,79 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 	}, []);
 
 	return (
-		<div>
-			<div className="flex flex-wrap items-center gap-2 border-b px-4 py-3 sm:px-5">
-				{seasons.length > 0 && (
-					<Popover open={seasonFilterOpen} onOpenChange={setSeasonFilterOpen}>
-						<PopoverTrigger asChild>
-							<Button
-								variant="outline"
-								size="sm"
-								className={cn(
-									"gap-2 h-8 text-xs",
-									selectedSeasons.length > 0 && "border-primary text-primary",
-								)}
-							>
-								<SlidersHorizontal className="h-3.5 w-3.5" />
-								Season
-								{selectedSeasons.length > 0 && (
-									<Badge variant="secondary" className="h-4 px-1 text-[10px]">
-										{selectedSeasons.length}
-									</Badge>
-								)}
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="w-52 p-0" align="start">
-							<div className="max-h-64 overflow-y-auto py-1">
-								{seasons.map((season) => {
-									const isActive = selectedSeasons.includes(season);
-									return (
-										<label
-											key={season}
-											className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
-										>
-											<span>{season}</span>
-											<button
-												type="button"
-												role="switch"
-												aria-checked={isActive}
-												onClick={() => handleToggleSeason(season)}
-												className={cn(
-													"relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
-													isActive ? "bg-primary" : "bg-muted-foreground/30",
-												)}
-											>
-												<span
-													className={cn(
-														"inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
-														isActive ? "translate-x-4" : "translate-x-0.5",
-													)}
-												/>
-											</button>
-										</label>
-									);
-								})}
-							</div>
-							{selectedSeasons.length > 0 && (
-								<div className="border-t">
-									<button
-										type="button"
-										onClick={handleClearSeasons}
-										className="w-full py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-									>
-										Clear filter
-									</button>
-								</div>
+		<Card className="gap-0 overflow-hidden py-0">
+			<TableToolbar
+				search={{
+					...searchProps,
+					label: "Search packages",
+					placeholder: "Package name",
+					isLoading: isLoading && Boolean(searchTerm),
+				}}
+			>
+				<Popover open={seasonFilterOpen} onOpenChange={setSeasonFilterOpen}>
+					<PopoverTrigger asChild>
+						<Button
+							variant="outline"
+							size="sm"
+							disabled={seasons.length === 0 && selectedSeasons.length === 0}
+							className={cn(
+								"gap-2 h-8 text-xs",
+								selectedSeasons.length > 0 && "border-primary text-primary",
 							)}
-						</PopoverContent>
-					</Popover>
-				)}
+						>
+							<SlidersHorizontal className="h-3.5 w-3.5" />
+							Season
+							{selectedSeasons.length > 0 && (
+								<Badge variant="secondary" className="h-4 px-1 text-[10px]">
+									{selectedSeasons.length}
+								</Badge>
+							)}
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className="w-52 p-0" align="start">
+						<div className="max-h-64 overflow-y-auto py-1">
+							{seasons.map((season) => {
+								const isActive = selectedSeasons.includes(season);
+								return (
+									<label
+										key={season}
+										className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
+									>
+										<span>{season}</span>
+										<button
+											type="button"
+											role="switch"
+											aria-checked={isActive}
+											onClick={() => handleToggleSeason(season)}
+											className={cn(
+												"relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
+												isActive ? "bg-primary" : "bg-muted-foreground/30",
+											)}
+										>
+											<span
+												className={cn(
+													"inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform",
+													isActive ? "translate-x-4" : "translate-x-0.5",
+												)}
+											/>
+										</button>
+									</label>
+								);
+							})}
+						</div>
+						{selectedSeasons.length > 0 && (
+							<div className="border-t">
+								<button
+									type="button"
+									onClick={handleClearSeasons}
+									className="w-full py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+								>
+									Clear filter
+								</button>
+							</div>
+						)}
+					</PopoverContent>
+				</Popover>
 
 				<Popover open={statusFilterOpen} onOpenChange={setStatusFilterOpen}>
 					<PopoverTrigger asChild>
@@ -200,14 +214,16 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 						)}
 					</PopoverContent>
 				</Popover>
-			</div>
+			</TableToolbar>
 
-			<DataTable
-				columns={columns}
-				data={filteredData}
-				handlePreview={handlePreviewPckg}
-				isLoading={isLoading}
-			/>
+			<CardContent className="p-0">
+				<DataTable
+					columns={columns}
+					data={filteredData}
+					handlePreview={handlePreviewPckg}
+					isLoading={isLoading}
+				/>
+			</CardContent>
 
 			{previewPackage && (
 				<PackagePreviewModal
@@ -216,7 +232,7 @@ const PackageList: React.FC<Props> = ({ data, isLoading = false }) => {
 					onOpenChange={setIsPreviewOpen}
 				/>
 			)}
-		</div>
+		</Card>
 	);
 };
 

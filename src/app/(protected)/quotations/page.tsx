@@ -4,19 +4,19 @@ import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { api } from "convex/_generated/api";
 import { useQuery, useConvexAuth } from "convex/react";
 import { PAGE_SIZE } from "convex/constants";
-import { Loader2, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { Plus, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { TableToolbar } from "~/components/ui/table-toolbar";
 import { COLUMN_LABELS } from "~/features/quotation/components/QuotationTable/columns";
 import QuotationListing from "~/features/quotation/QuotationListing";
 import { useDebouncedSearch } from "~/hooks/useDebounce";
@@ -128,105 +128,95 @@ export default function QuotationsPage() {
                 <Link href="/quotations?visibility=archived" aria-current={visibility === "archived" ? "page" : undefined}>Archived families</Link>
             </div>
 			<Card className="gap-0 overflow-hidden py-0">
-				<CardHeader className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-5 [.border-b]:pb-4">
-					{/* Fields visibility button row */}
-					<div className="flex justify-start">
-						<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>
-							<PopoverTrigger asChild>
-								<Button variant="outline" size="sm" className="gap-2 h-8 text-xs">
-									<SlidersHorizontal className="h-3.5 w-3.5" />
-									Fields
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-56 p-0" align="end">
-								<div className="flex items-center gap-2 px-3 py-2 border-b">
-									<Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-									<input
-										type="text"
-										placeholder="Search fields..."
-										value={fieldSearchQuery}
-										onChange={(e) => setFieldSearchQuery(e.target.value)}
-										className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
-									/>
-								</div>
-								<div className="max-h-64 overflow-y-auto py-1">
-									{allColumnIds
-										.filter((id) =>
-											COLUMN_LABELS[id]
-												.toLowerCase()
-												.includes(fieldSearchQuery.toLowerCase()),
-										)
-										.map((id) => {
-											const isVisible = columnVisibility[id] !== false;
-											return (
-												<label
-													key={id}
-													className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
+				<TableToolbar
+					search={{
+						...searchProps,
+						label: "Search quotations",
+						placeholder: "Ref, client or package",
+						isLoading: isSearchLoading,
+					}}
+				>
+					<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>
+						<PopoverTrigger asChild>
+							<Button variant="outline" size="sm" className="gap-2 h-8 text-xs">
+								<SlidersHorizontal className="h-3.5 w-3.5" />
+								Fields
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-56 p-0" align="start">
+							<div className="flex items-center gap-2 px-3 py-2 border-b">
+								<Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+								<input
+									type="text"
+									placeholder="Search fields..."
+									value={fieldSearchQuery}
+									onChange={(e) => setFieldSearchQuery(e.target.value)}
+									className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+								/>
+							</div>
+							<div className="max-h-64 overflow-y-auto py-1">
+								{allColumnIds
+									.filter((id) =>
+										COLUMN_LABELS[id]
+											.toLowerCase()
+											.includes(fieldSearchQuery.toLowerCase()),
+									)
+									.map((id) => {
+										const isVisible = columnVisibility[id] !== false;
+										return (
+											<label
+												key={id}
+												className="flex items-center justify-between px-3 py-1.5 text-sm cursor-pointer hover:bg-muted/50 select-none"
+											>
+												<span>{COLUMN_LABELS[id]}</span>
+												<button
+													type="button"
+													role="switch"
+													aria-checked={isVisible}
+													onClick={() =>
+														setColumnVisibility((prev) => ({
+															...prev,
+															[id]: !isVisible,
+														}))
+													}
+													className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+														isVisible ? "bg-primary" : "bg-muted-foreground/30"
+													}`}
 												>
-													<span>{COLUMN_LABELS[id]}</span>
-													<button
-														type="button"
-														role="switch"
-														aria-checked={isVisible}
-														onClick={() =>
-															setColumnVisibility((prev) => ({
-																...prev,
-																[id]: !isVisible,
-															}))
-														}
-														className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-															isVisible ? "bg-primary" : "bg-muted-foreground/30"
+													<span
+														className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+															isVisible ? "translate-x-4" : "translate-x-0.5"
 														}`}
-													>
-														<span
-															className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
-																isVisible ? "translate-x-4" : "translate-x-0.5"
-															}`}
-														/>
-													</button>
-												</label>
-											);
-										})}
-								</div>
-								<div className="flex border-t">
-									<button
-										type="button"
-										onClick={() =>
-											setColumnVisibility(
-												Object.fromEntries(allColumnIds.map((id) => [id, false])),
-											)
-										}
-										className="flex-1 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-center gap-1"
-									>
-										Hide All
-									</button>
-									<div className="w-px bg-border" />
-									<button
-										type="button"
-										onClick={() => setColumnVisibility({})}
-										className="flex-1 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-center gap-1"
-									>
-										Show All
-									</button>
-								</div>
-							</PopoverContent>
-						</Popover>
-					</div>
-					{/* Search bar */}
-					<form onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1">
-						{isSearchLoading ? (
-							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
-						) : (
-							<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-						)}
-						<Input
-							name="q"
-							placeholder="Search by reference, client or package..."
-							className="pl-9 h-9"
-							{...searchProps}
-						/>
-					</form>
-				</CardHeader>
+													/>
+												</button>
+											</label>
+										);
+									})}
+							</div>
+							<div className="flex border-t">
+								<button
+									type="button"
+									onClick={() =>
+										setColumnVisibility(
+											Object.fromEntries(allColumnIds.map((id) => [id, false])),
+										)
+									}
+									className="flex-1 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-center gap-1"
+								>
+									Hide All
+								</button>
+								<div className="w-px bg-border" />
+								<button
+									type="button"
+									onClick={() => setColumnVisibility({})}
+									className="flex-1 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-center gap-1"
+								>
+									Show All
+								</button>
+							</div>
+						</PopoverContent>
+					</Popover>
+				</TableToolbar>
 				<CardContent className="p-0">
 					<QuotationListing
 						data={displayQuotations}

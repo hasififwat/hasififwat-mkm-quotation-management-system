@@ -2,7 +2,7 @@
 
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -12,10 +12,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import PackageList from "~/features/packages/PackageList";
-import { useDebouncedSearch } from "~/hooks/useDebounce";
 
 export default function PackageListPage() {
 	const searchParams = useSearchParams();
@@ -24,8 +21,6 @@ export default function PackageListPage() {
 		searchTerm: searchTerm || undefined,
 	});
 	const isLoading = data === undefined;
-
-	const searchProps = useDebouncedSearch(searchTerm);
 
 	return (
 		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
@@ -55,23 +50,7 @@ export default function PackageListPage() {
 				</DropdownMenu>
 			</div>
 
-			<Card className="gap-0 overflow-hidden py-0">
-				<CardHeader className="border-b px-4 py-4 sm:px-5 [.border-b]:pb-4">
-					<form onSubmit={(e) => e.preventDefault()} className="relative" role="search">
-						<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-
-						<Input
-							name="q"
-							placeholder="Search by package name..."
-							className="pl-9 h-9"
-							{...searchProps}
-						/>
-					</form>
-				</CardHeader>
-				<CardContent className="p-0">
-					<PackageList data={data ?? []} isLoading={isLoading} />
-				</CardContent>
-			</Card>
+			<PackageList data={data ?? []} isLoading={isLoading} searchTerm={searchTerm} />
 		</div>
 	);
 }
