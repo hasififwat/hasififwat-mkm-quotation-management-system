@@ -1249,6 +1249,8 @@ export default function PackageSyncPage() {
       } catch (e) { errors.push(`Promote packages: ${syncErrorMessage(e)}`); }
     }
 
+    const packagesWithFailedFlightWrites = new Set<string>();
+
     for (const spec of plan.flightsToAdd) {
       setProgress({ phase: "flights", done, total, current: `Adding flight ${spec.package_name} ${spec.departure_date}…` });
       let packageId = spec.db_package_id;
@@ -1268,7 +1270,10 @@ export default function PackageSyncPage() {
           source: "sync",
         });
         flightsAdded++;
-      } catch (e) { errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`); }
+      } catch (e) {
+        packagesWithFailedFlightWrites.add(packageId);
+        errors.push(`Add flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`);
+      }
       done++;
     }
 
@@ -1284,11 +1289,19 @@ export default function PackageSyncPage() {
           return_date: spec.return_date, return_sector: spec.return_sector,
         });
         flightsUpdated++;
-      } catch (e) { errors.push(`Update flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`); }
+      } catch (e) {
+        packagesWithFailedFlightWrites.add(spec.db_package_id);
+        errors.push(`Update flight ${spec.package_name} ${spec.departure_date}: ${syncErrorMessage(e)}`);
+      }
       done++;
     }
 
     for (const spec of plan.flightsToRemove) {
+      if (packagesWithFailedFlightWrites.has(spec.row.db_package_id)) {
+        errors.push(`Skipped removal of ${spec.package_name} (${spec.season}) flight on ${spec.departure_date} because adding or updating a flight for this package failed.`);
+        done++;
+        continue;
+      }
       setProgress({ phase: "flights", done, total, current: `Removing flight ${spec.package_name} ${spec.departure_date}…` });
       try {
         await deleteFlight({ id: spec.db_flight_id as Id<"package_flights"> });
