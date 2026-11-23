@@ -60,9 +60,11 @@ database state:
 - quantity: `1`, `2`;
 - unit price: `0`, `100`.
 
-Creation cases submit the current package content version through `reviewed_context`.
-The adapter derives it from the same explicit package and child fixture rows.
-This keeps the original domain valid after creation requires reviewed context.
+Create and update cases submit `reviewed_context` from the fixture's current package and child rows.
+Update cases also submit `expected_quotation_token` from the saved quotation and items.
+These inputs let the original identity and association checks run.
+The focused stale-edit and stale-catalogue cases in
+`scripts/quotation-legacy-update.test.mjs` verify the new conflicts separately.
 Stale context and availability have focused checks in
 `scripts/quotation-selection.test.mjs`. Run
 `node scripts/check-quotation-selection-mutation.mjs` to verify that removing the
