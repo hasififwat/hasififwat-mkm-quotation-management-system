@@ -1090,6 +1090,8 @@ export const update = mutation({
 	args: {
 		payload: v.object({
 			id: v.string(),
+			expected_quotation_token: v.optional(v.string()),
+			reviewed_context: v.optional(v.string()),
 			pic_name: v.string(),
 			branch: v.string(),
 			client_id: v.string(),
@@ -1143,6 +1145,19 @@ export const update = mutation({
 			throw new Error("Quotation not found");
 		}
 		assertMutableLegacyQuotation(quotation);
+		const existingItems = await ctx.db
+			.query("quotation_items")
+			.withIndex("by_quotation_id", (q) => q.eq("quotation_id", String(quotation._id)))
+			.collect();
+		if (!args.payload.expected_quotation_token ||
+			args.payload.expected_quotation_token !== await quotationRefreshToken(quotation, existingItems)) {
+			throw new ConvexError({ code: "QUOTATION_STALE_EDITOR", message: "This quotation changed after you opened it. Review the saved quotation before trying again." });
+		}
+
+		const packageChanged = args.payload.package_id !== quotation.package_id;
+		const replacePackageSnapshot = packageChanged || !quotation.package_snapshot;
+		const replaceFlightSnapshot = args.payload.flight_id !== quotation.flight_id || !quotation.flight_snapshot;
+		const replaceHotelsSnapshot = packageChanged || !quotation.hotels_snapshot;
 
 		const now = new Date().toISOString();
 
@@ -1167,6 +1182,12 @@ export const update = mutation({
 		);
 		if (!selectedPackage) {
 			throw new Error("Package not found");
+		}
+		if ((replacePackageSnapshot || replaceFlightSnapshot || replaceHotelsSnapshot) &&
+			args.payload.reviewed_context !== quotationSelectionContext(
+				selectedPackage, allPackageRooms, allFlights, allPackageHotels, allPackageMeals,
+			)) {
+			throw new ConvexError({ code: "QUOTATION_SELECTION_CONFLICT", message: "The package, rooms, or itinerary changed. Review the latest package before saving." });
 		}
 
 		const selectedFlight = allFlights.find(
@@ -1241,9 +1262,6 @@ export const update = mutation({
 		}
 		const totalAmount = normalizeCurrency(roomsTotal + addOnsTotal - discountsTotal);
 
-		const packageChanged = args.payload.package_id !== quotation.package_id;
-		const flightChanged  = args.payload.flight_id  !== quotation.flight_id;
-
 		const hotelsForPkg = allPackageHotels.filter(
 			(h) => String(h.package_id) === args.payload.package_id,
 		);
@@ -1259,17 +1277,17 @@ export const update = mutation({
 			(r) => String(r.package_id) === args.payload.package_id,
 		);
 		requirePrices(roomsForPkg, "Package room");
-		const package_snapshot = packageChanged
+		const package_snapshot = replacePackageSnapshot
 			? buildPackageSnapshot(selectedPackage, roomsForPkg)
-			: (quotation.package_snapshot ?? buildPackageSnapshot(selectedPackage, roomsForPkg));
+			: quotation.package_snapshot;
 
-		const flight_snapshot = flightChanged
+		const flight_snapshot = replaceFlightSnapshot
 			? buildFlightSnapshot(selectedFlight)
-			: (quotation.flight_snapshot ?? buildFlightSnapshot(selectedFlight));
+			: quotation.flight_snapshot;
 
-		const hotels_snapshot = packageChanged
+		const hotels_snapshot = replaceHotelsSnapshot
 			? buildHotelsSnapshot(hotelsForPkg, mealsByHotelId)
-			: (quotation.hotels_snapshot ?? buildHotelsSnapshot(hotelsForPkg, mealsByHotelId));
+			: quotation.hotels_snapshot;
 
 		await ctx.db.patch(quotation._id, {
 			client_name: client.name,
@@ -1286,11 +1304,6 @@ export const update = mutation({
 			flight_snapshot,
 			hotels_snapshot,
 		});
-
-		const existingItems = await ctx.db
-			.query("quotation_items")
-			.withIndex("by_quotation_id", (q) => q.eq("quotation_id", String(quotation._id)))
-			.collect();
 
 		for (const item of existingItems) {
 			await ctx.db.delete(item._id);
@@ -1377,7 +1390,7 @@ async function readRefreshQuotation(ctx: QueryCtx, quotationId: string, expected
 		.collect();
 	const token = await quotationRefreshToken(quotation, items);
 	if (expected !== token) refreshConflict();
-	return { quotation, token };
+	return { quotation, token, items };
 }
 
 async function readRefreshSource(ctx: QueryCtx, quotation: Doc<"quotations">) {
@@ -1453,17 +1466,18 @@ export const refreshSnapshot = mutation({
 		  return saveRevision(ctx, actor, args.command);
 		}
 		await assertLegacyWritesAllowed(ctx);
-		const { quotation } = await readRefreshQuotation(ctx, args.quotation_id, args.expected_quotation_token);
+		const { quotation, items } = await readRefreshQuotation(ctx, args.quotation_id, args.expected_quotation_token);
 		if (!args.source_context) refreshConflict();
 		const current = await readRefreshSource(ctx, quotation);
 		if (args.source_context !== current.source_context) refreshConflict();
 		const now = new Date().toISOString();
-		await ctx.db.patch(quotation._id, {
+		const patch = {
 			package_snapshot: current.package_snapshot,
 			flight_snapshot: current.flight_snapshot,
 			hotels_snapshot: current.hotels_snapshot,
 			updated_at: now,
-		});
+		};
+		await ctx.db.patch(quotation._id, patch);
 		const quotationNumber = buildQuotationNumber(quotation.hijri_year, quotation.sequence_num, quotation.revision);
 		await ctx.db.insert("quotation_logs", {
 			quotation_id: String(quotation._id), action: "snapshot_refreshed",
@@ -1471,7 +1485,7 @@ export const refreshSnapshot = mutation({
 			performed_by: actor, created_at: now,
 			snapshot_data: JSON.stringify({ package_updated_at: current.package_snapshot.package_updated_at }),
 		});
-		return { success: true };
+		return { success: true, snapshot_refresh_token: await quotationRefreshToken({ ...quotation, ...patch }, items) };
 	},
 });
 

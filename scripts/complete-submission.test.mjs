@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, reviewedQuote } from "./helpers/submission-fixtures.mjs";
+import { packages, quotations, flights, normalize, transform, packageSchema, state, form, create, read, save, quotationEditToken, reviewedQuote } from "./helpers/submission-fixtures.mjs";
 
 const badPrices = [-1, NaN, Infinity, -Infinity, 1.001];
 const badDates = ["", " ", "2027-02-30", "2027-13-01", "01/01/2027"];
@@ -65,6 +65,7 @@ for (const writer of ["create", "update"]) {
         const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
         const initial = await quotations.create._handler(s.ctx,{payload});
         payload.id = initial.id;
+        if (writer === "update") payload.expected_quotation_token = await quotationEditToken(s, payload.id);
         payload[section] = section === "selected_rooms" ? [{room_type:"Quad",price,pax:1}] : [{name:"Fixture",price,pax:1}];
         await unchanged(s, () => quotations[writer]._handler(s.ctx,{payload}), /price/i);
       });
@@ -73,6 +74,7 @@ for (const writer of ["create", "update"]) {
   test(`quotation ${writer} rejects incomplete historical flight`, async () => {
     const s = state(); const id = await create(s,form()); const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx,{payload})).id;
+    if (writer === "update") payload.expected_quotation_token = await quotationEditToken(s, payload.id);
     s.tables.package_flights[0].return_date = "";
     if (writer === "create") payload.reviewed_context = (await reviewedQuote(s, id, payload.flight_id)).reviewed_context;
     await unchanged(s, () => quotations[writer]._handler(s.ctx,{payload}), /date/i);
@@ -80,6 +82,7 @@ for (const writer of ["create", "update"]) {
   test(`quotation ${writer} rejects overflowing arithmetic`, async () => {
     const s = state(); const id = await create(s,form()); const payload = await reviewedQuote(s,id,s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx,{payload})).id;
+    if (writer === "update") payload.expected_quotation_token = await quotationEditToken(s, payload.id);
     payload.selected_rooms[0].pax = Infinity;
     await unchanged(s, () => quotations[writer]._handler(s.ctx,{payload}), /finite|amount|quantity/i);
   });
@@ -102,7 +105,8 @@ for (const price of [0, 1234.56]) {
     const payload = await reviewedQuote(s,id,reopened.flights[0]._id,"Quad",price); payload.selected_rooms[0].pax=2;
     payload.adds_ons=[{name:"Fixture",price:10.25,pax:2}]; payload.discounts=[{name:"Fixture",price:0.25,pax:2}];
     const result = await quotations.create._handler(s.ctx,{payload}); assert.equal(s.tables.quotations.find(q=>q._id===result.id).total_amount,price*2+20);
-    payload.id=result.id; await quotations.update._handler(s.ctx,{payload}); assert.equal(s.tables.quotations.find(q=>q._id===result.id).total_amount,price*2+20);
+    payload.id=result.id; payload.expected_quotation_token=await quotationEditToken(s,result.id);
+    await quotations.update._handler(s.ctx,{payload}); assert.equal(s.tables.quotations.find(q=>q._id===result.id).total_amount,price*2+20);
   });
 }
 test("packages can be saved without any flight", async () => {const s=state();const data=form();data.flights=[];await create(s,data);assert.equal(s.tables.package_flights.length,0);});
@@ -111,6 +115,7 @@ for (const writer of ["create", "update"]) {
   test(`quotation ${writer} rejects invalid historical package prices before snapshot writes`, async () => {
     const s = state(); const id = await create(s, form()); const payload = await reviewedQuote(s,id, s.tables.package_flights[0]._id);
     payload.id = (await quotations.create._handler(s.ctx, {payload})).id;
+    if (writer === "update") payload.expected_quotation_token = await quotationEditToken(s, payload.id);
     s.tables.package_rooms[0].price = -10;
     if (writer === "create") payload.reviewed_context = (await reviewedQuote(s, id, payload.flight_id)).reviewed_context;
     await unchanged(s, () => quotations[writer]._handler(s.ctx, {payload}), /price/i);

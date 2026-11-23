@@ -16,7 +16,7 @@ function route(error, revision = null) {
    if(id==='next/server') return {NextResponse:Response};
    if(id==='~/features/quotation/revision-api') return {saveRevisionResponse:async()=>revision};
    if(id==='convex/_generated/api') return {api:{quotations:{refreshSnapshot:'refresh',update:'update'}}};
-   if(id==='~/lib/convex-server') return {getServerConvexClient:async()=>({mutation:async(...args)=>{calls.push(args);if(error)throw error;}})};
+   if(id==='~/lib/convex-server') return {getServerConvexClient:async()=>({mutation:async(...args)=>{calls.push(args);if(error)throw error;return {snapshot_refresh_token:'refreshed'};}})};
    return require(id);
   },
  }, {filename:source});
@@ -24,7 +24,10 @@ function route(error, revision = null) {
 }
 const payload = {_intent:'refresh_snapshot',quotation_id:'q:1',expected_quotation_token:'loaded',source_context:'reviewed'};
 test('refresh route forwards both reviewed tokens', async()=>{
- const r=route(); assert.equal((await r.post(payload)).status,200);
+ const r=route();
+ const response=await r.post(payload);
+ assert.equal(response.status,200);
+ assert.deepEqual(await response.json(),{success:true,refreshed:true,snapshot_refresh_token:'refreshed'});
  assert.deepEqual(JSON.parse(JSON.stringify(r.calls)),[['refresh',{quotation_id:'q:1',expected_quotation_token:'loaded',source_context:'reviewed'}]]);
 });
 for(const key of ['quotation_id','expected_quotation_token','source_context']) test(`refresh route requires ${key}`,async()=>{
@@ -37,9 +40,18 @@ for(const error of [new Error('Not authenticated'),new ConvexError({code:'Unauth
  assert.equal((await route(error).post(payload)).status,401);
 });
 test('unknown refresh errors remain500',async()=>assert.equal((await route(new Error('network')).post(payload)).status,500));
-test('ordinary update is unchanged',async()=>{
+test('ordinary update sends the draft to the legacy mutation',async()=>{
  const r=route();assert.equal((await r.post({id:'q:1',notes:'draft'})).status,200);assert.equal(r.calls[0][0],'update');
 });
 test('revision response still owns command handling',async()=>{
  const revision=Response.json({success:true,revision:2});const r=route(null,revision);assert.equal(await r.post({command:{operation:'append'}}),revision);assert.equal(r.calls.length,0);
 });
+
+for (const code of ['QUOTATION_STALE_EDITOR', 'QUOTATION_SELECTION_CONFLICT']) {
+ test(`legacy Save returns a typed HTTP 409 for ${code}`, async () => {
+  const message = 'Review the saved quotation or catalogue before saving.';
+  const response = await route(new ConvexError({code, message})).post({id:'q:1',notes:'draft'});
+  assert.equal(response.status, 409);
+  assert.deepEqual(await response.json(), {success:false, code, error:message});
+ });
+}

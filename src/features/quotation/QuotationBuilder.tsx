@@ -635,7 +635,7 @@ export default function QuotationBuilder({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isReviewing, setIsReviewing] = useState(false);
 	const [packageOptions, setPackageOptions] = useState(allPackages);
-	const [saveError, setSaveError] = useState<{ message: string; conflict: boolean } | null>(null);
+	const [saveError, setSaveError] = useState<{ message: string; conflict?: "selection" | "stale" } | null>(null);
 	const [reviewNotice, setReviewNotice] = useState("");
 	const [refreshState, setRefreshState] = useState<RefreshSnapshotState>({ status: "idle" });
 	const refreshUnconfirmed = refreshState.status === "uncertain";
@@ -677,7 +677,12 @@ export default function QuotationBuilder({
 		try {
 			const result = await refreshQuotationSnapshot(qid, review);
 			setRefreshState(result);
-			if (result.status === "success") router.refresh();
+			if (result.status === "success") {
+				if (result.snapshotRefreshToken && review.expected_quotation_token === loadedRefreshToken.current) {
+					loadedRefreshToken.current = result.snapshotRefreshToken;
+				}
+				router.refresh();
+			}
 		} finally { refreshRequest.current = false; }
 	};
 
@@ -803,7 +808,7 @@ export default function QuotationBuilder({
 			}
 			setSaveError(null);
 		} catch {
-			setSaveError({ message: "Could not load the latest package. Your draft is retained. Try reviewing again.", conflict: true });
+			setSaveError({ message: "Could not load the latest package. Your draft is retained. Try reviewing again.", conflict: "selection" });
 		} finally {
 			setIsReviewing(false);
 		}
@@ -866,18 +871,22 @@ export default function QuotationBuilder({
 			adds_ons: sanitizeLineItems(data.adds_ons) ?? [],
 			discounts: sanitizeLineItems(data.discounts) ?? [],
 		};
-		const payload = qid ? { ...basePayload, id: data.id ?? qid } : {
-			...basePayload,
-			request_key: createAttempt.current?.requestKey,
-			reviewed_context: selectedPackage?.creation_context,
-		};
+		const reviewed_context = selectedPackage && String(selectedPackage._id) === data.package_id
+			? selectedPackage.creation_context
+			: undefined;
+		const payload = qid ? {
+			...basePayload, id: data.id ?? qid, expected_quotation_token: loadedRefreshToken.current, reviewed_context,
+		} : { ...basePayload, request_key: createAttempt.current?.requestKey, reviewed_context };
 
 		setIsSubmitting(true);
 		setSaveError(null);
 		try {
 			const result = await saveQuotation(payload, qid);
 			if (!result.ok) {
-				setSaveError({ message: result.message, conflict: !qid && result.selectionConflict === true });
+				setSaveError({
+					message: result.message,
+					conflict: result.staleEditor ? "stale" : result.selectionConflict ? "selection" : undefined,
+				});
 				return;
 			}
 			router.push(`/quotations/review/${encodeURIComponent(result.id)}`);
@@ -916,18 +925,18 @@ export default function QuotationBuilder({
 				<div role="alert" className="space-y-3 rounded-lg border border-destructive bg-destructive/5 p-4 text-sm">
 					<p>{saveError.message}{saveError.conflict && " No quotation was saved. Your draft is retained."}</p>
 					<div className={qid ? undefined : "grid w-full grid-cols-1 sm:w-64"}>
-						{saveError.conflict ? (
+						{saveError.conflict === "selection" ? (
 							<Button type="button" variant="outline" onClick={reviewLatestPackage} disabled={isReviewing}>
 								{isReviewing ? "Loading latest package..." : "Review latest package"}
 							</Button>
 						) : (
 							<Link
-								href="/quotations"
+								href={saveError.conflict === "stale" && qid ? `/quotations/edit/${encodeURIComponent(qid)}` : "/quotations"}
 								target="_blank"
 								rel="noopener noreferrer"
 								className={qid ? "inline-block underline" : buttonVariants({ variant: "outline" })}
 							>
-								Check Quotations in a new tab
+								{saveError.conflict === "stale" ? "Open the latest quotation in a new tab" : "Check Quotations in a new tab"}
 							</Link>
 						)}
 					</div>

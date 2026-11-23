@@ -87,3 +87,17 @@ test("attempt conflict retains the draft and gives recovery guidance without pac
   assert.equal(calls, 1);
   assert.deepEqual(draft, before);
 });
+
+for (const [code, recovery] of [
+  ["QUOTATION_STALE_EDITOR", "staleEditor"],
+  ["QUOTATION_SELECTION_CONFLICT", "selectionConflict"],
+]) {
+  test(`legacy edit gives specific recovery for ${code}`, async () => {
+    const message = "Review the changes before you save again.";
+    const result = await saveQuotation({ id: "existing-record" }, "existing-record", async () =>
+      Response.json({ code, error: message }, { status: 409 }));
+    assert.equal(result.ok, false);
+    assert.equal(result[recovery], true);
+    assert.equal(result.message, message);
+  });
+}

@@ -17,9 +17,9 @@ test('refresh rejects an editor loaded on A after another editor saves B', async
       quotation_id: id,
       expected_quotation_token: loaded.snapshot_refresh_token,
     });
-  delete payload.reviewed_context;
+  const replacement = await reviewedQuote(fixture, packageB, flightB);
   await quotations.update._handler(fixture.ctx, {
-    payload: { ...payload, id, package_id: packageB, flight_id: flightB },
+    payload: { ...replacement, id, expected_quotation_token: loaded.snapshot_refresh_token },
   });
   fixture.tables.packages.find(pkg => pkg._id === packageB).name = 'Package B unseen';
 
@@ -76,7 +76,11 @@ test('success writes reviewed snapshots and preserves every charge and item',asy
  q.total_amount=1350;x.s.tables.packages[0].name='Latest name';x.s.tables.package_rooms[0].price=1500;
  const original=structuredClone(q),items=structuredClone(x.s.tables.quotation_items);const r=await review(x);
  assert.equal(r.saved_package,'Fixture Package');assert.equal(r.current_package,'Latest name');assert.ok(r.changes.some(c=>c.label==='Package room prices and availability'));
- await confirm(x,r);assert.equal(q.package_snapshot.name,'Latest name');assert.equal(q.package_snapshot.rooms[0].price,1500);assert.deepEqual(x.s.tables.quotation_items,items);
+ const refreshed=await confirm(x,r);
+ assert.equal(refreshed.success,true);
+ assert.notEqual(refreshed.snapshot_refresh_token,r.expected_quotation_token);
+ assert.equal(refreshed.snapshot_refresh_token,(await edit(x)).snapshot_refresh_token);
+ assert.equal(q.package_snapshot.name,'Latest name');assert.equal(q.package_snapshot.rooms[0].price,1500);assert.deepEqual(x.s.tables.quotation_items,items);
  for(const key of Object.keys(original).filter(k=>!['package_snapshot','flight_snapshot','hotels_snapshot','updated_at'].includes(k)))assert.deepEqual(q[key],original[key]);
  assert.equal(x.s.tables.quotation_logs.filter(l=>l.action==='snapshot_refreshed').length,1);
  await rejectsWithoutWrites(x,()=>confirm(x,r));

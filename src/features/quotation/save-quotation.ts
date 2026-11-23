@@ -2,7 +2,7 @@ export type QuotationCreateAttempt = { requestKey: string };
 
 type SaveResult =
 	| { ok: true; id: string }
-	| { ok: false; message: string; selectionConflict?: true };
+	| { ok: false; message: string; selectionConflict?: true; staleEditor?: true };
 
 const uncertainSave =
 	"We could not confirm whether your quotation was saved. Your entries are kept on this page. Check Quotations for the saved record before saving again to avoid a duplicate.";
@@ -22,14 +22,12 @@ export async function saveQuotation(
 			},
 		);
 		if (!response.ok) {
-			if (!qid && response.status === 409) {
+			if (response.status === 409) {
 				const body: unknown = await response.json().catch(() => null);
-				if (body && typeof body === "object" && "code" in body &&
-					(body.code === "QUOTATION_SELECTION_CONFLICT" || body.code === "QUOTATION_ATTEMPT_CONFLICT") && "error" in body &&
-					typeof body.error === "string") {
-					return body.code === "QUOTATION_SELECTION_CONFLICT"
-						? { ok: false, message: body.error, selectionConflict: true }
-						: { ok: false, message: body.error };
+				if (body && typeof body === "object" && "code" in body && "error" in body && typeof body.error === "string") {
+					if (body.code === "QUOTATION_SELECTION_CONFLICT") return { ok: false, message: body.error, selectionConflict: true };
+					if (qid && body.code === "QUOTATION_STALE_EDITOR") return { ok: false, message: body.error, staleEditor: true };
+					if (!qid && body.code === "QUOTATION_ATTEMPT_CONFLICT") return { ok: false, message: body.error };
 				}
 			}
 			return {
