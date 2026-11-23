@@ -1,0 +1,249 @@
+{
+  "baselineCommit": "851ec67c4a3cace5333c35232b83581a6cf92aac",
+  "testedCodeCommit": "0578df1b55c7182aa99fff3e6216f9f40e303e0b",
+  "localPreview": "http://127.0.0.1:3509/",
+  "browser": {
+    "engine": "Chromium",
+    "layouts": [
+      {
+        "width": 1440,
+        "contentWidth": 1440,
+        "header": {
+          "x": 56,
+          "y": 28,
+          "right": 548.796875,
+          "bottom": 72
+        },
+        "intro": {
+          "x": 726.390625,
+          "y": 102.234375,
+          "right": 1318.390625,
+          "bottom": 314.765625
+        },
+        "heading": {
+          "x": 102.390625,
+          "y": 275.75,
+          "right": 502.390625,
+          "bottom": 315.75
+        },
+        "submit": {
+          "x": 102.390625,
+          "y": 576.25,
+          "right": 502.390625,
+          "bottom": 624.25
+        },
+        "preview": {
+          "x": 726.390625,
+          "y": 346.765625,
+          "right": 1318.390625,
+          "bottom": 797.765625
+        }
+      },
+      {
+        "width": 1024,
+        "contentWidth": 1024,
+        "header": {
+          "x": 40.953125,
+          "y": 28,
+          "right": 389.109375,
+          "bottom": 72
+        },
+        "intro": {
+          "x": 471.03125,
+          "y": 71.59375,
+          "right": 983.03125,
+          "bottom": 245.40625
+        },
+        "heading": {
+          "x": 40.953125,
+          "y": 209.75,
+          "right": 389.109375,
+          "bottom": 249.75
+        },
+        "submit": {
+          "x": 40.953125,
+          "y": 510.25,
+          "right": 389.109375,
+          "bottom": 558.25
+        },
+        "preview": {
+          "x": 471.03125,
+          "y": 277.40625,
+          "right": 983.03125,
+          "bottom": 696.40625
+        }
+      },
+      {
+        "width": 768,
+        "contentWidth": 768,
+        "header": {
+          "x": 88,
+          "y": 20,
+          "right": 680,
+          "bottom": 64
+        },
+        "intro": {
+          "x": 88,
+          "y": 96,
+          "right": 680,
+          "bottom": 262.59375
+        },
+        "heading": {
+          "x": 185,
+          "y": 323.59375,
+          "right": 583,
+          "bottom": 359.59375
+        },
+        "submit": {
+          "x": 185,
+          "y": 620.09375,
+          "right": 583,
+          "bottom": 668.09375
+        },
+        "preview": {
+          "x": 88,
+          "y": 737.09375,
+          "right": 680,
+          "bottom": 1188.09375
+        }
+      },
+      {
+        "width": 390,
+        "contentWidth": 390,
+        "header": {
+          "x": 16,
+          "y": 20,
+          "right": 374,
+          "bottom": 64
+        },
+        "intro": {
+          "x": 16,
+          "y": 96,
+          "right": 374,
+          "bottom": 232.46875
+        },
+        "heading": {
+          "x": 37,
+          "y": 281.46875,
+          "right": 353,
+          "bottom": 317.46875
+        },
+        "submit": {
+          "x": 37,
+          "y": 570.71875,
+          "right": 353,
+          "bottom": 618.71875
+        },
+        "preview": {
+          "x": 16,
+          "y": 675.71875,
+          "right": 374,
+          "bottom": 1033.109375
+        }
+      },
+      {
+        "width": 320,
+        "contentWidth": 320,
+        "header": {
+          "x": 16,
+          "y": 20,
+          "right": 304,
+          "bottom": 64
+        },
+        "intro": {
+          "x": 16,
+          "y": 96,
+          "right": 304,
+          "bottom": 232.46875
+        },
+        "heading": {
+          "x": 37,
+          "y": 281.46875,
+          "right": 283,
+          "bottom": 317.46875
+        },
+        "submit": {
+          "x": 37,
+          "y": 593.46875,
+          "right": 283,
+          "bottom": 641.46875
+        },
+        "preview": {
+          "x": 16,
+          "y": 698.46875,
+          "right": 304,
+          "bottom": 1027.859375
+        }
+      }
+    ],
+    "passed": [
+      "light and dark layout",
+      "theme after reload",
+      "keyboard focus",
+      "blank and malformed field validation",
+      "pending controls and duplicate prevention",
+      "invalid credentials and preserved keyboard focus",
+      "valid sign-in",
+      "authenticated reload and revisit"
+    ]
+  },
+  "commandResults": [
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "output": [
+        "Next.js 16.3.4 (Turbopack)",
+        "Compiled successfully",
+        "Finished TypeScript",
+        "Generated 22 of 22 static pages"
+      ]
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "output": [
+        "tsc --noEmit"
+      ]
+    },
+    {
+      "command": "pnpm exec eslint src/app/page.tsx src/features/authentication/components/LoginForm.tsx",
+      "exitCode": 0,
+      "output": []
+    },
+    {
+      "command": "pnpm test:packages-auth",
+      "exitCode": 0,
+      "passed": 32,
+      "failed": 0
+    },
+    {
+      "command": "node --test scripts/*.test.mjs",
+      "exitCode": 1,
+      "baseline": {
+        "tests": 734,
+        "pass": 721,
+        "fail": 13
+      },
+      "refresh": {
+        "tests": 734,
+        "pass": 721,
+        "fail": 13
+      },
+      "sameFailingTests": [
+        "HTTP409 typed=false preserves full draft and blocks redispatch",
+        "HTTP409 typed=true preserves full draft and blocks redispatch",
+        "a known HTTP 400 rejection permits correction and a deliberate save",
+        "an invalid success acknowledgement blocks another request",
+        "complete schema validation opens Pricing and prevents a blank price write",
+        "confirmed success renders the canonical saved-record link",
+        "create commits then loses its response; another save cannot duplicate it",
+        "download retains the entire current raw draft and the original attempted snapshot",
+        "http failure is visible and keeps every draft field",
+        "network failure is visible and keeps every draft field",
+        "prop refresh and section import cannot replace original submitted baseline",
+        "save callback excludes a second invocation synchronously",
+        "section import rejects removal through actual update handler and keeps draft correctable"
+      ]
+    }
+  ]
+}
