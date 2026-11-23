@@ -69,11 +69,10 @@ export default function HotelDetails({
 								key={hotel.id}
 								className={`transition-all duration-200  ${
 									hotelData.enabled
-										? "py-4" // Active styles
-										: "py-2 opacity-60 " // Inactive styles
+										? "py-4"
+										: "py-2 opacity-60 "
 								}`}
 							>
-								{/* --- TOGGLE HEADER --- */}
 								<CardHeader
 									className="cursor-pointer select-none py-0 gap-0"
 									onClick={() => {
@@ -99,7 +98,6 @@ export default function HotelDetails({
 									</div>
 								</CardHeader>
 
-								{/* --- FORM CONTENT (Only show if enabled) --- */}
 								{hotelData.enabled && (
 									<CardContent className="space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ">
 										<Controller

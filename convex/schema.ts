@@ -12,7 +12,6 @@ export default defineSchema({
     
     title: v.string(),
     
-    // Timestamps for clean data health
     created_at: v.string(),
     updated_at: v.string(),
   })
@@ -147,7 +146,6 @@ export default defineSchema({
     document_schema_version: v.optional(v.number()),
     legacy_provenance: v.optional(v.literal("legacy_unknown")),
     snapshot_completeness: v.optional(v.union(v.literal("partial"), v.literal("unknown"))),
-    // The link to our inquiry state machine
     inquiry_id: v.optional(v.union(v.id("inquiries"), v.string())),
 
     archived: v.optional(v.boolean()),
@@ -157,7 +155,6 @@ export default defineSchema({
     client_name: v.string(),
     package_id: v.string(),
     
-    // Status Model Hardening: Strict type checks for transitions
     status: v.union(
       v.literal("draft"),
       v.literal("sent"),

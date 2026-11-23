@@ -59,7 +59,6 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 
 	return (
 		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
-			{/* Back nav */}
 			<Button variant="ghost" size="sm" asChild className="-ml-2 gap-1 text-muted-foreground">
 				<Link href="/clients">
 					<ChevronLeft className="h-4 w-4" />
@@ -67,7 +66,6 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 				</Link>
 			</Button>
 
-			{/* Client info card */}
 			<Card>
 				<CardHeader className="pb-3">
 					<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -111,7 +109,6 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 				</CardContent>
 			</Card>
 
-			{/* Quotation timeline */}
 			<Card className="overflow-hidden">
 				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border">
 					<CardTitle className="text-base">
@@ -135,12 +132,10 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						<ol className="relative border-l border-border ml-3">
 							{client.quotations.map((q) => (
 								<li key={q.id} className="mb-8 ml-6 last:mb-0">
-									{/* Timeline dot */}
 									<span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border ring-4 ring-background">
 										<FileText className="h-3 w-3 text-muted-foreground" />
 									</span>
 
-									{/* Content row */}
 									<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
 										<div className="space-y-1">
 											<p className="text-sm">

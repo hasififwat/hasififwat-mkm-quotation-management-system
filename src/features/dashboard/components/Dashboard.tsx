@@ -12,7 +12,6 @@ import {
 function Dashboard() {
 	return (
 		<div className="workspace-page max-w-7xl space-y-6 animate-slideIn">
-			{/* Welcome Section */}
 			<div>
 				<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">Welcome back!</h2>
 				<p className="text-muted-foreground">
@@ -20,7 +19,6 @@ function Dashboard() {
 				</p>
 			</div>
 
-			{/* Stats Cards */}
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -75,7 +73,6 @@ function Dashboard() {
 				</Card>
 			</div>
 
-			{/* Recent Activity */}
 			<Card>
 				<CardHeader>
 					<CardTitle>Recent Activity</CardTitle>

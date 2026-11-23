@@ -343,7 +343,6 @@ export const findDuplicates = query({
 		await requireQuotationActor(ctx);
 		const allQuotations = await readCurrentQuotations(ctx);
 
-		// Group by (client_name, package_id, flight_id, total_amount)
 		const groups = new Map<
 			string,
 			(typeof allQuotations)[number][]
@@ -357,7 +356,6 @@ export const findDuplicates = query({
 			groups.get(key)!.push(q);
 		}
 
-		// Return only groups with duplicates (2 or more items)
 		const duplicateGroups = Array.from(groups.entries())
 			.filter(([_, items]) => items.length > 1)
 			.map(([key, items]) => {
@@ -1582,14 +1580,12 @@ export const deleteById = mutation({
 	handler: async (ctx, { quotationId }) => {
 		await requireQuotationActor(ctx);
 		await assertLegacyWritesAllowed(ctx);
-		// Find the quotation
 		const quotation = await findQuotationByStringId(ctx, quotationId);
 		if (!quotation) {
 			throw new Error(`Quotation ${quotationId} not found`);
 		}
 		assertMutableLegacyQuotation(quotation);
 
-		// Delete all quotation items for this quotation
 		const items = await ctx.db
 			.query("quotation_items")
 			.withIndex("by_quotation_id", (q) =>
@@ -1601,7 +1597,6 @@ export const deleteById = mutation({
 			await ctx.db.delete(item._id);
 		}
 
-		// Delete all quotation logs for this quotation
 		const logs = await ctx.db
 			.query("quotation_logs")
 			.withIndex("by_quotation_id", (q) =>
@@ -1613,7 +1608,6 @@ export const deleteById = mutation({
 			await ctx.db.delete(log._id);
 		}
 
-		// Delete the quotation itself
 		await ctx.db.delete(quotation._id);
 
 		return {
@@ -1625,14 +1619,6 @@ export const deleteById = mutation({
 	},
 });
 
-/**
- * Repair mutation: finds quotations whose flight_id no longer exists in
- * package_flights (e.g. because a package was updated and flights were
- * recreated) and remaps each one to the first available flight for that
- * package.
- *
- * Always run with dryRun: true first to preview what would change.
- */
 export const repairStaleFlightIds = mutation({
 	args: {
 		dryRun: v.optional(v.boolean()),
@@ -1651,7 +1637,6 @@ export const repairStaleFlightIds = mutation({
 
 		const validFlightIds = new Set(flights.map((f) => String(f._id)));
 
-		// Group current flights by package_id for lookup
 		const flightsByPackageId = new Map<string, (typeof flights)[number][]>();
 		for (const flight of flights) {
 			const key = String(flight.package_id);

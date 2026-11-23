@@ -82,7 +82,6 @@ export function mealShorthandToTypes(shorthand: string): string[] {
     case "":
       return [];
     default:
-      // MATCHED rows store full meal types joined with "+" e.g. "BREAKFAST+LUNCH+DINNER"
       return s.split("+").map((m) => m.trim()).filter(Boolean);
   }
 }
@@ -272,8 +271,6 @@ function computeChanges(spec: Omit<PackageUpdateSpec, "changes">, dbPkg: Existin
   return changes;
 }
 
-// Packages permanently excluded from auto-creation during sync.
-// These are either managed manually or use a different workflow.
 const EXCLUDED_FROM_SYNC = new Set(["PLATINUM"]);
 
 export function buildSyncPlan(
@@ -293,7 +290,6 @@ export function buildSyncPlan(
   const packagesToUpdate: PackageUpdateSpec[] = [];
   const packagesToPromote: string[] = [];
 
-  // Clone source: prefer same-name package with most data (any season)
   const cloneSourceByName = new Map<string, ExistingPackage>();
   for (const pkg of existingPackages) {
     const key = pkg.name.trim().toUpperCase();
@@ -324,7 +320,6 @@ export function buildSyncPlan(
       });
     } else if (row.match_status === "MATCHED" && row.db_id) {
       const dbPkg = existingPackages.find((p) => p._id === row.db_id) ?? null;
-      // Only promote "manual" packages — "unsync" were deliberately edited, leave them
       if (dbPkg && dbPkg.source === "manual") {
         packagesToPromote.push(row.db_id);
       }
@@ -346,7 +341,6 @@ export function buildSyncPlan(
         rooms: mergeRoomPrices(dbPkg?.rooms ?? [], rooms),
         row,
       };
-      // "unsync" packages were manually edited after sync — skip overwriting them
       const changes = (dbPkg && dbPkg.source !== "unsync") ? computeChanges(spec, dbPkg) : [];
       if (changes.length > 0) {
         packagesToUpdate.push({ ...spec, changes });
@@ -412,7 +406,6 @@ export function buildSyncPlan(
         row,
       });
     } else if (row.status === "removed" && row.season !== "2026/2027") {
-      // Skip 2026/2027 legacy flights — those packages are intentionally kept untouched
       flightsToRemove.push({
         kind: "remove",
         db_flight_id: row.db_flight_id,
@@ -423,7 +416,6 @@ export function buildSyncPlan(
         row,
       });
     } else if (row.status === "unchanged" && row.notes === "promote" && row.db_flight_id) {
-      // MFF-matched manual flight — promote to source: "sync" on apply
       flightsToPromote.push(row.db_flight_id);
     }
   }
@@ -431,8 +423,6 @@ export function buildSyncPlan(
   return { errors, packagesToCreate, packagesToUpdate, packagesToPromote, flightsToAdd, flightsToUpdate, flightsToRemove, flightsToPromote };
 }
 
-// ─── Price list parser ────────────────────────────────────────────────────────
-// Ports scripts/extract-price-list.js to run in-browser without Node.js.
 
 import type { DbFlight } from "./types";
 
@@ -603,8 +593,6 @@ export function parsePriceListCsv(
   return results;
 }
 
-// ─── MFF parser ───────────────────────────────────────────────────────────────
-// Ports scripts/compare-mff-flights.js to run in-browser without Node.js.
 
 const MFF_NAME_MAP: Record<string, string> = {
   "UMJ":                                  "MENARA JAM",
@@ -655,7 +643,6 @@ export function parseMffCsv(
   dbFlights: DbFlight[],
   authorizedScopeKeys: string[] = [],
 ): MffParseResult {
-  // Build season ranges from mapping rows
   const seasonRanges: Array<{ code: string; start: string; end: string }> = [];
   const seenCodes = new Set<string>();
   for (const r of mappingRows) {
@@ -696,7 +683,6 @@ export function parseMffCsv(
     dbFlightMap.set(`${f.package_id}|${f.departure_date}|${f.return_date}`, f);
   }
 
-  // Parse MFF rows
   const lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
   type MffRow = {
     mff_package: string; canonical_name: string; season: string;
@@ -800,7 +786,6 @@ export function parseMffCsv(
         db_package_id: dbPkg._id, db_flight_id: "", notes: "",
       });
     } else if (dbFlight.source === "manual") {
-      // Manual flights matched by the MFF are promoted to "sync" on apply, but data is never modified.
       results.push({
         status: "unchanged",
         package_name: dbPkg.name, season,
@@ -813,7 +798,6 @@ export function parseMffCsv(
     } else {
       const depChanged     = normalizeSector(dbFlight.departure_sector) !== row.dep_sector_norm;
       const retChanged     = normalizeSector(dbFlight.return_sector) !== row.ret_sector_norm;
-      // DB stores airline name; compare airline name → airline name
       const mffAirlineName = airlineName(row.airline);
       const dbAirlineName  = dbFlight.flight ?? "";
       const airlineChanged = mffAirlineName !== "" && dbAirlineName !== mffAirlineName;

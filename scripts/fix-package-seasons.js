@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/fix-package-seasons.js
- *
- * Finds DB packages whose season is still set to the year ("2026/2027") and
- * derives the correct season code from their associated flight departure dates.
- *
- * Usage:
- *   node scripts/fix-package-seasons.js           # dry run — shows what would change
- *   node scripts/fix-package-seasons.js --apply   # applies the changes to Convex
- */
 
 import { runStaffConvex } from './helpers/staff-convex.mjs';
 import path from 'path';
@@ -18,9 +8,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.resolve(__dirname, '..');
 const APPLY     = process.argv.includes('--apply');
 
-// ---------------------------------------------------------------------------
-// Season date ranges
-// ---------------------------------------------------------------------------
 const SEASON_RANGES = [
   { code: 'SLS - JUN',        start: '2026-06-18', end: '2026-06-30' },
   { code: 'LS - JULY TO SEP', start: '2026-07-01', end: '2026-09-30' },
@@ -40,22 +27,15 @@ function getSeasonCode(isoDate) {
   return null;
 }
 
-// ---------------------------------------------------------------------------
-// Fetch helpers
-// ---------------------------------------------------------------------------
 function runConvex(fn) {
   const raw = runStaffConvex(ROOT, fn);
   return JSON.parse(raw);
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 console.log('🗄️  Fetching packages and flights…');
 const packages = runConvex('packages:list');
 const flights  = runConvex('packageFlights:listAll');
 
-// Build map: package_id → list of departure_dates
 const flightsByPkg = new Map();
 for (const f of flights) {
   const list = flightsByPkg.get(f.package_id) ?? [];
@@ -63,7 +43,6 @@ for (const f of flights) {
   flightsByPkg.set(f.package_id, list);
 }
 
-// Find packages with bad season value
 const badPackages = packages.filter(p => !p.season || p.season === p.year);
 console.log(`\nFound ${badPackages.length} packages with season = "${badPackages[0]?.year ?? '2026/2027'}":\n`);
 
@@ -78,7 +57,6 @@ for (const pkg of badPackages) {
     continue;
   }
 
-  // Derive season codes from all departure dates
   const seasonCodes = [...new Set(pkgFlights.map(d => getSeasonCode(d)).filter(Boolean))];
 
   if (seasonCodes.length === 0) {
@@ -88,7 +66,6 @@ for (const pkg of badPackages) {
   }
 
   if (seasonCodes.length > 1) {
-    // Flights span multiple seasons — use whichever code has the most flights
     const counts = {};
     for (const d of pkgFlights) {
       const s = getSeasonCode(d);
@@ -102,7 +79,6 @@ for (const pkg of badPackages) {
   }
 }
 
-// Display proposals
 console.log('\n── Proposed Changes ──────────────────────────────────────────────');
 console.log(`${'Package'.padEnd(45)} ${'Current'.padEnd(15)} → New Season`);
 console.log('─'.repeat(80));
@@ -125,9 +101,6 @@ if (!APPLY) {
   process.exit(0);
 }
 
-// ---------------------------------------------------------------------------
-// Apply
-// ---------------------------------------------------------------------------
 console.log('\n🔧 Applying…\n');
 
 for (const { pkg, derivedSeason } of toFix) {

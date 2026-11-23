@@ -65,7 +65,6 @@ function syncErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// ─── File drop zone ───────────────────────────────────────────────────────────
 
 function DropZone({
   label,
@@ -119,7 +118,6 @@ function DropZone({
   );
 }
 
-// ─── Hotel helpers ────────────────────────────────────────────────────────────
 
 function quotationMealLabel(meals: string[], hotelType: string): string {
   const m = meals.map((s) => s.trim()).filter(Boolean);
@@ -130,7 +128,6 @@ function quotationMealLabel(meals: string[], hotelType: string): string {
   return `${m[0].toUpperCase()} (${type})`;
 }
 
-// ─── Create accordion ─────────────────────────────────────────────────────────
 
 function PackageCreateCard({ spec }: { spec: PackageCreateSpec }) {
   const [open, setOpen] = useState(false);
@@ -153,13 +150,11 @@ function PackageCreateCard({ spec }: { spec: PackageCreateSpec }) {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="px-4 py-3 border-t space-y-4 text-sm">
-            {/* Transport */}
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Transport</p>
               <p className="text-sm">{spec.transport || "—"}</p>
             </div>
 
-            {/* Hotels & Meals */}
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">Hotels &amp; Meals</p>
               <div className="space-y-1">
@@ -173,7 +168,6 @@ function PackageCreateCard({ spec }: { spec: PackageCreateSpec }) {
               </div>
             </div>
 
-            {/* Rooms */}
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">Room Pricing</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1">
@@ -186,7 +180,6 @@ function PackageCreateCard({ spec }: { spec: PackageCreateSpec }) {
               </div>
             </div>
 
-            {/* Clone source */}
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Clone inclusions from</p>
               {spec.clone_from_label ? (
@@ -225,7 +218,6 @@ function PackagesToCreateSection({ items }: { items: PackageCreateSpec[] }) {
   );
 }
 
-// ─── Update accordion ─────────────────────────────────────────────────────────
 
 function mealLabel(meals: string[]): string {
   const s = [...meals].sort().join("+");
@@ -357,7 +349,6 @@ function PackagesToUpdateSection({ items }: { items: PackageUpdateSpec[] }) {
   );
 }
 
-// ─── Flights sections ─────────────────────────────────────────────────────────
 
 function FlightsToAddSection({ items }: { items: FlightAddSpec[] }) {
   if (items.length === 0) return null;
@@ -517,7 +508,6 @@ function FlightsToRemoveSection({ items }: { items: FlightRemoveSpec[] }) {
   );
 }
 
-// ─── Merged by-package view ──────────────────────────────────────────────────
 
 type PackageEntry = {
   key: string;
@@ -687,7 +677,6 @@ function MergedPlanSection({ plan }: { plan: SyncPlan }) {
   );
 }
 
-// ─── Step 2: Flight diff verification ────────────────────────────────────────
 
 import type { FlightDiffRow } from "~/features/packages/sync/types";
 
@@ -707,7 +696,6 @@ function FlightDiffStep({
   const unchanged     = rows.filter(r => r.status === "unchanged");
   const edited        = rows.filter(r => r.status === "edited");
 
-  // Group flights by "package|season"
   function groupByPackage(list: FlightDiffRow[]) {
     const map = new Map<string, { name: string; season: string; rows: FlightDiffRow[] }>();
     for (const r of list) {
@@ -763,7 +751,6 @@ function FlightDiffStep({
 
   return (
     <div className="space-y-4">
-      {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/20 p-3 text-center">
           <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{added.length}</p>
@@ -790,7 +777,6 @@ function FlightDiffStep({
         </div>
       </div>
 
-      {/* No DB package warning */}
       {noDbPkg.length > 0 && (
         <Card className="border-amber-300">
           <CardHeader className="pb-2">
@@ -829,7 +815,6 @@ function FlightDiffStep({
         </Card>
       )}
 
-      {/* Added flights */}
       {added.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -842,7 +827,6 @@ function FlightDiffStep({
         </div>
       )}
 
-      {/* Edited flights (airline / sector changed) */}
       {edited.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -902,7 +886,6 @@ function FlightDiffStep({
         </div>
       )}
 
-      {/* Flights to remove */}
       {willRemove.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -915,7 +898,6 @@ function FlightDiffStep({
         </div>
       )}
 
-      {/* Legacy skipped */}
       {legacySkipped.length > 0 && (
         <div className="space-y-2">
           <Collapsible>
@@ -939,7 +921,6 @@ function FlightDiffStep({
         </div>
       )}
 
-      {/* Nothing to change */}
       {added.length === 0 && edited.length === 0 && willRemove.length === 0 && noDbPkg.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-green-500" />
@@ -961,7 +942,6 @@ function FlightDiffStep({
   );
 }
 
-// ─── Stepper ──────────────────────────────────────────────────────────────────
 
 const STEPS = ["Upload Files", "Verify Mapping", "Verify Flights", "Review & Apply"];
 
@@ -991,7 +971,6 @@ function Stepper({ step }: { step: number }) {
   );
 }
 
-// ─── Step 1: Mapping verification ────────────────────────────────────────────
 
 function MappingStep({
   rows,
@@ -1005,7 +984,6 @@ function MappingStep({
   const matched = rows.filter(r => r.match_status === "MATCHED").length;
   const newCount = rows.filter(r => r.match_status === "NEW").length;
 
-  // Group by season in order of appearance
   const bySeason = new Map<string, PackageMappingRow[]>();
   for (const r of rows) {
     if (!bySeason.has(r.season_code)) bySeason.set(r.season_code, []);
@@ -1014,7 +992,6 @@ function MappingStep({
 
   return (
     <div className="space-y-4">
-      {/* Summary stats */}
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border p-3 text-center">
           <p className="text-2xl font-bold">{bySeason.size}</p>
@@ -1030,7 +1007,6 @@ function MappingStep({
         </div>
       </div>
 
-      {/* Per-season tables */}
       {Array.from(bySeason.entries()).map(([season, seasonRows]) => {
         const first = seasonRows[0];
         return (
@@ -1126,7 +1102,6 @@ function MffDiagnostics({ result }: { result: MffParseResult | null }) {
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function PackageSyncPage() {
   const existingPackages = useQuery(api.packages.listWithHotelsAndMeals) ?? [];
@@ -1340,7 +1315,6 @@ export default function PackageSyncPage() {
 
       <Stepper step={step} />
 
-      {/* ── Step 0: Upload ── */}
       {step === 0 && (
         <Card>
           <CardHeader>
@@ -1377,7 +1351,6 @@ export default function PackageSyncPage() {
         </Card>
       )}
 
-      {/* ── Step 1: Mapping verification ── */}
       {step === 1 && (
         <MappingStep
           rows={mappingRows}
@@ -1386,7 +1359,6 @@ export default function PackageSyncPage() {
         />
       )}
 
-      {/* ── Step 2: Flight diff verification ── */}
       {step === 2 && (
         <div className="space-y-4">
           <MffDiagnostics result={mffResult} />
@@ -1430,7 +1402,6 @@ export default function PackageSyncPage() {
         </div>
       )}
 
-      {/* ── Step 3: Review & Apply ── */}
       {step === 3 && (
         <div className="space-y-4">
           {!result && <MffDiagnostics result={reviewedSchedule?.result ?? null} />}
@@ -1446,7 +1417,6 @@ export default function PackageSyncPage() {
               </CardContent>
             </Card>
           )}
-          {/* Result banner */}
           {result && (
             <Card className={result.errors.length > 0 ? "border-amber-400" : "border-green-400"}>
               <CardContent className="pt-4 space-y-2">
@@ -1486,7 +1456,6 @@ export default function PackageSyncPage() {
             </Card>
           )}
 
-          {/* Progress */}
           {applying && progress && (
             <Card>
               <CardContent className="pt-4 space-y-3">
@@ -1509,7 +1478,6 @@ export default function PackageSyncPage() {
             </Card>
           )}
 
-          {/* Review */}
           {plan && totalChanges > 0 && !applying && !result && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">

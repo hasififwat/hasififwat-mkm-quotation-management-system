@@ -28,7 +28,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
 	useEffect(() => {
 		setMounted(true);
-		// Get theme from localStorage or system preference
 		const storedTheme = localStorage.getItem("theme") as Theme | null;
 		const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
 			.matches
@@ -50,7 +49,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 		setTheme(newTheme);
 	};
 
-	// Prevent flash of incorrect theme
 	if (!mounted) {
 		return null;
 	}

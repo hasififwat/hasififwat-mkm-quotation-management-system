@@ -10,7 +10,6 @@ interface Props {
 }
 
 const FlightListings: React.FC<Props> = ({ data, isLoading }) => {
-	// Logic for preview can be added here later
 
 	return (
 		<div>

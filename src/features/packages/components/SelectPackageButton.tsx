@@ -97,7 +97,6 @@ export default function SelectPackageButton() {
 			<DialogContent className="sm:max-w-sm md:max-w-lg lg:max-w-xl ">
 				<form
 					onSubmit={handleSubmit(_onSubmit)}
-					//hide scrollbar but allow scrolling
 				>
 					<DialogHeader className="border-b pb-4">
 						<DialogTitle>Select Package to create</DialogTitle>

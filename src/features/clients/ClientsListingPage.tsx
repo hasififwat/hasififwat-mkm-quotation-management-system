@@ -233,16 +233,12 @@ export default function ClientsListingPage({
 	const [agentFilterOpen, setAgentFilterOpen] = useState(false);
 	const [agentSearch, setAgentSearch] = useState("");
 
-	// Local search state — kept independent of loaderData during navigation
-	// to prevent letters disappearing while the clientLoader is in-flight.
 	const [localSearch, setLocalSearch] = useState(searchTerm);
 
-	// Sync from URL when params change (back/forward navigation, not during active typing)
 	useEffect(() => {
 		setLocalSearch(searchTerm);
 	}, [searchTerm]);
 
-	// Debounce-navigate when the user types
 	useEffect(() => {
 		if (localSearch === searchTerm) return;
 		const timer = setTimeout(() => {
@@ -255,7 +251,6 @@ export default function ClientsListingPage({
 			navigate(`/clients${qs ? `?${qs}` : ""}`);
 		}, 400);
 		return () => clearTimeout(timer);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [localSearch]);
 
 	const isFiltered = !!searchTerm || picFilters.length > 0;
@@ -338,7 +333,6 @@ export default function ClientsListingPage({
 
 			<Card className="gap-0 overflow-hidden py-0">
 				<div className="flex flex-col gap-3 border-b bg-muted/40 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
-					{/* Agent filter */}
 					<div className="flex items-center gap-2">
 						<Popover open={agentFilterOpen} onOpenChange={setAgentFilterOpen}>
 							<PopoverTrigger asChild>
@@ -419,7 +413,6 @@ export default function ClientsListingPage({
 						</Popover>
 					</div>
 
-					{/* Search */}
 					<div className="relative min-w-0 flex-1">
 						{isLoading ? (
 							<Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
@@ -573,7 +566,6 @@ export default function ClientsListingPage({
 						</div>
 					) : null}
 
-					{/* Pagination */}
 					{(!isFirstPage || !isDone) && (
 						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
 							{loadStatus === "loaded" && isFiltered && total > 0 && (

@@ -9,11 +9,6 @@ import { STALE_FIELD_LABELS } from "~/features/quotation/stale-labels";
 
 import type { QuotationFullDetails } from "./types";
 
-/**
- * The PDF pane pulls in `@react-pdf/renderer` (~1MB). Load it as a
- * separate client bundle on mount instead of statically importing it
- * into the review page bundle (bundle-dynamic-imports).
- */
 const PdfPreviewPane = dynamic(() => import("./pdf-preview-pane"), {
 	ssr: false,
 	loading: () => (
@@ -37,17 +32,15 @@ export function ReviewClient({
 		const handleResize = () => {
 			if (containerRef.current) {
 				const containerWidth = containerRef.current.offsetWidth;
-				const pdfWidth = 794; // The fixed width of the QuotePDF component
-				const padding = 32; // Side padding
+				const pdfWidth = 794;
+				const padding = 32;
 
-				// Calculate scale based on container width vs PDF width
-				// Only scale down (if container is smaller), don't scale up past 1
 				const newScale = Math.min((containerWidth - padding) / pdfWidth, 1);
 				setScale(newScale);
 			}
 		};
 
-		handleResize(); // Initial calc
+		handleResize();
 		window.addEventListener("resize", handleResize);
 
 		return () => window.removeEventListener("resize", handleResize);
@@ -81,10 +74,8 @@ export function ReviewClient({
 				</div>
 			)}
 
-			{/* Desktop: PDF rendered into an iframe via blob URL (dynamically loaded) */}
 			<PdfPreviewPane details={initialData} />
 
-			{/* Mobile: HTML preview scaled to fit viewport width */}
 			<div
 				className="bg-white shadow-lg my-8 md:hidden overflow-hidden"
 				style={{

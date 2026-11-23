@@ -84,10 +84,8 @@ export const listWithRooms = query({
     await requirePackageAccess(ctx);
     let packages = await ctx.db.query("packages").collect();
 
-    // Exclude archived packages
     packages = packages.filter((pkg) => !pkg.archived);
 
-    // Filter by search term if provided
     if (args.searchTerm && args.searchTerm.trim() !== "") {
       const searchLower = args.searchTerm.toLowerCase();
       packages = packages.filter((pkg) =>
@@ -419,8 +417,6 @@ export const updatePackage = mutation({
     const nextSeason =
       args.payload.season?.trim() || existingPackage.season || args.payload.year;
 
-    // Read existing hotels/meals/rooms BEFORE deleting so we can compare against the
-    // incoming payload to decide whether any sync-managed field actually changed.
     const existingHotels = await ctx.db
       .query("package_hotels")
       .withIndex("by_package_id", (q) => q.eq("package_id", existingPackage._id))
@@ -464,8 +460,6 @@ export const updatePackage = mutation({
       new Set(args.payload.rooms.map(room => room.room_type)),
     );
 
-    // Detect whether any sync-managed field (transport, hotels, rooms) actually changed.
-    // Inclusions/exclusions are NOT sync-managed — editing only those should not unsync the package.
     const transportChanged =
       (args.payload.transport ?? "").trim() !== (existingPackage.transport ?? "").trim();
 
@@ -528,7 +522,6 @@ export const updatePackage = mutation({
       await ctx.db.delete(room._id);
     }
 
-    // Delete flights that were removed from the payload
     for (const flight of dedupedExistingFlights) {
       if (!incomingFlightIdSet.has(String(flight._id))) {
         await ctx.db.delete(flight._id);
@@ -564,8 +557,6 @@ export const updatePackage = mutation({
       });
     }
 
-    // Patch existing flights in place (preserves _id so quotation references stay valid),
-    // or insert brand-new flights that have no _id yet.
     for (const flight of args.payload.flights) {
       if (flight._id && existingFlightIdSet.has(flight._id)) {
         await ctx.db.patch(flight._id as Id<"package_flights">, {
@@ -1309,7 +1300,6 @@ export const promotePackageToSync = mutation({
     await requirePackageAccess(ctx);
     for (const id of args.ids) {
       const p = await ctx.db.get(id as Id<"packages">);
-      // Only promote "manual" — "unsync" packages were deliberately edited, leave them
       if (p && p.source === "manual") {
         await ctx.db.patch(p._id, { source: "sync" });
       }

@@ -60,9 +60,7 @@ export function QuotationExpandedRow({ quotation }: Props) {
 	return (
 		<div className="px-6 py-4 bg-muted/20 space-y-4">
 
-			{/* Row 1: three equal columns */}
 			<div className="grid grid-cols-3 gap-6">
-				{/* Umrah Dates */}
 				<div>
 					<SectionLabel>Umrah Dates</SectionLabel>
 					{flight?.departure_date && flight?.return_date ? (
@@ -88,14 +86,12 @@ export function QuotationExpandedRow({ quotation }: Props) {
 					)}
 				</div>
 
-				{/* PIC & Branch */}
 				<div>
 					<SectionLabel>PIC & Branch</SectionLabel>
 					<p className="text-sm">{quotation.pic_name}</p>
 					<p className="text-xs text-muted-foreground">{quotation.branch}</p>
 				</div>
 
-				{/* Timestamps */}
 				<div>
 					<SectionLabel>Record Info</SectionLabel>
 					<div className="space-y-0.5">
@@ -112,7 +108,6 @@ export function QuotationExpandedRow({ quotation }: Props) {
 				</div>
 			</div>
 
-			{/* Notes */}
 			{quotation.notes && (
 				<>
 					<Separator />
@@ -123,7 +118,6 @@ export function QuotationExpandedRow({ quotation }: Props) {
 				</>
 			)}
 
-			{/* Add-ons & Discounts */}
 			{items === undefined ? (
 				<>
 					<Separator />
@@ -143,7 +137,6 @@ export function QuotationExpandedRow({ quotation }: Props) {
 				<>
 					<Separator />
 					<div className="grid grid-cols-2 gap-6">
-						{/* Additional Costs */}
 						<div>
 							<SectionLabel>Additional Costs</SectionLabel>
 							{addons.length > 0 ? (
@@ -165,7 +158,6 @@ export function QuotationExpandedRow({ quotation }: Props) {
 							)}
 						</div>
 
-						{/* Discounts */}
 						<div>
 							<SectionLabel>Discounts</SectionLabel>
 							{discounts.length > 0 ? (

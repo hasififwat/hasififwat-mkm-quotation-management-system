@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/compare-prices.js
- *
- * Compares room prices in the MASTER PRICE LIST CSV against live DB package_rooms.
- * Identifies packages where prices have changed, been added, or are missing.
- *
- * Usage:
- *   node scripts/compare-prices.js "/path/to/MASTER PRICE LIST.csv"
- *
- * Outputs:
- *   docs/price-diff.md    Human-readable price diff report
- *   docs/price-diff.csv   Machine-readable diff
- */
 
 import fs from 'fs';
 import path from 'path';
@@ -27,9 +14,6 @@ if (!PRICE_LIST_CSV) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// Season detection (same as extract-price-list.js)
-// ---------------------------------------------------------------------------
 const SEASON_CODE_MAP = [
   { match: /SUPER LOW SEASON/i,                code: 'SLS - JUN'        },
   { match: /LOW SEASON.*(JULY|JUL)/i,          code: 'LS - JULY TO SEP' },
@@ -49,9 +33,6 @@ function getSeasonCode(header) {
   return null;
 }
 
-// ---------------------------------------------------------------------------
-// Package + segment → canonical DB name
-// ---------------------------------------------------------------------------
 function canonicalName(pkg, segment) {
   const p = pkg.trim().toUpperCase();
   const s = (segment || '').trim().toUpperCase();
@@ -80,10 +61,6 @@ function canonicalName(pkg, segment) {
   return pkg.trim();
 }
 
-// ---------------------------------------------------------------------------
-// Price list CSV parser
-// Price columns (0-indexed): QDP=5, TPL=6, DBL=7, QNT=8, SGL=9
-// ---------------------------------------------------------------------------
 function parseCsvRow(line) {
   const fields = [];
   let field = '', inQuote = false;
@@ -117,7 +94,6 @@ function parsePriceList(csvPath) {
     const col2 = (row[2] || '').trim();
     const col3 = (row[3] || '').trim();
 
-    // Season header
     if ((col1 === 'FINAL' || col1 === 'WILL BE UPDATE') && col2.length > 0) {
       const code = getSeasonCode(col2);
       if (code) currentSeason = code;
@@ -143,7 +119,6 @@ function parsePriceList(csvPath) {
     const qnt = parsePrice(row[8]);
     const sgl = parsePrice(row[9]);
 
-    // Skip rows with no prices at all
     if (!qdp && !tpl && !dbl && !qnt && !sgl) continue;
 
     results.push({
@@ -160,9 +135,6 @@ function parsePriceList(csvPath) {
   return results;
 }
 
-// ---------------------------------------------------------------------------
-// Fetch DB packages with rooms
-// ---------------------------------------------------------------------------
 function runConvex(fn, args = '{}') {
   const raw = execSync(`npx convex run ${fn} '${args}'`, {
     encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'],
@@ -170,7 +142,6 @@ function runConvex(fn, args = '{}') {
   return JSON.parse(raw);
 }
 
-// Room type → price list column mapping
 const DB_TO_PL = {
   'Quad':   'pl_quad',
   'Triple': 'pl_triple',
@@ -178,14 +149,10 @@ const DB_TO_PL = {
   'Quint':  'pl_quint',
 };
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 const DOCS = path.join(ROOT, 'docs', 'sync-1448h');
 
 console.log('📄 Parsing price list…');
 const plRows = parsePriceList(PRICE_LIST_CSV);
-// Merge rows for the same canonical_name+season (segment variants → single entry, keep highest prices)
 const plMap = new Map();
 for (const row of plRows) {
   const key = `${row.canonical_name.trim().toUpperCase()}|${row.season_code}`;
@@ -193,7 +160,6 @@ for (const row of plRows) {
   if (!existing) {
     plMap.set(key, { ...row });
   } else {
-    // Keep highest price across segment variants
     for (const f of ['pl_quad','pl_triple','pl_double','pl_quint','pl_single']) {
       if (row[f] !== null && (existing[f] === null || row[f] > existing[f])) {
         existing[f] = row[f];
@@ -207,7 +173,6 @@ console.log('🗄️  Fetching DB packages with rooms…');
 const dbPackages = runConvex('packages:listWithRooms');
 console.log(`   ${dbPackages.length} packages in DB`);
 
-// Build DB room lookup: package_id → { Quad: price, Triple: price, Double: price, ... }
 function getRoomPrices(pkg) {
   const result = {};
   for (const room of (pkg.rooms || [])) {
@@ -216,15 +181,11 @@ function getRoomPrices(pkg) {
   return result;
 }
 
-// ---------------------------------------------------------------------------
-// Compare
-// ---------------------------------------------------------------------------
 const changed   = [];
 const matched   = [];
 const noDbMatch = [];
 const noPlMatch = [];
 
-// Check each price list entry against DB
 for (const [key, pl] of plMap) {
   const dbPkg = dbPackages.find(p => {
     const dbKey = `${p.name.trim().toUpperCase()}|${(p.season || '').trim()}`;
@@ -244,7 +205,7 @@ for (const [key, pl] of plMap) {
     const dbPrice = dbRooms[roomType] ?? null;
 
     if (plPrice === null && dbPrice === null) continue;
-    if (plPrice === null) continue; // not in price list, skip
+    if (plPrice === null) continue;
 
     if (dbPrice === null) {
       diffs.push({ room_type: roomType, db_price: null, pl_price: plPrice, delta: null, status: 'missing_in_db' });
@@ -272,7 +233,6 @@ for (const [key, pl] of plMap) {
   else matched.push(entry);
 }
 
-// DB packages with valid season but no price list entry
 for (const p of dbPackages) {
   if (!p.season || p.season === p.year) continue;
   const key = `${p.name.trim().toUpperCase()}|${p.season.trim()}`;
@@ -287,9 +247,6 @@ console.log(`   💰 Prices changed:     ${changed.length}`);
 console.log(`   ❓ No DB package:      ${noDbMatch.length} (package not yet created)`);
 console.log(`   ⚠️  No price list entry: ${noPlMatch.length}`);
 
-// ---------------------------------------------------------------------------
-// Write docs/price-diff.md
-// ---------------------------------------------------------------------------
 function fmt(n) { return n === null ? '—' : `RM ${n.toLocaleString()}`; }
 function delta(n) {
   if (n === null) return '';
@@ -309,7 +266,6 @@ function writeMd() {
   L.push(`| ❓ Package not in DB yet | ${noDbMatch.length} |`);
   L.push(`| ⚠️ In DB but not in price list | ${noPlMatch.length} |`);
 
-  // --- CHANGED ---
   L.push('\n---\n');
   L.push('## 💰 Packages with Price Changes\n');
   if (changed.length === 0) {
@@ -343,7 +299,6 @@ function writeMd() {
     }
   }
 
-  // --- MATCHED ---
   L.push('\n---\n');
   L.push('## ✅ Packages with Matching Prices\n');
   if (matched.length === 0) {
@@ -356,7 +311,6 @@ function writeMd() {
     }
   }
 
-  // --- NO DB MATCH ---
   if (noDbMatch.length > 0) {
     L.push('\n---\n');
     L.push('## ❓ Packages in Price List but Not in DB\n');
@@ -368,7 +322,6 @@ function writeMd() {
     }
   }
 
-  // --- NO PL MATCH ---
   if (noPlMatch.length > 0) {
     L.push('\n---\n');
     L.push('## ⚠️ DB Packages Not in Price List\n');
@@ -391,9 +344,6 @@ function writeMd() {
   console.log(`\n✓ docs/price-diff.md`);
 }
 
-// ---------------------------------------------------------------------------
-// Write docs/price-diff.csv
-// ---------------------------------------------------------------------------
 function writeCsv() {
   const cols = ['status','db_name','season','room_type','db_price','pl_price','delta','db_id'];
   const lines = [cols.join(',')];

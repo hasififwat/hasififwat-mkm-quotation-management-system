@@ -9,7 +9,6 @@ export const getMyProfile = query({
 		const userId = await getAuthUserId(ctx);
 		if (!userId) return null;
 
-		// Get email from the password account (providerAccountId is the email for Password provider)
 		const account = await ctx.db
 			.query("authAccounts")
 			.withIndex("userIdAndProvider", (q) =>
@@ -121,7 +120,6 @@ export const migrateQuotationCreators = mutation({
 		for (const p of profiles) {
 			nameToId[p.full_name] = p._id;
 		}
-		// Sera is Norsuhaira
 		const norsuhaira = profiles.find((p) => p.email === "norsuhaira0248@gmail.com");
 		if (norsuhaira) nameToId["Sera"] = norsuhaira._id;
 

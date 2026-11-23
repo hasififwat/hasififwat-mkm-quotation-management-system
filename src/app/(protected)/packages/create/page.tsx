@@ -14,7 +14,6 @@ export const metadata = {
 	title: "Create Package",
 };
 
-// Create empty template for new package from Convex templates
 const createEmptyTemplate = (templateData: {
 	hotelTemplates: Array<IHotelDetailsApi>;
 	roomTemplates: Array<IRoomDetailsApi>;
@@ -73,7 +72,6 @@ export default async function PackageCreatePage() {
 		client.query(api.packages.getPackageTemplate, {}),
 	]);
 
-	// Transform all packages
 	const allPackages = (
 		Array.isArray(allPackagesData) ? allPackagesData : []
 	).map(transformConvexPackage);

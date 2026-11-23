@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	// @react-pdf/renderer uses Buffer internally — polyfill for the browser
 	turbopack: {
 		resolveAlias: {
 			buffer: "buffer",

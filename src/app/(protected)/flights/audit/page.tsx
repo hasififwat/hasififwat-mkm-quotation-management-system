@@ -50,7 +50,6 @@ export default function FlightAuditPage() {
 
   return (
     <div className="workspace-page max-w-7xl space-y-6 animate-fadeIn">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <Plane className="w-6 h-6 text-muted-foreground" />
         <div>
@@ -59,7 +58,6 @@ export default function FlightAuditPage() {
         </div>
       </div>
 
-      {/* Summary tiles */}
       <p role="status" className="sr-only">
         {isLoading ? "Loading flight audit…" : ""}
       </p>
@@ -84,7 +82,6 @@ export default function FlightAuditPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -96,7 +93,6 @@ export default function FlightAuditPage() {
           />
         </div>
 
-        {/* Source filter tabs */}
         <div className="flex rounded-md border overflow-hidden text-sm">
           {SOURCE_OPTIONS.map((opt) => (
             <button
@@ -114,7 +110,6 @@ export default function FlightAuditPage() {
           ))}
         </div>
 
-        {/* Season filter */}
         <select
           value={seasonFilter}
           onChange={(e) => setSeasonFilter(e.target.value)}
@@ -128,7 +123,6 @@ export default function FlightAuditPage() {
         </select>
       </div>
 
-      {/* Table */}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

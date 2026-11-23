@@ -69,7 +69,6 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	);
 	const enabledHotels = (pkg.hotels ?? []).filter((hotel) => hotel.enabled);
 
-	// Group flights by month
 	const flightsByMonth = pkg.flights.reduce(
 		(acc: Record<string, Flight[]>, flight: Flight) => {
 			const month = flight.month || "Other";
@@ -103,7 +102,6 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 	};
 
 	const getFlightRoute = (departure: string, returnSector: string) => {
-		// Extract airport codes (e.g., KULMED -> KUL MED)
 		const depCodes = departure.match(/.{3}/g)?.join(" ") || departure;
 		const retCodes = returnSector.match(/.{3}/g)?.join(" ") || returnSector;
 		return `${depCodes} - ${retCodes}`;
@@ -163,28 +161,22 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 		const lines: string[] = [];
 
-		// Package name (bold in WhatsApp with *)
 		lines.push(`*PAKEJ ${pkg.name} ${pkg.duration}*`);
 
-		// Iterate over each selected flight
 		selectedFlights.forEach((flight: Flight) => {
-			lines.push(""); // Add spacing between flights
-			// Dates
+			lines.push("");
 			lines.push(
 				`${formatDate(flight.departure_date)} - ${formatDate(
 					flight.return_date,
 				)}`,
 			);
 
-			// Duration
 			lines.push(pkg.duration);
 
-			// Flight route
 			lines.push(
 				`✈ ${getFlightRoute(flight.departure_sector, flight.return_sector)}`,
 			);
 
-			// Room prices
 			const sortedRooms = pkg.rooms
 				.filter((room: Room) => room.enabled)
 				.sort((a: Room, b: Room) => {
@@ -207,17 +199,14 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 			});
 		});
 
-		// Empty line
 		lines.push("");
 
-		// Hotels
 		enabledHotels.forEach((hotel) => {
 			lines.push(
 				`${formatHotelTypeLabel(hotel.hotel_type)} : ${hotel.name || hotel.placeholder}${formatHotelMeals(hotel.meals)}`,
 			);
 		});
 
-		// Footer note
 		lines.push("");
 		lines.push(
 			"(setaraf bermaksud memiliki kualiti yang setanding dengan hotel yang diberi)",
@@ -230,7 +219,6 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 
 	const anchor = useComboboxAnchor();
 
-	//connvert flightsByMonth to array of {month, flights}
 	const _flightsByMonthArray = Object.entries(flightsByMonth).map(
 		([month, flights]) => ({
 			month,
@@ -238,16 +226,13 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		}),
 	);
 
-	// ] as const
 
 	const _handleValueChange = (val: string[]) => {
 		_setSelectedFlightIds(val);
 	};
 
-	// Shared content between Dialog and Drawer
 	const renderContent = () => (
 		<div className="space-y-4 px-4 md:px-0 ">
-			{/* Flight Selection */}
 			<FieldLabel className="text-sm font-medium mb-1">
 				Select Flight Dates
 			</FieldLabel>
@@ -255,18 +240,9 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 			<Combobox
 				multiple
 				items={_flightsByMonthArray}
-				// value={selectedFlights}
 				modal={true}
 				onValueChange={_handleValueChange}
 			>
-				{/* <ComboboxChips ref={anchor} className="w-full">
-					<ComboboxValue>
-						{selectedFlights.map((flight) => (
-							<ComboboxChip key={flight.id}>{flight.label}</ComboboxChip>
-						))}
-					</ComboboxValue>
-					<ComboboxChipsInput placeholder="Select flight date" />
-				</ComboboxChips> */}
 				<ComboboxChips ref={anchor}>
 					<ComboboxValue>
 						{(values) => (
@@ -310,7 +286,6 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 				</ComboboxContent>
 			</Combobox>
 
-			{/* Preview */}
 			<div className="h-75 overflow-y-auto border rounded-md bg-muted/10 relative">
 				{!selectedFlights.length ? (
 					<div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
@@ -387,7 +362,6 @@ const PackagePreviewModal: React.FC<Props> = ({ pkg, open, onOpenChange }) => {
 		</div>
 	);
 
-	// Action buttons shared between Dialog and Drawer
 	const actionButtons = (
 		<div className="flex justify-end gap-2">
 			<Button

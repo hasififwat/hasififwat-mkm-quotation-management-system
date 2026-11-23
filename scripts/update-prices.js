@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/update-prices.js
- *
- * Updates room prices for the 15 existing packages that have price changes
- * according to the MASTER PRICE LIST CSV.
- *
- * Usage:
- *   node scripts/update-prices.js "/path/to/MASTER PRICE LIST.csv"           # dry run
- *   node scripts/update-prices.js "/path/to/MASTER PRICE LIST.csv" --apply   # apply
- */
 
 import fs from 'fs';
 import path from 'path';
@@ -19,9 +9,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.resolve(__dirname, '..');
 const APPLY     = process.argv.includes('--apply');
 
-// ---------------------------------------------------------------------------
-// Inline price list parsing (same logic as compare-prices.js)
-// ---------------------------------------------------------------------------
 const SEASON_CODE_MAP = [
   { match: /SUPER LOW SEASON/i,                code: 'SLS - JUN'        },
   { match: /LOW SEASON.*(JULY|JUL)/i,          code: 'LS - JULY TO SEP' },
@@ -122,10 +109,6 @@ function parsePriceList(csvPath) {
   return results;
 }
 
-// ---------------------------------------------------------------------------
-// Merge price list rows (same package+season may appear multiple times for segments)
-// Keep the row that has the highest prices across types (most complete row)
-// ---------------------------------------------------------------------------
 function buildPriceMap(rows) {
   const map = new Map();
   for (const r of rows) {
@@ -139,9 +122,6 @@ function buildPriceMap(rows) {
   return map;
 }
 
-// ---------------------------------------------------------------------------
-// Fetch DB packages with rooms
-// ---------------------------------------------------------------------------
 function runConvex(fn, args = '{}') {
   return JSON.parse(execSync(`npx convex run ${fn} '${args}'`, {
     encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'],
@@ -155,9 +135,6 @@ function runConvexMutation(fn, argsObj) {
   }));
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 const PRICE_LIST_CSV = process.argv.find(a => !a.startsWith('-') && a.includes('.csv'));
 if (!PRICE_LIST_CSV) {
   console.error('Usage: node scripts/update-prices.js "/path/to/price-list.csv" [--apply]');
@@ -170,18 +147,16 @@ const plMap = buildPriceMap(parsePriceList(PRICE_LIST_CSV));
 console.log('🗄️  Fetching DB packages with rooms…');
 const dbPackages = runConvex('packages:listWithRoomPricesOnly');
 
-// Room type → price list field
 const ROOM_MAP = { Quad: 'qdp', Triple: 'tpl', Double: 'dbl' };
 
-// Build update plan — only packages with a proper season code (skip 2026/2027)
 const plan = [];
 
 for (const pkg of dbPackages) {
-  if (!pkg.season || pkg.season === pkg.year) continue; // skip bad-season packages
+  if (!pkg.season || pkg.season === pkg.year) continue;
 
   const key    = `${pkg.name.trim().toUpperCase()}|${pkg.season.trim()}`;
   const pl     = plMap.get(key);
-  if (!pl) continue; // not in price list (old naming, etc.)
+  if (!pl) continue;
 
   const dbRooms = Object.fromEntries(
     (pkg.rooms || []).filter(r => r.enabled).map(r => [r.room_type, r.price])
@@ -192,7 +167,7 @@ for (const pkg of dbPackages) {
     const plPrice = pl[plField];
     const dbPrice = dbRooms[roomType] ?? null;
     if (plPrice === null) continue;
-    if (plPrice === dbPrice) continue; // unchanged
+    if (plPrice === dbPrice) continue;
     changes.push({ room_type: roomType, old_price: dbPrice, new_price: plPrice });
   }
 
@@ -201,9 +176,6 @@ for (const pkg of dbPackages) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Display plan
-// ---------------------------------------------------------------------------
 if (plan.length === 0) {
   console.log('\n✅ All prices are already up to date.');
   process.exit(0);
@@ -227,9 +199,6 @@ if (!APPLY) {
   process.exit(0);
 }
 
-// ---------------------------------------------------------------------------
-// Push mutation and apply
-// ---------------------------------------------------------------------------
 console.log('🔧 Pushing mutation and applying…\n');
 execSync('npx convex run --push packages:patchRoomPrices \'{"package_id":"dummy","prices":[]}\' 2>/dev/null || true', {
   cwd: ROOT, stdio: 'pipe',

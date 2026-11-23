@@ -129,7 +129,6 @@ export default function QuotationsPage() {
             </div>
 			<Card className="gap-0 overflow-hidden py-0">
 				<CardHeader className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-5 [.border-b]:pb-4">
-					{/* Fields visibility button row */}
 					<div className="flex justify-start">
 						<Popover open={fieldFilterOpen} onOpenChange={setFieldFilterOpen}>
 							<PopoverTrigger asChild>
@@ -212,7 +211,6 @@ export default function QuotationsPage() {
 							</PopoverContent>
 						</Popover>
 					</div>
-					{/* Search bar */}
 					<form onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1">
 						{isSearchLoading ? (
 							<Loader2 className="absolute left-3 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />

@@ -15,7 +15,7 @@ import { cn } from "~/lib/utils";
 interface DatePickerProps {
 	triggerRef?: React.Ref<HTMLButtonElement>;
 	invalid?: boolean;
-	value?: string; // ISO date string (YYYY-MM-DD)
+	value?: string;
 	onChange?: (value: string) => void;
 	placeholder?: string;
 	className?: string;
@@ -31,7 +31,6 @@ export function DatePicker({
 }: DatePickerProps) {
 	const [open, setOpen] = React.useState(false);
 
-	// Convert string value to Date object for Calendar
 	const dateValue = React.useMemo(() => {
 		if (!value) return undefined;
 		try {
@@ -43,7 +42,6 @@ export function DatePicker({
 
 	const handleSelect = (date: Date | undefined) => {
 		if (date && onChange) {
-			// Convert Date to ISO string (YYYY-MM-DD)
 			onChange(format(date, "yyyy-MM-dd"));
 		}
 		setOpen(false);

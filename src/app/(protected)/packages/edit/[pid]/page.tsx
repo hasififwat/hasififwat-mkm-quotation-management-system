@@ -23,7 +23,6 @@ export default async function PackageEditPage({ params }: Params) {
 		redirect("/packages");
 	}
 
-	// Transform both current package and all packages
 	const initialData = transformConvexPackage(packageData);
 	const allPackages = (
 		Array.isArray(allPackagesData) ? allPackagesData : []

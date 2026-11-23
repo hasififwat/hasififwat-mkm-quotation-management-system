@@ -11,7 +11,6 @@ import ClientsListingPage, {
 	type ClientWithStats,
 } from "~/features/clients/ClientsListingPage";
 
-// Port of the old clientLoader — runs client-side against Convex directly.
 export default function ClientsPage() {
 	const http = useConvex();
 	const { isAuthenticated } = useConvexAuth();

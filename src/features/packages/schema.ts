@@ -57,20 +57,15 @@ export const packageSchema = z.object({
 	duration: z.string().min(1, "Duration is required (e.g., '12 Days')"),
 	transport: z.string().default(""),
 
-	// TODO: we need more satus options in the future (e.g., 'draft', 'archived')
 	status: z.enum(["published", "unpublished"]).default("unpublished"),
 
-	// Nested Objects
 	hotels: z.array(hotelSchema),
 
-	// Arrays of Strings
 	inclusions: z.string().default(""),
 	exclusions: z.string().default(""),
 
-	// Array of Objects
 	rooms: z.array(roomSchema).default([]),
 
-	//Array of flights
 	flights: z.array(completeFlightSchema).default([]),
 });
 

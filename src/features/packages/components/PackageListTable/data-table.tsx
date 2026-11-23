@@ -83,7 +83,6 @@ export function DataTable<TData, TValue>({
 	const [grouping] = useState<GroupingState>(["season"]);
 	const [columnVisibility] = useState<Record<string, boolean>>({ season: false });
 
-	// Add hidden season column used only for grouping
 	const allColumns = useMemo<ColumnDef<TData, unknown>[]>(
 		() => [
 			{ id: "season", accessorKey: "season" } as ColumnDef<TData, unknown>,

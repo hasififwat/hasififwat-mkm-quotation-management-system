@@ -5,8 +5,6 @@ import "./globals.css";
 
 import { Providers } from "./providers";
 
-// Self-hosted via next/font — no external Google Fonts requests,
-// no layout shift, preloaded automatically (server-hoist-static-io).
 const inter = Inter({
 	subsets: ["latin"],
 	variable: "--font-inter",

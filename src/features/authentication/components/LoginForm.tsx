@@ -42,7 +42,6 @@ export function LoginForm() {
 
 		try {
 			await signIn("password", { email, password, flow: "signIn" });
-			// navigation happens via useEffect once isAuthenticated becomes true
 		} catch {
 			setError("Invalid email or password.");
 			setIsSubmitting(false);

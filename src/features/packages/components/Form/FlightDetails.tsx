@@ -138,7 +138,6 @@ export default function FlightDetails({
 								</Button>
 							</div>
 
-							{/* Hidden ID field for existing entries */}
 							<Controller
 								name={`flights.${index}._id`}
 								control={control}
@@ -147,9 +146,7 @@ export default function FlightDetails({
 								)}
 							/>
 
-							{/* Airline + Month row */}
 							<div className="grid grid-cols-1 gap-4 @min-[20rem]:grid-cols-2">
-								{/* Airline Select */}
 								<Controller
 									name={`flights.${index}.code`}
 									control={control}
@@ -175,7 +172,6 @@ export default function FlightDetails({
 									)}
 								/>
 
-								{/* Month Select */}
 								<Controller
 									name={`flights.${index}.month`}
 									control={control}
@@ -207,9 +203,7 @@ export default function FlightDetails({
 								/>
 							</div>
 
-							{/* Dates + Sectors */}
 							<div className="grid grid-cols-1 gap-4 @min-[20rem]:grid-cols-2 @min-[44rem]:grid-cols-4">
-								{/* Departure Date */}
 								<Controller
 									name={`flights.${index}.departure`}
 									control={control}
@@ -232,7 +226,6 @@ export default function FlightDetails({
 									)}
 								/>
 
-								{/* Departure Sector */}
 								<Controller
 									name={`flights.${index}.sector_departure`}
 									control={control}
@@ -254,7 +247,6 @@ export default function FlightDetails({
 									)}
 								/>
 
-								{/* Return Date */}
 								<Controller
 									name={`flights.${index}.return`}
 									control={control}
@@ -277,7 +269,6 @@ export default function FlightDetails({
 									)}
 								/>
 
-								{/* Return Sector */}
 								<Controller
 									name={`flights.${index}.sector_return`}
 									control={control}

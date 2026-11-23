@@ -13,7 +13,6 @@ export default function FlightMaster() {
 	const [_flights, setFlights] = useState<FlightData[]>([]);
 	const [pendingImports, setPendingImports] = useState(0);
 	const [_searchTerm, _setSearchTerm] = useState("");
-	// Fix: Added useRef to handle hidden file input trigger as Button does not support asChild
 	const _fileInputRef = useRef<HTMLInputElement>(null);
 
 	const _handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +22,6 @@ export default function FlightMaster() {
 		setPendingImports((pending) => pending + 1);
 		const finishImport = () => setPendingImports((pending) => pending - 1);
 		Papa.parse(file, {
-			// This function runs on every header name found
 
 			complete: (results) => {
 				finishImport();
@@ -103,13 +101,10 @@ export default function FlightMaster() {
 						}
 					}
 
-					//convert row to array
 				}
 
-				//filter out pakej === "JUALAN AGENT"
 				tableData = tableData.filter((row) => row.pakej !== "JUALAN AGENT");
 
-				//if pakej is MT / UMJ P means it has two pakej, so split it into two rows
 				let finalTableData: FlightData[] = [];
 				tableData.forEach((row) => {
 					if (row?.pakej?.includes("/")) {
@@ -122,12 +117,6 @@ export default function FlightMaster() {
 					}
 				});
 
-				//format pakej to package_name
-				//         UMJ - UMRAH MENARA JAM
-				// MANASIK HAJI
-				// MT - MAKKAH TOWER
-				// MT P - MAKKAH TOWER - PREMIUM
-				// UMJ P - UMRAH MENARA JAM - PREMIUM
 
 				finalTableData = finalTableData.map((row) => {
 					let package_name = "";
@@ -164,12 +153,7 @@ export default function FlightMaster() {
 						row.pakej,
 				);
 
-				//add incremental no. to each row
 
-				// setFlights(tableData as FlightRecord[]);
-				// uploadFlightSchedule(tableData);
-				// tableData = tableData.filter((row) => Object.keys(row).length > 0);
-				// setFlights(tableData as FlightRecord[]);
 				setFlights(filteredFinalTableData);
 			},
 			error: finishImport,

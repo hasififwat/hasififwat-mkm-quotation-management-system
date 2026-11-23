@@ -13,7 +13,7 @@ import { DataTable } from "./components/PackageListTable/data-table";
 import PackagePreviewModal from "./PackagePreviewModal";
 
 interface Props {
-	data: FunctionReturnType<typeof api.packages.listWithRooms>; // Receives data from parent
+	data: FunctionReturnType<typeof api.packages.listWithRooms>;
 	isLoading?: boolean;
 }
 

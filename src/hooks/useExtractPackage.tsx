@@ -108,7 +108,6 @@ function parseDate(rawValue: string): string {
 		return "";
 	}
 
-	// dd-MMM-yy or d-MMM-yy
 	const dashMatch = value.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/);
 	if (dashMatch) {
 		const [, dayRaw, monthRaw, yearRaw] = dashMatch;
@@ -124,7 +123,6 @@ function parseDate(rawValue: string): string {
 		}
 	}
 
-	// dd/mm/yyyy OR mm/dd/yyyy
 	const slashMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
 	if (slashMatch) {
 		let [, first, second, year] = slashMatch;

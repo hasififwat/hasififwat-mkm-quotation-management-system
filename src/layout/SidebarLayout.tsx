@@ -26,11 +26,6 @@ import {
 import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
 
 const menuItems = [
-	// {
-	//   title: "Dashboard",
-	//   icon: Home,
-	//   url: "/dashboard",
-	// },
 	{
 		title: "Packages",
 		icon: Package,
@@ -87,7 +82,7 @@ const SidebarNavLink = ({
 interface SidebarLayoutProps {
 	children: ReactNode;
 	title?: string;
-	profile?: any; // ✅ Add profile prop (you can replace 'any' with your actual profile type)
+	profile?: any;
 }
 
 export function SidebarLayout({

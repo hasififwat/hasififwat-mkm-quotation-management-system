@@ -1,19 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/extract-price-list.js
- *
- * Extracts all packages from the MASTER PRICE LIST CSV, generates season codes
- * following the MKM convention (LS - JULY TO SEP, MS - NOV, PS - DEC, etc.),
- * then compares against live Convex DB packages.
- *
- * Usage:
- *   node scripts/extract-price-list.js "/path/to/MASTER PRICE LIST.csv"
- *
- * Outputs:
- *   docs/season-codes.csv       Season code → date range reference
- *   docs/package-mapping.csv    Full price list × DB comparison
- *   docs/package-mapping.md     Human-readable report
- */
 
 import fs from 'fs';
 import path from 'path';
@@ -28,10 +13,6 @@ if (!PRICE_LIST_CSV) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// 1. Season code definitions
-//    Maps raw season headers from the price list → MKM season codes.
-// ---------------------------------------------------------------------------
 const SEASON_CODE_MAP = [
   { match: /SUPER LOW SEASON/i,                         code: 'SLS - JUN',        fullName: 'Super Low Season (Jun)',             start: '2026-06-18', end: '2026-06-30' },
   { match: /LOW SEASON.*(JULY|JUL)/i,                   code: 'LS - JULY TO SEP', fullName: 'Low Season (Jul – Sep)',              start: '2026-07-01', end: '2026-09-30' },
@@ -51,9 +32,6 @@ function getSeasonEntry(header) {
   return null;
 }
 
-// ---------------------------------------------------------------------------
-// 2. Package + segment → canonical DB name
-// ---------------------------------------------------------------------------
 function canonicalName(pkg, segment) {
   const p = pkg.trim().toUpperCase();
   const s = (segment || '').trim().toUpperCase();
@@ -75,7 +53,7 @@ function canonicalName(pkg, segment) {
   if (p === 'SEASONAL')               return 'MUSIM HAJI';
   if (p === 'HAJI FADHIL - EJEN')     return 'HAJI FADHIL - EJEN';
   if (p === 'UNIMAP')                 return 'UNIMAP';
-  if (p === 'LEISURE PACKAGE')        return null; // skip — different price structure
+  if (p === 'LEISURE PACKAGE')        return null;
   if (p === 'SAMBUT')                 return `SAMBUT RAMADHAN - ${s}`;
   if (p === 'AWAL')                   return `AWAL RAMADHAN - ${s}`;
   if (p === 'PERTENGAHAN')            return `PERTENGAHAN RAMADHAN - ${s}`;
@@ -83,7 +61,6 @@ function canonicalName(pkg, segment) {
   return pkg.trim();
 }
 
-// MFF column-30 package name → canonical DB name (for later MFF normalization)
 const MFF_NAME_MAP = {
   'UMJ':                               'MENARA JAM',
   'UMJ SV':                            'MENARA JAM',
@@ -98,9 +75,6 @@ const MFF_NAME_MAP = {
   'MANASIK HAJI':                      'MANASIK HAJI',
 };
 
-// ---------------------------------------------------------------------------
-// 3. Parse the price list CSV
-// ---------------------------------------------------------------------------
 function parseCsvRow(line) {
   const fields = [];
   let field = '';
@@ -128,7 +102,6 @@ function parsePriceList(csvPath) {
     const col2 = (row[2] || '').trim();
     const col3 = (row[3] || '').trim();
 
-    // Season header row: col1 is FINAL or WILL BE UPDATE, col2 is the season name
     if ((col1 === 'FINAL' || col1 === 'WILL BE UPDATE') && col2.length > 0) {
       const entry = getSeasonEntry(col2);
       if (entry) { currentSeason = { ...entry, raw: col2 }; lastPackage = ''; }
@@ -137,12 +110,10 @@ function parsePriceList(csvPath) {
 
     if (!currentSeason) continue;
 
-    // Skip sub-headers and column header rows
     if (['UMRAH PACKAGE', 'LEISURE PACKAGE', 'UMRAH PACKAGE (CUSTOM)', 'PACKAGE'].includes(col2)) continue;
     if (col3 === 'SEGMENT' || ['QDP', 'DBL', 'PRICE PER PAX (RM)'].includes(row[5])) continue;
     if (!col2 && !col3) continue;
 
-    // Fill down package name
     if (col2) lastPackage = col2;
     const pkg = lastPackage;
     if (!pkg || pkg === 'LEISURE PACKAGE') continue;
@@ -201,9 +172,6 @@ function parsePriceList(csvPath) {
   return results;
 }
 
-// ---------------------------------------------------------------------------
-// 4. Fetch live DB packages via Convex CLI
-// ---------------------------------------------------------------------------
 function runConvex(fn) {
   const raw = execSync(`npx convex run ${fn}`, {
     encoding: 'utf8',
@@ -231,20 +199,15 @@ function fetchDbHotelsAndMeals() {
   }
 }
 
-// ---------------------------------------------------------------------------
-// 5. Match price list rows to DB packages
-// ---------------------------------------------------------------------------
 const HOTEL_TYPES = ['makkah', 'madinah', 'aziziah', 'taif'];
 
 function matchToDb(rows, dbPackages, dbDetails) {
-  // Lookup by (canonical_name_upper + "|" + season_code)
   const lookup = new Map();
   for (const pkg of dbPackages) {
     const key = `${(pkg.name || '').trim().toUpperCase()}|${(pkg.season || '').trim()}`;
     if (!lookup.has(key)) lookup.set(key, pkg);
   }
 
-  // Detail lookup by _id
   const detailById = new Map();
   for (const d of dbDetails) {
     detailById.set(d._id, d);
@@ -257,8 +220,6 @@ function matchToDb(rows, dbPackages, dbDetails) {
 
     const isMatched = !!hit;
 
-    // For MATCHED rows: use live DB hotel/meal/transport data
-    // For NEW rows: fall back to price list columns
     let transport, makkah_hotel, makkah_meals, madinah_hotel, madinah_meals, aziziah_hotel, aziziah_meals, taif_hotel, taif_meals;
 
     if (isMatched && detail) {
@@ -273,18 +234,13 @@ function matchToDb(rows, dbPackages, dbDetails) {
         if (type === 'taif')     { taif_hotel     = name; taif_meals     = meals; }
       }
     } else {
-      // NEW package — pull from price list
-      // NOTE: price list hotel columns (20-21) are in AZIZIAH→TAIF order,
-      // but nights (16-17) and meals (24-25) are in TAIF→AZIZIAH order.
       transport     = row.pl_transport    ?? '';
       madinah_hotel = row.pl_madinah_hotel ?? '';
       makkah_hotel  = row.pl_makkah_hotel  ?? '';
       madinah_meals = row.pl_madinah_meals ?? '';
       makkah_meals  = row.pl_makkah_meals  ?? '';
-      // col20=aziziah hotel, col17=aziziah nights, col25=aziziah meals
       aziziah_hotel = row.pl_other1_hotel ? `${row.pl_other1_hotel}${row.pl_other2_nights ? ` (${row.pl_other2_nights})` : ''}` : '';
       aziziah_meals = row.pl_other2_meals ?? '';
-      // col21=taif hotel, col16=taif nights, col24=taif meals
       taif_hotel    = row.pl_other2_hotel ? `${row.pl_other2_hotel}${row.pl_other1_nights ? ` (${row.pl_other1_nights})` : ''}` : '';
       taif_meals    = row.pl_other1_meals ?? '';
     }
@@ -306,9 +262,6 @@ function matchToDb(rows, dbPackages, dbDetails) {
   });
 }
 
-// ---------------------------------------------------------------------------
-// 6. Write output files
-// ---------------------------------------------------------------------------
 const q = (v) => `"${(v ?? '').toString().replace(/"/g, '""')}"`;
 
 function writeSeasonCsv(outPath) {
@@ -448,9 +401,6 @@ function writeMappingMd(rows, dbPackages, outPath) {
   console.log(`✓ ${path.relative(process.cwd(), outPath)}`);
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 const docsDir = path.resolve(__dirname, '..', 'docs', 'sync-1448h');
 
 console.log('📄 Parsing price list…');

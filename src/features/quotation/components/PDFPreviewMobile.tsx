@@ -55,7 +55,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 
 	const total = details.total_amount;
 
-	// Format date
 	const createDate = new Date(details.created_at).toLocaleDateString("en-GB", {
 		day: "2-digit",
 		month: "short",
@@ -63,16 +62,13 @@ export default function PDFPreviewMobile({ details }: Props) {
 	});
 
 	return (
-		// Page
 		<div className="quotation-print relative bg-white text-black mx-auto p-[10px] shadow-2xl w-[210mm] aspect-[210/280] border border-gray-200 text-[10px] leading-tight">
 			<img
 				src={header.src}
 				alt="Header"
 				className="mb-3 h-[100px] w-full object-contain object-left"
 			/>
-			{/* Body */}
 			<div className="relative  ">
-				{/* Basic Info */}
 				<div className="flex flex-row">
 					<div className="flex-[2_2_0%] flex flex-col gap-1">
 						<div className="py-2 border border-black opacity-0">
@@ -105,7 +101,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 					</div>
 				</div>
 
-				{/* Room and Add-ons */}
 				<div className="mt-3">
 					<div>
 						<div className="flex flex-row">
@@ -142,7 +137,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 						</div>
 					</div>
 
-					{/* Add-ons */}
 
 					{addons.map((addon) => (
 						<div key={addon.id} className="flex flex-row">
@@ -158,7 +152,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 						</div>
 					))}
 
-					{/* Discount */}
 					{discounts.length > 0 &&
 						discounts.map((discount) => (
 							<div key={discount.id} className="flex flex-row">
@@ -174,7 +167,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 							</div>
 						))}
 
-					{/* Total Amount */}
 					<div className="flex flex-row">
 						<div className="w-[140px] shrink-0 p-1 border-l border-b border-black">
 							JUMLAH KESELURUHAN
@@ -186,13 +178,10 @@ export default function PDFPreviewMobile({ details }: Props) {
 					</div>
 				</div>
 
-				{/* Package Details */}
 				<div className="mt-3">
-					{/* Package Detail Table */}
 					<div className="bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
 						BUTIRAN PAKEJ
 					</div>
-					{/* Data */}
 					<DetailRow label="JENIS PENERBANGAN" value={flightType} />
 					<DetailRow
 						label="TARIKH CADANGAN"
@@ -232,10 +221,8 @@ export default function PDFPreviewMobile({ details }: Props) {
 					/>
 				</div>
 
-				{/* Package Inclusions and Exclusions */}
 				{(inclusionItems.length > 0 || exclusionItems.length > 0) && (
 					<div className="mt-3">
-						{/* Header */}
 						<div className="flex flex-row">
 							<div className="flex-1 bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-black">
 								PAKEJ TERMASUK
@@ -244,7 +231,6 @@ export default function PDFPreviewMobile({ details }: Props) {
 								PAKEJ TIDAK TERMASUK
 							</div>
 						</div>
-						{/* Data */}
 						<div className="flex flex-row">
 							<div className="flex-1 p-1 border-l border-b border-black text-left ">
 								{inclusionItems.map((inc) => (
@@ -265,12 +251,10 @@ export default function PDFPreviewMobile({ details }: Props) {
 					</div>
 				)}
 
-				{/* Terms and Conditions */}
 				<div className="mt-3">
 					<div className="bg-[#1a365d] text-white p-1 font-semibold text-center border-l border-r border-black">
 						TERMA & SYARAT PEMBAYARAN{" "}
 					</div>
-					{/* Data */}
 
 					{TERMS_AND_CONDITIONS.map((term, index) => (
 						<div key={`${term}`} className="flex flex-row">

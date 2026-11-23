@@ -4,7 +4,7 @@ import type { FlightData } from "../schema";
 
 export type FlightColumn = {
 	header: string;
-	accessorKey: keyof FlightData; // This is the magic part
+	accessorKey: keyof FlightData;
 };
 
 export const columns: FlightColumn[] = [

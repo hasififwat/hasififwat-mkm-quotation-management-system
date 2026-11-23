@@ -120,7 +120,7 @@ function HotelSelection({
 			append({
 				room_type: roomToCheck.room_type,
 				price: roomToCheck.price,
-				pax: 1, // Default pax
+				pax: 1,
 			});
 		} else {
 			const index = fields.findIndex(
@@ -692,7 +692,6 @@ export default function QuotationBuilder({
 		{},
 	);
 
-	// Track selected package state
 	const [selectedPackage, setSelectedPackage] =
 		useState<QuotationPackage | null>(
 			initialData?.package_id
@@ -944,7 +943,6 @@ export default function QuotationBuilder({
 			)}
 			{reviewNotice && <p role="status" className="rounded-lg border bg-muted p-4 text-sm">{reviewNotice}</p>}
 
-			{/* Step Navigation Header */}
 			<Card>
 				<CardContent>
 					<div className="flex items-center justify-between">
@@ -1135,7 +1133,6 @@ export default function QuotationBuilder({
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-6">
-							{/* Step 1: Basic Details */}
 							<div
 								className={
 									currentStep === "basic"
@@ -1143,7 +1140,6 @@ export default function QuotationBuilder({
 										: "hidden"
 								}
 							>
-								{/* PIC Name */}
 								<Controller
 									name="pic_name"
 									control={methods.control}
@@ -1184,7 +1180,6 @@ export default function QuotationBuilder({
 									)}
 								/>
 
-								{/* Client Name */}
 								<Controller
 									name="client_id"
 									control={methods.control}
@@ -1221,7 +1216,6 @@ export default function QuotationBuilder({
 										</Field>
 									)}
 								/>
-								{/* Notes */}
 								<Controller
 									name="notes"
 									control={methods.control}
@@ -1243,7 +1237,6 @@ export default function QuotationBuilder({
 								/>
 							</div>
 
-							{/* Step 2: Package Selection */}
 							<div
 								className={currentStep === "package" ? "space-y-6" : "hidden"}
 							>
@@ -1297,7 +1290,6 @@ export default function QuotationBuilder({
 													if (selectedPkg) {
 														setSelectedPackage(selectedPkg);
 														field.onChange(selectedId);
-														// Reset selected rooms and flight when package changes
 														setValue("selected_rooms", []);
 														setValue("flight_id", "");
 													}
@@ -1317,7 +1309,6 @@ export default function QuotationBuilder({
 								</>}
 							</div>
 
-							{/* Step 3: Add-ons & Discounts */}
 							<div
 								className={currentStep === "extras" ? "space-y-8" : "hidden"}
 							>

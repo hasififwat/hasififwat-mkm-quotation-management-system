@@ -62,15 +62,12 @@ interface DataTableProps<TData, TValue> {
     archived?: boolean;
 	handlePreview?: (quotation: TData) => void;
 	isLoading?: boolean;
-	// pagination
 	isDone?: boolean;
 	isFirstPage?: boolean;
 	onPreviousPage?: () => void;
 	onNextPage?: () => void;
-	// sorting
 	sorting?: SortingState;
 	onSortChange?: (sorting: SortingState) => void;
-	// column visibility
 	columnVisibility?: VisibilityState;
 	onColumnVisibilityChange?: (visibility: VisibilityState) => void;
 }
@@ -371,7 +368,6 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			{/* Pagination controls */}
 			{(onPreviousPage || onNextPage) && (
 				<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
 					<Button

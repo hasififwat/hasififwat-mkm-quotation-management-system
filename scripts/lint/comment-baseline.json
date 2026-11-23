@@ -1,0 +1,5 @@
+{
+  "src/features/packages/components/PackageListTable/data-table.tsx": {
+    "// Reading an empty grouped model while pending makes TanStack reset the initial expansion.": 1
+  }
+}

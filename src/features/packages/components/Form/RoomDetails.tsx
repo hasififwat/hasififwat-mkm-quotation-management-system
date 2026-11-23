@@ -26,7 +26,7 @@ export default function RoomDetails({
 	const { control } = useFormContext<IPackageDetailsForm>();
 	const { fields } = useFieldArray<IPackageDetailsForm, "rooms">({
 		control,
-		name: "rooms", // Matches your schema key
+		name: "rooms",
 	});
 
 	return (
@@ -40,7 +40,6 @@ export default function RoomDetails({
 				{fields.map((field, index) => {
 					return (
 						<div key={field.id}>
-							{/* We wrap the whole row in the "Enabled" controller logic */}
 							<Controller
 								name={`rooms.${index}.enabled`}
 								control={control}
@@ -63,10 +62,8 @@ export default function RoomDetails({
 												name={`rooms.${index}.id`}
 												value={field.id}
 											/>
-											{/* TOGGLE BUTTON */}
 											<button
 												type="button"
-												// 2. Simply toggle the boolean value
 												onClick={() =>
 													enabledField.onChange(!enabledField.value)
 												}
@@ -84,7 +81,6 @@ export default function RoomDetails({
 												</span>
 											</button>
 
-											{/* PRICE INPUT */}
 											<Controller
 												name={`rooms.${index}.price`}
 												control={control}

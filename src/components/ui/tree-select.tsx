@@ -45,12 +45,10 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 		const option = options.find((opt) => opt.value === optionValue);
 
 		if (!option) {
-			// Check if it's a child node
 			for (const opt of options) {
 				if (opt.nodes) {
 					const childNode = opt.nodes.find((n) => n.value === optionValue);
 					if (childNode) {
-						// Toggle individual child
 						if (value.includes(optionValue)) {
 							onChange(value.filter((v) => v !== optionValue));
 						} else {
@@ -63,7 +61,6 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 			return;
 		}
 
-		// Handle parent options with nodes
 		if (option.nodes && option.nodes.length > 0) {
 			const childValues = option.nodes.map((node) => node.value);
 			const hasAllChildren = childValues.every((childValue) =>
@@ -71,10 +68,8 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 			);
 
 			if (hasAllChildren) {
-				// Remove all children
 				onChange(value.filter((v) => !childValues.includes(v)));
 			} else {
-				// Add all children
 				const newValue = [...value];
 				childValues.forEach((childValue) => {
 					if (!newValue.includes(childValue)) {
@@ -84,9 +79,7 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 				onChange(newValue);
 			}
 		} else {
-			// Handle leaf options or options without nodes
 			if (option.value === value[0] && value.length === 0) {
-				// Special case for "NOT_INCLUDED" or similar clear options
 				onChange([]);
 			} else if (value.includes(option.value)) {
 				onChange(value.filter((v) => v !== option.value));
@@ -97,7 +90,6 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 	};
 
 	const getDisplay = () => {
-		// Check if all children of a parent are selected
 		for (const option of options) {
 			if (option.nodes && option.nodes.length > 0) {
 				const childValues = option.nodes.map((node) => node.value);
@@ -110,7 +102,6 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 			}
 		}
 
-		// If no values selected, check for empty state option
 		if (value.length === 0) {
 			const emptyOption = options.find(
 				(opt) => !opt.nodes || opt.nodes.length === 0,
@@ -121,7 +112,6 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 			return placeholder;
 		}
 
-		// Find labels for selected values
 		const selectedLabels: string[] = [];
 		options.forEach((option) => {
 			if (option.nodes) {
@@ -140,7 +130,6 @@ export const TreeSelect: React.FC<TreeSelectProps> = ({
 
 	const isParentChecked = (option: TreeSelectOption): boolean => {
 		if (!option.nodes || option.nodes.length === 0) {
-			// For options without nodes, check if it represents empty state
 			return value.length === 0;
 		}
 		const childValues = option.nodes.map((node) => node.value);

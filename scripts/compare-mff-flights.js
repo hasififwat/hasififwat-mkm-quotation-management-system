@@ -1,17 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/compare-mff-flights.js
- *
- * Compares the MFF flight schedule CSV against live DB package_flights.
- * Identifies flights that were added, removed, or edited in the new MFF.
- *
- * Usage:
- *   node scripts/compare-mff-flights.js "/path/to/MFF VERSION 6.csv"
- *
- * Outputs:
- *   docs/flight-diff.md   Human-readable diff report
- *   docs/flight-diff.csv  Machine-readable diff
- */
 
 import fs from 'fs';
 import path from 'path';
@@ -27,10 +14,6 @@ if (!MFF_CSV) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// Season date ranges — derived from package-mapping.csv, not hardcoded.
-// This ensures the season lookup always matches the packages we actually have.
-// ---------------------------------------------------------------------------
 const MAPPING_CSV_PATH = path.join(ROOT, 'docs', 'sync-1448h', 'package-mapping.csv');
 if (!fs.existsSync(MAPPING_CSV_PATH)) {
   console.error(`❌ package-mapping.csv not found at ${MAPPING_CSV_PATH}`);
@@ -79,9 +62,6 @@ function getSeasonCode(isoDate) {
   return null;
 }
 
-// ---------------------------------------------------------------------------
-// MFF package name → canonical DB name
-// ---------------------------------------------------------------------------
 const MFF_NAME_MAP = {
   'UMJ':                                   'MENARA JAM',
   'UMJ SV':                                'MENARA JAM',
@@ -97,7 +77,6 @@ const MFF_NAME_MAP = {
   'UMJ (TRIP HJ FADHIL PENANG)':           'HAJI FADHIL - EJEN',
 };
 
-// Packages to skip entirely
 const SKIP_PATTERNS = [
   /^JUALAN TIKET/i,
   /^LEISURE /i,
@@ -109,11 +88,6 @@ function shouldSkip(pkg) {
   return SKIP_PATTERNS.some(p => p.test(pkg));
 }
 
-// ---------------------------------------------------------------------------
-// Sector normalisation
-// Strips airline suffix (SV, MH, EK…), removes spaces, inserts hyphen.
-// KULJED → KUL-JED, KUL JED → KUL-JED, KULMED SV → KUL-MED
-// ---------------------------------------------------------------------------
 function normalizeSector(s) {
   s = s.trim().toUpperCase();
   s = s.replace(/\s+(SV|MH|EK|QR|TK|EY|GA|KL|CX)$/i, '').trim();
@@ -124,9 +98,6 @@ function normalizeSector(s) {
   return s;
 }
 
-// ---------------------------------------------------------------------------
-// Date parsing:  "2-Jul-2026" → "2026-07-02"
-// ---------------------------------------------------------------------------
 const MONTH_MAP = {
   JAN:'01', FEB:'02', MAR:'03', APR:'04', MAY:'05', JUN:'06',
   JUL:'07', AUG:'08', SEP:'09', OCT:'10', NOV:'11', DEC:'12',
@@ -142,9 +113,6 @@ function parseDate(s) {
   return `${y}-${month}-${d.padStart(2, '0')}`;
 }
 
-// ---------------------------------------------------------------------------
-// CSV parser (handles quoted fields)
-// ---------------------------------------------------------------------------
 function parseCsvRow(line) {
   const fields = [];
   let field = '', inQuote = false;
@@ -158,12 +126,6 @@ function parseCsvRow(line) {
   return fields;
 }
 
-// ---------------------------------------------------------------------------
-// Parse MFF CSV
-// MFF columns (0-indexed):
-//   1=CODE  2=MONTH  8=dep FLT  9=dep DATE  11=dep SECTOR
-//   14=ret FLT  15=ret DATE  17=ret SECTOR  35=PACKAGE
-// ---------------------------------------------------------------------------
 function parseMff(csvPath) {
   const raw  = fs.readFileSync(csvPath, 'utf8');
   const lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
@@ -173,12 +135,11 @@ function parseMff(csvPath) {
   let currentMonth = '';
 
   for (let i = 0; i < lines.length; i++) {
-    if (i < 10) continue; // skip preamble + header rows
+    if (i < 10) continue;
 
     const row = parseCsvRow(lines[i]);
     const get = (idx) => (row[idx] || '').trim();
 
-    // Fill down CODE and MONTH
     if (get(1)) currentCode  = get(1);
     if (get(2)) currentMonth = get(2);
 
@@ -187,8 +148,6 @@ function parseMff(csvPath) {
     const retDate  = parseDate(get(15));
     const depFlt   = get(8);
 
-    // Override filled-down CODE when the flight number reveals the actual airline.
-    // MH charter codes are bare 4-digit numbers (e.g. 0152, 0156B).
     if (!get(1) && depFlt) {
       if (/^SV/i.test(depFlt)) currentCode = 'SV';
       else if (/^MH/i.test(depFlt) || /^\d{4}[A-Z]?$/.test(depFlt)) currentCode = 'MH';
@@ -199,10 +158,8 @@ function parseMff(csvPath) {
     const depSec   = get(11);
     const retSec   = get(17);
 
-    // Skip if no dates (summary/blank rows)
     if (!depDate || !retDate) continue;
 
-    // Skip non-package rows
     if (!pkg || shouldSkip(pkg)) continue;
 
     const canonicalName = MFF_NAME_MAP[pkg.toUpperCase()] ?? MFF_NAME_MAP[pkg] ?? null;
@@ -226,17 +183,11 @@ function parseMff(csvPath) {
   return results;
 }
 
-// ---------------------------------------------------------------------------
-// Fetch DB data via Convex CLI
-// ---------------------------------------------------------------------------
 function runConvex(fn) {
   const raw = runStaffConvex(ROOT, fn);
   return JSON.parse(raw);
 }
 
-// ---------------------------------------------------------------------------
-// Main comparison
-// ---------------------------------------------------------------------------
 const DOCS = path.join(ROOT, 'docs', 'sync-1448h');
 
 console.log('📖 Parsing MFF…');
@@ -250,7 +201,6 @@ console.log(`   ${mffRows.length} MFF rows → ${knownMff.length} known packages
 
 console.log('🗄️  Fetching DB packages…');
 const dbPackages = runConvex('packages:list');
-// Build lookup: "CANONICAL_NAME_UPPER|SEASON_CODE" → package
 const pkgLookup = new Map();
 for (const p of dbPackages) {
   const key = `${p.name.trim().toUpperCase()}|${(p.season || '').trim()}`;
@@ -261,16 +211,12 @@ console.log('🗄️  Fetching DB flights…');
 const dbFlights = runConvex('packageFlights:listAll');
 console.log(`   ${dbFlights.length} flights in DB`);
 
-// Build DB flight lookup: "package_id|dep_date|ret_date" → flight record
 const dbFlightMap = new Map();
 for (const f of dbFlights) {
   const key = `${f.package_id}|${f.departure_date}|${f.return_date}`;
   dbFlightMap.set(key, f);
 }
 
-// ---------------------------------------------------------------------------
-// For each MFF row, resolve DB package_id then compare
-// ---------------------------------------------------------------------------
 const added    = [];
 const edited   = [];
 const matched  = [];
@@ -318,12 +264,10 @@ for (const row of knownMff) {
     } else {
       matched.push({ ...row, season, db_package_id: dbPkg._id });
     }
-    // Mark DB flight as seen
     dbFlightMap.delete(flightKey);
   }
 }
 
-// Remaining DB flights not matched to any MFF row = removed
 const removed = [...dbFlightMap.values()].map(f => ({
   db_flight_id:       f._id,
   db_package_id:      f.package_id,
@@ -344,9 +288,6 @@ console.log(`   ➕ Added:              ${added.length}`);
 console.log(`   ➖ Removed:            ${removed.length}`);
 console.log(`   ❓ No DB package:      ${noDbPkg.length}`);
 
-// ---------------------------------------------------------------------------
-// Write docs/flight-diff.md
-// ---------------------------------------------------------------------------
 const q = (v) => `"${(v ?? '').toString().replace(/"/g, '""')}"`;
 
 function writeMd() {
@@ -363,7 +304,6 @@ function writeMd() {
   L.push(`| ➖ Removed (in DB, not in MFF) | ${removed.length} |`);
   L.push(`| ❓ MFF rows with no matching DB package | ${noDbPkg.length} |`);
 
-  // --- EDITED ---
   L.push('\n---\n');
   L.push('## ✏️ Edited Flights\n');
   if (edited.length === 0) {
@@ -378,7 +318,6 @@ function writeMd() {
     }
   }
 
-  // --- ADDED ---
   L.push('\n---\n');
   L.push('## ➕ Added Flights (in MFF, not in DB)\n');
   if (added.length === 0) {
@@ -391,7 +330,6 @@ function writeMd() {
     }
   }
 
-  // --- REMOVED ---
   L.push('\n---\n');
   L.push('## ➖ Removed Flights (in DB, not in MFF)\n');
   if (removed.length === 0) {
@@ -404,7 +342,6 @@ function writeMd() {
     }
   }
 
-  // --- NO DB PACKAGE ---
   if (noDbPkg.length > 0) {
     L.push('\n---\n');
     L.push('## ❓ MFF Rows with No Matching DB Package\n');

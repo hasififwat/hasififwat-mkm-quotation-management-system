@@ -46,7 +46,6 @@ export type FlightDiffRow = {
   db_package_id: string;
   db_flight_id: string;
   notes: string;
-  // populated for "edited" rows only
   db_airline?: string;
   db_dep_sector?: string;
   db_ret_sector?: string;
@@ -146,11 +145,11 @@ export type SyncPlan = {
   errors: string[];
   packagesToCreate: PackageCreateSpec[];
   packagesToUpdate: PackageUpdateSpec[];
-  packagesToPromote: string[]; // DB package IDs to mark source: "sync"
+  packagesToPromote: string[];
   flightsToAdd: FlightAddSpec[];
   flightsToUpdate: FlightUpdateSpec[];
   flightsToRemove: FlightRemoveSpec[];
-  flightsToPromote: string[]; // DB flight IDs to mark source: "sync"
+  flightsToPromote: string[];
 };
 
 export type ApplyProgress = {

@@ -11,20 +11,16 @@ export function useDebouncedSearch(
 	const searchParams = useSearchParams();
 	const [query, setQuery] = useState(initialValue);
 
-	// 1. Sync local state if the URL changes (e.g. Back button pressed)
 	useEffect(() => {
 		setQuery(initialValue || "");
 	}, [initialValue]);
 
-	// 2. Handle Debounce & URL update
 	useEffect(() => {
-		// Don't submit if nothing changed or on initial mount
 		if (query === (initialValue || "")) return;
 
 		const timer = setTimeout(() => {
-			const isFirstSearch = !initialValue; // If URL was empty, PUSH history. Otherwise REPLACE.
+			const isFirstSearch = !initialValue;
 
-			// Preserve existing params (sort, dir, etc.) but drop page when searching
 			const existing = new URLSearchParams(searchParams.toString());
 			existing.delete("page");
 			existing.delete("cursor");
@@ -34,7 +30,6 @@ export function useDebouncedSearch(
 				existing.delete("q");
 			}
 
-			// Update the URL — pages re-run their data effects on param change
 			if (isFirstSearch) {
 				router.push(`?${existing.toString()}`);
 			} else {
@@ -45,7 +40,6 @@ export function useDebouncedSearch(
 		return () => clearTimeout(timer);
 	}, [query, initialValue, delay, router, searchParams]);
 
-	// 3. Return props ready for the Input component
 	return {
 		value: query,
 		onChange: (e: React.ChangeEvent<HTMLInputElement>) =>

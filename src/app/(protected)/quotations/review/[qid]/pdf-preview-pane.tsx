@@ -20,11 +20,6 @@ function toFileSafe(value: string) {
 		.toLowerCase();
 }
 
-/**
- * Desktop PDF pane. Lives in its own module so `@react-pdf/renderer`
- * is code-split out of the review page's initial bundle and only
- * fetched when this component mounts (loaded via `next/dynamic`).
- */
 export default function PdfPreviewPane({
 	details,
 }: {
