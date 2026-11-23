@@ -228,13 +228,8 @@ export function WorkspaceSkeleton() {
 			<p role="status" className="sr-only">
 				Loading {screen.label}…
 			</p>
-			<div aria-hidden="true" className={isPackageEditor ? "space-y-6" : "space-y-4 md:space-y-6"}>
-				{isPackageEditor ? (
-					<div className="flex min-w-0 items-center gap-4">
-						<Skeleton className="size-9 shrink-0" />
-						<Skeleton className="h-7 w-40 max-w-full md:h-8" />
-					</div>
-				) : screen.kind !== "document" ? (
+			<div aria-hidden="true" className="space-y-4 md:space-y-6">
+				{!isPackageEditor && screen.kind !== "document" ? (
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="min-w-0 flex-1 space-y-2">
 							<Skeleton className="h-7 w-48 max-w-full" />

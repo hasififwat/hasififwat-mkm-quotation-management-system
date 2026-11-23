@@ -4,7 +4,7 @@ import { isPackageEditConflict } from "~/domain/package-edit-conflict";
 import { isPackageReferenceConflict } from "~/domain/package-reference-conflict";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronLeft } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { FormProvider, useForm, type FieldErrors, type FieldPath } from "react-hook-form";
@@ -54,33 +54,6 @@ const STEPS: { id: Step; label: string }[] = [
 	{ id: "flights", label: "Flights" },
 	{ id: "preview", label: "Preview" },
 ];
-
-const PackageBuilderHeader = ({
-	pid,
-	onBack,
-	isFirstStep,
-}: {
-	pid?: string;
-	onBack: () => void;
-	isFirstStep: boolean;
-}) => (
-	<div className="flex items-center gap-4">
-		{isFirstStep ? (
-			<Link href="/packages" className="text-sm text-muted-foreground">
-				<Button variant="ghost" size="icon">
-					<ChevronLeft className="w-5 h-5" />
-				</Button>
-			</Link>
-		) : (
-			<Button variant="ghost" size="icon" onClick={onBack}>
-				<ChevronLeft className="w-5 h-5" />
-			</Button>
-		)}
-		<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
-			{pid ? "Edit Package" : "Create Package"}
-		</h2>
-	</div>
-);
 
 const PackageStepNavigation = ({
 	currentIndex,
@@ -448,13 +421,7 @@ const PackageBuilder: React.FC<PackageBuilderProps> = ({
 	);
 
 	return (
-		<div className="workspace-page max-w-6xl space-y-6 animate-slideIn">
-			<PackageBuilderHeader
-				pid={packageId ?? undefined}
-				onBack={goToPreviousStep}
-				isFirstStep={currentStep === "basic"}
-			/>
-
+		<div className="workspace-page max-w-6xl animate-slideIn">
 			<div className="@container min-w-0">
 				<div className="grid min-w-0 grid-cols-1 gap-3 @min-[52rem]:grid-cols-[minmax(0,1fr)_14rem] @min-[52rem]:gap-6">
 					<PackageStepNavigation

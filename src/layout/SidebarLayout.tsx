@@ -1,10 +1,10 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { FileText, Home, LogOut, Menu, Package, Plane, RefreshCw, Users } from "lucide-react";
+import { ChevronRight, FileText, Home, LogOut, Menu, Package, Plane, RefreshCw, Users } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import {
 	Sidebar,
@@ -96,6 +96,13 @@ export function SidebarLayout({
 }: SidebarLayoutProps) {
 	const { signOut } = useAuthActions();
 	const router = useRouter();
+	const pathname = usePathname();
+	const packageEditorTitle =
+		pathname === "/packages/create"
+			? "Create Package"
+			: /^\/packages\/edit\/[^/]+$/.test(pathname)
+				? "Edit Package"
+				: null;
 
 	const handleSignOut = async () => {
 		await signOut();
@@ -171,9 +178,30 @@ export function SidebarLayout({
 					<SidebarTrigger className="size-10">
 						<Menu className="size-5" />
 					</SidebarTrigger>
-					<div className="flex-1">
-						{title && <h1 className="text-lg font-semibold">{title}</h1>}
-					</div>
+					{packageEditorTitle ? (
+						<nav aria-label="Breadcrumb" className="min-w-0 flex-1">
+							<ol className="flex items-center gap-1 text-sm sm:gap-2 sm:text-base">
+								<li className="shrink-0">
+									<Link
+										href="/packages"
+										className="text-muted-foreground hover:text-foreground hover:underline focus-visible:underline"
+									>
+										Packages
+									</Link>
+								</li>
+								<li className="flex min-w-0 items-center gap-1 sm:gap-2">
+									<ChevronRight aria-hidden="true" className="size-3 shrink-0 text-muted-foreground sm:size-4" />
+									<h1 aria-current="page" className="min-w-0 wrap-anywhere leading-tight font-semibold sm:text-lg">
+										{packageEditorTitle}
+									</h1>
+								</li>
+							</ol>
+						</nav>
+					) : (
+						<div className="flex-1">
+							{title && <h1 className="text-lg font-semibold">{title}</h1>}
+						</div>
+					)}
 					<ThemeToggle />
 				</header>
 				<div className="grid w-full grid-cols-12">{children}</div>
