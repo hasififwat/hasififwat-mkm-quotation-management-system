@@ -2,7 +2,7 @@
 
 import { PAGE_SIZE } from "convex/constants";
 import type { Id } from "convex/_generated/dataModel";
-import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, Plus, Users } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
+import { ListPageLayout } from "~/components/ui/list-page-layout";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { TableToolbar } from "~/components/ui/table-toolbar";
@@ -303,23 +304,17 @@ export default function ClientsListingPage({
 	}
 
 	return (
-		<div className="workspace-page flex w-full min-w-0 flex-col gap-4 animate-fadeIn lg:gap-5">
-			<div className="flex shrink-0 flex-col md:flex-row justify-between items-start md:items-center gap-4">
-				<div>
-					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
-						Clients
-					</h2>
-					<p className="text-muted-foreground text-xs md:text-sm">
-						Browse clients and their Inquiries. Open a client to view historical and archived revisions.
-					</p>
-				</div>
-				<Button asChild className="w-full md:w-auto gap-2">
+		<ListPageLayout
+			title="Clients"
+			description="Browse clients and their inquiries."
+			primaryAction={
+				<Button asChild>
 					<Link href="/clients/create">
-						<UserPlus className="w-4 h-4" />
-						New Client
+						<Plus className="w-4 h-4" /> Create Client
 					</Link>
 				</Button>
-			</div>
+			}
+		>
 
 			<Card className="shrink-0 gap-0 overflow-hidden py-0 [&>div]:border-b-0">
 				<TableToolbar
@@ -501,6 +496,6 @@ export default function ClientsListingPage({
 					</div>
 				)}
 			</Card>
-		</div>
+		</ListPageLayout>
 	);
 }
