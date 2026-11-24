@@ -1,5 +1,15 @@
 # Clients split workspace verification
 
+## Expandable client rows
+
+Tested `ab2e4e7b461c170c437508763382e20ee954e219` at `http://localhost:3556/clients` against the disposable Convex preview. Expanding **Inquiry History Demo** showed all four quotations from its open Inquiry. Expanding **Accepted Inquiry Demo** showed two quotations from its last closed Inquiry, including the accepted revision. The full history link opened the client page and showed all three Inquiries for **Inquiry History Demo**.
+
+Chromium passed at 1440 and 390 px in dark mode and 320 px in light mode. The browser checks covered keyboard disclosure, the standalone quotation fallback, the empty state and its create link, search, Agent filtering, and pagination. The light and dark theme variables matched the previous build. TypeScript, scoped ESLint, and 41 focused tests passed. The browser sessions closed and the existing synthetic preview stayed running.
+
+[Desktop open Inquiry](directory-open-desktop.png) · [Desktop last closed Inquiry](directory-closed-desktop.png) · [Mobile expanded row](directory-open-mobile.png) · [Empty row](directory-empty-desktop.png)
+
+## Earlier split workspace
+
 Tested `b208cf1f020490d1fde7fd3fe5cad834cd13c6dc` in Chromium at `http://localhost:3556/clients`. The preview used a disposable Convex database with 28 synthetic clients.
 
 The desktop workspace showed eight current quotations at 1440 × 900. In a shorter viewport, the directory and quotation pane scrolled independently. Selecting a client with Enter kept the directory scroll position and reset the quotation pane. Paging exposed all 28 clients exactly once and reset the directory to the top of each new page.
