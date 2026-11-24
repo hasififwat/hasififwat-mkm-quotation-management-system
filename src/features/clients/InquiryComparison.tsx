@@ -1,8 +1,8 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { CalendarDays, Check, ChevronRight, Clock, MoreHorizontal, Pencil, Undo2, XCircle, BellRing } from "lucide-react";
+import { BellRing, CalendarDays, Check, ChevronRight, Clock, Eye, MoreHorizontal, Pencil, Undo2, XCircle } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
@@ -213,10 +213,11 @@ const optionTone: Record<Option["status"], Tone> = { active: "open", accepted: "
 function InquiryQuotationList({ options, actionsEnabled, onReview }: {
   options: Option[];
   actionsEnabled: boolean;
-  onReview: (option: Option, command: Command) => void;
+  onReview?: (option: Option, command: Command) => void;
 }) {
   if (options.length === 0) return <p className="text-sm text-muted-foreground">No quotations in this Inquiry.</p>;
 
+  const preview = !onReview;
   return <ul role="list" aria-label="Quotations" className="@container divide-y overflow-hidden rounded-lg border bg-card shadow-xs">
     {options.map(option => {
       const canManage = actionsEnabled && option.status === "active";
@@ -225,6 +226,7 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
       return <li key={option.family_id} className={cn(
         "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-3",
         "@min-[40rem]:grid-cols-[minmax(0,1fr)_12rem_8.5rem_4.5rem] @min-[40rem]:items-center @min-[40rem]:gap-x-4 @min-[40rem]:gap-y-1 @min-[40rem]:px-4",
+        preview && "@min-[40rem]:grid-cols-[minmax(0,1fr)_8rem_8.5rem_4.5rem]",
         option.status === "accepted" && "bg-primary/5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary",
       )}>
         <div className="col-start-1 row-start-1 min-w-0">
@@ -234,10 +236,11 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
         </div>
 
         <div className="col-span-2 col-start-1 row-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground @min-[40rem]:col-span-1">
-          <Link href={`/quotations/review/${option.revision_id}`} title="Preview quotation"
-            className="rounded-sm font-mono font-semibold text-primary wrap-anywhere hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            {option.reference}
-          </Link>
+          {preview ? <span className="font-mono font-semibold wrap-anywhere">{option.reference}</span>
+            : <Link href={`/quotations/review/${option.revision_id}`} title="Preview quotation"
+              className="rounded-sm font-mono font-semibold text-primary wrap-anywhere hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              {option.reference}
+            </Link>}
           {option.package_year && <span>{option.package_year}</span>}
           <span className="inline-flex items-center gap-1 tabular-nums">
             <CalendarDays aria-hidden="true" className="size-3.5 shrink-0" />
@@ -257,19 +260,61 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
           {money(option.total_amount)}
         </p>
 
-        <div className="col-start-2 row-start-3 flex items-center justify-end gap-0.5 self-center @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1">
+        <div className={cn(
+          "col-start-2 row-start-3 flex items-center justify-end gap-0.5 self-center @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1",
+          preview && "w-[4.125rem] justify-start justify-self-end",
+        )}>
+          {preview && <Button asChild variant="ghost" size="icon-sm">
+            <Link href={`/quotations/review/${option.revision_id}`} aria-label={`Preview quotation ${option.reference}`} title="Preview quotation">
+              <Eye aria-hidden="true" />
+            </Link>
+          </Button>}
           {canManage && <>
             <Button asChild variant="ghost" size="icon-sm">
               <Link href={`/quotations/edit/${option.revision_id}`} aria-label={`Edit current quotation ${option.reference}`} title="Edit current quotation">
                 <Pencil aria-hidden="true" />
               </Link>
             </Button>
-            <InquiryOptionActions option={option} onReview={command => onReview(option, command)} />
+            {onReview && <InquiryOptionActions option={option} onReview={command => onReview(option, command)} />}
           </>}
         </div>
       </li>;
     })}
   </ul>;
+}
+
+function selectPreviewInquiry(inquiries: Inquiry[]): Inquiry | null {
+  let latestClosed: Inquiry | null = null;
+  for (const inquiry of inquiries) {
+    if (!inquiry.outcome) return inquiry;
+    if (!latestClosed?.outcome || inquiry.outcome.at > latestClosed.outcome.at) latestClosed = inquiry;
+  }
+  return latestClosed;
+}
+
+export function ClientInquiryPreview({ clientId, children }: { clientId: Id<"clients">; children: ReactNode }) {
+  const data = useQuery(api.inquiries.forClient, { client_id: clientId });
+  const inquiry = data ? selectPreviewInquiry(data.inquiries) : null;
+  const outcome = inquiry?.outcome;
+
+  return <section className="min-w-0 space-y-3" aria-label="Client quotations">
+    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-2 border-l-3 border-primary pl-3">
+        <h3 className="font-semibold">{inquiry ? outcome ? "Last closed Inquiry" : "Open Inquiry" : "Current quotations"}</h3>
+        {outcome?.type === "accepted" && <StatusPill tone="accepted">Accepted</StatusPill>}
+        {inquiry && !outcome && data && <span className="text-xs text-muted-foreground">
+          <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
+        </span>}
+        {outcome && outcome.type !== "accepted" && <span className="text-xs text-muted-foreground">
+          {inquiryClosureLabel[outcome.type]}
+        </span>}
+      </div>
+      <Link href={`/clients/${clientId}`} className="text-sm font-medium text-primary underline underline-offset-4">View client and history</Link>
+    </div>
+    {!data ? <p role="status" className="py-4 text-sm text-muted-foreground">Loading Inquiries…</p>
+      : inquiry ? <InquiryQuotationList options={inquiry.options} actionsEnabled={data.actions_enabled} />
+        : children}
+  </section>;
 }
 
 function valueSummary(inquiry: Inquiry, winner: Option | null | undefined) {

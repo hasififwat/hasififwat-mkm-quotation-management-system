@@ -3,7 +3,7 @@
 import { PAGE_SIZE } from "convex/constants";
 import type { Id } from "convex/_generated/dataModel";
 import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -11,9 +11,10 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { TableToolbar } from "~/components/ui/table-toolbar";
 import { cn } from "~/lib/utils";
-import InquiryComparison from "./InquiryComparison";
+import { ClientInquiryPreview } from "./InquiryComparison";
 
 type ClientQuotation = {
 	client_name: string;
@@ -217,7 +218,12 @@ export default function ClientsListingPage({
 	const queryString = searchParams.toString();
 	const isLoading = loadStatus === "loading";
 
-	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
+	const [expandedQuery, setExpandedQuery] = useState(queryString);
+	if (expandedQuery !== queryString) {
+		setExpandedQuery(queryString);
+		setExpandedClientId(null);
+	}
 	const [agentFilterOpen, setAgentFilterOpen] = useState(false);
 	const [agentSearch, setAgentSearch] = useState("");
 
@@ -296,17 +302,8 @@ export default function ClientsListingPage({
 		}
 	}
 
-	const selectedClient = clients.find((client) => client.id === selectedId) ?? clients[0];
-	const hasCurrentQuotations = (selectedClient?.quotations.length ?? 0) > 0;
-	const standaloneQuotations = selectedClient?.quotations.filter((quotation) => !quotation.inquiry_id) ?? [];
-	const hasInquiryQuotations = (selectedClient?.quotations.length ?? 0) > standaloneQuotations.length;
-	const quotationListTitle = hasInquiryQuotations ? "Standalone quotations" : "Current quotations";
-	if (selectedId !== null && selectedId !== selectedClient?.id) {
-		setSelectedId(selectedClient?.id ?? null);
-	}
-
 	return (
-		<div className="workspace-page flex max-w-7xl flex-col gap-4 animate-fadeIn lg:h-[calc(100dvh-6rem)] lg:gap-5">
+		<div className="workspace-page flex w-full min-w-0 flex-col gap-4 animate-fadeIn lg:gap-5">
 			<div className="flex shrink-0 flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
 					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
@@ -420,105 +417,90 @@ export default function ClientsListingPage({
 			{loadStatus === "failed" && (
 				<p role="alert" className="text-sm text-muted-foreground">Unable to load clients.</p>
 			)}
-			<div className="grid min-h-0 gap-4 lg:flex-1 lg:grid-cols-[minmax(14rem,0.8fr)_minmax(0,1.6fr)]">
-				<Card className="min-h-0 min-w-0 gap-0 overflow-hidden py-0" role="region" aria-labelledby="client-directory-heading">
-					<div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
-						<h3 id="client-directory-heading" className="text-sm font-semibold">Client directory</h3>
-						<span className="text-xs text-muted-foreground">{loadStatus === "loaded" ? `${total} ${total === 1 ? "client" : "clients"}` : isLoading ? "Loading…" : "Unavailable"}</span>
-					</div>
-					<div key={clients.map((client) => client.id).join(",")}
-						className="max-h-64 min-h-0 overflow-y-auto overscroll-contain p-1 [scrollbar-color:var(--muted-foreground)_transparent] [scrollbar-width:thin] [scrollbar-gutter:stable] lg:max-h-none lg:flex-1" aria-busy={isLoading}>
-						{clients.length === 0 && loadStatus === "loaded" ? (
-							<div className="flex flex-col items-center gap-3 px-4 py-10 text-center text-muted-foreground">
-								<Users className="size-8 opacity-30" />
-								<p className="text-sm">{isFiltered ? "No clients match the current filters." : "No clients yet."}</p>
-							</div>
-						) : (
-							<ul aria-label="Clients">
-								{clients.map((client) => (
-									<li key={client.id} className="border-b border-border/60 last:border-0">
-										<button
-											type="button"
-											onClick={() => setSelectedId(client.id)}
-											aria-pressed={selectedClient?.id === client.id}
-											aria-controls="selected-client-details"
-											className={cn("flex w-full items-start gap-3 rounded-md border-l-3 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-muted/50 focus-visible:-outline-offset-2", selectedClient?.id === client.id && "border-l-primary bg-muted")}
-										>
-											<span className="min-w-0 flex-1">
-												<span className="block wrap-anywhere text-sm font-medium">{client.name}</span>
-												<time dateTime={client.last_quotation_at ?? client.created_at} className="block text-xs text-muted-foreground">
-													{formatDate(client.last_quotation_at ?? client.created_at)}
-												</time>
-											</span>
-											<Badge variant="secondary" className="mt-0.5" aria-label={`${client.quotation_count} current quotations`}>{client.quotation_count}</Badge>
-										</button>
-									</li>
-								))}
-							</ul>
-						)}
-					</div>
-					{(!isFirstPage || !isDone) && (
-						<div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t p-3">
-							{loadStatus === "loaded" && isFiltered && total > 0 && <span className="w-full text-xs text-muted-foreground">Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}</span>}
-							<Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={isFirstPage || isLoading} className="gap-1 px-2">
-								<ChevronLeft className="size-4" />Previous
-							</Button>
-							<Button variant="outline" size="sm" onClick={handleNextPage} disabled={isDone || loadStatus !== "loaded"} className="gap-1 px-2">
-								Next<ChevronRight className="size-4" />
-							</Button>
-						</div>
-					)}
-				</Card>
-
-				<Card id="selected-client-details" role="region" aria-labelledby="selected-client-heading" className="min-h-0 min-w-0 scroll-mt-20 gap-0 overflow-hidden py-0">
-					{selectedClient ? (
-						<>
-							<div className="shrink-0 space-y-2 px-4 pt-4">
-								<h3 id="selected-client-heading" className="wrap-anywhere text-lg font-bold tracking-tight">{selectedClient.name}</h3>
-								<div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b pb-3 text-xs">
-									<p className="wrap-anywhere text-muted-foreground">Client since {formatDate(selectedClient.created_at)}{selectedClient.phone_number ? ` · ${selectedClient.phone_number}` : ""}</p>
-									<Link href={`/clients/${selectedClient.id}`} className="text-primary hover:underline">View client and history ({selectedClient.historical_quotation_count})</Link>
+			<Card className="min-w-0 gap-0 overflow-hidden py-0" role="region" aria-labelledby="client-directory-heading">
+				<div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
+					<h3 id="client-directory-heading" className="text-sm font-semibold">Client directory</h3>
+					<span className="text-xs text-muted-foreground">{loadStatus === "loaded" ? `${total} ${total === 1 ? "client" : "clients"}` : isLoading ? "Loading…" : "Unavailable"}</span>
+				</div>
+				<Table aria-label="Clients" aria-busy={isLoading} className="table-fixed">
+					<TableHeader>
+						<TableRow className="hover:bg-transparent">
+							<TableHead scope="col" className="pl-11 sm:w-[52%] lg:w-[30%]">Name</TableHead>
+							<TableHead scope="col" className="hidden w-[30%] sm:table-cell lg:w-[22%]">Phone</TableHead>
+							<TableHead scope="col" className="w-[5.25rem] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[14%]">Quotations</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] lg:table-cell">Last Quotation</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] pr-4 lg:table-cell">Client Since</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{clients.length === 0 && loadStatus === "loaded" && <TableRow className="hover:bg-transparent">
+							<TableCell colSpan={5} className="whitespace-normal">
+								<div className="flex flex-col items-center gap-3 px-4 py-10 text-center text-muted-foreground">
+									<Users aria-hidden="true" className="size-8 opacity-30" />
+									<p>{isFiltered ? "No clients match the current filters." : "No clients yet."}</p>
 								</div>
-								{!hasCurrentQuotations && <div className="flex flex-wrap items-center gap-2">
-									<h4 className="text-sm font-semibold">Current quotations</h4>
-									<Badge variant="secondary">{selectedClient.quotation_count}</Badge>
-								</div>}
-							</div>
-							<div
-								key={selectedClient.id}
-								className={cn(
-									"@container min-h-0 px-4 pb-3 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-color:var(--muted-foreground)_transparent] lg:[scrollbar-width:thin] lg:[scrollbar-gutter:stable]",
-									hasCurrentQuotations ? "space-y-4 pt-3" : "grid place-items-center",
-								)}
-							>
-								{hasInquiryQuotations && <InquiryComparison clientId={selectedClient.id as Id<"clients">} />}
-								{!hasCurrentQuotations ? (
-									<div className="flex flex-col items-center gap-3 px-4 py-12 text-center">
-										<FileText aria-hidden="true" className="size-8 text-muted-foreground opacity-60" />
-										<p className="text-sm text-muted-foreground">No current quotations for this client.</p>
-										<Button asChild size="sm" variant="outline"><Link href={`/quotations/create?client_id=${selectedClient.id}`}>Create quotation</Link></Button>
-									</div>
-								) : standaloneQuotations.length > 0 && (
-									<div>
-										<div className="flex flex-wrap items-center gap-2">
-											<h4 className="text-sm font-semibold">{quotationListTitle}</h4>
-											<Badge variant="secondary">{standaloneQuotations.length}</Badge>
+							</TableCell>
+						</TableRow>}
+						{clients.map((client) => {
+							const isExpanded = expandedClientId === client.id;
+							const detailId = `client-${client.id}-details`;
+							const standaloneQuotations = isExpanded ? client.quotations.filter((quotation) => !quotation.inquiry_id) : [];
+							const lastQuotation = client.last_quotation_at
+								? <time dateTime={client.last_quotation_at}>{formatDate(client.last_quotation_at)}</time>
+								: "—";
+							return <Fragment key={client.id}>
+								<TableRow className={cn(isExpanded && "bg-primary/10 hover:bg-primary/10")}>
+									<TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal text-foreground">
+										<button type="button" aria-label={`Quotations for ${client.name}`} aria-expanded={isExpanded}
+											aria-controls={detailId}
+											onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
+											className="flex w-full min-w-0 items-start gap-3 rounded-sm pt-4 pr-2 pb-2 pl-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:pb-4">
+											<ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
+											<span className="min-w-0 font-semibold wrap-anywhere">{client.name}</span>
+										</button>
+										<div className="space-y-1 pr-2 pb-4 pl-11 text-xs text-muted-foreground wrap-anywhere lg:hidden">
+											<p className="sm:hidden">{client.phone_number || "No phone number"}</p>
+											<p>Last quotation {lastQuotation}</p>
+											<p>Client since <time dateTime={client.created_at}>{formatDate(client.created_at)}</time></p>
 										</div>
-										<p className="py-2 text-[11px] text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>
-										<ul aria-label={`${quotationListTitle} for ${selectedClient.name}`}>
-											{standaloneQuotations.map((q) => <QuotationRow key={q.id} q={q} />)}
-										</ul>
-									</div>
-								)}
-							</div>
-						</>
-					) : (
-						<div className="px-4 py-10 text-sm text-muted-foreground">
-							<h3 id="selected-client-heading" className="font-medium">{isLoading ? "Loading client details…" : "Select a client to view quotations."}</h3>
-						</div>
-					)}
-				</Card>
-			</div>
+									</TableHead>
+									<TableCell className="hidden py-4 whitespace-normal wrap-anywhere sm:table-cell">{client.phone_number || "—"}</TableCell>
+									<TableCell className="py-4 text-center tabular-nums" aria-label={`${client.quotation_count} current quotations`}>{client.quotation_count}</TableCell>
+									<TableCell className="hidden py-4 lg:table-cell">{lastQuotation}</TableCell>
+									<TableCell className="hidden py-4 pr-4 lg:table-cell"><time dateTime={client.created_at}>{formatDate(client.created_at)}</time></TableCell>
+								</TableRow>
+								{isExpanded && <TableRow id={detailId} className="bg-muted/30 hover:bg-muted/30">
+									<TableCell colSpan={5} className="p-3 whitespace-normal sm:p-5">
+										<ClientInquiryPreview clientId={client.id as Id<"clients">}>
+											{standaloneQuotations.length > 0 ? <div>
+												<p className="pb-2 text-xs text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>
+												<ul aria-label={`Current quotations for ${client.name}`} className="@container rounded-lg border bg-card px-3">
+													{standaloneQuotations.map((q) => <QuotationRow key={q.id} q={q} />)}
+												</ul>
+											</div> : <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
+												<FileText aria-hidden="true" className="size-8 text-muted-foreground opacity-60" />
+												<p className="text-sm text-muted-foreground">No current quotations for this client.</p>
+												<Button asChild size="sm" variant="outline"><Link href={`/quotations/create?client_id=${client.id}`}>Create quotation</Link></Button>
+											</div>}
+										</ClientInquiryPreview>
+									</TableCell>
+								</TableRow>}
+							</Fragment>;
+						})}
+					</TableBody>
+				</Table>
+				{(!isFirstPage || !isDone) && (
+					<div className="flex flex-wrap items-center justify-between gap-2 border-t p-3">
+						{loadStatus === "loaded" && isFiltered && total > 0 && <span className="w-full text-xs text-muted-foreground">Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}</span>}
+						<Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={isFirstPage || isLoading} className="gap-1 px-2">
+							<ChevronLeft className="size-4" />Previous
+						</Button>
+						<Button variant="outline" size="sm" onClick={handleNextPage} disabled={isDone || loadStatus !== "loaded"} className="gap-1 px-2">
+							Next<ChevronRight className="size-4" />
+						</Button>
+					</div>
+				)}
+			</Card>
 		</div>
 	);
 }
