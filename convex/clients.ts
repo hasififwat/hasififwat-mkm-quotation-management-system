@@ -149,7 +149,7 @@ export const listWithStatsPaginated = query({
 		const page = remaining.slice(0, paginationOpts.numItems);
 		const last = page.at(-1);
 		const isDone = remaining.length <= page.length;
-		return { page, isDone, continueCursor: !isDone && last ? JSON.stringify([last.created_at, last.id]) : "" };
+		return { page, isDone, total: rows.length, continueCursor: !isDone && last ? JSON.stringify([last.created_at, last.id]) : "" };
 	},
 });
 

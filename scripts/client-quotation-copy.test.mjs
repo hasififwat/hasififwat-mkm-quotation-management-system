@@ -27,7 +27,7 @@ test('copied quotation keeps its saved client name after canonical client associ
   const exports={}; let frame, copied;
   const dummy=()=>null;
   vm.runInNewContext(compiled.outputText,{exports,Date,Intl,performance:{now:()=>0},requestAnimationFrame:callback=>{frame=callback;return 1;},cancelAnimationFrame:dummy,navigator:{clipboard:{writeText:text=>{copied=text;return Promise.resolve();}}},require(id){
-    if(id==='react')return {useState:value=>[value,dummy],useRef:value=>({current:value}),useCallback:callback=>callback};
+    if(id==='react')return {useState:value=>[value,dummy],useRef:value=>({current:value}),useCallback:callback=>callback,useEffect:dummy};
     if(id==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
     if(id==='sonner')return {toast:{success:dummy,error:dummy}};
     return new Proxy({},{get:()=>dummy});

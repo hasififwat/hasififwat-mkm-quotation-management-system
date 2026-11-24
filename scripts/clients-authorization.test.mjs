@@ -152,6 +152,7 @@ test('client pagination removes aliases before selecting each stable page', asyn
   let cursor = null;
   for (let pageNumber=0;pageNumber<10;pageNumber++) {
     const result = await clients.listWithStatsPaginated._handler(s.ctx,{paginationOpts:{cursor,numItems:5}});
+    assert.equal(result.total,28);
     seen.push(...result.page.map(row => row.id));
     if(result.isDone) break;
     assert.equal(result.page.length,5);
