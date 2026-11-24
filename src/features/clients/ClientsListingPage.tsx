@@ -457,7 +457,7 @@ export default function ClientsListingPage({
 									<TableCell className="hidden py-4 pr-4 lg:table-cell lg:py-2"><time dateTime={client.created_at}>{formatDate(client.created_at)}</time></TableCell>
 								</TableRow>
 								{isExpanded && <TableRow id={detailId} className="bg-muted/30 hover:bg-muted/30">
-									<TableCell colSpan={5} className="p-3 whitespace-normal sm:p-5">
+									<TableCell colSpan={5} className="p-3 whitespace-normal sm:px-6 sm:py-3">
 										<ClientInquiryPreview clientId={client.id as Id<"clients">}>
 											{standaloneQuotations.length > 0 ? <div>
 												<p className="pb-2 text-xs text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>

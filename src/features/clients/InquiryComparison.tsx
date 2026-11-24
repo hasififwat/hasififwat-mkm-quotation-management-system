@@ -226,7 +226,7 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
       return <li key={option.family_id} className={cn(
         "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-3",
         "@min-[40rem]:grid-cols-[minmax(0,1fr)_12rem_8.5rem_4.5rem] @min-[40rem]:items-center @min-[40rem]:gap-x-4 @min-[40rem]:gap-y-1 @min-[40rem]:px-4",
-        preview && "@min-[40rem]:grid-cols-[minmax(0,1fr)_8rem_8.5rem_4.5rem]",
+        preview && "@min-[40rem]:grid-cols-[minmax(0,1fr)_8rem_8.5rem_4.5rem] @min-[40rem]:gap-y-0 @min-[40rem]:py-1.5",
         option.status === "accepted" && "bg-primary/5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary",
       )}>
         <div className="col-start-1 row-start-1 min-w-0">
