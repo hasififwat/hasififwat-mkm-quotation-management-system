@@ -11,3 +11,11 @@ The workspace also fit 390 px in dark mode and 320 px in light mode. The browser
 [Before](before.png) · [Desktop](desktop.png) · [Mobile](mobile.png)
 
 The test browser closed. The local preview and its sample data remain available for review.
+
+## Empty quotation pane
+
+Tested `e4ce6430261db243c7e4b40df4bfb3e2c0650f05` on the same local preview. Selecting a client with no current quotations showed the document icon, message, and outline action as a centered group. The action opened quotation creation with the selected client's ID. Selecting a client with quotations restored the list.
+
+Checked dark mode at 1440 and 390 px and light mode at 320 px. The checks reported zero horizontal overflow or browser errors. TypeScript, scoped ESLint, and the quotation copy regression test passed.
+
+[Desktop empty state](empty-desktop.png) · [Mobile empty state](empty-mobile.png)
