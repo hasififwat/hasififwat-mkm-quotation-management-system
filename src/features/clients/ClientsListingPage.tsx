@@ -316,7 +316,7 @@ export default function ClientsListingPage({
 			}
 		>
 
-			<Card className="shrink-0 gap-0 overflow-hidden py-0 [&>div]:border-b-0">
+			<Card className="min-w-0 gap-0 overflow-hidden py-0" role="region" aria-label="Client directory">
 				<TableToolbar
 					search={{
 						label: "Search clients",
@@ -330,9 +330,8 @@ export default function ClientsListingPage({
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								size="sm"
 								className={cn(
-									"gap-2 h-8 text-xs",
+									"gap-2",
 									picFilters.length > 0 && "border-primary text-primary",
 								)}
 							>
@@ -406,17 +405,10 @@ export default function ClientsListingPage({
 						</PopoverContent>
 					</Popover>
 				</TableToolbar>
-			</Card>
-
-			<p role="status" className="sr-only">{isLoading ? "Loading clients…" : ""}</p>
-			{loadStatus === "failed" && (
-				<p role="alert" className="text-sm text-muted-foreground">Unable to load clients.</p>
-			)}
-			<Card className="min-w-0 gap-0 overflow-hidden py-0" role="region" aria-labelledby="client-directory-heading">
-				<div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
-					<h3 id="client-directory-heading" className="text-sm font-semibold">Client directory</h3>
-					<span className="text-xs text-muted-foreground">{loadStatus === "loaded" ? `${total} ${total === 1 ? "client" : "clients"}` : isLoading ? "Loading…" : "Unavailable"}</span>
-				</div>
+				<p role="status" className="sr-only">{isLoading ? "Loading clients…" : ""}</p>
+				{loadStatus === "failed" && (
+					<p role="alert" className="px-4 py-3 text-sm text-muted-foreground">Unable to load clients.</p>
+				)}
 				<Table aria-label="Clients" aria-busy={isLoading} className="table-fixed">
 					<TableHeader>
 						<TableRow className="hover:bg-transparent">
@@ -484,17 +476,25 @@ export default function ClientsListingPage({
 						})}
 					</TableBody>
 				</Table>
-				{(!isFirstPage || !isDone) && (
-					<div className="flex flex-wrap items-center justify-between gap-2 border-t p-3">
-						{loadStatus === "loaded" && isFiltered && total > 0 && <span className="w-full text-xs text-muted-foreground">Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}</span>}
+				<div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t p-3">
+					{(!isFirstPage || !isDone) && (
 						<Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={isFirstPage || isLoading} className="gap-1 px-2">
 							<ChevronLeft className="size-4" />Previous
 						</Button>
+					)}
+					<span className="col-start-2 min-w-0 text-center text-xs text-muted-foreground tabular-nums">
+						{loadStatus === "loaded"
+							? isFiltered && total > 0
+								? `Showing ${offset + 1}–${Math.min(offset + PAGE_SIZE, total)} of ${total}`
+								: `${total} ${total === 1 ? "client" : "clients"}`
+							: isLoading ? "Loading…" : "Unavailable"}
+					</span>
+					{(!isFirstPage || !isDone) && (
 						<Button variant="outline" size="sm" onClick={handleNextPage} disabled={isDone || loadStatus !== "loaded"} className="gap-1 px-2">
 							Next<ChevronRight className="size-4" />
 						</Button>
-					</div>
-				)}
+					)}
+				</div>
 			</Card>
 		</ListPageLayout>
 	);
