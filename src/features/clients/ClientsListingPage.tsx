@@ -1,6 +1,7 @@
 "use client";
 
 import { PAGE_SIZE } from "convex/constants";
+import type { Id } from "convex/_generated/dataModel";
 import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -12,6 +13,7 @@ import { Card } from "~/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { TableToolbar } from "~/components/ui/table-toolbar";
 import { cn } from "~/lib/utils";
+import InquiryComparison from "./InquiryComparison";
 
 type ClientQuotation = {
 	client_name: string;
@@ -296,6 +298,9 @@ export default function ClientsListingPage({
 
 	const selectedClient = clients.find((client) => client.id === selectedId) ?? clients[0];
 	const hasCurrentQuotations = (selectedClient?.quotations.length ?? 0) > 0;
+	const standaloneQuotations = selectedClient?.quotations.filter((quotation) => !quotation.inquiry_id) ?? [];
+	const hasInquiryQuotations = (selectedClient?.quotations.length ?? 0) > standaloneQuotations.length;
+	const quotationListTitle = hasInquiryQuotations ? "Standalone quotations" : "Current quotations";
 	if (selectedId !== null && selectedId !== selectedClient?.id) {
 		setSelectedId(selectedClient?.id ?? null);
 	}
@@ -308,7 +313,7 @@ export default function ClientsListingPage({
 						Clients
 					</h2>
 					<p className="text-muted-foreground text-xs md:text-sm">
-						Manage clients and current quotations. Open a client to view historical and archived revisions.
+						Browse clients and their Inquiries. Open a client to view historical and archived revisions.
 					</p>
 				</div>
 				<Button asChild className="w-full md:w-auto gap-2">
@@ -474,29 +479,36 @@ export default function ClientsListingPage({
 									<p className="wrap-anywhere text-muted-foreground">Client since {formatDate(selectedClient.created_at)}{selectedClient.phone_number ? ` · ${selectedClient.phone_number}` : ""}</p>
 									<Link href={`/clients/${selectedClient.id}`} className="text-primary hover:underline">View client and history ({selectedClient.historical_quotation_count})</Link>
 								</div>
-								<div className="flex flex-wrap items-center gap-2">
+								{!hasCurrentQuotations && <div className="flex flex-wrap items-center gap-2">
 									<h4 className="text-sm font-semibold">Current quotations</h4>
 									<Badge variant="secondary">{selectedClient.quotation_count}</Badge>
-								</div>
-								{hasCurrentQuotations && <p className="pb-2 text-[11px] text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>}
+								</div>}
 							</div>
 							<div
 								key={selectedClient.id}
 								className={cn(
 									"@container min-h-0 px-4 pb-3 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-color:var(--muted-foreground)_transparent] lg:[scrollbar-width:thin] lg:[scrollbar-gutter:stable]",
-									!hasCurrentQuotations && "grid place-items-center",
+									hasCurrentQuotations ? "space-y-4 pt-3" : "grid place-items-center",
 								)}
 							>
+								{hasInquiryQuotations && <InquiryComparison clientId={selectedClient.id as Id<"clients">} />}
 								{!hasCurrentQuotations ? (
 									<div className="flex flex-col items-center gap-3 px-4 py-12 text-center">
 										<FileText aria-hidden="true" className="size-8 text-muted-foreground opacity-60" />
 										<p className="text-sm text-muted-foreground">No current quotations for this client.</p>
 										<Button asChild size="sm" variant="outline"><Link href={`/quotations/create?client_id=${selectedClient.id}`}>Create quotation</Link></Button>
 									</div>
-								) : (
-									<ul aria-label={`Current quotations for ${selectedClient.name}`}>
-										{selectedClient.quotations.map((q) => <QuotationRow key={q.id} q={q} />)}
-									</ul>
+								) : standaloneQuotations.length > 0 && (
+									<div>
+										<div className="flex flex-wrap items-center gap-2">
+											<h4 className="text-sm font-semibold">{quotationListTitle}</h4>
+											<Badge variant="secondary">{standaloneQuotations.length}</Badge>
+										</div>
+										<p className="py-2 text-[11px] text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>
+										<ul aria-label={`${quotationListTitle} for ${selectedClient.name}`}>
+											{standaloneQuotations.map((q) => <QuotationRow key={q.id} q={q} />)}
+										</ul>
+									</div>
 								)}
 							</div>
 						</>
