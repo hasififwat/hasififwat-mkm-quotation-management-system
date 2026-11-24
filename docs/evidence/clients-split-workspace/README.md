@@ -19,3 +19,11 @@ Tested `e4ce6430261db243c7e4b40df4bfb3e2c0650f05` on the same local preview. Sel
 Checked dark mode at 1440 and 390 px and light mode at 320 px. The checks reported zero horizontal overflow or browser errors. TypeScript, scoped ESLint, and the quotation copy regression test passed.
 
 [Desktop empty state](empty-desktop.png) · [Mobile empty state](empty-mobile.png)
+
+## Inquiry groups in the selected client pane
+
+Tested `3c7c29a7d0ecaf938e2faf853aca8e6ce5875117` at `http://localhost:3556/clients` against the disposable Convex preview. The selected client showed one row each for its open, closed, and accepted Inquiries. Expanding them revealed all four, one, and three quotations respectively. The accepted quotation linked to the exact revision, and the open quotation's acceptance dialog opened and was canceled.
+
+Chromium passed at 1440 and 390 px in dark mode and 320 px in light mode. The checks also covered the standalone quotation list, the centered empty state, and the selected client's creation link. TypeScript, scoped ESLint, and 39 focused tests passed. The checks closed their browser sessions and left the synthetic preview running.
+
+[Desktop Inquiry rows](inquiries-desktop.png) · [Expanded Inquiry on mobile](inquiries-mobile.png)
