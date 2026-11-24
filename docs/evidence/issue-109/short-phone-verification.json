@@ -1,0 +1,78 @@
+{
+  "localPreview": "http://127.0.0.1:3509/",
+  "metric": "Worst phone scroll required to reveal the full Sign in button, in CSS pixels",
+  "targetPx": 0,
+  "minimumAttempts": 2,
+  "attemptsKept": 3,
+  "attemptsReverted": 0,
+  "baselineCommit": "1342cb7c9ddf05d60c702e7b0719215853a0d0f3",
+  "testedCodeCommit": "98025b8c73cf117bbccecce89295038996bb9da8",
+  "chromium": "158.0.8127.38",
+  "harnessSha256": "58461d2900b0fd2c6758253ac8a2e6038f3a33b5c406824b98912a023ba61ee2",
+  "productionBuild": "Next.js 16.3.4",
+  "measurementsPerRun": 40,
+  "samplesPerTheme": 5,
+  "regressionCasesPerRun": 14,
+  "browserErrorsPerRun": 0,
+  "iterations": [
+    {
+      "label": "baseline",
+      "median": 71,
+      "min": 71,
+      "max": 71
+    },
+    {
+      "label": "intro",
+      "median": 31,
+      "min": 31,
+      "max": 31
+    },
+    {
+      "label": "instruction",
+      "median": 8,
+      "min": 8,
+      "max": 8
+    },
+    {
+      "label": "final",
+      "median": 0,
+      "min": 0,
+      "max": 0
+    }
+  ],
+  "phoneViewports": [
+    {
+      "width": 320,
+      "height": 568,
+      "baselinePx": 71,
+      "finalPx": 0
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "baselinePx": 0,
+      "finalPx": 0
+    },
+    {
+      "width": 390,
+      "height": 640,
+      "baselinePx": 0,
+      "finalPx": 0
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "baselinePx": 0,
+      "finalPx": 0
+    }
+  ],
+  "regressionChecks": [
+    "No horizontal overflow at all sampled sizes",
+    "Original primary colors in light and dark mode",
+    "48 px inputs and Sign in button, with 16 px input text on phones",
+    "Keyboard focus and native required-field validation",
+    "Desktop split and phone form-before-demo order",
+    "Manual step selection, stable demo height, and quotation total",
+    "Reduced-motion default, autoplay, and pause"
+  ]
+}

@@ -1,5 +1,13 @@
 # MKM sign-in verification
 
+## Sign-in layout on short phones
+
+At 320 × 568 CSS pixels, the full Sign in button fits on the initial screen. The previous build required 71 px of scrolling. The three passes compacted the introduction on short phones, shortened the account instruction, and reduced the gap before the fields. The inputs and button remain 48 px tall.
+
+[Before](short-phone-before.png) · [After](short-phone-after.png) · [After in dark mode with the demo](short-phone-dark.png) · [Measurements](short-phone-verification.json)
+
+The tested production build was `98025b8c73cf117bbccecce89295038996bb9da8` at `http://127.0.0.1:3509/`. Chromium measured the idle form at four phone sizes in both themes. It also checked layout, keyboard focus, required fields, and demo controls on phones, tablet, and desktop.
+
 ## Right-side typography
 
 The production build of `6e5b26f8343c5a240978c878a426ef39ee78508a` ran at `http://127.0.0.1:3509/`. The headline uses the app's Inter font. The demo gives more weight to the stage heading and the quotation total, and uses larger supporting text and detail labels.
