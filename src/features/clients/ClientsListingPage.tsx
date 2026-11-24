@@ -412,9 +412,9 @@ export default function ClientsListingPage({
 				<Table aria-label="Clients" aria-busy={isLoading} className="table-fixed">
 					<TableHeader>
 						<TableRow className="hover:bg-transparent">
-							<TableHead scope="col" className="pl-11 sm:w-[52%] lg:w-[33%]">Name</TableHead>
+							<TableHead scope="col" className="w-[70%] pl-11 sm:w-[52%] lg:w-[33%]">Name</TableHead>
 							<TableHead scope="col" className="hidden w-[30%] sm:table-cell lg:w-[13%]">Phone</TableHead>
-							<TableHead scope="col" className="w-[5.25rem] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[17%]">Quotations</TableHead>
+							<TableHead scope="col" className="w-[30%] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[17%]">Quotations</TableHead>
 							<TableHead scope="col" className="hidden w-[17%] lg:w-[19%] lg:table-cell">Last Quotation</TableHead>
 							<TableHead scope="col" className="hidden w-[17%] pr-4 lg:w-[18%] lg:table-cell">Client Since</TableHead>
 						</TableRow>
