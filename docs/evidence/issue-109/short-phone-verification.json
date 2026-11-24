@@ -13,7 +13,6 @@
   "measurementsPerRun": 40,
   "samplesPerTheme": 5,
   "regressionCasesPerRun": 14,
-  "browserErrorsPerRun": 0,
   "iterations": [
     {
       "label": "baseline",
@@ -74,5 +73,24 @@
     "Desktop split and phone form-before-demo order",
     "Manual step selection, stable demo height, and quotation total",
     "Reduced-motion default, autoplay, and pause"
-  ]
+  ],
+  "themedPageExceptionsPerRun": 0,
+  "measuredPatchMatches": [
+    {
+      "label": "intro",
+      "commit": "cfa10e99cbedf31efd0b69fc06731da1f5785209",
+      "measuredPatchHash": "314b762a19f98619737ed19bd31d83fac739130a"
+    },
+    {
+      "label": "instruction",
+      "commit": "9bd767c02e93324b478d8f6b724930130955d04f",
+      "measuredPatchHash": "3e2cf02a552e1d6cb352c257914e66ef8e847c70"
+    },
+    {
+      "label": "form-gap",
+      "commit": "98025b8c73cf117bbccecce89295038996bb9da8",
+      "measuredPatchHash": "2a58a22a9b1acecdec29119ba0ab6c36eb06af0e"
+    }
+  ],
+  "measurementScope": "Idle sign-in on load with no virtual keyboard. The browser regression gate covers layout, required fields, keyboard focus, and demo playback. See demo-verification.json for the earlier authenticated and theme-persistence journeys."
 }
