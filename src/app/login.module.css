@@ -73,6 +73,21 @@
 	margin-top: 2.25rem;
 }
 
+@media (width < 40rem) and (height < 42rem) {
+	.page {
+		padding-top: 1rem;
+		background: linear-gradient(var(--preview-background) 14rem, var(--background) 14rem);
+	}
+
+	.intro {
+		margin-block: 1rem;
+	}
+
+	.explanation {
+		margin-top: 0.5rem;
+	}
+}
+
 @media (min-width: 64rem) {
 	.page {
 		--form-column: 42%;
