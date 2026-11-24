@@ -1,7 +1,7 @@
 "use client";
 
 import { PAGE_SIZE } from "convex/constants";
-import { ChevronLeft, ChevronRight, Eye, Loader2, Pencil, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -295,6 +295,7 @@ export default function ClientsListingPage({
 	}
 
 	const selectedClient = clients.find((client) => client.id === selectedId) ?? clients[0];
+	const hasCurrentQuotations = (selectedClient?.quotations.length ?? 0) > 0;
 	if (selectedId !== null && selectedId !== selectedClient?.id) {
 		setSelectedId(selectedClient?.id ?? null);
 	}
@@ -477,12 +478,19 @@ export default function ClientsListingPage({
 									<h4 className="text-sm font-semibold">Current quotations</h4>
 									<Badge variant="secondary">{selectedClient.quotation_count}</Badge>
 								</div>
-								{selectedClient.quotations.length > 0 && <p className="pb-2 text-[11px] text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>}
+								{hasCurrentQuotations && <p className="pb-2 text-[11px] text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>}
 							</div>
-							<div key={selectedClient.id} className="@container min-h-0 px-4 pb-3 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-color:var(--muted-foreground)_transparent] lg:[scrollbar-width:thin] lg:[scrollbar-gutter:stable]">
-								{selectedClient.quotations.length === 0 ? (
-									<div className="flex flex-wrap items-center justify-between gap-3 py-6">
-										<p className="text-sm text-muted-foreground">No current quotations.</p>
+							<div
+								key={selectedClient.id}
+								className={cn(
+									"@container min-h-0 px-4 pb-3 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-color:var(--muted-foreground)_transparent] lg:[scrollbar-width:thin] lg:[scrollbar-gutter:stable]",
+									!hasCurrentQuotations && "grid place-items-center",
+								)}
+							>
+								{!hasCurrentQuotations ? (
+									<div className="flex flex-col items-center gap-3 px-4 py-12 text-center">
+										<FileText aria-hidden="true" className="size-8 text-muted-foreground opacity-60" />
+										<p className="text-sm text-muted-foreground">No current quotations for this client.</p>
 										<Button asChild size="sm" variant="outline"><Link href={`/quotations/create?client_id=${selectedClient.id}`}>Create quotation</Link></Button>
 									</div>
 								) : (
