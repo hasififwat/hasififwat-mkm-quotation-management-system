@@ -299,7 +299,8 @@ export async function clientInquiries(ctx: Reader, selectedClient: Id<"clients">
         if (revision?.family_id !== family._id) throw new Error("Current option revision not found");
         const state: OptionState = optionState(family, inquiry, now);
         return { ...state, family_id: family._id, revision_id: revision._id, reference: quotationReference(revision),
-          package_name: revision.package_snapshot?.name ?? null, departure_date: revision.flight_snapshot?.departure_date ?? null,
+          package_name: revision.package_snapshot?.name ?? null, package_year: revision.package_snapshot?.year ?? null,
+          departure_date: revision.flight_snapshot?.departure_date ?? null,
           return_date: revision.flight_snapshot?.return_date ?? null, total_amount: revision.total_amount };
       }));
       return { id: inquiry._id, cycle: inquiry.lifecycle.cycle, deadline: inquiry.lifecycle.deadline,

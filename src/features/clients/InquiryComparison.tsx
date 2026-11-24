@@ -31,7 +31,6 @@ const actionCopy = {
   follow_up: { title: "Record follow-up", description: "This restarts the 14-day inactivity countdown.", success: "Follow-up recorded" },
 };
 
-const quotationPreviewLimit = 2;
 const currency = new Intl.NumberFormat("ms-MY", { style: "currency", currency: "MYR" });
 
 function Countdown({ deadline, serverNow }: { deadline: number; serverNow: number }) {
@@ -153,10 +152,83 @@ function InquiryOptionActions({ option, onReview }: { option: Option; onReview: 
   );
 }
 
+const travelDateFormatter = new Intl.DateTimeFormat("en-MY", {
+  day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+});
+
+function travelDate(value: string | null | undefined) {
+  if (!value) return "Not recorded";
+  const date = new Date(`${value}T00:00:00Z`);
+  if (!Number.isFinite(date.getTime())) return value;
+  return travelDateFormatter.format(date);
+}
+
+function TravelDates({ departure, returnDate }: { departure?: string | null; returnDate?: string | null }) {
+  if (!departure || !returnDate) {
+    if (departure) return <>Departure {travelDate(departure)}</>;
+    if (returnDate) return <>Return {travelDate(returnDate)}</>;
+    return <>Dates not recorded</>;
+  }
+
+  return <span className="inline-flex flex-wrap gap-x-1">
+    <span className="whitespace-nowrap">{travelDate(departure)}</span>
+    <span>to</span>
+    <span className="whitespace-nowrap">{travelDate(returnDate)}</span>
+  </span>;
+}
+
+function InquiryQuotationList({ options, actionsEnabled, onReview }: {
+  options: Option[];
+  actionsEnabled: boolean;
+  onReview: (option: Option, command: Command) => void;
+}) {
+  if (options.length === 0) return <p className="text-sm text-muted-foreground">No quotations in this Inquiry.</p>;
+
+  return <ul role="list" aria-label="Quotations" className="@container divide-y rounded-md border bg-background/40">
+    {options.map(option => {
+      const canManage = actionsEnabled && option.status === "active";
+
+      return <li key={option.family_id}
+        className="grid grid-cols-[minmax(0,1fr)_minmax(6rem,35%)] items-start gap-x-3 gap-y-2 p-3 @min-[38rem]:grid-cols-[minmax(8rem,1fr)_minmax(0,1.55fr)_minmax(5rem,0.7fr)_minmax(8.75rem,auto)] @min-[38rem]:items-center">
+        <div className="col-start-1 row-start-1 flex min-w-0 flex-wrap items-end gap-x-2 gap-y-1">
+          <Link href={`/quotations/review/${option.revision_id}`} className="group grid min-w-0 gap-1 rounded-sm">
+            <span className="wrap-anywhere font-mono text-sm font-bold text-primary group-hover:underline">{option.reference}</span>
+            <span className="text-xs text-muted-foreground group-hover:text-primary">Preview</span>
+          </Link>
+          {canManage && <Link href={`/quotations/edit/${option.revision_id}`}
+            aria-label={`Edit current quotation ${option.reference}`}
+            className="rounded-sm text-xs text-muted-foreground hover:text-primary hover:underline">
+            Edit current
+          </Link>}
+        </div>
+        <div className="col-start-1 row-start-2 min-w-0 wrap-anywhere @min-[38rem]:col-start-2 @min-[38rem]:row-start-1">
+          <p className="font-medium">{option.package_name || "Package unavailable"}</p>
+          {option.package_year && <p className="text-xs text-muted-foreground">{option.package_year}</p>}
+          <p className="mt-1 text-xs text-muted-foreground tabular-nums">
+            <TravelDates departure={option.departure_date} returnDate={option.return_date} />
+          </p>
+        </div>
+        <div className="col-start-2 row-start-2 min-w-0 text-right @min-[38rem]:col-start-3 @min-[38rem]:row-start-1 @min-[38rem]:text-left">
+          <Badge variant={option.status === "accepted" ? "default" : "secondary"}>
+            {inquiryStatusLabel[option.status]}
+          </Badge>
+          {option.status === "closed" && <p className="mt-1 wrap-anywhere text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
+        </div>
+        <div className="col-start-2 row-start-1 grid min-w-0 items-center justify-items-end gap-1 @min-[38rem]:col-start-4 @min-[38rem]:grid-cols-[minmax(0,1fr)_2rem] @min-[38rem]:gap-2">
+          <span className="min-w-0 wrap-break-word text-right text-xs font-medium tabular-nums @min-[38rem]:text-sm">
+            {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
+          </span>
+          {canManage && <InquiryOptionActions option={option} onReview={command => onReview(option, command)} />}
+        </div>
+      </li>;
+    })}
+  </ul>;
+}
+
 export default function InquiryComparison({ clientId }: { clientId: Id<"clients"> }) {
   const data = useQuery(api.inquiries.forClient, { client_id: clientId });
   const [intent, setIntent] = useState<Intent | null>(null);
-  const [expanded, setExpanded] = useState<{ id: Inquiry["id"]; showEarlier: boolean } | null>(null);
+  const [expandedInquiryId, setExpandedInquiryId] = useState<Inquiry["id"] | null>(null);
   const handledHash = useRef<string | null>(null);
   const scrollTarget = useRef<Inquiry["id"] | null>(null);
 
@@ -170,7 +242,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
       frame = window.requestAnimationFrame(() => {
         handledHash.current = hash;
         scrollTarget.current = inquiry.id;
-        setExpanded({ id: inquiry.id, showEarlier: false });
+        setExpandedInquiryId(inquiry.id);
       });
     }
     function hashChanged() {
@@ -187,10 +259,10 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
   }, [data]);
 
   useEffect(() => {
-    if (!expanded || scrollTarget.current !== expanded.id) return;
-    document.getElementById(`inquiry-${expanded.id}`)?.scrollIntoView({ block: "nearest" });
+    if (!expandedInquiryId || scrollTarget.current !== expandedInquiryId) return;
+    document.getElementById(`inquiry-${expandedInquiryId}`)?.scrollIntoView({ block: "nearest" });
     scrollTarget.current = null;
-  }, [expanded]);
+  }, [expandedInquiryId]);
 
   function review(inquiry: Inquiry, command: Command, option?: Option) {
     setIntent({ inquiry, command, option, requestKey: crypto.randomUUID() });
@@ -212,11 +284,8 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
         </TableHeader>
         <TableBody>
           {data.inquiries.map(inquiry => {
-            const isExpanded = expanded?.id === inquiry.id;
+            const isExpanded = expandedInquiryId === inquiry.id;
             const detailId = `inquiry-${inquiry.id}-details`;
-            const showEarlier = isExpanded && expanded.showEarlier;
-            const options = showEarlier ? inquiry.options : inquiry.options.slice(0, quotationPreviewLimit);
-            const earlierCount = inquiry.options.length - quotationPreviewLimit;
             const accepted = inquiry.outcome?.type === "accepted" ? inquiry.outcome : null;
             const winner = accepted && inquiry.options.find(option => option.revision_id === accepted.revision_id);
             const canManage = data.actions_enabled && !inquiry.outcome;
@@ -226,7 +295,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 <TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal">
                   <button type="button" aria-expanded={isExpanded} aria-controls={isExpanded ? detailId : undefined}
                     className="flex w-full min-w-0 items-start gap-2 rounded-sm p-3 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => setExpanded(isExpanded ? null : { id: inquiry.id, showEarlier: false })}>
+                    onClick={() => setExpandedInquiryId(isExpanded ? null : inquiry.id)}>
                     {isExpanded ? <ChevronDown aria-hidden="true" className="mt-0.5 size-4 shrink-0" /> : <ChevronRight aria-hidden="true" className="mt-0.5 size-4 shrink-0" />}
                     <time dateTime={inquiry.opened_at} className="min-w-0 wrap-anywhere">{revisionDate(inquiry.opened_at)}</time>
                   </button>
@@ -246,7 +315,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{inquiry.options.length}</TableCell>
               </TableRow>
-              {isExpanded && <TableRow id={detailId} className="hover:bg-transparent">
+              {isExpanded && <TableRow id={detailId} className="bg-muted/20 hover:bg-muted/20">
                 <TableCell colSpan={3} className="space-y-3 p-3 whitespace-normal @min-[34rem]:p-4">
                   {(inquiry.outcome || canManage) && <div className="flex flex-wrap items-center justify-between gap-3">
                     {inquiry.outcome && <p className="text-sm font-medium">
@@ -261,57 +330,8 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                       Undo acceptance
                     </Button>}
                   </div>}
-                  <div className="@container overflow-hidden rounded-md border">
-                    <Table id={`${detailId}-options`} aria-label="Quotation options" className="table-fixed">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead scope="col" className="@min-[47rem]:w-[14%]">Quotation</TableHead>
-                          <TableHead scope="col" className="hidden w-[25%] @min-[47rem]:table-cell">Package</TableHead>
-                          <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Departure</TableHead>
-                          <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Return</TableHead>
-                          <TableHead scope="col" className="w-[27%] text-right @min-[42rem]:w-[14%]">Total</TableHead>
-                          <TableHead scope="col" className="w-[27%] @max-[18rem]:w-[84px] @min-[42rem]:w-[19%]">Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {options.map(option => {
-                          const departure = option.departure_date ?? "Not recorded";
-                          const returnDate = option.return_date ?? "Not recorded";
-
-                          return <TableRow key={option.family_id}>
-                            <TableHead scope="row" className="h-auto wrap-anywhere p-2 align-top font-normal whitespace-normal text-foreground @min-[47rem]:align-middle">
-                              <Link href={`/quotations/review/${option.revision_id}`} className="font-mono font-medium text-primary underline">{option.reference}</Link>
-                              <p className="mt-0.5 font-medium @min-[47rem]:hidden">{option.package_name ?? "Package unavailable"}</p>
-                              <div className="mt-1 text-xs text-muted-foreground @min-[42rem]:hidden">
-                                <p>Departure <span className="whitespace-nowrap">{departure}</span></p>
-                                <p>Return <span className="whitespace-nowrap">{returnDate}</span></p>
-                              </div>
-                            </TableHead>
-                            <TableCell className="hidden wrap-anywhere font-medium whitespace-normal @min-[47rem]:table-cell">{option.package_name ?? "Package unavailable"}</TableCell>
-                            <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{departure}</TableCell>
-                            <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{returnDate}</TableCell>
-                            <TableCell className="wrap-break-word px-1.5 text-right align-top text-xs font-medium whitespace-normal tabular-nums @min-[42rem]:text-sm @min-[47rem]:align-middle">
-                              {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
-                            </TableCell>
-                            <TableCell className="align-top whitespace-normal @min-[47rem]:align-middle">
-                              <div className="flex flex-wrap items-center justify-between gap-x-1">
-                                <Badge variant={option.status === "accepted" ? "default" : "secondary"} className="px-1.5 @min-[42rem]:px-2">
-                                  {inquiryStatusLabel[option.status]}
-                                </Badge>
-                                {data.actions_enabled && option.status === "active" && <InquiryOptionActions option={option} onReview={command => review(inquiry, command, option)} />}
-                              </div>
-                              {option.status === "closed" && <p className="mt-1 text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
-                            </TableCell>
-                          </TableRow>;
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  {earlierCount > 0 && <Button type="button" size="sm" variant="outline"
-                    aria-expanded={showEarlier} aria-controls={`${detailId}-options`}
-                    onClick={() => setExpanded({ id: inquiry.id, showEarlier: !showEarlier })}>
-                    {showEarlier ? `Show newest ${quotationPreviewLimit} quotations` : `Show ${earlierCount} earlier ${earlierCount === 1 ? "quotation" : "quotations"}`}
-                  </Button>}
+                  <InquiryQuotationList options={inquiry.options} actionsEnabled={data.actions_enabled}
+                    onReview={(option, command) => review(inquiry, command, option)} />
                 </TableCell>
               </TableRow>}
             </Fragment>;
