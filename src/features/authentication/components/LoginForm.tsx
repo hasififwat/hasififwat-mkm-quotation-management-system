@@ -49,7 +49,7 @@ export function LoginForm() {
 				Sign in
 			</h1>
 			<p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-				Use your MKM agent account to continue.
+				Use your MKM agent account.
 			</p>
 
 			<form
