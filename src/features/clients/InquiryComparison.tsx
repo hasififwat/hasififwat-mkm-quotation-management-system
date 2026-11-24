@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
@@ -11,7 +11,6 @@ import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
@@ -32,6 +31,7 @@ const actionCopy = {
   follow_up: { title: "Record follow-up", description: "This restarts the 14-day inactivity countdown.", success: "Follow-up recorded" },
 };
 
+const quotationPreviewLimit = 2;
 const currency = new Intl.NumberFormat("ms-MY", { style: "currency", currency: "MYR" });
 
 function Countdown({ deadline, serverNow }: { deadline: number; serverNow: number }) {
@@ -156,6 +156,41 @@ function InquiryOptionActions({ option, onReview }: { option: Option; onReview: 
 export default function InquiryComparison({ clientId }: { clientId: Id<"clients"> }) {
   const data = useQuery(api.inquiries.forClient, { client_id: clientId });
   const [intent, setIntent] = useState<Intent | null>(null);
+  const [expanded, setExpanded] = useState<{ id: Inquiry["id"]; showEarlier: boolean } | null>(null);
+  const handledHash = useRef<string | null>(null);
+  const scrollTarget = useRef<Inquiry["id"] | null>(null);
+
+  useEffect(() => {
+    let frame: number | undefined;
+    function openHashTarget() {
+      const hash = window.location.hash;
+      if (handledHash.current === hash) return;
+      const inquiry = data?.inquiries.find(row => hash === `#inquiry-${row.id}`);
+      if (!inquiry) return;
+      frame = window.requestAnimationFrame(() => {
+        handledHash.current = hash;
+        scrollTarget.current = inquiry.id;
+        setExpanded({ id: inquiry.id, showEarlier: false });
+      });
+    }
+    function hashChanged() {
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      handledHash.current = null;
+      openHashTarget();
+    }
+    openHashTarget();
+    window.addEventListener("hashchange", hashChanged);
+    return () => {
+      window.removeEventListener("hashchange", hashChanged);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+    };
+  }, [data]);
+
+  useEffect(() => {
+    if (!expanded || scrollTarget.current !== expanded.id) return;
+    document.getElementById(`inquiry-${expanded.id}`)?.scrollIntoView({ block: "nearest" });
+    scrollTarget.current = null;
+  }, [expanded]);
 
   function review(inquiry: Inquiry, command: Command, option?: Option) {
     setIntent({ inquiry, command, option, requestKey: crypto.randomUUID() });
@@ -166,80 +201,124 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
 
   return <section className="space-y-4" aria-label="Inquiries">
     <h2 className="text-lg font-semibold">Inquiries</h2>
-    {data.inquiries.map(inquiry => {
-      return <Card key={inquiry.id} id={`inquiry-${inquiry.id}`}>
-        <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle className="text-base">{!inquiry.outcome ? "Open Inquiry" : inquiry.outcome.type === "accepted" ? "Accepted Inquiry" : "Closed Inquiry"}</CardTitle>
-              <p className="text-sm text-muted-foreground">Opened {revisionDate(inquiry.opened_at)}</p>
-            </div>
-            <p className="text-sm font-medium">
-              {!inquiry.outcome ? <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
-                : inquiry.outcome.type === "accepted" ? "Quotation accepted" : inquiryClosureLabel[inquiry.outcome.type]}
-            </p>
-          </div>
-          {data.actions_enabled && <div className="flex flex-wrap gap-2">
-            {!inquiry.outcome && <>
-              <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>Record follow-up</Button>
-              <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>Close Inquiry</Button>
-            </>}
-            {inquiry.can_undo && inquiry.outcome?.type === "accepted" &&
-              <Button size="sm" variant="outline" onClick={() => {
-                if (inquiry.outcome?.type === "accepted") review(inquiry, { type: "undo_acceptance", expected_acceptance_id: inquiry.outcome.event_id });
-              }}>Undo acceptance</Button>}
-          </div>}
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6">
-          <div className="@container overflow-hidden rounded-md border">
-            <Table aria-label="Quotation options" className="table-fixed">
-              <TableHeader>
-                <TableRow>
-                  <TableHead scope="col" className="@min-[47rem]:w-[14%]">Quotation</TableHead>
-                  <TableHead scope="col" className="hidden w-[25%] @min-[47rem]:table-cell">Package</TableHead>
-                  <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Departure</TableHead>
-                  <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Return</TableHead>
-                  <TableHead scope="col" className="w-[27%] text-right @min-[42rem]:w-[14%]">Total</TableHead>
-                  <TableHead scope="col" className="w-[27%] @max-[18rem]:w-[84px] @min-[42rem]:w-[19%]">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {inquiry.options.map(option => {
-                  const departure = option.departure_date ?? "Not recorded";
-                  const returnDate = option.return_date ?? "Not recorded";
+    <div className="@container overflow-hidden rounded-md border">
+      <Table aria-label="Inquiry history" className="table-fixed">
+        <TableHeader>
+          <TableRow>
+            <TableHead scope="col">Opened</TableHead>
+            <TableHead scope="col" className="w-[28%] @min-[34rem]:w-[20%]">Status</TableHead>
+            <TableHead scope="col" className="w-24 text-right @min-[34rem]:w-[20%]">Quotations</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.inquiries.map(inquiry => {
+            const isExpanded = expanded?.id === inquiry.id;
+            const detailId = `inquiry-${inquiry.id}-details`;
+            const showEarlier = isExpanded && expanded.showEarlier;
+            const options = showEarlier ? inquiry.options : inquiry.options.slice(0, quotationPreviewLimit);
+            const earlierCount = inquiry.options.length - quotationPreviewLimit;
+            const accepted = inquiry.outcome?.type === "accepted" ? inquiry.outcome : null;
+            const winner = accepted && inquiry.options.find(option => option.revision_id === accepted.revision_id);
+            const canManage = data.actions_enabled && !inquiry.outcome;
+            const canUndo = data.actions_enabled && inquiry.can_undo && accepted;
+            return <Fragment key={inquiry.id}>
+              <TableRow id={`inquiry-${inquiry.id}`} className="scroll-mt-4">
+                <TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal">
+                  <button type="button" aria-expanded={isExpanded} aria-controls={isExpanded ? detailId : undefined}
+                    className="flex w-full min-w-0 items-start gap-2 rounded-sm p-3 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => setExpanded(isExpanded ? null : { id: inquiry.id, showEarlier: false })}>
+                    {isExpanded ? <ChevronDown aria-hidden="true" className="mt-0.5 size-4 shrink-0" /> : <ChevronRight aria-hidden="true" className="mt-0.5 size-4 shrink-0" />}
+                    <time dateTime={inquiry.opened_at} className="min-w-0 wrap-anywhere">{revisionDate(inquiry.opened_at)}</time>
+                  </button>
+                  {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
+                    aria-label={winner ? `Accepted quotation ${winner.reference}` : "Accepted quotation"}
+                    className="block wrap-anywhere pr-3 pb-3 pl-9 font-mono text-xs text-primary underline">
+                    {winner?.reference ?? "Accepted quotation"}
+                  </Link>}
+                </TableHead>
+                <TableCell className="px-1.5 whitespace-normal @min-[34rem]:px-2">
+                  <Badge variant={accepted ? "default" : "secondary"} className="px-1.5 @min-[34rem]:px-2">
+                    {!inquiry.outcome ? "Open" : accepted ? "Accepted" : "Closed"}
+                  </Badge>
+                  {!inquiry.outcome && <p className="mt-1 text-xs text-muted-foreground">
+                    <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
+                  </p>}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{inquiry.options.length}</TableCell>
+              </TableRow>
+              {isExpanded && <TableRow id={detailId} className="hover:bg-transparent">
+                <TableCell colSpan={3} className="space-y-3 p-3 whitespace-normal @min-[34rem]:p-4">
+                  {(inquiry.outcome || canManage) && <div className="flex flex-wrap items-center justify-between gap-3">
+                    {inquiry.outcome && <p className="text-sm font-medium">
+                      {inquiry.outcome.type === "accepted" ? "Quotation accepted" : inquiryClosureLabel[inquiry.outcome.type]}
+                    </p>}
+                    {canManage && <div className="ml-auto flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>Record follow-up</Button>
+                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>Close Inquiry</Button>
+                    </div>}
+                    {canUndo && <Button size="sm" variant="outline" className="ml-auto"
+                      onClick={() => review(inquiry, { type: "undo_acceptance", expected_acceptance_id: canUndo.event_id })}>
+                      Undo acceptance
+                    </Button>}
+                  </div>}
+                  <div className="@container overflow-hidden rounded-md border">
+                    <Table id={`${detailId}-options`} aria-label="Quotation options" className="table-fixed">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead scope="col" className="@min-[47rem]:w-[14%]">Quotation</TableHead>
+                          <TableHead scope="col" className="hidden w-[25%] @min-[47rem]:table-cell">Package</TableHead>
+                          <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Departure</TableHead>
+                          <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Return</TableHead>
+                          <TableHead scope="col" className="w-[27%] text-right @min-[42rem]:w-[14%]">Total</TableHead>
+                          <TableHead scope="col" className="w-[27%] @max-[18rem]:w-[84px] @min-[42rem]:w-[19%]">Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {options.map(option => {
+                          const departure = option.departure_date ?? "Not recorded";
+                          const returnDate = option.return_date ?? "Not recorded";
 
-                  return <TableRow key={option.family_id}>
-                    <TableHead scope="row" className="h-auto wrap-anywhere p-2 align-top font-normal whitespace-normal text-foreground @min-[47rem]:align-middle">
-                      <Link href={`/quotations/review/${option.revision_id}`} className="font-mono font-medium text-primary underline">{option.reference}</Link>
-                      <p className="mt-0.5 font-medium @min-[47rem]:hidden">{option.package_name ?? "Package unavailable"}</p>
-                      <div className="mt-1 text-xs text-muted-foreground @min-[42rem]:hidden">
-                        <p>Departure <span className="whitespace-nowrap">{departure}</span></p>
-                        <p>Return <span className="whitespace-nowrap">{returnDate}</span></p>
-                      </div>
-                    </TableHead>
-                    <TableCell className="hidden wrap-anywhere font-medium whitespace-normal @min-[47rem]:table-cell">{option.package_name ?? "Package unavailable"}</TableCell>
-                    <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{departure}</TableCell>
-                    <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{returnDate}</TableCell>
-                    <TableCell className="wrap-break-word px-1.5 text-right align-top text-xs font-medium whitespace-normal tabular-nums @min-[42rem]:text-sm @min-[47rem]:align-middle">
-                      {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
-                    </TableCell>
-                    <TableCell className="align-top whitespace-normal @min-[47rem]:align-middle">
-                      <div className="flex flex-wrap items-center justify-between gap-x-1">
-                        <Badge variant={option.status === "accepted" ? "default" : "secondary"} className="px-1.5 @min-[42rem]:px-2">
-                          {inquiryStatusLabel[option.status]}
-                        </Badge>
-                        {data.actions_enabled && option.status === "active" && <InquiryOptionActions option={option} onReview={command => review(inquiry, command, option)} />}
-                      </div>
-                      {option.status === "closed" && <p className="mt-1 text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
-                    </TableCell>
-                  </TableRow>;
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>;
-    })}
+                          return <TableRow key={option.family_id}>
+                            <TableHead scope="row" className="h-auto wrap-anywhere p-2 align-top font-normal whitespace-normal text-foreground @min-[47rem]:align-middle">
+                              <Link href={`/quotations/review/${option.revision_id}`} className="font-mono font-medium text-primary underline">{option.reference}</Link>
+                              <p className="mt-0.5 font-medium @min-[47rem]:hidden">{option.package_name ?? "Package unavailable"}</p>
+                              <div className="mt-1 text-xs text-muted-foreground @min-[42rem]:hidden">
+                                <p>Departure <span className="whitespace-nowrap">{departure}</span></p>
+                                <p>Return <span className="whitespace-nowrap">{returnDate}</span></p>
+                              </div>
+                            </TableHead>
+                            <TableCell className="hidden wrap-anywhere font-medium whitespace-normal @min-[47rem]:table-cell">{option.package_name ?? "Package unavailable"}</TableCell>
+                            <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{departure}</TableCell>
+                            <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{returnDate}</TableCell>
+                            <TableCell className="wrap-break-word px-1.5 text-right align-top text-xs font-medium whitespace-normal tabular-nums @min-[42rem]:text-sm @min-[47rem]:align-middle">
+                              {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
+                            </TableCell>
+                            <TableCell className="align-top whitespace-normal @min-[47rem]:align-middle">
+                              <div className="flex flex-wrap items-center justify-between gap-x-1">
+                                <Badge variant={option.status === "accepted" ? "default" : "secondary"} className="px-1.5 @min-[42rem]:px-2">
+                                  {inquiryStatusLabel[option.status]}
+                                </Badge>
+                                {data.actions_enabled && option.status === "active" && <InquiryOptionActions option={option} onReview={command => review(inquiry, command, option)} />}
+                              </div>
+                              {option.status === "closed" && <p className="mt-1 text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
+                            </TableCell>
+                          </TableRow>;
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {earlierCount > 0 && <Button type="button" size="sm" variant="outline"
+                    aria-expanded={showEarlier} aria-controls={`${detailId}-options`}
+                    onClick={() => setExpanded({ id: inquiry.id, showEarlier: !showEarlier })}>
+                    {showEarlier ? `Show newest ${quotationPreviewLimit} quotations` : `Show ${earlierCount} earlier ${earlierCount === 1 ? "quotation" : "quotations"}`}
+                  </Button>}
+                </TableCell>
+              </TableRow>}
+            </Fragment>;
+          })}
+        </TableBody>
+      </Table>
+    </div>
     {intent && <InquiryAction intent={intent} onDismiss={() => setIntent(null)} />}
   </section>;
 }

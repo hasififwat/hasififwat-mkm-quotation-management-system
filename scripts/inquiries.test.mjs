@@ -67,7 +67,7 @@ test("authenticated create starts or joins the reviewed Inquiry and replays its 
   assert.equal(inquiry.id, joinedDestination.inquiry_id);
   assert.ok(inquiry.deadline > earlierDeadline);
   assert.equal(inquiry.deadline, f.tables.inquiry_events.find(row => row.action === "option_added").at + windowMs);
-  assert.deepEqual(plain(inquiry.options.map(row => [row.family_id, row.status])), [[option.family_id, "active"], [alternative.family_id, "active"]]);
+  assert.deepEqual(plain(inquiry.options.map(row => [row.family_id, row.status])), [[alternative.family_id, "active"], [option.family_id, "active"]]);
   assert.equal(inquiry.options[0].package_name, "Fixture Package");
   assert.equal(inquiry.options[0].departure_date, "2027-01-01");
   assert.equal(inquiry.options[0].return_date, "2027-01-12");
@@ -80,6 +80,23 @@ test("authenticated create starts or joins the reviewed Inquiry and replays its 
   assert.equal((await f.compare())[0].options[0].reason, "manual");
   await assert.rejects(f.save(f.command(undefined)), code("INQUIRY_DESTINATION_CHANGED"));
   assert.deepEqual(plain(f.tables), afterClosure);
+});
+
+test("Inquiry options keep family creation order while showing the exact latest saved revision", async () => {
+  const f = await fixture();
+  const oldest = await f.newOption();
+  const middle = await f.newOption();
+  const newest = await f.newOption();
+  const [inquiry] = await f.compare();
+  const revisedOldest = await f.save(append(oldest, inquiry.cycle));
+  const [updated] = await f.compare();
+
+  assert.notEqual(revisedOldest.id, oldest.id);
+  assert.deepEqual(plain(updated.options.map(row => [row.family_id, row.revision_id, row.reference])), [
+    [newest.family_id, newest.id, newest.quotation_number],
+    [middle.family_id, middle.id, middle.quotation_number],
+    [oldest.family_id, revisedOldest.id, revisedOldest.quotation_number],
+  ]);
 });
 
 test("accept and undo use exact saved revisions, retain individual closures, and preserve frozen terms", async () => {
@@ -105,7 +122,7 @@ test("accept and undo use exact saved revisions, retain individual closures, and
   assert.equal(accepted.outcome.event_id, acceptance.event_id);
   assert.equal(accepted.outcome.revision_id, revised.id);
   assert.deepEqual(plain(accepted.options.map(row => [row.status, row.reason])), [
-    ["accepted", null], ["closed", "another_accepted"], ["closed", "individual"],
+    ["closed", "individual"], ["closed", "another_accepted"], ["accepted", null],
   ]);
   assert.deepEqual(plain([f.tables.quotations, f.tables.quotation_items, f.tables.quotation_pdf_artifacts]), frozen);
   assert.deepEqual(plain(await f.save(editCommand)), plain(revised));
@@ -131,7 +148,7 @@ test("accept and undo use exact saved revisions, retain individual closures, and
   assert.equal(reopened.cycle, open.cycle + 1);
   assert.equal(reopened.outcome, null);
   assert.equal(reopened.deadline, f.tables.inquiry_events.find(row => row._id === undoResult.event_id).at + windowMs);
-  assert.deepEqual(plain(reopened.options.map(row => row.status)), ["active", "active", "closed"]);
+  assert.deepEqual(plain(reopened.options.map(row => row.status)), ["closed", "active", "active"]);
   assert.equal(f.tables.inquiry_events.find(row => row._id === undoResult.event_id).actor.user_id, "fixture-staff");
   await assert.rejects(f.act(open, target("accept", revised)), code("INQUIRY_CYCLE_CHANGED"));
   await assert.rejects(f.save(append(revised, open.cycle)), code("INQUIRY_CYCLE_CHANGED"));

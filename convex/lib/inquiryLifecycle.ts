@@ -294,7 +294,7 @@ export async function clientInquiries(ctx: Reader, selectedClient: Id<"clients">
     .map(async inquiry => {
       const outcome = effectiveOutcome(inquiry, now) ?? null;
       const families = await ctx.db.query("quotation_families").withIndex("by_inquiry", q => q.eq("inquiry_id", inquiry._id)).collect();
-      const options = await Promise.all(families.map(async family => {
+      const options = await Promise.all(families.sort((a, b) => b._creationTime - a._creationTime).map(async family => {
         const revision = await ctx.db.get(family.current_revision_id);
         if (revision?.family_id !== family._id) throw new Error("Current option revision not found");
         const state: OptionState = optionState(family, inquiry, now);
