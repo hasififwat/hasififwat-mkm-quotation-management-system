@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { MoreHorizontal } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
@@ -13,6 +14,8 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { inquiryClosureLabel, inquiryStatusLabel } from "~/features/quotation/inquiry-display";
 import { revisionDate } from "~/features/quotation/revision-display";
 
@@ -122,6 +125,34 @@ function InquiryAction({ intent, onDismiss }: { intent: Intent; onDismiss: () =>
   </Dialog>;
 }
 
+function InquiryOptionActions({ option, onReview }: { option: Option; onReview: (command: Command) => void }) {
+  const reviewAfterClose = useRef<(() => void) | null>(null);
+
+  function select(type: "accept" | "close_option") {
+    reviewAfterClose.current = () => onReview({
+      type, family_id: option.family_id, expected_revision_id: option.revision_id,
+    });
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label={`Actions for ${option.reference}`}>
+          <MoreHorizontal aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onCloseAutoFocus={() => {
+        const review = reviewAfterClose.current;
+        reviewAfterClose.current = null;
+        review?.();
+      }}>
+        <DropdownMenuItem onSelect={() => select("accept")}>Review to accept</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => select("close_option")}>Close option</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export default function InquiryComparison({ clientId }: { clientId: Id<"clients"> }) {
   const data = useQuery(api.inquiries.forClient, { client_id: clientId });
   const [intent, setIntent] = useState<Intent | null>(null);
@@ -135,51 +166,80 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
 
   return <section className="space-y-4" aria-label="Inquiries">
     <h2 className="text-lg font-semibold">Inquiries</h2>
-    {data.inquiries.map(inquiry => <Card key={inquiry.id} id={`inquiry-${inquiry.id}`}>
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{!inquiry.outcome ? "Open Inquiry" : inquiry.outcome.type === "accepted" ? "Accepted Inquiry" : "Closed Inquiry"}</CardTitle>
-            <p className="text-sm text-muted-foreground">Opened {revisionDate(inquiry.opened_at)}</p>
-          </div>
-          <p className="text-sm font-medium">
-            {!inquiry.outcome ? <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
-              : inquiry.outcome.type === "accepted" ? "Quotation accepted" : inquiryClosureLabel[inquiry.outcome.type]}
-          </p>
-        </div>
-        {data.actions_enabled && <div className="flex flex-wrap gap-2">
-          {!inquiry.outcome && <>
-            <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>Record follow-up</Button>
-            <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>Close Inquiry</Button>
-          </>}
-          {inquiry.can_undo && inquiry.outcome?.type === "accepted" &&
-            <Button size="sm" variant="outline" onClick={() => {
-              if (inquiry.outcome?.type === "accepted") review(inquiry, { type: "undo_acceptance", expected_acceptance_id: inquiry.outcome.event_id });
-            }}>Undo acceptance</Button>}
-        </div>}
-      </CardHeader>
-      <CardContent>
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {inquiry.options.map(option => <li key={option.family_id} className="flex min-w-0 flex-col gap-2 rounded-md border p-3 text-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <Link href={`/quotations/review/${option.revision_id}`} className="font-mono font-medium underline">{option.reference}</Link>
-              <Badge variant={option.status === "accepted" ? "default" : "secondary"}>{inquiryStatusLabel[option.status]}</Badge>
+    {data.inquiries.map(inquiry => {
+      return <Card key={inquiry.id} id={`inquiry-${inquiry.id}`}>
+        <CardHeader>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="space-y-1">
+              <CardTitle className="text-base">{!inquiry.outcome ? "Open Inquiry" : inquiry.outcome.type === "accepted" ? "Accepted Inquiry" : "Closed Inquiry"}</CardTitle>
+              <p className="text-sm text-muted-foreground">Opened {revisionDate(inquiry.opened_at)}</p>
             </div>
-            <p className="break-words font-medium">{option.package_name ?? "Package unavailable"}</p>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              <dt className="text-muted-foreground">Departure</dt><dd>{option.departure_date ?? "Not recorded"}</dd>
-              <dt className="text-muted-foreground">Return</dt><dd>{option.return_date ?? "Not recorded"}</dd>
-              <dt className="text-muted-foreground">Total</dt><dd>{currency.format(option.total_amount)}</dd>
-            </dl>
-            {option.status === "closed" && <p className="text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
-            {option.status === "active" && data.actions_enabled && <div className="mt-auto flex flex-wrap gap-2 pt-2">
-              <Button size="sm" onClick={() => review(inquiry, { type: "accept", family_id: option.family_id, expected_revision_id: option.revision_id }, option)}>Review to accept</Button>
-              <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close_option", family_id: option.family_id, expected_revision_id: option.revision_id }, option)}>Close option</Button>
-            </div>}
-          </li>)}
-        </ul>
-      </CardContent>
-    </Card>)}
+            <p className="text-sm font-medium">
+              {!inquiry.outcome ? <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
+                : inquiry.outcome.type === "accepted" ? "Quotation accepted" : inquiryClosureLabel[inquiry.outcome.type]}
+            </p>
+          </div>
+          {data.actions_enabled && <div className="flex flex-wrap gap-2">
+            {!inquiry.outcome && <>
+              <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>Record follow-up</Button>
+              <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>Close Inquiry</Button>
+            </>}
+            {inquiry.can_undo && inquiry.outcome?.type === "accepted" &&
+              <Button size="sm" variant="outline" onClick={() => {
+                if (inquiry.outcome?.type === "accepted") review(inquiry, { type: "undo_acceptance", expected_acceptance_id: inquiry.outcome.event_id });
+              }}>Undo acceptance</Button>}
+          </div>}
+        </CardHeader>
+        <CardContent className="px-3 sm:px-6">
+          <div className="@container overflow-hidden rounded-md border">
+            <Table aria-label="Quotation options" className="table-fixed">
+              <TableHeader>
+                <TableRow>
+                  <TableHead scope="col" className="@min-[47rem]:w-[14%]">Quotation</TableHead>
+                  <TableHead scope="col" className="hidden w-[25%] @min-[47rem]:table-cell">Package</TableHead>
+                  <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Departure</TableHead>
+                  <TableHead scope="col" className="hidden w-[14%] @min-[42rem]:table-cell">Return</TableHead>
+                  <TableHead scope="col" className="w-[27%] text-right @min-[42rem]:w-[14%]">Total</TableHead>
+                  <TableHead scope="col" className="w-[27%] @max-[18rem]:w-[84px] @min-[42rem]:w-[19%]">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {inquiry.options.map(option => {
+                  const departure = option.departure_date ?? "Not recorded";
+                  const returnDate = option.return_date ?? "Not recorded";
+
+                  return <TableRow key={option.family_id}>
+                    <TableHead scope="row" className="h-auto wrap-anywhere p-2 align-top font-normal whitespace-normal text-foreground @min-[47rem]:align-middle">
+                      <Link href={`/quotations/review/${option.revision_id}`} className="font-mono font-medium text-primary underline">{option.reference}</Link>
+                      <p className="mt-0.5 font-medium @min-[47rem]:hidden">{option.package_name ?? "Package unavailable"}</p>
+                      <div className="mt-1 text-xs text-muted-foreground @min-[42rem]:hidden">
+                        <p>Departure <span className="whitespace-nowrap">{departure}</span></p>
+                        <p>Return <span className="whitespace-nowrap">{returnDate}</span></p>
+                      </div>
+                    </TableHead>
+                    <TableCell className="hidden wrap-anywhere font-medium whitespace-normal @min-[47rem]:table-cell">{option.package_name ?? "Package unavailable"}</TableCell>
+                    <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{departure}</TableCell>
+                    <TableCell className="hidden wrap-anywhere whitespace-normal tabular-nums @min-[42rem]:table-cell">{returnDate}</TableCell>
+                    <TableCell className="wrap-break-word px-1.5 text-right align-top text-xs font-medium whitespace-normal tabular-nums @min-[42rem]:text-sm @min-[47rem]:align-middle">
+                      {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
+                    </TableCell>
+                    <TableCell className="align-top whitespace-normal @min-[47rem]:align-middle">
+                      <div className="flex flex-wrap items-center justify-between gap-x-1">
+                        <Badge variant={option.status === "accepted" ? "default" : "secondary"} className="px-1.5 @min-[42rem]:px-2">
+                          {inquiryStatusLabel[option.status]}
+                        </Badge>
+                        {data.actions_enabled && option.status === "active" && <InquiryOptionActions option={option} onReview={command => review(inquiry, command, option)} />}
+                      </div>
+                      {option.status === "closed" && <p className="mt-1 text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
+                    </TableCell>
+                  </TableRow>;
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>;
+    })}
     {intent && <InquiryAction intent={intent} onDismiss={() => setIntent(null)} />}
   </section>;
 }
