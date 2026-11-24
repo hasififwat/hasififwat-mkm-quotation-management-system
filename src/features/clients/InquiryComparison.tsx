@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
+import { CalendarDays, Check, ChevronRight, Clock, MoreHorizontal, Pencil, Undo2, XCircle, BellRing } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { inquiryClosureLabel, inquiryStatusLabel } from "~/features/quotation/inquiry-display";
 import { revisionDate } from "~/features/quotation/revision-display";
+import { cn } from "~/lib/utils";
 
 type Inquiry = FunctionReturnType<typeof api.inquiries.forClient>["inquiries"][number];
 type Option = Inquiry["options"][number];
@@ -42,10 +43,13 @@ function Countdown({ deadline, serverNow }: { deadline: number; serverNow: numbe
   }, []);
 
   const minutes = Math.ceil((deadline - serverNow - elapsed) / 60_000);
-  if (minutes <= 0) return <span>Closing due to inactivity…</span>;
+  const urgent = minutes <= 3 * 1440;
   const [amount, unit] = minutes >= 1440 ? [Math.ceil(minutes / 1440), "day"]
     : minutes >= 60 ? [Math.ceil(minutes / 60), "hour"] : [minutes, "minute"];
-  return <span>Closes in {amount} {unit}{amount === 1 ? "" : "s"}</span>;
+  return <span className={cn("inline-flex items-center gap-1", urgent && "text-amber-700 dark:text-amber-400")}>
+    <Clock aria-hidden="true" className="size-3 shrink-0" />
+    {minutes <= 0 ? "Closing due to inactivity…" : `Closes in ${amount} ${unit}${amount === 1 ? "" : "s"}`}
+  </span>;
 }
 
 function InquiryAction({ intent, onDismiss }: { intent: Intent; onDismiss: () => void }) {
@@ -172,10 +176,39 @@ function TravelDates({ departure, returnDate }: { departure?: string | null; ret
 
   return <span className="inline-flex flex-wrap gap-x-1">
     <span className="whitespace-nowrap">{travelDate(departure)}</span>
-    <span>to</span>
+    <span aria-hidden="true">→</span>
+    <span className="sr-only">to</span>
     <span className="whitespace-nowrap">{travelDate(returnDate)}</span>
   </span>;
 }
+
+function money(value: number) {
+  return currency.format(value).replaceAll("\u00a0", " ");
+}
+
+function roundMoney(value: number) {
+  return (Number.isInteger(value) ? wholeCurrency : currency).format(value);
+}
+
+const wholeCurrency = new Intl.NumberFormat("ms-MY", { style: "currency", currency: "MYR", maximumFractionDigits: 0 });
+
+type Tone = "open" | "accepted" | "closed";
+
+const toneClass: Record<Tone, string> = {
+  open: "border-emerald-600/25 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/25 dark:text-emerald-300",
+  accepted: "border-primary/30 bg-primary/10 text-primary",
+  closed: "border-border bg-muted text-muted-foreground",
+};
+
+function StatusPill({ tone, children }: { tone: Tone; children: string }) {
+  return <Badge variant="outline" className={cn("gap-1.5", toneClass[tone])}>
+    {tone === "accepted" ? <Check aria-hidden="true" strokeWidth={3} />
+      : <span aria-hidden="true" className="size-1.5 rounded-full bg-current" />}
+    {children}
+  </Badge>;
+}
+
+const optionTone: Record<Option["status"], Tone> = { active: "open", accepted: "accepted", closed: "closed" };
 
 function InquiryQuotationList({ options, actionsEnabled, onReview }: {
   options: Option[];
@@ -184,45 +217,70 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
 }) {
   if (options.length === 0) return <p className="text-sm text-muted-foreground">No quotations in this Inquiry.</p>;
 
-  return <ul role="list" aria-label="Quotations" className="@container divide-y rounded-md border bg-background/40">
+  return <ul role="list" aria-label="Quotations" className="@container divide-y overflow-hidden rounded-lg border bg-card shadow-xs">
     {options.map(option => {
       const canManage = actionsEnabled && option.status === "active";
+      const closed = option.status === "closed";
 
-      return <li key={option.family_id}
-        className="grid grid-cols-[minmax(0,1fr)_minmax(6rem,35%)] items-start gap-x-3 gap-y-2 p-3 @min-[38rem]:grid-cols-[minmax(8rem,1fr)_minmax(0,1.55fr)_minmax(5rem,0.7fr)_minmax(8.75rem,auto)] @min-[38rem]:items-center">
-        <div className="col-start-1 row-start-1 flex min-w-0 flex-wrap items-end gap-x-2 gap-y-1">
-          <Link href={`/quotations/review/${option.revision_id}`} className="group grid min-w-0 gap-1 rounded-sm">
-            <span className="wrap-anywhere font-mono text-sm font-bold text-primary group-hover:underline">{option.reference}</span>
-            <span className="text-xs text-muted-foreground group-hover:text-primary">Preview</span>
-          </Link>
-          {canManage && <Link href={`/quotations/edit/${option.revision_id}`}
-            aria-label={`Edit current quotation ${option.reference}`}
-            className="rounded-sm text-xs text-muted-foreground hover:text-primary hover:underline">
-            Edit current
-          </Link>}
-        </div>
-        <div className="col-start-1 row-start-2 min-w-0 wrap-anywhere @min-[38rem]:col-start-2 @min-[38rem]:row-start-1">
-          <p className="font-medium">{option.package_name || "Package unavailable"}</p>
-          {option.package_year && <p className="text-xs text-muted-foreground">{option.package_year}</p>}
-          <p className="mt-1 text-xs text-muted-foreground tabular-nums">
-            <TravelDates departure={option.departure_date} returnDate={option.return_date} />
+      return <li key={option.family_id} className={cn(
+        "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-3",
+        "@min-[40rem]:grid-cols-[minmax(0,1fr)_12rem_8.5rem_4.5rem] @min-[40rem]:items-center @min-[40rem]:gap-x-4 @min-[40rem]:gap-y-1 @min-[40rem]:px-4",
+        option.status === "accepted" && "bg-primary/5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary",
+      )}>
+        <div className="col-start-1 row-start-1 min-w-0">
+          <p className={cn("font-medium wrap-anywhere", closed && "text-muted-foreground")}>
+            {option.package_name || "Package unavailable"}
           </p>
         </div>
-        <div className="col-start-2 row-start-2 min-w-0 text-right @min-[38rem]:col-start-3 @min-[38rem]:row-start-1 @min-[38rem]:text-left">
-          <Badge variant={option.status === "accepted" ? "default" : "secondary"}>
-            {inquiryStatusLabel[option.status]}
-          </Badge>
-          {option.status === "closed" && <p className="mt-1 wrap-anywhere text-xs text-muted-foreground">{inquiryClosureLabel[option.reason]}</p>}
-        </div>
-        <div className="col-start-2 row-start-1 grid min-w-0 items-center justify-items-end gap-1 @min-[38rem]:col-start-4 @min-[38rem]:grid-cols-[minmax(0,1fr)_2rem] @min-[38rem]:gap-2">
-          <span className="min-w-0 wrap-break-word text-right text-xs font-medium tabular-nums @min-[38rem]:text-sm">
-            {currency.format(option.total_amount).replaceAll("\u00a0", " ")}
+
+        <div className="col-span-2 col-start-1 row-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground @min-[40rem]:col-span-1">
+          <Link href={`/quotations/review/${option.revision_id}`} title="Preview quotation"
+            className="rounded-sm font-mono font-semibold text-primary wrap-anywhere hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            {option.reference}
+          </Link>
+          {option.package_year && <span>{option.package_year}</span>}
+          <span className="inline-flex items-center gap-1 tabular-nums">
+            <CalendarDays aria-hidden="true" className="size-3.5 shrink-0" />
+            <TravelDates departure={option.departure_date} returnDate={option.return_date} />
           </span>
-          {canManage && <InquiryOptionActions option={option} onReview={command => onReview(option, command)} />}
+        </div>
+
+        <div className="col-start-1 row-start-3 min-w-0 self-center @min-[40rem]:col-start-2 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1">
+          <StatusPill tone={optionTone[option.status]}>{inquiryStatusLabel[option.status]}</StatusPill>
+          {closed && <p className="mt-1 text-xs text-muted-foreground wrap-anywhere">{inquiryClosureLabel[option.reason]}</p>}
+        </div>
+
+        <p className={cn(
+          "col-start-2 row-start-1 text-right font-semibold tabular-nums whitespace-nowrap @min-[40rem]:col-start-3 @min-[40rem]:row-span-2",
+          closed && "font-medium text-muted-foreground",
+        )}>
+          {money(option.total_amount)}
+        </p>
+
+        <div className="col-start-2 row-start-3 flex items-center justify-end gap-0.5 self-center @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1">
+          {canManage && <>
+            <Button asChild variant="ghost" size="icon-sm">
+              <Link href={`/quotations/edit/${option.revision_id}`} aria-label={`Edit current quotation ${option.reference}`} title="Edit current quotation">
+                <Pencil aria-hidden="true" />
+              </Link>
+            </Button>
+            <InquiryOptionActions option={option} onReview={command => onReview(option, command)} />
+          </>}
         </div>
       </li>;
     })}
   </ul>;
+}
+
+function valueSummary(inquiry: Inquiry, winner: Option | null | undefined) {
+  if (winner) return roundMoney(winner.total_amount);
+  const active = inquiry.options.filter(option => option.status === "active");
+  const pool = active.length ? active : inquiry.options;
+  if (pool.length === 0) return "—";
+  const totals = pool.map(option => option.total_amount);
+  const low = Math.min(...totals);
+  const high = Math.max(...totals);
+  return low === high ? roundMoney(low) : `${roundMoney(low)} – ${roundMoney(high)}`;
 }
 
 export default function InquiryComparison({ clientId }: { clientId: Id<"clients"> }) {
@@ -271,15 +329,20 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
   if (!data) return <p role="status" className="text-sm text-muted-foreground">Loading Inquiries…</p>;
   if (data.inquiries.length === 0) return null;
 
-  return <section className="space-y-4" aria-label="Inquiries">
-    <h2 className="text-lg font-semibold">Inquiries</h2>
-    <div className="@container overflow-hidden rounded-md border">
+  return <section className="space-y-3" aria-label="Inquiries">
+    <div>
+      <h2 className="text-lg font-semibold">Inquiries</h2>
+      <p className="text-sm text-muted-foreground">Expand an Inquiry to compare its quotations.</p>
+    </div>
+    <div className="@container overflow-hidden rounded-lg border bg-card shadow-xs">
       <Table aria-label="Inquiry history" className="table-fixed">
         <TableHeader>
-          <TableRow>
-            <TableHead scope="col">Opened</TableHead>
-            <TableHead scope="col" className="w-[28%] @min-[34rem]:w-[20%]">Status</TableHead>
-            <TableHead scope="col" className="w-24 text-right @min-[34rem]:w-[20%]">Quotations</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead scope="col" className="pl-11">Inquiry</TableHead>
+            <TableHead scope="col" className="w-[42%] @min-[34rem]:w-[24%]">Status</TableHead>
+            <TableHead scope="col" className="w-0 p-0 text-right @min-[34rem]:w-[24%] @min-[34rem]:pr-4">
+              <span className="sr-only @min-[34rem]:not-sr-only">Value</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -290,46 +353,65 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
             const winner = accepted && inquiry.options.find(option => option.revision_id === accepted.revision_id);
             const canManage = data.actions_enabled && !inquiry.outcome;
             const canUndo = data.actions_enabled && inquiry.can_undo && accepted;
+            const value = valueSummary(inquiry, winner);
+            const count = inquiry.options.length;
+            const toggle = () => setExpandedInquiryId(isExpanded ? null : inquiry.id);
             return <Fragment key={inquiry.id}>
-              <TableRow id={`inquiry-${inquiry.id}`} className="scroll-mt-4">
+              <TableRow id={`inquiry-${inquiry.id}`}
+                className={cn("scroll-mt-4 cursor-pointer", isExpanded && "border-b-0 bg-muted/40 hover:bg-muted/40")}
+                onClick={event => { if (!(event.target as HTMLElement).closest("a, button")) toggle(); }}>
                 <TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal">
                   <button type="button" aria-expanded={isExpanded} aria-controls={isExpanded ? detailId : undefined}
-                    className="flex w-full min-w-0 items-start gap-2 rounded-sm p-3 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => setExpandedInquiryId(isExpanded ? null : inquiry.id)}>
-                    {isExpanded ? <ChevronDown aria-hidden="true" className="mt-0.5 size-4 shrink-0" /> : <ChevronRight aria-hidden="true" className="mt-0.5 size-4 shrink-0" />}
-                    <time dateTime={inquiry.opened_at} className="min-w-0 wrap-anywhere">{revisionDate(inquiry.opened_at)}</time>
+                    className="flex w-full min-w-0 items-start gap-3 rounded-sm py-3 pr-2 pl-4 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                    onClick={toggle}>
+                    <ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
+                    <span className="grid min-w-0 gap-0.5">
+                      <time dateTime={inquiry.opened_at} className="font-medium wrap-anywhere">{revisionDate(inquiry.opened_at)}</time>
+                      <span className="text-xs text-muted-foreground">
+                        {count} {count === 1 ? "quotation" : "quotations"}
+                        <span aria-hidden="true" className="@min-[34rem]:hidden"> · {value}</span>
+                      </span>
+                    </span>
                   </button>
-                  {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
-                    aria-label={winner ? `Accepted quotation ${winner.reference}` : "Accepted quotation"}
-                    className="block wrap-anywhere pr-3 pb-3 pl-9 font-mono text-xs text-primary underline">
-                    {winner?.reference ?? "Accepted quotation"}
-                  </Link>}
                 </TableHead>
-                <TableCell className="px-1.5 whitespace-normal @min-[34rem]:px-2">
-                  <Badge variant={accepted ? "default" : "secondary"} className="px-1.5 @min-[34rem]:px-2">
+                <TableCell className="py-3 align-top whitespace-normal">
+                  <StatusPill tone={!inquiry.outcome ? "open" : accepted ? "accepted" : "closed"}>
                     {!inquiry.outcome ? "Open" : accepted ? "Accepted" : "Closed"}
-                  </Badge>
-                  {!inquiry.outcome && <p className="mt-1 text-xs text-muted-foreground">
+                  </StatusPill>
+                  {!inquiry.outcome && <p className="mt-1.5 text-xs text-muted-foreground">
                     <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
                   </p>}
+                  {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
+                    aria-label={winner ? `Accepted quotation ${winner.reference}` : "Accepted quotation"}
+                    className="mt-1.5 block font-mono text-xs text-primary wrap-anywhere hover:underline">
+                    {winner?.reference ?? "View accepted quotation"}
+                  </Link>}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{inquiry.options.length}</TableCell>
+                <TableCell className="p-0 text-right align-top font-semibold tabular-nums whitespace-normal @min-[34rem]:py-3 @min-[34rem]:pr-4">
+                  <span className="sr-only @min-[34rem]:not-sr-only">{value}</span>
+                </TableCell>
               </TableRow>
-              {isExpanded && <TableRow id={detailId} className="bg-muted/20 hover:bg-muted/20">
-                <TableCell colSpan={3} className="space-y-3 p-3 whitespace-normal @min-[34rem]:p-4">
-                  {(inquiry.outcome || canManage) && <div className="flex flex-wrap items-center justify-between gap-3">
-                    {inquiry.outcome && <p className="text-sm font-medium">
-                      {inquiry.outcome.type === "accepted" ? "Quotation accepted" : inquiryClosureLabel[inquiry.outcome.type]}
-                    </p>}
-                    {canManage && <div className="ml-auto flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>Record follow-up</Button>
-                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>Close Inquiry</Button>
+              {isExpanded && <TableRow id={detailId} className="bg-muted/40 hover:bg-muted/40">
+                <TableCell colSpan={3} className="space-y-3 px-3 pt-0 pb-4 whitespace-normal @min-[34rem]:pr-4 @min-[34rem]:pl-11">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {inquiry.outcome?.type === "accepted" ? "Quotation accepted"
+                        : inquiry.outcome ? inquiryClosureLabel[inquiry.outcome.type]
+                          : count > 1 ? `Comparing ${count} quotations · newest first` : "Newest first"}
+                    </p>
+                    {canManage && <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>
+                        <BellRing aria-hidden="true" />Record follow-up
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>
+                        <XCircle aria-hidden="true" />Close Inquiry
+                      </Button>
                     </div>}
-                    {canUndo && <Button size="sm" variant="outline" className="ml-auto"
+                    {canUndo && <Button size="sm" variant="outline"
                       onClick={() => review(inquiry, { type: "undo_acceptance", expected_acceptance_id: canUndo.event_id })}>
-                      Undo acceptance
+                      <Undo2 aria-hidden="true" />Undo acceptance
                     </Button>}
-                  </div>}
+                  </div>
                   <InquiryQuotationList options={inquiry.options} actionsEnabled={data.actions_enabled}
                     onReview={(option, command) => review(inquiry, command, option)} />
                 </TableCell>
