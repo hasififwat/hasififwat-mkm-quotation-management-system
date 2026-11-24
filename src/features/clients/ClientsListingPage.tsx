@@ -412,11 +412,11 @@ export default function ClientsListingPage({
 				<Table aria-label="Clients" aria-busy={isLoading} className="table-fixed">
 					<TableHeader>
 						<TableRow className="hover:bg-transparent">
-							<TableHead scope="col" className="pl-11 sm:w-[52%] lg:w-[30%]">Name</TableHead>
-							<TableHead scope="col" className="hidden w-[30%] sm:table-cell lg:w-[22%]">Phone</TableHead>
-							<TableHead scope="col" className="w-[5.25rem] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[14%]">Quotations</TableHead>
-							<TableHead scope="col" className="hidden w-[17%] lg:table-cell">Last Quotation</TableHead>
-							<TableHead scope="col" className="hidden w-[17%] pr-4 lg:table-cell">Client Since</TableHead>
+							<TableHead scope="col" className="pl-11 sm:w-[52%] lg:w-[33%]">Name</TableHead>
+							<TableHead scope="col" className="hidden w-[30%] sm:table-cell lg:w-[13%]">Phone</TableHead>
+							<TableHead scope="col" className="w-[5.25rem] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[17%]">Quotations</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] lg:w-[19%] lg:table-cell">Last Quotation</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] pr-4 lg:w-[18%] lg:table-cell">Client Since</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -441,7 +441,7 @@ export default function ClientsListingPage({
 										<button type="button" aria-label={`Quotations for ${client.name}`} aria-expanded={isExpanded}
 											aria-controls={detailId}
 											onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
-											className="flex w-full min-w-0 items-start gap-3 rounded-sm pt-4 pr-2 pb-2 pl-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:pb-4">
+											className="flex w-full min-w-0 items-start gap-3 rounded-sm pt-4 pr-2 pb-2 pl-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:py-2">
 											<ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
 											<span className="min-w-0 font-semibold wrap-anywhere">{client.name}</span>
 										</button>
@@ -451,10 +451,10 @@ export default function ClientsListingPage({
 											<p>Client since <time dateTime={client.created_at}>{formatDate(client.created_at)}</time></p>
 										</div>
 									</TableHead>
-									<TableCell className="hidden py-4 whitespace-normal wrap-anywhere sm:table-cell">{client.phone_number || "—"}</TableCell>
-									<TableCell className="py-4 text-center tabular-nums" aria-label={`${client.quotation_count} current quotations`}>{client.quotation_count}</TableCell>
-									<TableCell className="hidden py-4 lg:table-cell">{lastQuotation}</TableCell>
-									<TableCell className="hidden py-4 pr-4 lg:table-cell"><time dateTime={client.created_at}>{formatDate(client.created_at)}</time></TableCell>
+									<TableCell className="hidden py-4 whitespace-normal wrap-anywhere sm:table-cell lg:py-2">{client.phone_number || "—"}</TableCell>
+									<TableCell className="py-4 text-center tabular-nums lg:py-2" aria-label={`${client.quotation_count} current quotations`}>{client.quotation_count}</TableCell>
+									<TableCell className="hidden py-4 lg:table-cell lg:py-2">{lastQuotation}</TableCell>
+									<TableCell className="hidden py-4 pr-4 lg:table-cell lg:py-2"><time dateTime={client.created_at}>{formatDate(client.created_at)}</time></TableCell>
 								</TableRow>
 								{isExpanded && <TableRow id={detailId} className="bg-muted/30 hover:bg-muted/30">
 									<TableCell colSpan={5} className="p-3 whitespace-normal sm:p-5">
