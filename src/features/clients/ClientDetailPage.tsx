@@ -6,6 +6,7 @@ import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { StaffPageColumn } from "~/components/ui/list-page-layout";
 import InquiryComparison from "./InquiryComparison";
 
 type ClientQuotation = {
@@ -62,7 +63,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 	const standaloneQuotations = client.quotations.filter(quotation => !quotation.inquiry_id);
 
 	return (
-		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
+		<StaffPageColumn>
 			{/* Back nav */}
 			<Button variant="ghost" size="sm" asChild className="-ml-2 gap-1 text-muted-foreground">
 				<Link href="/clients">
@@ -220,6 +221,6 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 					)}
 				</CardContent>
 			</Card>
-		</div>
+		</StaffPageColumn>
 	);
 }
