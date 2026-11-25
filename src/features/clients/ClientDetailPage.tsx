@@ -74,7 +74,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 
 			{/* Client info card */}
 			<Card>
-				<CardHeader className="pb-3">
+				<CardHeader className="grid-rows-[auto]">
 					<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 						<div className="flex items-center gap-3">
 							<div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -93,26 +93,26 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						<Button asChild className="gap-2 w-full md:w-auto">
 							<Link href={`/quotations/create?client_id=${client.id}`}>
 								<Plus className="h-4 w-4" />
-								New Quotation
+								Create Quotation
 							</Link>
 						</Button>
 					</div>
 				</CardHeader>
-				<CardContent className="pt-0">
-					<div className="flex flex-wrap gap-6 text-sm">
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Quotations</p>
-							<p className="font-semibold">{client.quotations.length}</p>
+				<CardContent>
+					<dl className="flex flex-wrap gap-y-3 gap-x-6 sm:gap-x-10">
+						<div className="space-y-0.5">
+							<dt className="text-sm text-muted-foreground">Quotations</dt>
+							<dd className="text-lg font-semibold tabular-nums">{client.quotations.length}</dd>
 						</div>
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Current Quoted Value</p>
-							<p className="font-semibold">{formatCurrency(totalQuotedValue)}</p>
+						<div className="space-y-0.5">
+							<dt className="text-sm text-muted-foreground">Current Quoted Value</dt>
+							<dd className="text-lg font-semibold tabular-nums">{formatCurrency(totalQuotedValue)}</dd>
 						</div>
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Client Since</p>
-							<p className="font-semibold">{formatDate(client.created_at)}</p>
+						<div className="space-y-0.5">
+							<dt className="text-sm text-muted-foreground">Client Since</dt>
+							<dd className="text-lg font-semibold tabular-nums">{formatDate(client.created_at)}</dd>
 						</div>
-					</div>
+					</dl>
 				</CardContent>
 			</Card>
 
