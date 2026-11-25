@@ -11,6 +11,7 @@ import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
@@ -374,16 +375,16 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
   if (!data) return <p role="status" className="text-sm text-muted-foreground">Loading Inquiries…</p>;
   if (data.inquiries.length === 0) return null;
 
-  return <section className="space-y-3" aria-label="Inquiries">
+  return <section className="space-y-4" aria-label="Inquiries">
     <div>
-      <h2 className="text-lg font-semibold">Inquiries</h2>
-      <p className="text-sm text-muted-foreground">Expand an Inquiry to compare its quotations.</p>
+      <h2 className="text-xl font-semibold tracking-tight">Inquiries</h2>
+      <p className="text-sm text-muted-foreground">Expand an inquiry to compare its quotations.</p>
     </div>
-    <div className="@container overflow-hidden rounded-lg border bg-card shadow-xs">
+    <Card className="@container gap-0 overflow-hidden py-0">
       <Table aria-label="Inquiry history" className="table-fixed">
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead scope="col" className="pl-11">Inquiry</TableHead>
+            <TableHead scope="col" className="pl-12">Inquiry</TableHead>
             <TableHead scope="col" className="w-[42%] @min-[34rem]:w-[24%]">Status</TableHead>
             <TableHead scope="col" className="w-0 p-0 text-right @min-[34rem]:w-[24%] @min-[34rem]:pr-4">
               <span className="sr-only @min-[34rem]:not-sr-only">Value</span>
@@ -407,7 +408,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 onClick={event => { if (!(event.target as HTMLElement).closest("a, button")) toggle(); }}>
                 <TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal">
                   <button type="button" aria-expanded={isExpanded} aria-controls={isExpanded ? detailId : undefined}
-                    className="flex w-full min-w-0 items-start gap-3 rounded-sm py-3 pr-2 pl-4 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                    className="flex w-full min-w-0 items-start gap-3 rounded-sm py-3 pr-2 pl-5 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                     onClick={toggle}>
                     <ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
                     <span className="grid min-w-0 gap-0.5">
@@ -437,7 +438,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 </TableCell>
               </TableRow>
               {isExpanded && <TableRow id={detailId} className="bg-muted/40 hover:bg-muted/40">
-                <TableCell colSpan={3} className="space-y-3 px-3 pt-0 pb-4 whitespace-normal @min-[34rem]:pr-4 @min-[34rem]:pl-11">
+                <TableCell colSpan={3} className="space-y-3 px-3 pt-0 pb-4 whitespace-normal @min-[34rem]:pr-4 @min-[34rem]:pl-12">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-xs font-medium text-muted-foreground">
                       {inquiry.outcome?.type === "accepted" ? "Quotation accepted"
@@ -465,7 +466,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
           })}
         </TableBody>
       </Table>
-    </div>
+    </Card>
     {intent && <InquiryAction intent={intent} onDismiss={() => setIntent(null)} />}
   </section>;
 }
