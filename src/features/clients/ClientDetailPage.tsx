@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { StaffPageColumn } from "~/components/ui/list-page-layout";
 import InquiryComparison from "./InquiryComparison";
 
@@ -199,20 +199,20 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 					)}
 				</CardContent>
 			</Card>}
-			<Card>
+			<Card className="gap-5">
 				<CardHeader>
-					<CardTitle className="text-base">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+					<CardTitle className="text-lg leading-normal">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+					<CardDescription>These revisions are excluded from current quoted value.</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p className="text-sm text-muted-foreground mb-4">Saved revisions associated with this client. These amounts are excluded from current quoted value.</p>
 					{client.historical_quotations.length === 0 ? <p className="text-sm text-muted-foreground">No historical revisions.</p> : (
-						<ul className="divide-y">
+						<ul className="divide-y divide-border">
 							{client.historical_quotations.map(q => (
-								<li key={q.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-									<div className="space-y-1">
-										<Link href={`/quotations/review/${q.id}`} className="font-mono text-sm text-primary hover:underline">{q.quotation_number}</Link>
-										<p className="text-sm">{q.client_name} · {q.package_name}</p>
-										<p className="text-xs text-muted-foreground">{formatCurrency(q.total_amount)} · {formatDate(q.created_at)}{q.archived ? " · Family archived" : " · Historical revision"}</p>
+								<li key={q.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-1 last:pb-0">
+									<div className="min-w-0 space-y-1">
+										<Link href={`/quotations/review/${q.id}`} className="break-words font-mono text-sm text-primary hover:underline">{q.quotation_number}</Link>
+										<p className="break-words text-sm">{q.client_name} · {q.package_name}</p>
+										<p className="break-words text-sm text-muted-foreground">{formatCurrency(q.total_amount)} · {formatDate(q.created_at)}{q.archived ? " · Family archived" : " · Historical revision"}</p>
 									</div>
 									<Button variant="outline" size="sm" asChild><Link href={`/quotations/review/${q.id}`}>View saved revision</Link></Button>
 								</li>
