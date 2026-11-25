@@ -201,7 +201,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 			</Card>}
 			<Card className="gap-5">
 				<CardHeader>
-					<CardTitle className="text-lg leading-normal">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+					<CardTitle className="text-base leading-normal sm:text-lg">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
 					<CardDescription>These revisions are excluded from current quoted value.</CardDescription>
 				</CardHeader>
 				<CardContent>
