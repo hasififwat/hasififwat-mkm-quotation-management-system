@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { BellRing, CalendarDays, Check, ChevronRight, Clock, Eye, MoreHorizontal, Pencil, Undo2, XCircle } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
@@ -11,11 +11,10 @@ import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { inquiryClosureLabel, inquiryStatusLabel } from "~/features/quotation/inquiry-display";
 import { revisionDate } from "~/features/quotation/revision-display";
 import { cn } from "~/lib/utils";
@@ -225,9 +224,10 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
       const closed = option.status === "closed";
 
       return <li key={option.family_id} className={cn(
-        "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-3",
-        "@min-[40rem]:grid-cols-[minmax(0,1fr)_12rem_8.5rem_4.5rem] @min-[40rem]:items-center @min-[40rem]:gap-x-4 @min-[40rem]:gap-y-1 @min-[40rem]:px-4",
-        preview && "@min-[40rem]:grid-cols-[minmax(0,1fr)_8rem_8.5rem_4.5rem] @min-[40rem]:gap-y-0 @min-[40rem]:py-1.5",
+        "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 px-3",
+        preview
+          ? "gap-x-3 gap-y-2 py-3 @min-[40rem]:grid-cols-[minmax(0,1fr)_8rem_8.5rem_4.5rem] @min-[40rem]:items-center @min-[40rem]:gap-x-4 @min-[40rem]:gap-y-0 @min-[40rem]:px-4 @min-[40rem]:py-1.5"
+          : "gap-y-1 py-2 @min-[29rem]:grid-cols-[minmax(0,1fr)_auto_auto_auto] @min-[29rem]:items-center",
         option.status === "accepted" && "bg-primary/5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary",
       )}>
         <div className="col-start-1 row-start-1 min-w-0">
@@ -236,7 +236,10 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
           </p>
         </div>
 
-        <div className="col-span-2 col-start-1 row-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground @min-[40rem]:col-span-1">
+        <div className={cn(
+          "col-span-2 col-start-1 row-start-2 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground",
+          preview ? "gap-x-3 @min-[40rem]:col-span-1" : "@min-[29rem]:col-span-1",
+        )}>
           {preview ? <span className="font-mono font-semibold wrap-anywhere">{option.reference}</span>
             : <Link href={`/quotations/review/${option.revision_id}`} title="Preview quotation"
               className="rounded-sm font-mono font-semibold text-primary wrap-anywhere hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -249,27 +252,34 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
           </span>
         </div>
 
-        <div className="col-start-1 row-start-3 min-w-0 self-center @min-[40rem]:col-start-2 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1">
+        <div className={cn(
+          "col-start-1 row-start-3 min-w-0 self-center",
+          preview ? "@min-[40rem]:col-start-2 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1"
+            : "@min-[29rem]:col-start-2 @min-[29rem]:row-span-2 @min-[29rem]:row-start-1",
+        )}>
           <StatusPill tone={optionTone[option.status]}>{inquiryStatusLabel[option.status]}</StatusPill>
           {closed && <p className="mt-1 text-xs text-muted-foreground wrap-anywhere">{inquiryClosureLabel[option.reason]}</p>}
         </div>
 
         <p className={cn(
-          "col-start-2 row-start-1 text-right font-semibold tabular-nums whitespace-nowrap @min-[40rem]:col-start-3 @min-[40rem]:row-span-2",
+          "col-start-2 row-start-1 text-right font-semibold tabular-nums whitespace-nowrap",
+          preview ? "@min-[40rem]:col-start-3 @min-[40rem]:row-span-2"
+            : "@min-[29rem]:col-start-3 @min-[29rem]:row-span-2",
           closed && "font-medium text-muted-foreground",
         )}>
           {money(option.total_amount)}
         </p>
 
         <div className={cn(
-          "col-start-2 row-start-3 flex items-center justify-end gap-0.5 self-center @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1",
-          preview && "w-[4.125rem] justify-start justify-self-end",
+          "col-start-2 row-start-3 flex items-center self-center",
+          preview ? "w-[4.125rem] justify-self-end gap-0.5 @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1"
+            : "w-24 @min-[29rem]:col-start-4 @min-[29rem]:row-span-2 @min-[29rem]:row-start-1",
         )}>
-          {preview && <Button asChild variant="ghost" size="icon-sm">
+          <Button asChild variant="ghost" size="icon-sm">
             <Link href={`/quotations/review/${option.revision_id}`} aria-label={`Preview quotation ${option.reference}`} title="Preview quotation">
               <Eye aria-hidden="true" />
             </Link>
-          </Button>}
+          </Button>
           {canManage && <>
             <Button asChild variant="ghost" size="icon-sm">
               <Link href={`/quotations/edit/${option.revision_id}`} aria-label={`Edit current quotation ${option.reference}`} title="Edit current quotation">
@@ -329,12 +339,72 @@ function valueSummary(inquiry: Inquiry, winner: Option | null | undefined) {
   return low === high ? roundMoney(low) : `${roundMoney(low)} – ${roundMoney(high)}`;
 }
 
+function inquiryTone(inquiry: Inquiry): Tone {
+  return !inquiry.outcome ? "open" : inquiry.outcome.type === "accepted" ? "accepted" : "closed";
+}
+
+const inquiryStatus: Record<Tone, string> = { open: "Open", closed: "Closed", accepted: "Accepted" };
+const timelineDot: Record<Tone, string> = {
+  open: "bg-emerald-600 dark:bg-emerald-400",
+  closed: "bg-muted-foreground",
+  accepted: "bg-primary",
+};
+
+function InquiryDetails({ inquiry, actionsEnabled, showSummary, onReview }: {
+  inquiry: Inquiry;
+  actionsEnabled: boolean;
+  showSummary: boolean;
+  onReview: (command: Command, option?: Option) => void;
+}) {
+  const outcome = inquiry.outcome;
+  const tone = inquiryTone(inquiry);
+  return <section id={`inquiry-${inquiry.id}-details`} aria-labelledby={`inquiry-${inquiry.id}-quotations`} className="min-w-0 space-y-3">
+    <div className="flex flex-wrap items-start justify-between gap-2">
+      <div className="min-w-0">
+        <h3 id={`inquiry-${inquiry.id}-quotations`} className="text-base font-semibold sm:text-lg">
+          Quotations ({inquiry.options.length})
+        </h3>
+        {showSummary && <p className="text-sm text-muted-foreground">For inquiry on {revisionDate(inquiry.opened_at)}</p>}
+        {outcome && outcome.type !== "accepted" && <p className="text-xs text-muted-foreground">{inquiryClosureLabel[outcome.type]}</p>}
+      </div>
+      {showSummary && <StatusPill tone={tone}>{inquiryStatus[tone]}</StatusPill>}
+    </div>
+    {actionsEnabled && (!outcome || (outcome.type === "accepted" && inquiry.can_undo)) &&
+      <div className="flex flex-wrap gap-2">
+        {!outcome ? <>
+          <Button size="sm" variant="outline" onClick={() => onReview({ type: "follow_up" })}>
+            <BellRing aria-hidden="true" />Record follow-up
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => onReview({ type: "close" })}>
+            <XCircle aria-hidden="true" />Close Inquiry
+          </Button>
+        </> : <Button size="sm" variant="outline"
+          onClick={() => onReview({ type: "undo_acceptance", expected_acceptance_id: outcome.event_id })}>
+          <Undo2 aria-hidden="true" />Undo acceptance
+        </Button>}
+      </div>}
+    <InquiryQuotationList options={inquiry.options} actionsEnabled={actionsEnabled}
+      onReview={(option, command) => onReview(command, option)} />
+  </section>;
+}
+
+const splitPaneMinWidth = 880;
+
 export default function InquiryComparison({ clientId }: { clientId: Id<"clients"> }) {
   const data = useQuery(api.inquiries.forClient, { client_id: clientId });
   const [intent, setIntent] = useState<Intent | null>(null);
-  const [expandedInquiryId, setExpandedInquiryId] = useState<Inquiry["id"] | null>(null);
+  const [selectedInquiryId, setSelectedInquiryId] = useState<Inquiry["id"] | null>(null);
+  const [splitPane, setSplitPane] = useState(false);
+  const workspace = useRef<HTMLElement>(null);
   const handledHash = useRef<string | null>(null);
-  const scrollTarget = useRef<Inquiry["id"] | null>(null);
+  const hasInquiries = Boolean(data?.inquiries.length);
+
+  useEffect(() => {
+    if (!hasInquiries || !workspace.current) return;
+    const observer = new ResizeObserver(([entry]) => setSplitPane(entry.contentRect.width >= splitPaneMinWidth));
+    observer.observe(workspace.current);
+    return () => observer.disconnect();
+  }, [hasInquiries]);
 
   useEffect(() => {
     let frame: number | undefined;
@@ -345,8 +415,8 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
       if (!inquiry) return;
       frame = window.requestAnimationFrame(() => {
         handledHash.current = hash;
-        scrollTarget.current = inquiry.id;
-        setExpandedInquiryId(inquiry.id);
+        setSelectedInquiryId(inquiry.id);
+        document.getElementById(`inquiry-${inquiry.id}`)?.scrollIntoView({ block: "nearest" });
       });
     }
     function hashChanged() {
@@ -362,111 +432,80 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
     };
   }, [data]);
 
-  useEffect(() => {
-    if (!expandedInquiryId || scrollTarget.current !== expandedInquiryId) return;
-    document.getElementById(`inquiry-${expandedInquiryId}`)?.scrollIntoView({ block: "nearest" });
-    scrollTarget.current = null;
-  }, [expandedInquiryId]);
-
-  function review(inquiry: Inquiry, command: Command, option?: Option) {
-    setIntent({ inquiry, command, option, requestKey: crypto.randomUUID() });
-  }
-
   if (!data) return <p role="status" className="text-sm text-muted-foreground">Loading Inquiries…</p>;
-  if (data.inquiries.length === 0) return null;
+  if (!hasInquiries) return null;
 
-  return <section className="space-y-4" aria-label="Inquiries">
-    <div>
-      <h2 className="text-xl font-semibold tracking-tight">Inquiries</h2>
-      <p className="text-sm text-muted-foreground">Expand an inquiry to compare its quotations.</p>
-    </div>
-    <Card className="@container gap-0 overflow-hidden py-0">
-      <Table aria-label="Inquiry history" className="table-fixed">
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead scope="col" className="pl-12">Inquiry</TableHead>
-            <TableHead scope="col" className="w-[42%] @min-[34rem]:w-[24%]">Status</TableHead>
-            <TableHead scope="col" className="w-0 p-0 text-right @min-[34rem]:w-[24%] @min-[34rem]:pr-4">
-              <span className="sr-only @min-[34rem]:not-sr-only">Value</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+  const selected = data.inquiries.find(inquiry => inquiry.id === selectedInquiryId)
+    ?? (splitPane ? data.inquiries[0] : null);
+  const details = selected ? <InquiryDetails
+    inquiry={selected}
+    actionsEnabled={data.actions_enabled}
+    showSummary={splitPane}
+    onReview={(command, option) => setIntent({ inquiry: selected, command, option, requestKey: crypto.randomUUID() })}
+  /> : null;
+
+  return <section ref={workspace} aria-labelledby="inquiry-timeline-heading"
+    className={cn("grid min-w-0 gap-4", splitPane && "grid-cols-[minmax(0,9fr)_minmax(0,11fr)]")}>
+    <Card className="min-w-0 gap-4 py-4">
+      <CardHeader className="gap-1 px-3 sm:px-4">
+        <h2 id="inquiry-timeline-heading" className="text-lg font-semibold tracking-tight">Inquiry Timeline</h2>
+        <CardDescription>A chronological record of inquiries and their quotations.</CardDescription>
+      </CardHeader>
+      <CardContent className="px-3 sm:px-4">
+        <ol role="list" className="space-y-2 pl-4 sm:pl-5" aria-label="Inquiry history">
           {data.inquiries.map(inquiry => {
-            const isExpanded = expandedInquiryId === inquiry.id;
-            const detailId = `inquiry-${inquiry.id}-details`;
+            const isSelected = selected?.id === inquiry.id;
+            const id = `inquiry-${inquiry.id}`;
             const accepted = inquiry.outcome?.type === "accepted" ? inquiry.outcome : null;
             const winner = accepted && inquiry.options.find(option => option.revision_id === accepted.revision_id);
-            const canManage = data.actions_enabled && !inquiry.outcome;
-            const canUndo = data.actions_enabled && inquiry.can_undo && accepted;
-            const value = valueSummary(inquiry, winner);
+            const tone = inquiryTone(inquiry);
             const count = inquiry.options.length;
-            const toggle = () => setExpandedInquiryId(isExpanded ? null : inquiry.id);
-            return <Fragment key={inquiry.id}>
-              <TableRow id={`inquiry-${inquiry.id}`}
-                className={cn("scroll-mt-4 cursor-pointer", isExpanded && "border-b-0 bg-muted/40 hover:bg-muted/40")}
-                onClick={event => { if (!(event.target as HTMLElement).closest("a, button")) toggle(); }}>
-                <TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal">
-                  <button type="button" aria-expanded={isExpanded} aria-controls={isExpanded ? detailId : undefined}
-                    className="flex w-full min-w-0 items-start gap-3 rounded-sm py-3 pr-2 pl-5 text-left text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                    onClick={toggle}>
-                    <ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
-                    <span className="grid min-w-0 gap-0.5">
-                      <time dateTime={inquiry.opened_at} className="font-medium wrap-anywhere">{revisionDate(inquiry.opened_at)}</time>
-                      <span className="text-xs text-muted-foreground">
-                        {count} {count === 1 ? "quotation" : "quotations"}
-                        <span aria-hidden="true" className="@min-[34rem]:hidden"> · {value}</span>
-                      </span>
+            return <li key={inquiry.id} id={id} className="group relative scroll-mt-20">
+              <div aria-hidden="true" className="absolute -left-3 top-7 -bottom-2 border-l border-border group-last:hidden sm:-left-4" />
+              <div aria-hidden="true" className="absolute -left-3 top-0 h-7 border-l border-border group-first:hidden sm:-left-4" />
+              <span aria-hidden="true" className={cn(
+                "absolute -left-3 top-7 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-card sm:-left-4",
+                timelineDot[tone],
+              )} />
+              <div className={cn("rounded-lg border", isSelected ? "border-primary bg-primary/5" : "border-border")}>
+                <div className="relative grid min-h-14 grid-cols-[minmax(0,1fr)_minmax(0,1.12fr)] items-center gap-x-2 px-2 py-1.5 sm:px-3">
+                  <button type="button"
+                    aria-expanded={splitPane ? undefined : isSelected}
+                    aria-pressed={splitPane ? isSelected : undefined}
+                    aria-controls={isSelected ? `${id}-details` : undefined}
+                    aria-describedby={`${id}-summary`}
+                    className="flex min-w-0 cursor-pointer items-center gap-1.5 text-left after:absolute after:inset-0 after:rounded-lg hover:after:bg-muted/20 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring sm:gap-2"
+                    onClick={() => setSelectedInquiryId(!splitPane && isSelected ? null : inquiry.id)}>
+                    <ChevronRight aria-hidden="true" className={cn("size-3.5 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none",
+                      !splitPane && isSelected && "rotate-90")} />
+                    <span className="min-w-0 space-y-0.5">
+                      <time dateTime={inquiry.opened_at} className="block text-xs leading-tight font-semibold">{revisionDate(inquiry.opened_at)}</time>
+                      <span className="block text-xs leading-tight text-muted-foreground">{count} {count === 1 ? "quotation" : "quotations"}</span>
                     </span>
                   </button>
-                </TableHead>
-                <TableCell className="py-3 align-top whitespace-normal">
-                  <StatusPill tone={!inquiry.outcome ? "open" : accepted ? "accepted" : "closed"}>
-                    {!inquiry.outcome ? "Open" : accepted ? "Accepted" : "Closed"}
-                  </StatusPill>
-                  {!inquiry.outcome && <p className="mt-1.5 text-xs text-muted-foreground">
-                    <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
-                  </p>}
-                  {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
-                    aria-label={winner ? `Accepted quotation ${winner.reference}` : "Accepted quotation"}
-                    className="mt-1.5 block font-mono text-xs text-primary wrap-anywhere hover:underline">
-                    {winner?.reference ?? "View accepted quotation"}
-                  </Link>}
-                </TableCell>
-                <TableCell className="p-0 text-right align-top font-semibold tabular-nums whitespace-normal @min-[34rem]:py-3 @min-[34rem]:pr-4">
-                  <span className="sr-only @min-[34rem]:not-sr-only">{value}</span>
-                </TableCell>
-              </TableRow>
-              {isExpanded && <TableRow id={detailId} className="bg-muted/40 hover:bg-muted/40">
-                <TableCell colSpan={3} className="space-y-3 px-3 pt-0 pb-4 whitespace-normal @min-[34rem]:pr-4 @min-[34rem]:pl-12">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {inquiry.outcome?.type === "accepted" ? "Quotation accepted"
-                        : inquiry.outcome ? inquiryClosureLabel[inquiry.outcome.type]
-                          : count > 1 ? `Comparing ${count} quotations · newest first` : "Newest first"}
-                    </p>
-                    {canManage && <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "follow_up" })}>
-                        <BellRing aria-hidden="true" />Record follow-up
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => review(inquiry, { type: "close" })}>
-                        <XCircle aria-hidden="true" />Close Inquiry
-                      </Button>
-                    </div>}
-                    {canUndo && <Button size="sm" variant="outline"
-                      onClick={() => review(inquiry, { type: "undo_acceptance", expected_acceptance_id: canUndo.event_id })}>
-                      <Undo2 aria-hidden="true" />Undo acceptance
-                    </Button>}
+                  <div id={`${id}-summary`} className="min-w-0 space-y-0.5">
+                    <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-0.5">
+                      <StatusPill tone={tone}>{inquiryStatus[tone]}</StatusPill>
+                      <p className="ml-auto text-right text-xs leading-tight font-semibold tabular-nums">{valueSummary(inquiry, winner)}</p>
+                    </div>
+                    {!inquiry.outcome && <p className="text-xs leading-tight text-muted-foreground">
+                      <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
+                    </p>}
+                    {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
+                      aria-label={winner ? `Accepted quotation ${winner.reference}` : "Accepted quotation"}
+                      className="relative z-1 block w-fit font-mono text-xs leading-tight text-primary wrap-anywhere hover:underline">
+                      {winner?.reference ?? "View accepted quotation"}
+                    </Link>}
                   </div>
-                  <InquiryQuotationList options={inquiry.options} actionsEnabled={data.actions_enabled}
-                    onReview={(option, command) => review(inquiry, command, option)} />
-                </TableCell>
-              </TableRow>}
-            </Fragment>;
+                </div>
+                {!splitPane && isSelected && <div className="border-t px-2 py-3 sm:px-3">{details}</div>}
+              </div>
+            </li>;
           })}
-        </TableBody>
-      </Table>
+        </ol>
+      </CardContent>
     </Card>
+    {splitPane && <Card className="min-w-0 gap-0 p-4">{details}</Card>}
     {intent && <InquiryAction intent={intent} onDismiss={() => setIntent(null)} />}
   </section>;
 }
