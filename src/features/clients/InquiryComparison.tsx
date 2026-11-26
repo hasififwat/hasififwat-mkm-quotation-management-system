@@ -218,10 +218,13 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
   if (options.length === 0) return <p className="text-sm text-muted-foreground">No quotations in this Inquiry.</p>;
 
   const preview = !onReview;
+  const hasManageableOptions = actionsEnabled && options.some(option => option.status === "active");
+
   return <ul role="list" aria-label="Quotations" className="@container divide-y overflow-hidden rounded-lg border bg-card shadow-xs">
     {options.map(option => {
       const canManage = actionsEnabled && option.status === "active";
       const closed = option.status === "closed";
+      const closureLabel = closed ? inquiryClosureLabel[option.reason] : null;
 
       return <li key={option.family_id} className={cn(
         "relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 px-3",
@@ -250,6 +253,7 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
             <CalendarDays aria-hidden="true" className="size-3.5 shrink-0" />
             <TravelDates departure={option.departure_date} returnDate={option.return_date} />
           </span>
+          {!preview && closureLabel && <span className="basis-full wrap-anywhere">{closureLabel}</span>}
         </div>
 
         <div className={cn(
@@ -258,7 +262,7 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
             : "@min-[29rem]:col-start-2 @min-[29rem]:row-span-2 @min-[29rem]:row-start-1",
         )}>
           <StatusPill tone={optionTone[option.status]}>{inquiryStatusLabel[option.status]}</StatusPill>
-          {closed && <p className="mt-1 text-xs text-muted-foreground wrap-anywhere">{inquiryClosureLabel[option.reason]}</p>}
+          {preview && closureLabel && <p className="mt-1 text-xs text-muted-foreground wrap-anywhere">{closureLabel}</p>}
         </div>
 
         <p className={cn(
@@ -273,7 +277,8 @@ function InquiryQuotationList({ options, actionsEnabled, onReview }: {
         <div className={cn(
           "col-start-2 row-start-3 flex items-center self-center",
           preview ? "w-[4.125rem] justify-self-end gap-0.5 @min-[40rem]:col-start-4 @min-[40rem]:row-span-2 @min-[40rem]:row-start-1"
-            : "w-24 @min-[29rem]:col-start-4 @min-[29rem]:row-span-2 @min-[29rem]:row-start-1",
+            : "justify-self-end @min-[29rem]:col-start-4 @min-[29rem]:row-span-2 @min-[29rem]:row-start-1",
+          !preview && (hasManageableOptions ? "w-24" : "w-8"),
         )}>
           <Button asChild variant="ghost" size="icon-sm">
             <Link href={`/quotations/review/${option.revision_id}`} aria-label={`Preview quotation ${option.reference}`} title="Preview quotation">
