@@ -75,8 +75,9 @@ test("an open Inquiry takes precedence over closed history and exposes its activ
 
 function renderTimeline() {
   const open = inquiry("ongoing", null, "active");
+  const closed = inquiry("closed", { type: "manual", at: Date.parse("2026-11-25T07:30:00Z") }, "closed");
   const accepted = inquiry("accepted", { type: "accepted", at: 200, revision_id: "accepted" }, "accepted");
-  const data = { inquiries: [open, accepted], actions_enabled: true, server_now: 400 };
+  const data = { inquiries: [open, closed, accepted], actions_enabled: true, server_now: 400 };
   const state = new Map();
   let nextState = 0;
   let onResize;
@@ -107,6 +108,7 @@ function renderTimeline() {
   effects.splice(0).forEach(effect => effect());
 
   return {
+    render,
     disclosure(id) {
       return elements(render()).find(node => node.type === "button" && node.props["aria-describedby"] === `inquiry-${id}-summary`);
     },
@@ -154,4 +156,22 @@ test("wide client detail shows one quotation pane and preserves selection when n
   timeline.resize(390);
   assert.equal(timeline.disclosure("accepted").props["aria-expanded"], true);
   assert.deepEqual(timeline.previewLinks("accepted"), ["/quotations/review/accepted"]);
+});
+
+test("timeline summaries show closure time for closed Inquiries and prices only in quotation details", () => {
+  const timeline = renderTimeline();
+  timeline.resize(1000);
+  const nodes = elements(timeline.render());
+  const summaries = ["ongoing", "closed", "accepted"].map(id =>
+    elements(nodes.find(node => node.props?.id === `inquiry-${id}-summary`)),
+  );
+
+  assert.deepEqual(
+    summaries.map(summary => summary.find(node => node.type === "time")?.props.dateTime),
+    [undefined, "2026-11-25T07:30:00.000Z", undefined],
+  );
+  const showsPrice = node => typeof node.props?.children === "string" && /RM\s*100/.test(node.props.children);
+  assert.ok(summaries.every(summary => !summary.some(showsPrice)));
+  const quotations = nodes.find(node => node.type === "ul" && node.props["aria-label"] === "Quotations");
+  assert.ok(elements(quotations).some(showsPrice));
 });

@@ -186,12 +186,6 @@ function money(value: number) {
   return currency.format(value).replaceAll("\u00a0", " ");
 }
 
-function roundMoney(value: number) {
-  return (Number.isInteger(value) ? wholeCurrency : currency).format(value);
-}
-
-const wholeCurrency = new Intl.NumberFormat("ms-MY", { style: "currency", currency: "MYR", maximumFractionDigits: 0 });
-
 type Tone = "open" | "accepted" | "closed";
 
 const toneClass: Record<Tone, string> = {
@@ -333,17 +327,6 @@ export function ClientInquiryPreview({ clientId, children }: { clientId: Id<"cli
   </section>;
 }
 
-function valueSummary(inquiry: Inquiry, winner: Option | null | undefined) {
-  if (winner) return roundMoney(winner.total_amount);
-  const active = inquiry.options.filter(option => option.status === "active");
-  const pool = active.length ? active : inquiry.options;
-  if (pool.length === 0) return "—";
-  const totals = pool.map(option => option.total_amount);
-  const low = Math.min(...totals);
-  const high = Math.max(...totals);
-  return low === high ? roundMoney(low) : `${roundMoney(low)} – ${roundMoney(high)}`;
-}
-
 function inquiryTone(inquiry: Inquiry): Tone {
   return !inquiry.outcome ? "open" : inquiry.outcome.type === "accepted" ? "accepted" : "closed";
 }
@@ -461,7 +444,9 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
           {data.inquiries.map(inquiry => {
             const isSelected = selected?.id === inquiry.id;
             const id = `inquiry-${inquiry.id}`;
-            const accepted = inquiry.outcome?.type === "accepted" ? inquiry.outcome : null;
+            const outcome = inquiry.outcome;
+            const accepted = outcome?.type === "accepted" ? outcome : null;
+            const closedAt = outcome && !accepted ? new Date(outcome.at).toISOString() : null;
             const winner = accepted && inquiry.options.find(option => option.revision_id === accepted.revision_id);
             const tone = inquiryTone(inquiry);
             const count = inquiry.options.length;
@@ -473,7 +458,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 timelineDot[tone],
               )} />
               <div className={cn("rounded-lg border", isSelected ? "border-primary bg-primary/5" : "border-border")}>
-                <div className="relative grid min-h-14 grid-cols-[minmax(0,1fr)_minmax(0,min(12.25rem,63%))] items-center gap-x-2 px-2 py-1.5 sm:px-3">
+                <div className="relative grid min-h-14 grid-cols-2 items-center gap-x-2 px-2 py-1.5 sm:px-3">
                   <button type="button"
                     aria-expanded={splitPane ? undefined : isSelected}
                     aria-pressed={splitPane ? isSelected : undefined}
@@ -489,11 +474,11 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                     </span>
                   </button>
                   <div id={`${id}-summary`} className="min-w-0 space-y-0.5">
-                    <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-0.5">
-                      <StatusPill tone={tone}>{inquiryStatus[tone]}</StatusPill>
-                      <p className="ml-auto text-right text-xs leading-tight font-semibold tabular-nums wrap-anywhere">{valueSummary(inquiry, winner)}</p>
-                    </div>
-                    {!inquiry.outcome && <p className="text-xs leading-tight text-muted-foreground">
+                    <StatusPill tone={tone}>{inquiryStatus[tone]}</StatusPill>
+                    {closedAt && <time dateTime={closedAt} className="block text-xs leading-tight text-muted-foreground">
+                      {revisionDate(closedAt)}
+                    </time>}
+                    {!outcome && <p className="text-xs leading-tight text-muted-foreground">
                       <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
                     </p>}
                     {accepted && <Link href={`/quotations/review/${accepted.revision_id}`}
