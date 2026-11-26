@@ -468,7 +468,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                 timelineDot[tone],
               )} />
               <div className={cn("rounded-lg border", isSelected ? "border-primary bg-primary/5" : "border-border")}>
-                <div className="relative grid min-h-14 grid-cols-[minmax(0,1fr)_minmax(0,1.12fr)] items-center gap-x-2 px-2 py-1.5 sm:px-3">
+                <div className="relative grid min-h-14 grid-cols-[minmax(0,1fr)_minmax(0,min(12.25rem,63%))] items-center gap-x-2 px-2 py-1.5 sm:px-3">
                   <button type="button"
                     aria-expanded={splitPane ? undefined : isSelected}
                     aria-pressed={splitPane ? isSelected : undefined}
@@ -486,7 +486,7 @@ export default function InquiryComparison({ clientId }: { clientId: Id<"clients"
                   <div id={`${id}-summary`} className="min-w-0 space-y-0.5">
                     <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-0.5">
                       <StatusPill tone={tone}>{inquiryStatus[tone]}</StatusPill>
-                      <p className="ml-auto text-right text-xs leading-tight font-semibold tabular-nums">{valueSummary(inquiry, winner)}</p>
+                      <p className="ml-auto text-right text-xs leading-tight font-semibold tabular-nums wrap-anywhere">{valueSummary(inquiry, winner)}</p>
                     </div>
                     {!inquiry.outcome && <p className="text-xs leading-tight text-muted-foreground">
                       <Countdown key={`${inquiry.deadline}:${data.server_now}`} deadline={inquiry.deadline} serverNow={data.server_now} />
