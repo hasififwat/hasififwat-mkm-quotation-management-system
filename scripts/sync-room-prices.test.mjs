@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {test} from 'node:test';
-import {load, packages, quotations, state, form, create, reviewedQuote, quotePayload} from './helpers/submission-fixtures.mjs';
+import {load, packages, quotations, state, form, create, read, reviewedQuote, quotePayload} from './helpers/submission-fixtures.mjs';
 
 function equal(actual, expected) { assert.deepEqual(structuredClone(actual), structuredClone(expected)); }
 const parsers = load(path.resolve('src/features/packages/sync/parsers.ts'));
@@ -12,8 +12,8 @@ function csv({qdp = '2500', tpl = '', dbl = '', sgl = ''} = {}) {
   row[2] = 'MENARA JAM'; row[5] = qdp; row[6] = tpl; row[7] = dbl; row[9] = sgl; row[13] = '12 days';
   return `${header.join(',')}\n${row.join(',')}`;
 }
-async function fixture(roomType = 'Quad') {
-  const s = state(); const data = form(); data.rooms[0].name = roomType;
+async function fixture(roomType = 'Quad', hotels = form().hotels) {
+  const s = state(); const data = form(); data.rooms[0].name = roomType; data.hotels = hotels;
   const id = await create(s, data);
   await s.ctx.db.patch(id, {name: 'MENARA JAM', season: 'MS - NOV', source: 'sync'});
   return {s, id, fid: s.tables.package_flights[0]._id};
@@ -25,7 +25,7 @@ async function plan(f, options) {
   return {saved, rows, plan: parsers.buildSyncPlan(rows, [], saved)};
 }
 async function apply(f, spec) {
-  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, expected_edit_token: spec.expected_edit_token, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotels, rooms: spec.rooms});
+  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, expected_edit_token: spec.expected_edit_token, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotel_updates, rooms: spec.rooms});
 }
 test('saved sync data includes room prices, labels and disabled state', async () => {
   const f = await fixture(); f.s.tables.package_rooms[0].enabled = false;
@@ -99,4 +99,105 @@ test('changed-price apply retains custom and disabled rooms and adds absent type
   equal(p.packagesToUpdate[0].rooms, expected);
   await apply(f, p.packagesToUpdate[0]);
   equal(f.s.tables.package_rooms.map(({room_type, price, enabled}) => ({room_type, price, enabled})), expected);
+});
+
+const preservedHotels = [
+  {hotel_type: 'MAKKAH', name: 'Fairmont Makkah', enabled: false, placeholder: 'Custom Makkah placeholder', meals: ['BREAKFAST']},
+  {hotel_type: 'Madinah', name: 'Anwar Madinah', enabled: true, placeholder: 'Enter Madinah hotel', meals: ['BREAKFAST', 'DINNER']},
+  {hotel_type: 'AZIZIAH', name: '', enabled: false, placeholder: 'Enter Aziziah hotel', meals: []},
+  {hotel_type: 'JEDDAH', name: 'Jeddah Transit', enabled: true, placeholder: 'Enter Jeddah', meals: ['BREAKFAST']},
+];
+async function savedHotels(f) {
+  const saved = await read(f.s, f.id);
+  return saved.hotels.map(({_id, hotel_type, name, enabled, placeholder, meals}) => ({_id, hotel_type, name, enabled, placeholder, meals}));
+}
+test('sync review query includes enabled and placeholder for every saved hotel', async () => {
+  const f = await fixture('Quad', preservedHotels);
+  const saved = await packages.listWithHotelsAndMeals._handler(f.s.ctx, {});
+  equal(saved[0].hotels.map(({hotel_type, name, enabled, placeholder, meals}) => ({hotel_type, name, enabled, placeholder, meals})), preservedHotels);
+});
+test('price-only sync review lists only the approved room price change', async () => {
+  const f = await fixture('Quad', preservedHotels);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+});
+test('price-only sync apply preserves every hotel row and its metadata', async () => {
+  const f = await fixture('Quad', preservedHotels);
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
+});
+test('price-only manual import preserves the disabled hotel without inventing MADINAH', async () => {
+  const f = await fixture('Quad', [preservedHotels[0]]);
+  await f.s.ctx.db.patch(f.id, {source: 'manual'});
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
+});
+test('reviewed hotel mapping edits preserve metadata and untouched hotel rows', async () => {
+  const f = await fixture('Quad', [
+    preservedHotels[0],
+    {...preservedHotels[1], meals: ['BREAKFAST']},
+    {...preservedHotels[2], name: 'Aziziah Stay'},
+  ]);
+  const before = await savedHotels(f);
+  const {saved, rows} = await plan(f, {qdp: '1200'});
+  const mapping = {...rows[0], makkah_hotel: 'Swissotel Makkah', madinah_meals: 'HB', taif_hotel: 'Taif Stay'};
+  const mappingCsv = `${Object.keys(mapping).join(',')}\n${Object.values(mapping).map(value => value ?? '').join(',')}`;
+  const p = parsers.buildSyncPlan(parsers.parsePackageMappingCsv(mappingCsv), [], saved);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [
+    {field: 'MAKKAH hotel', old: 'Fairmont Makkah', new: 'Swissotel Makkah'},
+    {field: 'MADINAH meals', old: 'BB', new: 'HB'},
+    {field: 'TAIF hotel', old: '—', new: 'Taif Stay'},
+  ]);
+  await apply(f, p.packagesToUpdate[0]);
+  const after = await savedHotels(f);
+  equal(after.filter(hotel => hotel.hotel_type !== 'TAIF'), [
+    {...before[0], name: 'Swissotel Makkah'},
+    {...before[1], meals: ['BREAKFAST', 'DINNER']},
+    before[2],
+  ]);
+  assert.equal(after.length, 4);
+  const taif = after.find(hotel => hotel.hotel_type === 'TAIF');
+  assert.ok(taif?._id);
+  const {_id, ...taifFields} = taif;
+  equal(taifFields, {hotel_type: 'TAIF', name: 'Taif Stay', enabled: true, placeholder: '', meals: []});
+});
+test('price-only sync preserves saved shorthand meals without expanding them', async () => {
+  const f = await fixture('Quad', [
+    {hotel_type: 'MAKKAH', name: 'Fairmont Makkah', enabled: true, placeholder: 'Enter Makkah hotel', meals: ['BB']},
+  ]);
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+  equal(p.packagesToUpdate[0].hotel_updates, []);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
+});
+test('price-only sync succeeds and preserves duplicate saved hotel types', async () => {
+  const f = await fixture('Quad', [
+    {hotel_type: 'MAKKAH', name: 'Fairmont Makkah', enabled: false, placeholder: 'Primary Makkah', meals: ['BREAKFAST']},
+    {hotel_type: 'MAKKAH', name: 'Swissotel Makkah', enabled: true, placeholder: 'Secondary Makkah', meals: ['DINNER']},
+    {hotel_type: 'JEDDAH', name: 'Jeddah Transit A', enabled: true, placeholder: 'First Jeddah', meals: ['BREAKFAST']},
+    {hotel_type: 'JEDDAH', name: 'Jeddah Transit B', enabled: false, placeholder: 'Second Jeddah', meals: []},
+  ]);
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+  equal(p.packagesToUpdate[0].hotel_updates, []);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
 });

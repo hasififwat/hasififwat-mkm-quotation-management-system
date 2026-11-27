@@ -1,3 +1,4 @@
+import { canonicalHotelType, mergeCsvHotels, normalizedMealsKey, type PackageHotelState } from "../../../domain/package-sync-hotels";
 import { packageSyncKey } from "../../../domain/package-sync-intent";
 import type {
   FieldChange,
@@ -185,7 +186,7 @@ export function parseFlightDiffCsv(text: string): FlightDiffRow[] {
     .filter((r) => r.package_name);
 }
 
-type DbHotel = { hotel_type: string; name: string; meals: string[] };
+type DbHotel = { hotel_type: string; name: string; meals: string[]; enabled?: boolean; placeholder?: string };
 type ExistingPackage = {
   editToken?: string;
   _id: string;
@@ -217,11 +218,11 @@ function mergeRoomPrices(current: SyncRoom[], incoming: SyncRoom[]): SyncRoom[] 
 }
 
 function mealsLabel(meals: string[]): string {
-  const sorted = [...meals].sort().join("+");
+  const sorted = normalizedMealsKey(meals);
   if (sorted === "BREAKFAST+DINNER+LUNCH") return "FB";
   if (sorted === "BREAKFAST+DINNER") return "HB";
   if (sorted === "BREAKFAST") return "BB";
-  return meals.join(", ") || "none";
+  return sorted.split("+").filter(Boolean).join(", ") || "none";
 }
 
 function computeChanges(spec: Omit<PackageUpdateSpec, "changes">, dbPkg: ExistingPackage): FieldChange[] {
@@ -233,25 +234,18 @@ function computeChanges(spec: Omit<PackageUpdateSpec, "changes">, dbPkg: Existin
     changes.push({ field: "Transport", old: oldTransport || "—", new: newTransport || "—" });
   }
 
-  const dbHotelsByType = new Map<string, DbHotel>(
-    (dbPkg.hotels ?? []).map((h) => [h.hotel_type.toUpperCase(), h]),
-  );
-
-  const allTypes = new Set([
-    ...spec.hotels.map((h) => h.hotel_type.toUpperCase()),
-    ...(dbPkg.hotels ?? []).map((h) => h.hotel_type.toUpperCase()),
-  ]);
-
-  for (const type of allTypes) {
-    const dbHotel = dbHotelsByType.get(type);
-    const newHotel = spec.hotels.find((h) => h.hotel_type.toUpperCase() === type);
+  for (let index = 0; index < spec.hotels.length; index++) {
+    const dbHotel = spec.current_hotels[index];
+    const newHotel = spec.hotels[index];
+    if (dbHotel === newHotel) continue;
+    const type = canonicalHotelType(newHotel.hotel_type);
     const oldName = (dbHotel?.name ?? "").trim();
-    const newName = (newHotel?.name ?? "").trim();
+    const newName = newHotel.name.trim();
     if (oldName !== newName) {
       changes.push({ field: `${type} hotel`, old: oldName || "—", new: newName || "—" });
     }
     const oldMeals = mealsLabel(dbHotel?.meals ?? []);
-    const newMeals = mealsLabel(newHotel?.meals ?? []);
+    const newMeals = mealsLabel(newHotel.meals);
     if (oldMeals !== newMeals) {
       changes.push({ field: `${type} meals`, old: oldMeals, new: newMeals });
     }
@@ -328,11 +322,19 @@ export function buildSyncPlan(
       if (dbPkg && dbPkg.source === "manual") {
         packagesToPromote.push(row.db_id);
       }
-      const current_hotels: SyncHotel[] = (dbPkg?.hotels ?? []).map((h) => ({
-        hotel_type: h.hotel_type.toUpperCase(),
-        name: (h.name ?? "").trim(),
+      const current_hotels: PackageHotelState[] = (dbPkg?.hotels ?? []).map((h) => ({
+        hotel_type: h.hotel_type,
+        name: h.name ?? "",
         meals: h.meals ?? [],
+        enabled: h.enabled ?? true,
+        placeholder: h.placeholder ?? "",
       }));
+      const mergedHotels = row.preserve_db_hotels
+        ? current_hotels
+        : mergeCsvHotels(current_hotels, hotels);
+      const hotel_updates: SyncHotel[] = mergedHotels
+        .filter((hotel, index) => index >= current_hotels.length || hotel !== current_hotels[index])
+        .map(({ hotel_type, name, meals }) => ({ hotel_type, name, meals }));
       const spec = {
         kind: "update" as const,
         db_id: row.db_id,
@@ -342,7 +344,8 @@ export function buildSyncPlan(
         transport: row.transport,
         current_hotels,
         current_rooms: dbPkg?.rooms ?? [],
-        hotels,
+        hotels: mergedHotels,
+        hotel_updates,
         rooms: mergeRoomPrices(dbPkg?.rooms ?? [], rooms),
         row,
       };
@@ -557,7 +560,7 @@ export function parsePriceListCsv(
     if (isMatched && dbPkg) {
       transport = dbPkg.transport ?? plTransport;
       const getH = (type: string) =>
-        (dbPkg.hotels ?? []).find(h => h.hotel_type.toUpperCase() === type);
+        (dbPkg.hotels ?? []).find(h => canonicalHotelType(h.hotel_type) === type);
       const mk = getH("MAKKAH");
       const md = getH("MADINAH");
       const az = getH("AZIZIAH");
@@ -597,6 +600,7 @@ export function parsePriceListCsv(
       madinah_hotel, madinah_meals,
       aziziah_hotel, aziziah_meals,
       taif_hotel,    taif_meals,
+      ...(isMatched ? { preserve_db_hotels: true } : {}),
     });
   }
 
