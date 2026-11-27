@@ -53,7 +53,7 @@ const save=async command=>{for(let attempt=0;;attempt++){try{return await client
 const dump=()=>admin.query('issue61Fixture:dump',{});
 if(process.argv.includes('--reset-owned-fixture'))await admin.mutation('issue61Fixture:reset',{});
 const initial=await dump();assert.equal(initial.quotations.filter(q=>q.document_schema_version===1).length,0,'Use a fresh owned fixture for the pre-append gate matrix');
-const result={source,sourceCommit:run.sourceCommit,backendUrl:run.url,surface:'Real password-signup JWT and public HTTP Convex calls. Browser and Next.js HTTP route checks recorded separately.',checks:[]};
+const result={source,sourceCommit:run.sourceCommit,backendUrl:run.url,surface:'Real password-sign-in JWT and public HTTP Convex calls. Browser and Next.js HTTP route checks recorded separately.',checks:[]};
 const legacyPayload={request_key:randomUUID(),reviewed_context:pkg.creation_context,pic_name:'Integrated legacy',branch:'Disposable',client_id:fixture.clientId,package_id:pkg._id,flight_id:pkg.flights[0]._id,selected_rooms:[{room_type:pkg.rooms.find(room=>room.enabled).room_type,price:1200,pax:1}],adds_ons:[],discounts:[],notes:'Pre-migration compatibility'};
 const legacy=await client.mutation('quotations:create',{payload:legacyPayload});
 const gateCheckpoint=async(migration,enabled)=>{if(process.env.INTEGRATION_GATE_UI!=='1')return;const id=randomUUID();await fs.writeFile(path.join(runDir,'gate-ui.json'),JSON.stringify({id,migration,enabled,legacyId:legacy.id,legacyPayload,command:await create()}));for(let i=0;i<600;i++){try{if((await fs.readFile(path.join(runDir,'gate-ui-ack'),'utf8'))===id)return;}catch{}await new Promise(r=>setTimeout(r,200));}throw Error('UI gate checkpoint was not acknowledged');};
@@ -71,7 +71,7 @@ const original=await create();
 const noAuth=await dump();await assert.rejects(()=>anonymous.mutation('quotationRevisionSaves:save',{command:original}));assert.deepEqual(await dump(),noAuth);
 const invalid=new ConvexHttpClient(run.url);invalid.setAuth('invalid-token');
 await assert.rejects(()=>invalid.mutation('quotationRevisionSaves:save',{command:original}));
-result.checks.push('Anonymous and invalid JWT save denied; real password-signup JWT accepted below.');
+result.checks.push('Anonymous and invalid JWT save denied; real password-sign-in JWT accepted below.');
 const pdfRetries=[];
 const waitReady=async id=>{let retries=0;for(let attempt=0;attempt<600;attempt++){const status=await client.query('quotationPdfArtifacts:status',{revision_id:id});if(status.kind==='ready')return status;if(status.kind==='failed'){assert.ok(retries++<3,'Failed-state public retry limit');pdfRetries.push({revisionId:id,from:'failed',publicRetry:1});await client.mutation('quotationPdfArtifacts:retry',{revision_id:id});}await new Promise(resolve=>setTimeout(resolve,200));}throw new Error('PDF did not become ready');};
 

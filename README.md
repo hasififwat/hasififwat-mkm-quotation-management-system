@@ -79,6 +79,41 @@ Edit `mprocs.yaml` to add more services later.
 Use `pnpm dev:web` for web-only development. `pnpm dev` also starts the Convex
 watcher, which publishes local backend changes to the selected deployment.
 
+### Set up the first account administrator
+
+Use these steps on the target Convex deployment once it runs this version.
+
+1. If the intended administrator already controls a password account, confirm
+   they can sign in. In the deployment's `authAccounts` table, find the row
+   with `provider` set to `password` and `providerAccountId` set to their login
+   email. Use that row's `userId`.
+
+   To create the first account or replace a deleted administrator, sign in to
+   the target deployment's Convex dashboard as a deployment administrator. Run
+   `profiles:provisionPasswordAccount` in the function runner with `email`,
+   `password`, `fullName`, and `branch`. Use an unused email and enter a password
+   of at least eight characters directly in the runner. Copy the returned
+   `users` document `_id`.
+
+2. Set `MKM_ACCOUNT_ADMIN_USER_IDS` only in that Convex deployment's server
+   environment. Use a comma-separated list of `users` document IDs. For a
+   recovery, replace the deleted administrator's ID with the new ID.
+
+   ```bash
+   pnpm exec convex env set --deployment '<deployment-name>' MKM_ACCOUNT_ADMIN_USER_IDS '<users-id>'
+   ```
+
+   An unset or empty value disables account creation through the app.
+
+Self-registration is disabled. Existing password accounts keep their exact email
+for sign-in. New account and profile emails must have no surrounding whitespace.
+
+At rollout, review existing password accounts and profile-email bindings. Remove
+unauthorized accounts and correct bindings through deployment-admin tooling.
+
+To verify account creation and quotation access on a disposable local backend, run
+`FAMILY_BACKEND_BINARY=/absolute/path/to/convex-local-backend node scripts/check-account-provisioning-backend.mjs`.
+
 ### Package access
 
 Package functions require a signed-in Convex identity. The Next.js auth adapter

@@ -1,7 +1,9 @@
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation } from "./lib/quotationFamilyIdentity";
 import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { type Infer, v } from "convex/values";
+import type { DataModel, Id } from "./_generated/dataModel";
+import type { ActionCtx, MutationCtx } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 export const getMyProfile = query({
 	args: {},
@@ -9,7 +11,6 @@ export const getMyProfile = query({
 		const userId = await getAuthUserId(ctx);
 		if (!userId) return null;
 
-		// Get email from the password account (providerAccountId is the email for Password provider)
 		const account = await ctx.db
 			.query("authAccounts")
 			.withIndex("userIdAndProvider", (q) =>
@@ -19,9 +20,9 @@ export const getMyProfile = query({
 
 		const email = account?.providerAccountId ?? null;
 
-		const profile = await ctx.db
+		const profile = email === null ? null : await ctx.db
 			.query("profiles")
-			.withIndex("by_email", (q) => q.eq("email", email as string))
+			.withIndex("by_email", (q) => q.eq("email", email))
 			.unique();
 
 		return {
@@ -33,50 +34,81 @@ export const getMyProfile = query({
 	},
 });
 
+function requireEmail(email: string): string {
+	if (!email.trim()) throw new Error("Email is required");
+	if (email !== email.trim()) throw new Error("Email must not contain surrounding whitespace");
+	return email;
+}
+
+function profileFields(args: { email: string; fullName: string; branch: string; unit?: string }) {
+	const email = requireEmail(args.email);
+	const fullName = args.fullName.trim();
+	const branch = args.branch.trim();
+	if (!fullName) throw new Error("Full name is required");
+	if (!branch) throw new Error("Branch is required");
+	return { email, full_name: fullName, branch, unit: args.unit?.trim() || undefined };
+}
+
+async function requireAccountAdmin(ctx: MutationCtx): Promise<void> {
+	const userId = await getAuthUserId(ctx);
+	if (!userId) throw new Error("Not authenticated");
+	const normalizedUserId = ctx.db.normalizeId("users", userId);
+	const adminUserIds = new Set(
+		(process.env.MKM_ACCOUNT_ADMIN_USER_IDS ?? "").split(",").map((id) => id.trim()).filter(Boolean),
+	);
+	if (!normalizedUserId || !adminUserIds.has(normalizedUserId) || !(await ctx.db.get("users", normalizedUserId))) {
+		throw new Error("Administrator access required");
+	}
+}
+
+const passwordAccountArgs = v.object({
+	email: v.string(),
+	password: v.string(),
+	fullName: v.string(),
+	branch: v.string(),
+	unit: v.optional(v.string()),
+});
+
+async function writePasswordAccount(
+	ctx: MutationCtx,
+	args: Infer<typeof passwordAccountArgs>,
+): Promise<Id<"users">> {
+	const fields = profileFields(args);
+	if (args.password.length < 8) {
+		throw new Error("Password must be at least 8 characters long");
+	}
+	const accountContext: Pick<ActionCtx, "runMutation"> = ctx;
+	const { user } = await createAccount<DataModel>(accountContext as ActionCtx, {
+		provider: "password",
+		account: { id: fields.email, secret: args.password },
+		profile: { email: fields.email, name: fields.full_name },
+	});
+	if (!user) throw new Error("This password account has no user record. Use a new email.");
+	const existing = await ctx.db
+		.query("profiles")
+		.withIndex("by_email", (q) => q.eq("email", fields.email))
+		.unique();
+	if (!existing) {
+		await ctx.db.insert("profiles", { ...fields, updated_at: new Date().toISOString() });
+	}
+	return user._id;
+}
+
 export const createUserAccount = mutation({
-	args: {
-		email: v.string(),
-		password: v.string(),
-		fullName: v.string(),
-		branch: v.string(),
-		unit: v.optional(v.string()),
-	},
+	args: passwordAccountArgs,
 	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) throw new Error("Not authenticated");
-
-		const now = new Date().toISOString();
-
-		await createAccount(ctx as any, {
-			provider: "password",
-			account: {
-				id: args.email,
-				secret: args.password,
-			},
-			profile: {
-				email: args.email,
-				name: args.fullName,
-			},
-		});
-
-		const existing = await ctx.db
-			.query("profiles")
-			.withIndex("by_email", (q) => q.eq("email", args.email))
-			.unique();
-
-		if (!existing) {
-			await ctx.db.insert("profiles", {
-				email: args.email,
-				full_name: args.fullName,
-				branch: args.branch,
-				unit: args.unit,
-				updated_at: now,
-			});
-		}
+		await requireAccountAdmin(ctx);
+		return await writePasswordAccount(ctx, args);
 	},
 });
 
-export const createProfileForEmail = mutation({
+export const provisionPasswordAccount = internalMutation({
+	args: passwordAccountArgs,
+	returns: v.id("users"),
+	handler: writePasswordAccount,
+});
+
+export const createProfileForEmail = internalMutation({
 	args: {
 		email: v.string(),
 		fullName: v.string(),
@@ -84,44 +116,47 @@ export const createProfileForEmail = mutation({
 		unit: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
+		const fields = profileFields(args);
 		const existing = await ctx.db
 			.query("profiles")
-			.withIndex("by_email", (q) => q.eq("email", args.email))
+			.withIndex("by_email", (q) => q.eq("email", fields.email))
 			.unique();
 		if (existing) return { id: existing._id };
 		const id = await ctx.db.insert("profiles", {
-			email: args.email,
-			full_name: args.fullName,
-			branch: args.branch,
-			unit: args.unit,
+			...fields,
 			updated_at: new Date().toISOString(),
 		});
 		return { id };
 	},
 });
 
-export const setProfileEmail = mutation({
+export const setProfileEmail = internalMutation({
 	args: {
 		profileId: v.id("profiles"),
 		email: v.string(),
 	},
 	handler: async (ctx, args) => {
-		await ctx.db.patch(args.profileId, { email: args.email });
+		const email = requireEmail(args.email);
+		const profile = await ctx.db.get("profiles", args.profileId);
+		if (!profile) throw new Error("Profile not found");
+		const existing = await ctx.db.query("profiles")
+			.withIndex("by_email", (q) => q.eq("email", email)).unique();
+		if (existing && existing._id !== profile._id) throw new Error("Profile email is already assigned");
+		if (profile.email === email) return { success: true };
+		await ctx.db.patch(args.profileId, { email, updated_at: new Date().toISOString() });
 		return { success: true };
 	},
 });
 
-export const migrateQuotationCreators = mutation({
+export const migrateQuotationCreators = internalMutation({
 	args: {},
 	handler: async (ctx) => {
-		if (!await getAuthUserId(ctx)) throw new Error("Not authenticated");
 		await assertLegacyWritesAllowed(ctx);
 		const profiles = await ctx.db.query("profiles").collect();
-		const nameToId: Record<string, string> = {};
+		const nameToId: Record<string, Id<"profiles">> = {};
 		for (const p of profiles) {
 			nameToId[p.full_name] = p._id;
 		}
-		// Sera is Norsuhaira
 		const norsuhaira = profiles.find((p) => p.email === "norsuhaira0248@gmail.com");
 		if (norsuhaira) nameToId["Sera"] = norsuhaira._id;
 
@@ -133,7 +168,7 @@ export const migrateQuotationCreators = mutation({
 		for (const q of quotations) {
 			const profileId = nameToId[q.created_by];
 			if (profileId) {
-				await ctx.db.patch(q._id, { creator_id: profileId as any });
+				await ctx.db.patch(q._id, { creator_id: profileId });
 				linked++;
 			} else {
 				skipped++;
@@ -144,14 +179,14 @@ export const migrateQuotationCreators = mutation({
 	},
 });
 
-export const removeLegacySupabaseIds = mutation({
+export const removeLegacySupabaseIds = internalMutation({
 	args: {},
 	handler: async (ctx) => {
 		const profiles = await ctx.db.query("profiles").collect();
 		let cleaned = 0;
 
 		for (const profile of profiles) {
-			if (!(profile as any).supabase_id) {
+			if (!("supabase_id" in profile) || !profile.supabase_id) {
 				continue;
 			}
 
