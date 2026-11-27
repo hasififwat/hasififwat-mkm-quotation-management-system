@@ -234,25 +234,18 @@ function computeChanges(spec: Omit<PackageUpdateSpec, "changes">, dbPkg: Existin
     changes.push({ field: "Transport", old: oldTransport || "—", new: newTransport || "—" });
   }
 
-  const dbHotelsByType = new Map<string, DbHotel>(
-    (dbPkg.hotels ?? []).map((h) => [canonicalHotelType(h.hotel_type), h]),
-  );
-
-  const allTypes = new Set([
-    ...spec.hotels.map((h) => canonicalHotelType(h.hotel_type)),
-    ...(dbPkg.hotels ?? []).map((h) => canonicalHotelType(h.hotel_type)),
-  ]);
-
-  for (const type of allTypes) {
-    const dbHotel = dbHotelsByType.get(type);
-    const newHotel = spec.hotels.find((h) => canonicalHotelType(h.hotel_type) === type);
+  for (let index = 0; index < spec.hotels.length; index++) {
+    const dbHotel = spec.current_hotels[index];
+    const newHotel = spec.hotels[index];
+    if (dbHotel === newHotel) continue;
+    const type = canonicalHotelType(newHotel.hotel_type);
     const oldName = (dbHotel?.name ?? "").trim();
-    const newName = (newHotel?.name ?? "").trim();
+    const newName = newHotel.name.trim();
     if (oldName !== newName) {
       changes.push({ field: `${type} hotel`, old: oldName || "—", new: newName || "—" });
     }
     const oldMeals = mealsLabel(dbHotel?.meals ?? []);
-    const newMeals = mealsLabel(newHotel?.meals ?? []);
+    const newMeals = mealsLabel(newHotel.meals);
     if (oldMeals !== newMeals) {
       changes.push({ field: `${type} meals`, old: oldMeals, new: newMeals });
     }
@@ -336,6 +329,12 @@ export function buildSyncPlan(
         enabled: h.enabled ?? true,
         placeholder: h.placeholder ?? "",
       }));
+      const mergedHotels = row.preserve_db_hotels
+        ? current_hotels
+        : mergeCsvHotels(current_hotels, hotels);
+      const hotel_updates: SyncHotel[] = mergedHotels
+        .filter((hotel, index) => index >= current_hotels.length || hotel !== current_hotels[index])
+        .map(({ hotel_type, name, meals }) => ({ hotel_type, name, meals }));
       const spec = {
         kind: "update" as const,
         db_id: row.db_id,
@@ -345,7 +344,8 @@ export function buildSyncPlan(
         transport: row.transport,
         current_hotels,
         current_rooms: dbPkg?.rooms ?? [],
-        hotels: mergeCsvHotels(current_hotels, hotels),
+        hotels: mergedHotels,
+        hotel_updates,
         rooms: mergeRoomPrices(dbPkg?.rooms ?? [], rooms),
         row,
       };
@@ -600,6 +600,7 @@ export function parsePriceListCsv(
       madinah_hotel, madinah_meals,
       aziziah_hotel, aziziah_meals,
       taif_hotel,    taif_meals,
+      ...(isMatched ? { preserve_db_hotels: true } : {}),
     });
   }
 

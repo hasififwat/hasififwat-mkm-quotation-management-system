@@ -49,8 +49,8 @@ test('sync review query carries complete aggregate baseline',async()=>{
  assert.notEqual(fresh[0].editToken,listed[0].editToken);
 });
 
-for (const [field, value] of [['enabled', false], ['placeholder', 'Use the staff hotel selection']]) {
- test(`manual hotel ${field} edit transfers sync ownership to unsync`, async()=>{
+for (const [label, field, value] of [['enabled', 'enabled', false], ['placeholder', 'placeholder', 'Use the staff hotel selection'], ['whitespace placeholder', 'placeholder', 'Enter Makkah hotel ']]) {
+ test(`manual hotel ${label} edit transfers sync ownership to unsync`, async()=>{
   const s=state();const data=form();data.hotels[0].placeholder='Enter Makkah hotel';
   const id=await create(s,data);await s.ctx.db.patch(id,{source:'sync'});
   const edit=transform(await read(s,id));edit.hotels[0][field]=value;

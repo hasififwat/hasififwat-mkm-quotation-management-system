@@ -31,6 +31,7 @@ export type PackageMappingRow = {
   aziziah_meals: string;
   taif_hotel: string;
   taif_meals: string;
+  preserve_db_hotels?: boolean;
 };
 
 export type FlightDiffRow = {
@@ -89,6 +90,7 @@ export type PackageUpdateSpec = ReviewedPackageApplyIntent & {
   current_hotels: PackageHotelState[];
   current_rooms: SyncRoom[];
   hotels: PackageHotelState[];
+  hotel_updates: SyncHotel[];
   rooms: SyncRoom[];
   changes: FieldChange[];
   row: PackageMappingRow;

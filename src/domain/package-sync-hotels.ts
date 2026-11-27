@@ -23,7 +23,7 @@ export function hotelsEqual(left: readonly PackageHotelState[], right: readonly 
     canonicalHotelType(hotel.hotel_type),
     hotel.name.trim(),
     hotel.enabled,
-    hotel.placeholder.trim(),
+    hotel.placeholder,
     normalizedMealsKey(hotel.meals),
   ])).sort();
   const rightKeys = keys(right);

@@ -25,7 +25,7 @@ async function plan(f, options) {
   return {saved, rows, plan: parsers.buildSyncPlan(rows, [], saved)};
 }
 async function apply(f, spec) {
-  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, expected_edit_token: spec.expected_edit_token, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotels.map(({hotel_type, name, meals}) => ({hotel_type, name, meals})), rooms: spec.rooms});
+  return packages.syncPackageFromCsv._handler(f.s.ctx, {db_id: f.id, expected_edit_token: spec.expected_edit_token, name: spec.db_name, season: spec.row.season_code, year: '2026/2027', duration: spec.row.duration, transport: spec.transport, hotels: spec.hotel_updates, rooms: spec.rooms});
 }
 test('saved sync data includes room prices, labels and disabled state', async () => {
   const f = await fixture(); f.s.tables.package_rooms[0].enabled = false;
@@ -171,4 +171,33 @@ test('reviewed hotel mapping edits preserve metadata and untouched hotel rows', 
   assert.ok(taif?._id);
   const {_id, ...taifFields} = taif;
   equal(taifFields, {hotel_type: 'TAIF', name: 'Taif Stay', enabled: true, placeholder: '', meals: []});
+});
+test('price-only sync preserves saved shorthand meals without expanding them', async () => {
+  const f = await fixture('Quad', [
+    {hotel_type: 'MAKKAH', name: 'Fairmont Makkah', enabled: true, placeholder: 'Enter Makkah hotel', meals: ['BB']},
+  ]);
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+  equal(p.packagesToUpdate[0].hotel_updates, []);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
+});
+test('price-only sync succeeds and preserves duplicate saved hotel types', async () => {
+  const f = await fixture('Quad', [
+    {hotel_type: 'MAKKAH', name: 'Fairmont Makkah', enabled: false, placeholder: 'Primary Makkah', meals: ['BREAKFAST']},
+    {hotel_type: 'MAKKAH', name: 'Swissotel Makkah', enabled: true, placeholder: 'Secondary Makkah', meals: ['DINNER']},
+    {hotel_type: 'JEDDAH', name: 'Jeddah Transit A', enabled: true, placeholder: 'First Jeddah', meals: ['BREAKFAST']},
+    {hotel_type: 'JEDDAH', name: 'Jeddah Transit B', enabled: false, placeholder: 'Second Jeddah', meals: []},
+  ]);
+  const before = await savedHotels(f);
+  const {plan: p} = await plan(f);
+  assert.equal(p.packagesToUpdate.length, 1);
+  equal(p.packagesToUpdate[0].changes, [{field: 'Quad price', old: 'RM 1,200', new: 'RM 2,500'}]);
+  equal(p.packagesToUpdate[0].hotel_updates, []);
+  await apply(f, p.packagesToUpdate[0]);
+  assert.equal(f.s.tables.package_rooms[0].price, 2500);
+  equal(await savedHotels(f), before);
 });
