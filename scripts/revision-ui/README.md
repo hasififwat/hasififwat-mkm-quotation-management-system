@@ -15,7 +15,7 @@ node scripts/revision-ui/control-fixture.mjs install
 node scripts/revision-ui/seed-local-fixture.mjs
 ```
 
-`install` deploys only into the owned loopback snapshot and adds internal fixture controls there. `seed` signs up through the real password provider, creates a profile, client, package and baseline legacy quotation through public handlers, then rereads its total. The account path is recorded in `run.json`. Read it privately for browser login. Keep credentials and JWTs out of captures and committed evidence.
+`install` deploys only into the owned loopback snapshot and adds internal fixture controls there. `seed` provisions a password account and profile with the local deployment admin key, signs in through the real password provider, creates a client, package, and baseline legacy quotation through public handlers, then rereads its total. The account path is recorded in `run.json`. Read it privately for browser login. Keep credentials and JWTs out of captures and committed evidence.
 
 The initial backend has no migration freeze or active revision release. To rehearse cutover on this disposable backend only, run the following command.
 

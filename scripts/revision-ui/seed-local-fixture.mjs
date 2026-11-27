@@ -1,10 +1,10 @@
+import { seedRevisionPasswordAccount } from '../helpers/local-password-fixture.mjs';
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { randomUUID } from 'node:crypto';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 if (!process.env.REVISION_UI_RUN_DIR) throw new Error('Set REVISION_UI_RUN_DIR to an owned external fixture directory');
 const runDir = path.resolve(process.env.REVISION_UI_RUN_DIR);
 if (runDir.split(path.sep).includes('.next')) throw new Error('REVISION_UI_RUN_DIR must be outside .next');
@@ -14,12 +14,12 @@ const account = JSON.parse(await readFile(run.fixtureAccountPath, 'utf8'));
 const { api } = await import(pathToFileURL(path.join(run.sourceDir, 'convex/_generated/api.js')).href);
 const { form, normalize } = await import(pathToFileURL(path.join(run.sourceDir, 'scripts/helpers/submission-fixtures.mjs')).href);
 const client = new ConvexHttpClient(run.url);
-const signedIn = await client.action(api.auth.signIn, { provider: 'password', params: { ...account, flow: 'signUp' } });
-if (!signedIn.tokens?.token) throw new Error('Fixture signup did not return a session');
+await seedRevisionPasswordAccount(run, { ...account, fullName: 'Revision Verification', branch: 'Disposable fixture' });
+const signedIn = await client.action(api.auth.signIn, { provider: 'password', params: { ...account, flow: 'signIn' } });
+if (!signedIn.tokens?.token) throw new Error('Fixture sign-in did not return a session');
 await writeFile(path.join(runDir, '.session.json'), JSON.stringify(signedIn.tokens));
 await chmod(path.join(runDir, '.session.json'), 0o600);
 client.setAuth(signedIn.tokens.token);
-await client.mutation(api.profiles.createProfileForEmail, { email: account.email, fullName: 'Revision Verification', branch: 'Disposable fixture' });
 const selectedClient = await client.mutation(api.clients.create, { name: 'Revision History Fixture', phone_number: '' });
 const packageResult = await client.mutation(api.packages.createPackage, { payload: normalize({ ...form(), name: 'Revision verification package' }) });
 const packages = await client.query(api.packages.listWithRooms, {});

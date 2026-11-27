@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test:quotation-pdf": "node scripts/check-quotation-pdf.mjs",
     "test:complete-submission": "node --test scripts/complete-submission.test.mjs",
+    "test:profiles-auth": "node --test scripts/profiles-authorization.test.mjs",
     "test:packages-auth": "node --test scripts/packages-authorization.test.mjs scripts/convex-server-auth.test.mjs",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy"
