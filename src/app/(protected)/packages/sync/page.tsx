@@ -1230,7 +1230,7 @@ export default function PackageSyncPage() {
           name: spec.row.canonical_name, season: spec.row.season_code,
           year: spec.row.season_start.substring(0, 4) + "/" + (parseInt(spec.row.season_start.substring(0, 4), 10) + 1),
           duration: spec.row.duration, transport: spec.transport,
-          hotels: spec.hotels, rooms: spec.rooms,
+          hotels: spec.hotels.map(({ hotel_type, name, meals }) => ({ hotel_type, name, meals })), rooms: spec.rooms,
         });
         updated++;
       } catch (e) {

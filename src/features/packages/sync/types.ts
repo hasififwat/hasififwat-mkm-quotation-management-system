@@ -1,3 +1,4 @@
+import type { CsvHotelContent, PackageHotelState } from "../../../domain/package-sync-hotels";
 import type { ReviewedPackageApplyIntent } from "../../../domain/package-sync-intent";
 
 export type MatchStatus = "MATCHED" | "NEW" | "ORPHAN";
@@ -52,11 +53,7 @@ export type FlightDiffRow = {
   db_ret_sector?: string;
 };
 
-export type SyncHotel = {
-  hotel_type: string;
-  name: string;
-  meals: string[];
-};
+export type SyncHotel = CsvHotelContent;
 
 export type SyncRoom = {
   room_type: string;
@@ -89,9 +86,9 @@ export type PackageUpdateSpec = ReviewedPackageApplyIntent & {
   db_name: string;
   current_transport: string;
   transport: string;
-  current_hotels: SyncHotel[];
+  current_hotels: PackageHotelState[];
   current_rooms: SyncRoom[];
-  hotels: SyncHotel[];
+  hotels: PackageHotelState[];
   rooms: SyncRoom[];
   changes: FieldChange[];
   row: PackageMappingRow;

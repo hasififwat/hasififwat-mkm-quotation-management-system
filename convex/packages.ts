@@ -8,6 +8,7 @@ import { isSupportedUmrahYear } from "../src/domain/umrah-years";
 import { QUOTATION_STATUSES } from "../src/domain/quotation-status";
 import { ConvexError, v } from "convex/values";
 import { packageSyncKey, PACKAGE_SYNC_CONFLICT_MESSAGE } from "../src/domain/package-sync-intent";
+import { assertUniqueCsvHotelTypes, hotelsEqual, mergeCsvHotels, normalizedMealsKey, type PackageHotelState } from "../src/domain/package-sync-hotels";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
@@ -431,16 +432,18 @@ export const updatePackage = mutation({
       .collect();
     const allExistingHotels = dedupeById(existingHotels);
 
-    const existingHotelsNorm = await Promise.all(
+    const existingHotelsState: PackageHotelState[] = await Promise.all(
       allExistingHotels.map(async (h) => {
         const meals = await ctx.db
           .query("package_meals")
           .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", h._id))
           .collect();
         return {
-          hotel_type: h.hotel_type.toUpperCase(),
-          name: (h.name ?? "").trim(),
-          meals: meals.map((m) => m.meal_type).sort().join("+"),
+          hotel_type: h.hotel_type,
+          name: h.name ?? "",
+          meals: dedupeById(meals).map((m) => m.meal_type),
+          enabled: h.enabled,
+          placeholder: h.placeholder ?? "",
         };
       }),
     );
@@ -473,19 +476,14 @@ export const updatePackage = mutation({
     const transportChanged =
       (args.payload.transport ?? "").trim() !== (existingPackage.transport ?? "").trim();
 
-    const hotelsChanged = (() => {
-      const incoming = args.payload.hotels.map((h) => ({
-        hotel_type: h.hotel_type.toUpperCase(),
-        name: (h.name ?? "").trim(),
-        meals: [...h.meals].sort().join("+"),
-      }));
-      if (incoming.length !== existingHotelsNorm.length) return true;
-      const existingMap = new Map(existingHotelsNorm.map((h) => [h.hotel_type, h]));
-      return incoming.some((h) => {
-        const e = existingMap.get(h.hotel_type);
-        return !e || e.name !== h.name || e.meals !== h.meals;
-      });
-    })();
+    const incomingHotelsState: PackageHotelState[] = args.payload.hotels.map(hotel => ({
+      hotel_type: hotel.hotel_type,
+      name: hotel.name,
+      meals: hotel.meals,
+      enabled: hotel.enabled,
+      placeholder: hotel.placeholder,
+    }));
+    const hotelsChanged = !hotelsEqual(existingHotelsState, incomingHotelsState);
 
     const roomsChanged = (() => {
       if (args.payload.rooms.length !== allExistingRooms.length) return true;
@@ -643,11 +641,11 @@ export const listWithHotelsAndMeals = query({
       list.push(m.meal_type);
       mealsByHotelId.set(id, list);
     }
-    const hotelsByPkg = new Map<string, { hotel_type: string; name: string; enabled: boolean; meals: string[] }[]>();
+    const hotelsByPkg = new Map<string, PackageHotelState[]>();
     for (const h of hotels) {
       const id = String(h.package_id);
       const list = hotelsByPkg.get(id) ?? [];
-      list.push({ hotel_type: h.hotel_type, name: h.name ?? "", enabled: h.enabled, meals: mealsByHotelId.get(String(h._id)) ?? [] });
+      list.push({ hotel_type: h.hotel_type, name: h.name ?? "", enabled: h.enabled, placeholder: h.placeholder ?? "", meals: mealsByHotelId.get(String(h._id)) ?? [] });
       hotelsByPkg.set(id, list);
     }
     const roomsByPkg = new Map<string, { room_type: string; price: number; enabled: boolean }[]>();
@@ -1020,6 +1018,7 @@ export const syncPackageFromCsv = mutation({
     await requirePackageAccess(ctx);
     if (!args.db_id) requireSupportedUmrahYear(args.year);
     requirePrices(args.rooms);
+    assertUniqueCsvHotelTypes(args.hotels);
     const now = new Date().toISOString();
 
     if (args.db_id) {
@@ -1028,6 +1027,22 @@ export const syncPackageFromCsv = mutation({
         throw new ConvexError({ code: "PACKAGE_SYNC_CONFLICT", message: PACKAGE_SYNC_CONFLICT_MESSAGE });
       }
 
+      const existingHotels = dedupeById(snapshot.hotels);
+      const mealsByHotelId = new Map<string, typeof snapshot.meals>();
+      for (const meal of dedupeById(snapshot.meals)) {
+        const meals = mealsByHotelId.get(meal.package_hotel_id) ?? [];
+        meals.push(meal);
+        mealsByHotelId.set(meal.package_hotel_id, meals);
+      }
+      const currentHotels: PackageHotelState[] = existingHotels.map(hotel => ({
+        hotel_type: hotel.hotel_type,
+        name: hotel.name ?? "",
+        meals: (mealsByHotelId.get(hotel._id) ?? []).map(meal => meal.meal_type),
+        enabled: hotel.enabled,
+        placeholder: hotel.placeholder ?? "",
+      }));
+      const mergedHotels = mergeCsvHotels(currentHotels, args.hotels);
+
       const existingRooms = await ctx.db.query("package_rooms")
         .withIndex("by_package_id", q => q.eq("package_id", args.db_id!)).collect();
       await requireQuotationReferencesPreserved(ctx, args.db_id, existingRooms,
@@ -1035,25 +1050,28 @@ export const syncPackageFromCsv = mutation({
 
       await ctx.db.patch(args.db_id, { transport: args.transport, updated_at: now });
 
-      const existingHotels = await ctx.db
-        .query("package_hotels")
-        .withIndex("by_package_id", (q) => q.eq("package_id", args.db_id!))
-        .collect();
-      for (const hotel of existingHotels) {
-        const meals = await ctx.db
-          .query("package_meals")
-          .withIndex("by_package_hotel_id", (q) => q.eq("package_hotel_id", hotel._id))
-          .collect();
-        for (const m of meals) await ctx.db.delete(m._id);
-        await ctx.db.delete(hotel._id);
+      for (let index = 0; index < existingHotels.length; index++) {
+        const hotel = existingHotels[index];
+        const current = currentHotels[index];
+        const merged = mergedHotels[index];
+        if (merged === current) continue;
+        if (current.name !== merged.name) {
+          await ctx.db.patch(hotel._id, { name: merged.name });
+        }
+        if (normalizedMealsKey(current.meals) !== normalizedMealsKey(merged.meals)) {
+          for (const meal of mealsByHotelId.get(hotel._id) ?? []) await ctx.db.delete(meal._id);
+          for (const mealType of merged.meals) {
+            await ctx.db.insert("package_meals", { package_hotel_id: hotel._id, meal_type: mealType, created_at: now });
+          }
+        }
       }
-      for (const hotel of args.hotels) {
+      for (const hotel of mergedHotels.slice(existingHotels.length)) {
         const hotelId = await ctx.db.insert("package_hotels", {
           package_id: args.db_id,
           hotel_type: hotel.hotel_type,
           name: hotel.name,
-          enabled: hotel.name.length > 0,
-          placeholder: "",
+          enabled: hotel.enabled,
+          placeholder: hotel.placeholder,
           created_at: now,
         });
         for (const mealType of hotel.meals) {
@@ -1106,15 +1124,16 @@ export const syncPackageFromCsv = mutation({
     });
 
     for (const hotel of args.hotels) {
+      const name = hotel.name.trim();
       const hotelId = await ctx.db.insert("package_hotels", {
         package_id: packageId,
-        hotel_type: hotel.hotel_type,
-        name: hotel.name,
-        enabled: hotel.name.length > 0,
+        hotel_type: hotel.hotel_type.trim(),
+        name,
+        enabled: name.length > 0,
         placeholder: "",
         created_at: now,
       });
-      for (const mealType of hotel.meals) {
+      for (const mealType of hotel.meals.map(meal => meal.trim()).filter(Boolean)) {
         await ctx.db.insert("package_meals", { package_hotel_id: hotelId, meal_type: mealType, created_at: now });
       }
     }
