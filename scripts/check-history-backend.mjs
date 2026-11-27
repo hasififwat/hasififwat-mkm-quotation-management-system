@@ -21,10 +21,10 @@ try {
   await fs.mkdir(path.join(root,'convex/lib'), {recursive:true});
   await fs.mkdir(path.join(root,'convex/_generated'));
   await fs.symlink(path.join(repo,'node_modules'),path.join(root,'node_modules'));
-  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0'}}));
+  await fs.writeFile(path.join(root,'package.json'), JSON.stringify({type:'module',dependencies:{convex:'1.45.0','@react-pdf/renderer':'4.9.0'}}));
   await fs.copyFile(path.join(repo,'convex.json'),path.join(root,'convex.json'));
   await fs.cp(path.join(repo,'src'),path.join(root,'src'),{recursive:true});
-  for (const file of ['quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfModel.ts','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfAssetsV1.json','_generated/api.js','schema.ts','quotations.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/currentQuotations.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
+  for (const file of ['inquiries.ts','lib/inquiryLifecycle.ts','lib/quotationRefreshToken.ts','quotationPdfArtifacts.ts','quotationPdfWorker.ts','lib/quotationPdfModel.ts','lib/quotationPdfInput.ts','lib/quotationPdfTermsV1.ts','lib/quotationPdfAssetsV1.json','_generated/api.js','schema.ts','quotations.ts','clients.ts','profiles.ts','quotationFamilyMigration.ts','quotationRevisionSaves.ts','lib/savedQuotation.ts','lib/clientCanonical.ts','lib/currentQuotations.ts','lib/quotationFamilyIdentity.ts','_generated/server.js']) await fs.copyFile(path.join(repo,'convex',file),path.join(root,'convex',file));
   await fs.mkdir(path.join(root,'src/domain'), {recursive:true});
   for (const file of ['quotation-selection-context.ts','umrah-years.ts','submission-validation.ts']) await fs.copyFile(path.join(repo,'src/domain',file),path.join(root,'src/domain',file));
   await fs.writeFile(path.join(root,'convex/fixture.ts'), `
@@ -58,7 +58,7 @@ for(const row of await ctx.db.query('profiles').collect())await ctx.db.patch(row
 }});
 export const review=internalQuery({args:{pkg:v.id('packages')},handler:async(ctx,{pkg})=>quotationSelectionContext(await ctx.db.get(pkg),await ctx.db.query('package_rooms').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_flights').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_hotels').withIndex('by_package_id',q=>q.eq('package_id',pkg)).collect(),await ctx.db.query('package_meals').collect())});
 export const missingGate=internalMutation({args:{},handler:async(ctx)=>{for(const row of await ctx.db.query('quotation_family_migrations').collect())await ctx.db.delete(row._id);}});
-export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','client_aliases','clients','profiles'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
+export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};for(const table of ['quotations','quotation_families','quotation_items','quotation_logs','quotation_save_receipts','quotation_reference_counters','inquiries','inquiry_events','client_aliases','clients','profiles'] as const)result[table]=await ctx.db.query(table).collect();return result;}});
 `);
   for(let i=0;i<100;i++) { try { if((await fetch(`${url}/version`)).ok) break; } catch {} await new Promise(r=>setTimeout(r,100)); }
   const deploy = spawn(path.join(repo,'node_modules/.bin/convex'),['dev','--once','--typecheck','disable','--codegen','disable'],{cwd:root,env:{...Object.fromEntries(Object.entries(process.env).filter(([key])=>!key.startsWith('CONVEX_'))),CONVEX_SELF_HOSTED_URL:url,CONVEX_SELF_HOSTED_ADMIN_KEY:adminKey},stdio:['ignore','pipe','pipe']});
@@ -67,13 +67,15 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   if(code!==0) throw new Error(`Local deployment failed. ${output.replaceAll(adminKey,'[redacted]')}`);
   const client = new ConvexHttpClient(url); client.setAdminAuth(adminKey);
   const seed=await client.mutation('fixture:seed',{});
+  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   const key=()=>crypto.randomUUID();
-  const create={operation:'create',request_key:key(),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100.1,pax:3}]},extras:{mode:'replace',addons:[{name:'Addon',price:0.2,pax:1}],discounts:[]}};
+  const destination=async client_id=>(await client.query('inquiries:destination',{client_id})).destination;
+  const create={operation:'create',request_key:key(),inquiry_destination:await destination(seed.client),pic_name:'Fixture',branch:'Fixture',notes:'zero',client:{mode:'replace',id:seed.client},selection:{mode:'replace',package_id:seed.pkg,flight_id:seed.flight,reviewed_context:seed.context,rooms:[{room_type:'Quad',price:100.1,pax:3}]},extras:{mode:'replace',addons:[{name:'Addon',price:0.2,pax:1}],discounts:[]}};
   const dump=()=>client.query('fixture:dump',{});
   const empty=await dump();
-  await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:create}));
+  const anonymous=new ConvexHttpClient(url);
+  await assert.rejects(()=>anonymous.mutation('quotationRevisionSaves:save',{command:create}), /Not authenticated/);
   assert.deepEqual(await dump(),empty);
-  client.setAdminAuth(adminKey,{subject:'fixture-actor|fixture-session',issuer:'fixture',tokenIdentifier:'fixture|fixture-actor'});
   await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:{...create,request_key:undefined}}));
   await assert.rejects(()=>client.mutation('quotationRevisionSaves:save',{command:{...create,selection:{...create.selection,rooms:[]}}}));
   assert.deepEqual(await dump(),empty);
@@ -83,7 +85,8 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.deepEqual(await save(create),zero);
   const first=await dump();
   assert.equal(first.quotations[0].total_amount,300.5);
-  const append=(base,notes='one')=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,pic_name:'Fixture',branch:'Fixture',notes,client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'}});
+  const inquiryCycle=(await destination(seed.client)).cycle;
+  const append=(base,notes='one',expected_inquiry_cycle=inquiryCycle)=>({operation:'append',request_key:key(),family_id:base.family_id,source_revision_id:base.id,expected_current_id:base.id,expected_inquiry_cycle,pic_name:'Fixture',branch:'Fixture',notes,client:{mode:'retain'},selection:{mode:'retain'},extras:{mode:'retain'}});
   const r1command=append(zero);
   const same=await Promise.all([save(r1command),save(r1command)]);
   assert.deepEqual(same[0],same[1]); const r1=same[0];assert.equal(r1.revision,1);
@@ -103,18 +106,21 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.equal(races.filter(r=>r.status==='fulfilled').length,1);
   assert.equal(races.filter(r=>r.status==='rejected').length,1);
   const current=races.find(r=>r.status==='fulfilled').value;
-  const other=await save({...create,request_key:key()});
+  const newCreate=async()=>({...create,request_key:key(),inquiry_destination:await destination(seed.client)});
+  const other=await save(await newCreate());
   const independent=await Promise.all([save(append(current)),save(append(other))]);
   assert.equal(independent.length,2);
   const beforeFailure=await dump();
-  await assert.rejects(()=>client.mutation('fixture:rollback',{command:append(independent[0],'rollback')}));
+  await assert.rejects(()=>client.mutation('fixture:rollback',{command:append(independent[0],'rollback')}), /Injected failure after complete save/);
   assert.deepEqual(await dump(),beforeFailure);
-  await assert.rejects(()=>client.mutation('fixture:rollback',{command:{...create,request_key:key()}}));
+  const rollbackCreate=await newCreate();
+  await assert.rejects(()=>client.mutation('fixture:rollback',{command:rollbackCreate}), /Injected failure after complete save/);
   assert.deepEqual(await dump(),beforeFailure);
   await assert.rejects(()=>save({...append(independent[0]),family_id:other.family_id}));
   await assert.rejects(()=>save(append(zero)));
   assert.deepEqual(await dump(),beforeFailure);
   result.checks.push('Real concurrent distinct requests from one base yield one success and one conflict. Independent families progress. Injected failure after all writes rolls back quotation, items, pointer, receipt, log and counter. Forged and stale requests write nothing.');
+  const unavailableCreate=await newCreate();
   await client.mutation('fixture:removeCatalog',{});
   const retained=await save(append(independent[0],'catalog removed'));
   const afterRemoval=await dump();
@@ -123,11 +129,13 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.equal(JSON.parse(retainedRow.frozen_document).client_phone,'fixture-phone');
   assert.equal(JSON.parse(retainedRow.frozen_document).return_flight,'RETURN');
   assert.deepEqual(await save(create),zero);
-  await assert.rejects(()=>save({...create,request_key:key()}));
+  await assert.rejects(()=>save(unavailableCreate), /Client not found/);
   result.checks.push('Unavailable historical client, package, flight and rooms retain exact saved values without repricing. Frozen document preserves phone and return flight. Receipt replay succeeds after catalog deletion; new replacements reject.');
   const historySeed=await client.mutation('fixture:seed',{});
-  const historyCreate={...create,request_key:key(),client:{mode:'replace',id:historySeed.client},selection:{...create.selection,package_id:historySeed.pkg,flight_id:historySeed.flight,reviewed_context:historySeed.context}};
+  const historyCreate={...create,request_key:key(),inquiry_destination:await destination(historySeed.client),client:{mode:'replace',id:historySeed.client},selection:{...create.selection,package_id:historySeed.pkg,flight_id:historySeed.flight,reviewed_context:historySeed.context}};
   const historyZero=await save(historyCreate);
+  const historyCycle=(await destination(historySeed.client)).cycle;
+  const appendHistory=(base,notes)=>append(base,notes,historyCycle);
   const details=id=>client.query('quotations:getQuotationFullDetails',{target_quotation_id:id});
   const original=await details(historyZero.id);
   const stored=await dump();
@@ -144,7 +152,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.equal(changed.client_name,original.client_name);
   assert.equal(changed.pic_name,original.pic_name);
   assert.deepEqual(changed.selected_flight,original.selected_flight);
-  const refresh={...append(historyZero,'reviewed refresh'),selection:{mode:'replace',package_id:historySeed.pkg,flight_id:historySeed.flight,reviewed_context:historySeed.context,rooms:[{room_type:'Renamed',price:100.1,pax:3}]}};
+  const refresh={...appendHistory(historyZero,'reviewed refresh'),selection:{mode:'replace',package_id:historySeed.pkg,flight_id:historySeed.flight,reviewed_context:historySeed.context,rooms:[{room_type:'Renamed',price:100.1,pax:3}]}};
   const refreshCall=command=>client.mutation('quotations:refreshSnapshot',{quotation_id:command.source_revision_id,command},{skipQueue:true});
   const beforeStale=await dump();
   await assert.rejects(()=>refreshCall(refresh));assert.deepEqual(await dump(),beforeStale);
@@ -159,7 +167,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   assert.deepEqual(old.saved_document,original.saved_document);
   const oldItem=stored.quotation_items.find(i=>i.quotation_id===historyZero.id);
   const beforeOwnership=await dump();
-  await assert.rejects(()=>save({...append(refreshed),selection:{mode:'retain',rooms:[{source_item_id:oldItem._id,price:100,pax:1}]}}));assert.deepEqual(await dump(),beforeOwnership);
+  await assert.rejects(()=>save({...appendHistory(refreshed),selection:{mode:'retain',rooms:[{source_item_id:oldItem._id,price:100,pax:1}]}}));assert.deepEqual(await dump(),beforeOwnership);
   for(const [fn,args]of [
     ['quotations:update',{payload:{id:refreshed.id,pic_name:'Fixture',branch:'Fixture',client_id:historySeed.client,package_id:historySeed.pkg,flight_id:historySeed.flight,selected_rooms:[{room_type:'Renamed',price:100.1,pax:3}]}}],
     ['quotations:refreshSnapshot',{quotation_id:refreshed.id}],['quotations:resequenceByCreatedAt',{}],['quotations:deleteById',{quotationId:refreshed.id}],['quotations:repairStaleFlightIds',{}],['quotations:archiveQuotation',{id:refreshed.id}],['profiles:migrateQuotationCreators',{}],
@@ -170,7 +178,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   const postMerge=await dump();assert.deepEqual(postMerge.quotations,preMerge.quotations);assert.deepEqual(postMerge.quotation_items,preMerge.quotation_items);assert.deepEqual(postMerge.clients,preMerge.clients);assert.equal(postMerge.client_aliases.find(a=>a.alias_client_id===historySeed.client).canonical_client_id,canonical.id);
   const beforeCycle=await dump();await assert.rejects(()=>client.mutation('clients:mergeClients',{canonicalId:historySeed.client,duplicateIds:[canonical.id]}));assert.deepEqual(await dump(),beforeCycle);
   await client.mutation('fixture:removeCatalog',{});
-  const afterUnavailable=await save(append(refreshed,'notes only, unavailable catalog'));
+  const afterUnavailable=await save(appendHistory(refreshed,'notes only, unavailable catalog'));
   const retainedDetails=await details(afterUnavailable.id);
   const refreshedDetails=await details(refreshed.id);
   assert.deepEqual(retainedDetails.saved_document.package_snapshot,refreshedDetails.saved_document.package_snapshot);
@@ -180,7 +188,7 @@ export const dump=internalQuery({args:{},handler:async(ctx)=>{const result={};fo
   await client.mutation('fixture:missingGate',{});
   for(const [fn,args]of [['quotations:refreshSnapshot',{quotation_id:refreshed.id}],['quotations:resequenceByCreatedAt',{}],['quotations:deleteById',{quotationId:refreshed.id}],['quotations:repairStaleFlightIds',{}],['quotations:archiveQuotation',{id:refreshed.id}],['profiles:migrateQuotationCreators',{}]]){const before=await dump();await assert.rejects(()=>client.mutation(fn,args));assert.deepEqual(await dump(),before);}
   result.checks.push('Historical saved payloads remain equal after live client, package, room, flight, hotel, meal and profile changes. Old IDs stay exact and identify the newer current revision. Legacy unavailable retention preserves snapshots, items and quoted totals.');
-  result.checks.push('Reviewed refresh appends one new ID at original prices. Stale catalog context and foreign source items write nothing. Receipt replay succeeds after catalog deletion. Every destructive quotation writer and creator migration rejects with zero persisted writes, including missing migration-gate defense. Client merge only writes aliases and cycles roll back.');
+  result.checks.push('Reviewed refresh appends one new ID at original prices. Stale catalog context and foreign source items write nothing. Receipt replay succeeds after catalog deletion. Every destructive quotation writer and creator migration rejects with zero persisted writes, including missing migration-gate defense. Client merge writes an alias and preserves saved quotations, items and client rows. Alias cycles roll back.');
   result.runtime={node:process.version,convex:'1.45.0',url};
   result.source=execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();
   result.cleanup='Isolated process stopped and temporary database removed in finally.';

@@ -11,13 +11,13 @@ import ClientsListingPage, {
 	type ClientWithStats,
 } from "~/features/clients/ClientsListingPage";
 
-// Port of the old clientLoader — runs client-side against Convex directly.
 export default function ClientsPage() {
 	const http = useConvex();
 	const { isAuthenticated } = useConvexAuth();
 	const searchParams = useSearchParams();
 	const searchTerm = searchParams.get("q") || "";
 	const picFilters = searchParams.getAll("pic");
+	const queryString = searchParams.toString();
 	const cursor = searchParams.get("cursor");
 	const offsetParam = Number.parseInt(searchParams.get("offset") ?? "0", 10);
 	const offset = Number.isNaN(offsetParam) || offsetParam < 0 ? 0 : offsetParam;
@@ -53,6 +53,7 @@ export default function ClientsPage() {
 
 				if (isFiltered) {
 					const all = rawClients as ClientWithStats[];
+					const filterPics = new URLSearchParams(queryString).getAll("pic");
 					const filtered = all.filter((c) => {
 						if (searchTerm) {
 							const q = searchTerm.toLowerCase();
@@ -63,8 +64,8 @@ export default function ClientsPage() {
 								return false;
 							}
 						}
-						if (picFilters.length > 0) {
-							if (!c.quotations.some((q) => picFilters.includes(q.pic_name))) {
+						if (filterPics.length > 0) {
+							if (!c.quotations.some((q) => filterPics.includes(q.pic_name))) {
 								return false;
 							}
 						}
@@ -80,12 +81,13 @@ export default function ClientsPage() {
 						page: unknown[];
 						isDone: boolean;
 						continueCursor: string;
+						total: number;
 					};
 					setClients(result.page);
 					setIsDone(result.isDone);
 					setIsFirstPage(!cursor);
 					setContinueCursor(result.isDone ? null : (result.continueCursor ?? null));
-					setTotal(0);
+					setTotal(result.total);
 				}
 				setLoadStatus("loaded");
 			} catch {
@@ -97,7 +99,7 @@ export default function ClientsPage() {
 		return () => {
 			cancelled = true;
 		};
-	}, [http, isAuthenticated, searchTerm, picFilters.join(","), cursor, offset, isFiltered]);
+	}, [http, isAuthenticated, searchTerm, queryString, cursor, offset, isFiltered]);
 
 	return (
 		<ClientsListingPage

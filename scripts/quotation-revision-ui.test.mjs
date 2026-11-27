@@ -56,6 +56,23 @@ test('create requires a reviewed selection and uses replace intent', () => {
   assert.throws(() => beginRevisionAttempt(values,undefined,{mode:'retain'},key,'actor'), /identity/);
 });
 
+test('managed saves keep the destination or cycle in their exact request', () => {
+  const destination = {canonical_client_id:'canonical', inquiry_id:'inquiry', cycle:2};
+  const create = beginRevisionAttempt(values,undefined,{mode:'replace',catalog:{_id:'package',creation_context:'reviewed'}},key,'actor',destination);
+  assert.deepEqual(JSON.parse(create.body).command.inquiry_destination,destination);
+  const managed = {...source,revision_context:{...source.revision_context,inquiry:{cycle:2}}};
+  const edit = beginRevisionAttempt(values,managed,{mode:'retain'},key,'actor');
+  assert.equal(JSON.parse(edit.body).command.expected_inquiry_cycle,2);
+  assert.equal(JSON.parse(edit.body).command.client.mode,'retain');
+});
+
+test('an Inquiry destination conflict retains the draft and requires a new review', async () => {
+  const result = await saveRevisionAttempt(attempt(),async () => Response.json({code:'INQUIRY_DESTINATION_CHANGED'},{status:409}));
+  assert.equal(result.kind,'rejected');
+  assert.equal(result.conflict,'inquiry');
+  assert.match(result.message,/draft is kept.*Review the destination/);
+});
+
 test('new unchanged intentional save has a distinct request key', () => {
   const first = attempt();
   const next = beginRevisionAttempt(values,source,{mode:'retain'},'008a026b-d401-497c-aea3-952d92114f2b','actor');

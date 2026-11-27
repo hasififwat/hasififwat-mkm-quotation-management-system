@@ -4,6 +4,7 @@ import { ConvexError, v, type Infer } from "convex/values";
 import { mutation, type MutationCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import { reserveBaseReference, assertRevisionVacant } from "./lib/quotationFamilyIdentity";
+import { auditOptionSave, editInquiryOption, inquiryDestination, placeNewOption } from "./lib/inquiryLifecycle";
 import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { getMappedHijriYear } from "../src/domain/umrah-years";
 import { requireDescriptions, requirePrices, requireFlightDates } from "../src/domain/submission-validation";
@@ -24,9 +25,10 @@ const fields = {
   })),
 };
 export const saveCommand = v.union(
-  v.object({ operation: v.literal("create"), ...fields }),
+  v.object({ operation: v.literal("create"), inquiry_destination: v.optional(inquiryDestination), ...fields }),
   v.object({ operation: v.literal("append"), family_id: v.id("quotation_families"),
-    source_revision_id: v.id("quotations"), expected_current_id: v.id("quotations"), ...fields }),
+    source_revision_id: v.id("quotations"), expected_current_id: v.id("quotations"),
+    expected_inquiry_cycle: v.optional(v.number()), ...fields }),
 );
 export type SaveCommand = Infer<typeof saveCommand>;
 export type SavedItem = Omit<Doc<"quotation_items">, "_id" | "_creationTime" | "quotation_id" | "created_at">;
@@ -70,14 +72,17 @@ export async function saveRevision(ctx: MutationCtx, actor: string, command: Sav
   const release = await ctx.db.query("quotation_revision_release").withIndex("by_key", q => q.eq("key", "revision-v1")).unique();
   const migration = await ctx.db.query("quotation_family_migrations").withIndex("by_key", q => q.eq("key", "family-v1")).unique();
   if (!release?.enabled || !migration?.done) throw new Error("Quotation revision release is inactive");
+  const nowMs = Date.now();
   let source: Doc<"quotations"> | null = null;
   let family: Doc<"quotation_families"> | null = null;
+  let option: Awaited<ReturnType<typeof editInquiryOption>> | Awaited<ReturnType<typeof placeNewOption>> = null;
   if (command.operation === "append") {
     family = await ctx.db.get(command.family_id);
     source = await ctx.db.get(command.source_revision_id);
     if (!family || !source || source.family_id !== family._id || source.hijri_year !== family.hijri_year || source.sequence_num !== family.sequence_num) throw new Error("Invalid family and source identity");
     if (family.archived) throw new Error("Quotation family is archived");
     if (family.current_revision_id !== command.expected_current_id || source._id !== command.expected_current_id) conflict("QUOTATION_STALE_EDITOR", "A newer revision exists. Your draft has not been saved. Keep your entries and review the current revision.");
+    option = await editInquiryOption(ctx, family, command.client.mode, command.expected_inquiry_cycle, nowMs);
   }
   const savedItems = source ? await ctx.db.query("quotation_items").withIndex("by_quotation_id", q => q.eq("quotation_id", source!._id)).collect() : [];
   const retained = savedItems.map(({_id, _creationTime, quotation_id, created_at, ...item}) => item);
@@ -90,7 +95,11 @@ export async function saveRevision(ctx: MutationCtx, actor: string, command: Sav
     const frozen = source.frozen_document ? JSON.parse(source.frozen_document) : null;
     client_phone = frozen?.client_phone ?? null;
   } else {
-    const client = await ctx.db.get(command.client.id);
+    if (command.operation === "create") {
+      if (!command.inquiry_destination) conflict("INQUIRY_DESTINATION_CHANGED", "Review the Inquiry destination before saving your draft.");
+      option = await placeNewOption(ctx, command.client.id, command.inquiry_destination, nowMs);
+    }
+    const client = await ctx.db.get(option && "client_id" in option ? option.client_id : command.client.id);
     if (!client) throw new Error("Client not found");
     client_id = client._id; client_name = client.name; client_phone = client.phone_number ?? null;
   }
@@ -161,7 +170,7 @@ export async function saveRevision(ctx: MutationCtx, actor: string, command: Sav
   if (family) await assertRevisionVacant(ctx, family._id, revision);
   const hijri_year = family?.hijri_year ?? year;
   const sequence_num = family?.sequence_num ?? await reserveBaseReference(ctx, hijri_year);
-  const now = new Date().toISOString();
+  const now = new Date(nowMs).toISOString();
   const quotation_number = `${hijri_year}-${String(sequence_num).padStart(4,"0")}${revision ? `-R${revision}` : ""}`;
   const business = { client_id, client_name, package_id, flight_id, package_snapshot, flight_snapshot, hotels_snapshot,
     pic_name: command.pic_name, branch: command.branch, notes: command.notes, total_amount: totalCents / 100 };
@@ -179,12 +188,13 @@ export async function saveRevision(ctx: MutationCtx, actor: string, command: Sav
   let family_id: Id<"quotation_families">;
   if (family) { family_id = family._id; await ctx.db.patch(family_id, {current_revision_id: id}); }
   else {
-    family_id = await ctx.db.insert("quotation_families", {hijri_year, sequence_num, current_revision_id: id, archived: false});
+    family_id = await ctx.db.insert("quotation_families", {hijri_year, sequence_num, current_revision_id: id, archived: false, inquiry_id: option?.inquiry_id});
     await ctx.db.patch(id, {family_id});
   }
   for (const item of items) await ctx.db.insert("quotation_items", {...item, quotation_id: id, created_at: now});
   await ctx.db.insert("quotation_logs", {quotation_id: id, action: source ? "revision_saved" : "created",
     description: `Saved ${quotation_number}`, performed_by: actor, created_at: now});
+  if (option) await auditOptionSave(ctx, option, actor, family_id, id, nowMs);
   await enqueueRevisionPdf(ctx, id, document);
   const result = {id, family_id, quotation_number, revision};
   await ctx.db.insert("quotation_save_receipts", {actor, request_key: command.request_key, content, result});

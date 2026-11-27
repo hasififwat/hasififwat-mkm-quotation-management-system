@@ -1,29 +1,25 @@
 "use client";
 
 import { PAGE_SIZE } from "convex/constants";
-import { ChevronDown, ChevronLeft, ChevronRight, Loader2, Search, SlidersHorizontal, UserPlus, Users } from "lucide-react";
+import type { Id } from "convex/_generated/dataModel";
+import { ChevronLeft, ChevronRight, Eye, FileText, Loader2, Pencil, Search, SlidersHorizontal, Plus, Users } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { TableSkeletonRows } from "~/components/loading/TableSkeletonRows";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
+import { Card } from "~/components/ui/card";
+import { ListPageLayout } from "~/components/ui/list-page-layout";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { TableToolbar } from "~/components/ui/table-toolbar";
 import { cn } from "~/lib/utils";
+import { ClientInquiryPreview } from "./InquiryComparison";
 
 type ClientQuotation = {
-    client_name: string;
+	client_name: string;
+	inquiry_id?: string;
 	id: string;
 	quotation_number: string;
 	status: string;
@@ -46,6 +42,8 @@ export type ClientWithStats = {
 };
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+	active:     "secondary",
+	closed:     "outline",
 	draft:      "secondary",
 	sent:       "outline",
 	accepted:   "default",
@@ -63,7 +61,8 @@ function formatCurrency(amount: number) {
 	return new Intl.NumberFormat("ms-MY", {
 		style: "currency",
 		currency: "MYR",
-		maximumFractionDigits: 0,
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
 	}).format(amount);
 }
 
@@ -74,30 +73,42 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 	const [active, setActive] = useState(false);
 	const rafRef = useRef<number | null>(null);
 	const startRef = useRef<number | null>(null);
+	const pointerRef = useRef<{ x: number; y: number } | null>(null);
 
 	const cancel = useCallback(() => {
-		if (rafRef.current) cancelAnimationFrame(rafRef.current);
+		if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
 		rafRef.current = null;
 		startRef.current = null;
+		pointerRef.current = null;
 		setActive(false);
 		setProgress(0);
 	}, []);
 
+	useEffect(() => () => {
+		if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+		startRef.current = null;
+		pointerRef.current = null;
+	}, []);
+
 	const begin = useCallback(
 		(e: React.PointerEvent) => {
-			if ((e.target as Element).closest("a, button")) return;
-			e.preventDefault();
+			if (e.button > 0 || (e.target as Element).closest("a, button")) return;
+			if (e.pointerType !== "touch") e.preventDefault();
+			cancel();
+			pointerRef.current = { x: e.clientX, y: e.clientY };
 			setActive(true);
 			startRef.current = performance.now();
 
 			function tick(now: number) {
-				const elapsed = now - (startRef.current ?? now);
+				if (startRef.current === null) return;
+				const elapsed = now - startRef.current;
 				const pct = Math.min((elapsed / LONG_PRESS_MS) * 100, 100);
 				setProgress(pct);
 
 				if (pct < 100) {
 					rafRef.current = requestAnimationFrame(tick);
 				} else {
+					startRef.current = null;
 					const text = [
 						`Quotation: ${q.quotation_number}`,
 						`Client: ${q.client_name}`,
@@ -121,80 +132,57 @@ function QuotationRow({ q }: { q: ClientQuotation }) {
 	);
 
 	return (
-		<tr
-			className="border-b border-border/30 last:border-0 hover:bg-muted/40 transition-colors select-none"
-			style={{ position: "relative" }}
+		<li
+			className="relative grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-border/60 py-2 last:border-0 hover:bg-muted/40 select-none @min-[32rem]:grid-cols-[minmax(0,1fr)_5rem_minmax(6.5rem,max-content)_4.25rem] @min-[32rem]:py-1.5"
 			onPointerDown={begin}
-			onPointerUp={active ? cancel : undefined}
-			onPointerLeave={active ? cancel : undefined}
+			onPointerMove={(event) => {
+				const origin = pointerRef.current;
+				if (origin && Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > 8) cancel();
+			}}
+			onPointerUp={cancel}
+			onPointerLeave={cancel}
 			onPointerCancel={cancel}
-			onContextMenu={(e) => e.preventDefault()}
+			onContextMenu={(event) => event.preventDefault()}
 		>
 			{active && (
-				<td
-					colSpan={7}
-					style={{ position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none" }}
-				>
-					<div className="absolute inset-0 bg-background/75 backdrop-blur-[1px] flex items-center justify-center gap-2">
-						<Loader2 className="h-4 w-4 animate-spin text-primary" />
-						<span className="text-sm font-medium text-primary">Copying…</span>
-					</div>
-					<div
-						className="absolute bottom-0 left-0 h-0.5 bg-primary"
-						style={{ width: `${progress}%`, transition: "width 16ms linear" }}
-					/>
-				</td>
-			)}
-
-			<td className="py-2 pr-4">
-				<Link href={`/quotations/review/${q.id}`}
-					className="font-mono font-semibold text-primary hover:underline"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{q.quotation_number}
-				</Link>
-			</td>
-			<td className="py-2 pr-4">
-				<span className="font-medium">{q.package_name}</span>
-				{q.package_year && (
-					<span className="text-muted-foreground ml-1">({q.package_year})</span>
-				)}
-			</td>
-			<td className="py-2 pr-4 text-muted-foreground">{q.pic_name}</td>
-			<td className="py-2 pr-4">
-				<Badge variant={STATUS_VARIANT[q.status] ?? "secondary"} className="text-xs">
-					{q.status.charAt(0).toUpperCase() + q.status.slice(1)}
-				</Badge>
-			</td>
-			<td className="py-2 pr-4 text-right font-mono whitespace-nowrap">
-				{formatCurrency(q.total_amount)}
-			</td>
-			<td className="py-2 pr-4 text-muted-foreground whitespace-nowrap">
-				{formatDate(q.created_at)}
-			</td>
-			<td className="py-2">
-				<div className="flex items-center gap-2">
-					<Button
-						variant="ghost"
-						size="sm"
-						asChild
-						className="h-7 px-2 text-xs"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<Link href={`/quotations/review/${q.id}`}>Preview</Link>
-					</Button>
-					<Button
-						variant="ghost"
-						size="sm"
-						asChild
-						className="h-7 px-2 text-xs"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<Link href={`/quotations/edit/${q.id}`}>Edit</Link>
-					</Button>
+				<div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 bg-background/90" aria-hidden="true">
+					<Loader2 className="size-4 animate-spin text-primary" />
+					<span className="text-sm font-medium text-primary">Copying…</span>
+					<div className="absolute bottom-0 left-0 h-0.5 bg-primary" style={{ width: `${progress}%` }} />
 				</div>
-			</td>
-		</tr>
+			)}
+			<div className="min-w-0">
+				<p className="wrap-anywhere text-sm font-medium leading-snug">{q.package_name}</p>
+				<div className="mt-0.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 text-xs leading-snug">
+					<Link href={`/quotations/review/${q.id}`} className="min-w-0 wrap-anywhere font-mono font-semibold text-primary hover:underline">
+						{q.quotation_number}
+					</Link>
+					<span className="min-w-0 wrap-anywhere text-[11px] text-muted-foreground">
+						{q.package_year ? `${q.package_year} · ` : ""}PIC {q.pic_name} · {formatDate(q.created_at)}
+					</span>
+				</div>
+			</div>
+			<span className="justify-self-end @min-[32rem]:col-start-3 @min-[32rem]:row-start-1 font-mono text-sm font-semibold tabular-nums whitespace-nowrap">
+				{formatCurrency(q.total_amount)}
+			</span>
+			<Badge variant={STATUS_VARIANT[q.status] ?? "secondary"} className="text-[11px] @min-[32rem]:col-start-2 @min-[32rem]:row-start-1">
+				{q.status.charAt(0).toUpperCase() + q.status.slice(1)}
+			</Badge>
+			<div className="flex justify-end gap-1 @min-[32rem]:col-start-4 @min-[32rem]:row-start-1 @min-[32rem]:justify-start">
+				<Button variant="ghost" size="icon" asChild className="size-8">
+					<Link href={`/quotations/review/${q.id}`} aria-label={`Preview quotation ${q.quotation_number}`} title="Preview quotation">
+						<Eye className="size-4" />
+					</Link>
+				</Button>
+				{(!q.inquiry_id || q.status === "active") && (
+					<Button variant="ghost" size="icon" asChild className="size-8">
+						<Link href={`/quotations/edit/${q.id}`} aria-label={`Edit quotation ${q.quotation_number}`} title="Edit quotation">
+							<Pencil className="size-4" />
+						</Link>
+					</Button>
+				)}
+			</div>
+		</li>
 	);
 }
 
@@ -227,37 +215,38 @@ export default function ClientsListingPage({
 }: Props) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const navigate = (url: string) => router.push(url);
+	const navigate = (url: string) => router.push(url, { scroll: false });
+	const queryString = searchParams.toString();
 	const isLoading = loadStatus === "loading";
 
-	const [expandedId, setExpandedId] = useState<string | null>(null);
+	const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
+	const [expandedQuery, setExpandedQuery] = useState(queryString);
+	if (expandedQuery !== queryString) {
+		setExpandedQuery(queryString);
+		setExpandedClientId(null);
+	}
 	const [agentFilterOpen, setAgentFilterOpen] = useState(false);
 	const [agentSearch, setAgentSearch] = useState("");
 
-	// Local search state — kept independent of loaderData during navigation
-	// to prevent letters disappearing while the clientLoader is in-flight.
-	const [localSearch, setLocalSearch] = useState(searchTerm);
+	const [searchDraft, setSearchDraft] = useState({ searchTerm, value: searchTerm });
+	const localSearch = searchDraft.searchTerm === searchTerm ? searchDraft.value : searchTerm;
+	if (searchDraft.searchTerm !== searchTerm) {
+		setSearchDraft({ searchTerm, value: searchTerm });
+	}
 
-	// Sync from URL when params change (back/forward navigation, not during active typing)
-	useEffect(() => {
-		setLocalSearch(searchTerm);
-	}, [searchTerm]);
-
-	// Debounce-navigate when the user types
 	useEffect(() => {
 		if (localSearch === searchTerm) return;
 		const timer = setTimeout(() => {
-			const params = new URLSearchParams(searchParams.toString());
+			const params = new URLSearchParams(queryString);
 			params.delete("cursor");
 			params.delete("offset");
 			if (localSearch.trim()) params.set("q", localSearch.trim());
 			else params.delete("q");
 			const qs = params.toString();
-			navigate(`/clients${qs ? `?${qs}` : ""}`);
+			router.push(`/clients${qs ? `?${qs}` : ""}`, { scroll: false });
 		}, 400);
 		return () => clearTimeout(timer);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [localSearch]);
+	}, [localSearch, searchTerm, queryString, router]);
 
 	const isFiltered = !!searchTerm || picFilters.length > 0;
 
@@ -314,36 +303,26 @@ export default function ClientsListingPage({
 		}
 	}
 
-	function toggle(id: string) {
-		setExpandedId((prev) => (prev === id ? null : id));
-	}
-
 	return (
-		<div className="workspace-page max-w-7xl space-y-4 md:space-y-6 animate-fadeIn">
-			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-				<div>
-					<h2 className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">
-						Clients
-					</h2>
-					<p className="text-muted-foreground text-xs md:text-sm">
-						Manage clients and current quotations. Open a client to view historical and archived revisions.
-					</p>
-				</div>
-				<Button asChild className="w-full md:w-auto gap-2">
+		<ListPageLayout
+			title="Clients"
+			description="Browse clients and their inquiries."
+			primaryAction={
+				<Button asChild>
 					<Link href="/clients/create">
-						<UserPlus className="w-4 h-4" />
-						New Client
+						<Plus className="w-4 h-4" /> Create Client
 					</Link>
 				</Button>
-			</div>
+			}
+		>
 
-			<Card className="gap-0 overflow-hidden py-0">
+			<Card className="min-w-0 gap-0 overflow-hidden py-0" role="region" aria-label="Client directory">
 				<TableToolbar
 					search={{
 						label: "Search clients",
 						placeholder: "Name or phone number",
 						value: localSearch,
-						onChange: (event) => setLocalSearch(event.target.value),
+						onChange: (event) => setSearchDraft({ searchTerm, value: event.target.value }),
 						isLoading,
 					}}
 				>
@@ -351,9 +330,8 @@ export default function ClientsListingPage({
 						<PopoverTrigger asChild>
 							<Button
 								variant="outline"
-								size="sm"
 								className={cn(
-									"gap-2 h-8 text-xs",
+									"gap-2",
 									picFilters.length > 0 && "border-primary text-primary",
 								)}
 							>
@@ -374,7 +352,8 @@ export default function ClientsListingPage({
 									placeholder="Search agents..."
 									value={agentSearch}
 									onChange={(e) => setAgentSearch(e.target.value)}
-									className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+									aria-label="Search agents"
+									className="min-w-0 flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
 								/>
 							</div>
 							<div className="max-h-64 overflow-y-auto py-1">
@@ -394,6 +373,7 @@ export default function ClientsListingPage({
 													type="button"
 													role="switch"
 													aria-checked={isActive}
+													aria-label={`Filter by ${pic}`}
 													onClick={() => handleTogglePic(pic)}
 													className={cn(
 														"relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
@@ -425,176 +405,97 @@ export default function ClientsListingPage({
 						</PopoverContent>
 					</Popover>
 				</TableToolbar>
-
-				<CardContent className="p-0">
-					<p role="status" className="sr-only">
-						{isLoading ? "Loading clients…" : ""}
-					</p>
-					{loadStatus === "failed" ? (
-						<p role="alert" className="px-4 py-4 text-center text-sm text-muted-foreground">
-							Unable to load clients.
-						</p>
-					) : null}
-					{clients.length === 0 && loadStatus === "loaded" ? (
-						<div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-							<Users className="h-8 w-8 opacity-30" />
-							<p className="text-sm">
-								{isFiltered
-									? "No clients match the current filters."
-									: "No clients yet."}
-							</p>
-						</div>
-					) : isLoading || clients.length > 0 ? (
-						<div className="@container">
-							<Table className="min-w-full">
-								<TableHeader>
-									<TableRow>
-										<TableHead>Name</TableHead>
-										<TableHead>Phone</TableHead>
-										<TableHead className="text-right">Quotations</TableHead>
-										<TableHead>Last Quotation</TableHead>
-										<TableHead>Client Since</TableHead>
-										<TableHead className="w-10" />
-									</TableRow>
-								</TableHeader>
-								<TableBody aria-busy={isLoading}>
-									{isLoading && clients.length === 0 ? <TableSkeletonRows columns={6} /> : null}
-									{clients.map((client) => {
-										const isOpen = expandedId === client.id;
-										return (
-											<Fragment key={client.id}>
-												<TableRow
-													className={cn(
-														"hover:bg-muted/40 cursor-pointer",
-														isOpen && "bg-muted/30",
-													)}
-													onClick={() => toggle(client.id)}
-												>
-													<TableCell className="font-medium">
-														<Link href={`/clients/${client.id}`} onClick={event => event.stopPropagation()} className="hover:underline">{client.name}</Link>
-													</TableCell>
-													<TableCell className="text-muted-foreground text-sm">
-														{client.phone_number || "—"}
-													</TableCell>
-													<TableCell className="text-right">
-														<Badge variant="secondary">{client.quotation_count}</Badge>
-													</TableCell>
-													<TableCell className="text-sm text-muted-foreground">
-														{client.last_quotation_at
-															? formatDate(client.last_quotation_at)
-															: "—"}
-													</TableCell>
-													<TableCell className="text-sm text-muted-foreground">
-														{formatDate(client.created_at)}
-													</TableCell>
-													<TableCell onClick={(e) => e.stopPropagation()}>
-														<button
-															type="button"
-															onClick={() => toggle(client.id)}
-															className="flex items-center justify-center h-7 w-7 rounded hover:bg-muted transition-colors"
-															aria-label={isOpen ? "Collapse" : "Expand"}
-														>
-															<ChevronDown
-																className={cn(
-																	"h-4 w-4 text-muted-foreground transition-transform duration-200",
-																	isOpen && "rotate-180",
-																)}
-															/>
-														</button>
-													</TableCell>
-												</TableRow>
-
-												{isOpen && (
-													<TableRow className="hover:bg-transparent">
-														<TableCell colSpan={6} className="border-b-0 p-0 whitespace-normal wrap-anywhere">
-															<div className="border-l-4 border-primary/40 bg-muted/20 px-4 py-4 @min-[40rem]:px-6">
-																<div className="mb-3 flex flex-col items-start gap-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
-																	<p className="text-sm font-medium">Current quotations</p>
-																	<Link href={`/clients/${client.id}`} className="text-sm text-primary hover:underline">View client and history ({client.historical_quotation_count})</Link>
-																</div>
-																{client.quotations.length === 0 ? (
-																	<div className="flex flex-col items-start gap-2 py-2 @min-[40rem]:flex-row @min-[40rem]:items-center @min-[40rem]:justify-between">
-																		<p className="text-sm text-muted-foreground">
-																			No current quotations.
-																		</p>
-																		<Button asChild size="sm" variant="outline">
-																			<Link href={`/quotations/create?client_id=${client.id}`}>
-																				Create quotation
-																			</Link>
-																		</Button>
-																	</div>
-																) : (
-																	<>
-																		<p className="text-xs text-muted-foreground mb-3">
-																			Hold down on a row to copy its details to clipboard.
-																		</p>
-																		<table className="w-full text-sm">
-																			<thead>
-																				<tr className="text-xs text-muted-foreground border-b border-border/50">
-																					<th className="text-left font-medium pb-2 pr-4">Quotation</th>
-																					<th className="text-left font-medium pb-2 pr-4">Package</th>
-																					<th className="text-left font-medium pb-2 pr-4">PIC</th>
-																					<th className="text-left font-medium pb-2 pr-4">Status</th>
-																					<th className="text-right font-medium pb-2 pr-4">Amount</th>
-																					<th className="text-left font-medium pb-2 pr-4">Date</th>
-																					<th className="w-24 pb-2" />
-																				</tr>
-																			</thead>
-																			<tbody>
-																				{client.quotations.map((q) => (
-																					<QuotationRow
-																						key={q.id}
-																						q={q}
-																					/>
-																				))}
-																			</tbody>
-																		</table>
-																	</>
-																)}
-															</div>
-														</TableCell>
-													</TableRow>
-												)}
-											</Fragment>
-										);
-									})}
-								</TableBody>
-							</Table>
-						</div>
-					) : null}
-
-					{/* Pagination */}
+				<p role="status" className="sr-only">{isLoading ? "Loading clients…" : ""}</p>
+				{loadStatus === "failed" && (
+					<p role="alert" className="px-4 py-3 text-sm text-muted-foreground">Unable to load clients.</p>
+				)}
+				<Table aria-label="Clients" aria-busy={isLoading} className="table-fixed">
+					<TableHeader>
+						<TableRow className="hover:bg-transparent">
+							<TableHead scope="col" className="w-[70%] pl-11 sm:w-[52%] lg:w-[33%]">Name</TableHead>
+							<TableHead scope="col" className="hidden w-[30%] sm:table-cell lg:w-[13%]">Phone</TableHead>
+							<TableHead scope="col" className="w-[30%] text-center whitespace-normal wrap-anywhere sm:w-[18%] lg:w-[17%]">Quotations</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] lg:w-[19%] lg:table-cell">Last Quotation</TableHead>
+							<TableHead scope="col" className="hidden w-[17%] pr-4 lg:w-[18%] lg:table-cell">Client Since</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{clients.length === 0 && loadStatus === "loaded" && <TableRow className="hover:bg-transparent">
+							<TableCell colSpan={5} className="whitespace-normal">
+								<div className="flex flex-col items-center gap-3 px-4 py-10 text-center text-muted-foreground">
+									<Users aria-hidden="true" className="size-8 opacity-30" />
+									<p>{isFiltered ? "No clients match the current filters." : "No clients yet."}</p>
+								</div>
+							</TableCell>
+						</TableRow>}
+						{clients.map((client) => {
+							const isExpanded = expandedClientId === client.id;
+							const detailId = `client-${client.id}-details`;
+							const standaloneQuotations = isExpanded ? client.quotations.filter((quotation) => !quotation.inquiry_id) : [];
+							const lastQuotation = client.last_quotation_at
+								? <time dateTime={client.last_quotation_at}>{formatDate(client.last_quotation_at)}</time>
+								: "—";
+							return <Fragment key={client.id}>
+								<TableRow className={cn(isExpanded && "bg-primary/10 hover:bg-primary/10")}>
+									<TableHead scope="row" className="h-auto p-0 font-normal whitespace-normal text-foreground">
+										<button type="button" aria-label={`Quotations for ${client.name}`} aria-expanded={isExpanded}
+											aria-controls={detailId}
+											onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
+											className="flex w-full min-w-0 items-start gap-3 rounded-sm pt-4 pr-2 pb-2 pl-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset lg:py-2">
+											<ChevronRight aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", isExpanded && "rotate-90")} />
+											<span className="min-w-0 font-semibold wrap-anywhere">{client.name}</span>
+										</button>
+										<div className="space-y-1 pr-2 pb-4 pl-11 text-xs text-muted-foreground wrap-anywhere lg:hidden">
+											<p className="sm:hidden">{client.phone_number || "No phone number"}</p>
+											<p>Last quotation {lastQuotation}</p>
+											<p>Client since <time dateTime={client.created_at}>{formatDate(client.created_at)}</time></p>
+										</div>
+									</TableHead>
+									<TableCell className="hidden py-4 whitespace-normal wrap-anywhere sm:table-cell lg:py-2">{client.phone_number || "—"}</TableCell>
+									<TableCell className="py-4 text-center tabular-nums lg:py-2" aria-label={`${client.quotation_count} current quotations`}>{client.quotation_count}</TableCell>
+									<TableCell className="hidden py-4 lg:table-cell lg:py-2">{lastQuotation}</TableCell>
+									<TableCell className="hidden py-4 pr-4 lg:table-cell lg:py-2"><time dateTime={client.created_at}>{formatDate(client.created_at)}</time></TableCell>
+								</TableRow>
+								{isExpanded && <TableRow id={detailId} className="bg-muted/30 hover:bg-muted/30">
+									<TableCell colSpan={5} className="p-3 whitespace-normal sm:px-6 sm:py-3">
+										<ClientInquiryPreview clientId={client.id as Id<"clients">}>
+											{standaloneQuotations.length > 0 ? <div>
+												<p className="pb-2 text-xs text-muted-foreground">Hold down on a row to copy its details to clipboard.</p>
+												<ul aria-label={`Current quotations for ${client.name}`} className="@container rounded-lg border bg-card px-3">
+													{standaloneQuotations.map((q) => <QuotationRow key={q.id} q={q} />)}
+												</ul>
+											</div> : <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
+												<FileText aria-hidden="true" className="size-8 text-muted-foreground opacity-60" />
+												<p className="text-sm text-muted-foreground">No current quotations for this client.</p>
+												<Button asChild size="sm" variant="outline"><Link href={`/quotations/create?client_id=${client.id}`}>Create quotation</Link></Button>
+											</div>}
+										</ClientInquiryPreview>
+									</TableCell>
+								</TableRow>}
+							</Fragment>;
+						})}
+					</TableBody>
+				</Table>
+				<div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-t p-3">
 					{(!isFirstPage || !isDone) && (
-						<div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
-							{loadStatus === "loaded" && isFiltered && total > 0 && (
-								<span className="text-xs text-muted-foreground mr-auto">
-									Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}
-								</span>
-							)}
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={handlePreviousPage}
-								disabled={isFirstPage || isLoading}
-								className="gap-1"
-							>
-								<ChevronLeft className="h-4 w-4" />
-								Previous
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={handleNextPage}
-								disabled={isDone || loadStatus !== "loaded"}
-								className="gap-1"
-							>
-								Next
-								<ChevronRight className="h-4 w-4" />
-							</Button>
-						</div>
+						<Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={isFirstPage || isLoading} className="gap-1 px-2">
+							<ChevronLeft className="size-4" />Previous
+						</Button>
 					)}
-				</CardContent>
+					<span className="col-start-2 min-w-0 text-center text-xs text-muted-foreground tabular-nums">
+						{loadStatus === "loaded"
+							? isFiltered && total > 0
+								? `Showing ${offset + 1}–${Math.min(offset + PAGE_SIZE, total)} of ${total}`
+								: `${total} ${total === 1 ? "client" : "clients"}`
+							: isLoading ? "Loading…" : "Unavailable"}
+					</span>
+					{(!isFirstPage || !isDone) && (
+						<Button variant="outline" size="sm" onClick={handleNextPage} disabled={isDone || loadStatus !== "loaded"} className="gap-1 px-2">
+							Next<ChevronRight className="size-4" />
+						</Button>
+					)}
+				</div>
 			</Card>
-		</div>
+		</ListPageLayout>
 	);
 }

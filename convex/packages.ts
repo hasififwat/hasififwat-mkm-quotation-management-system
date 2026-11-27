@@ -1,9 +1,11 @@
 import { readCurrentQuotations } from "./lib/currentQuotations";
+import { currentOptionState } from "./lib/inquiryLifecycle";
 import { packageEditToken, readPackageEditSnapshot, requireCurrentPackageEdit } from "./lib/packageEditSnapshot";
 import { requireQuotationReferencesPreserved } from "./lib/packageReferences";
 import { requirePrices, requireFlightDates } from "../src/domain/submission-validation";
 import { quotationSelectionContext } from "../src/domain/quotation-selection-context";
 import { isSupportedUmrahYear } from "../src/domain/umrah-years";
+import { QUOTATION_STATUSES } from "../src/domain/quotation-status";
 import { ConvexError, v } from "convex/values";
 import { packageSyncKey, PACKAGE_SYNC_CONFLICT_MESSAGE } from "../src/domain/package-sync-intent";
 import { mutation, query, type QueryCtx } from "./_generated/server";
@@ -30,8 +32,6 @@ export const list = query({
   },
 });
 
-const QUOTATION_STATUSES = ["draft", "sent", "accepted", "rejected", "revised", "superseded"] as const;
-
 export const listWithQuotationCounts = query({
   args: {},
   handler: async (ctx) => {
@@ -48,18 +48,22 @@ export const listWithQuotationCounts = query({
       historicalCounts.set(revision.package_id, (historicalCounts.get(revision.package_id) ?? 0) + 1);
     }
 
-    const quotationsByPackage = new Map<string, typeof quotations>();
-    for (const q of quotations) {
-      const bucket = quotationsByPackage.get(q.package_id) ?? [];
-      bucket.push(q);
-      quotationsByPackage.set(q.package_id, bucket);
+    const statuses = await Promise.all(quotations.map(async quotation => ({
+      packageId: quotation.package_id,
+      status: (await currentOptionState(ctx, quotation))?.status ?? quotation.status,
+    })));
+    const statusesByPackage = new Map<string, (typeof statuses)[number]["status"][]>();
+    for (const { packageId, status } of statuses) {
+      const bucket = statusesByPackage.get(packageId) ?? [];
+      bucket.push(status);
+      statusesByPackage.set(packageId, bucket);
     }
 
     return packages
       .map((pkg) => {
-        const qs = quotationsByPackage.get(String(pkg._id)) ?? [];
+        const qs = statusesByPackage.get(String(pkg._id)) ?? [];
         const by_status = Object.fromEntries(
-          QUOTATION_STATUSES.map((s) => [s, qs.filter((q) => q.status === s).length])
+          QUOTATION_STATUSES.map((s) => [s, qs.filter((status) => status === s).length])
         ) as Record<typeof QUOTATION_STATUSES[number], number>;
         return {
           id: String(pkg._id),

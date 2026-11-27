@@ -1,0 +1,440 @@
+[
+  {
+    "variant": "cards",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          386,
+          386,
+          386,
+          386,
+          386
+        ],
+        "medianPx": 386,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          830,
+          830,
+          830,
+          830,
+          830
+        ],
+        "medianPx": 830,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          582,
+          582,
+          582,
+          582,
+          582
+        ],
+        "medianPx": 582,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          1498,
+          1498,
+          1498,
+          1498,
+          1498
+        ],
+        "medianPx": 1498,
+        "maxHorizontalOverflowPx": 0
+      }
+    }
+  },
+  {
+    "variant": "wide",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          347,
+          347,
+          347,
+          347,
+          347
+        ],
+        "medianPx": 347,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          542,
+          542,
+          542,
+          542,
+          542
+        ],
+        "medianPx": 542,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          395,
+          395,
+          395,
+          395,
+          395
+        ],
+        "medianPx": 395,
+        "maxHorizontalOverflowPx": 383
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          590,
+          590,
+          590,
+          590,
+          590
+        ],
+        "medianPx": 590,
+        "maxHorizontalOverflowPx": 393
+      }
+    }
+  },
+  {
+    "variant": "responsive",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          382,
+          382,
+          382,
+          382,
+          382
+        ],
+        "medianPx": 382,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          622,
+          622,
+          622,
+          622,
+          622
+        ],
+        "medianPx": 622,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          502,
+          502,
+          502,
+          502,
+          502
+        ],
+        "medianPx": 502,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          1342,
+          1342,
+          1342,
+          1342,
+          1342
+        ],
+        "medianPx": 1342,
+        "maxHorizontalOverflowPx": 0
+      }
+    }
+  },
+  {
+    "variant": "refined",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          362,
+          362,
+          362,
+          362,
+          362
+        ],
+        "medianPx": 362,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          550,
+          550,
+          550,
+          550,
+          550
+        ],
+        "medianPx": 550,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          502,
+          502,
+          502,
+          502,
+          502
+        ],
+        "medianPx": 502,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          986,
+          986,
+          986,
+          986,
+          986
+        ],
+        "medianPx": 986,
+        "maxHorizontalOverflowPx": 0
+      }
+    }
+  },
+  {
+    "variant": "adjusted",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          362,
+          362,
+          362,
+          362,
+          362
+        ],
+        "medianPx": 362,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          550,
+          550,
+          550,
+          550,
+          550
+        ],
+        "medianPx": 550,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          534,
+          534,
+          534,
+          534,
+          534
+        ],
+        "medianPx": 534,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          1122,
+          1122,
+          1122,
+          1122,
+          1122
+        ],
+        "medianPx": 1122,
+        "maxHorizontalOverflowPx": 0
+      },
+      "widthChecks": [
+        {
+          "width": 320,
+          "tableWidth": 260,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 390,
+          "tableWidth": 330,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 640,
+          "tableWidth": 540,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 768,
+          "tableWidth": 652,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 900,
+          "tableWidth": 784,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 1024,
+          "tableWidth": 636,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 1440,
+          "tableWidth": 908,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        }
+      ]
+    }
+  },
+  {
+    "variant": "final",
+    "errors": 0,
+    "samples": 5,
+    "results": {
+      "desktop-accepted": {
+        "rows": 2,
+        "heights": [
+          362,
+          362,
+          362,
+          362,
+          362
+        ],
+        "medianPx": 362,
+        "maxHorizontalOverflowPx": 0
+      },
+      "desktop-open": {
+        "rows": 6,
+        "heights": [
+          550,
+          550,
+          550,
+          550,
+          550
+        ],
+        "medianPx": 550,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-accepted": {
+        "rows": 2,
+        "heights": [
+          482,
+          482,
+          482,
+          482,
+          482
+        ],
+        "medianPx": 482,
+        "maxHorizontalOverflowPx": 0
+      },
+      "mobile-open": {
+        "rows": 6,
+        "heights": [
+          890,
+          890,
+          890,
+          890,
+          890
+        ],
+        "medianPx": 890,
+        "maxHorizontalOverflowPx": 0
+      },
+      "widthChecks": [
+        {
+          "width": 320,
+          "tableWidth": 260,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 390,
+          "tableWidth": 330,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 640,
+          "tableWidth": 540,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 768,
+          "tableWidth": 652,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 900,
+          "tableWidth": 784,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 1024,
+          "tableWidth": 636,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        },
+        {
+          "width": 1440,
+          "tableWidth": 908,
+          "tableOverflow": 0,
+          "clippedBadges": false,
+          "datesOnOneLine": true
+        }
+      ],
+      "actions": {
+        "openedWithKeyboard": true,
+        "confirmedExactQuotation": true,
+        "alternativesClosedAfterReload": 5,
+        "acceptedOnSavedReview": true
+      }
+    }
+  }
+]

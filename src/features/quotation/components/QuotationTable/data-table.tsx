@@ -174,13 +174,13 @@ export function DataTable<TData, TValue>({
                         {quotation.family_id && <Link href={`/quotations/${quotation.id}/history`}>
                             <DropdownMenuItem>Family history</DropdownMenuItem>
                         </Link>}
-						{!archived && <Link href={`/quotations/edit/${quotation.id}`}>
+						{!archived && (!quotation.inquiry_id || quotation.status === "active") && <Link href={`/quotations/edit/${quotation.id}`}>
 							<DropdownMenuItem>
 								<PencilIcon className="mr-2 h-4 w-4" />
 								Edit current
 							</DropdownMenuItem>
 						</Link>}
-						{!archived && <DropdownMenuItem
+						{!archived && !quotation.inquiry_id && <DropdownMenuItem
 							onClick={() => handleArchive(quotation)}
 							className="text-muted-foreground"
 						>
@@ -246,7 +246,7 @@ export function DataTable<TData, TValue>({
 							>
 								<Link href={`/quotations/review/${row.id}`}>Preview</Link>
 							</Button>
-							{!archived && <><Separator orientation="vertical" />
+							{!archived && (!row.inquiry_id || row.status === "active") && <><Separator orientation="vertical" />
 							<Button
 								variant="ghost"
 								size="sm"
@@ -284,6 +284,8 @@ export function DataTable<TData, TValue>({
 				let variant: "default" | "secondary" | "destructive" | "outline" =
 					"default";
 				switch (status) {
+					case "active": variant = "outline"; break;
+					case "closed": variant = "secondary"; break;
 					case "draft": variant = "secondary"; break;
 					case "sent": variant = "outline"; break;
 					case "accepted": variant = "default"; break;

@@ -10,6 +10,7 @@ function fixture(authenticated = true) {
     quotation_family_migrations: [],
     quotation_families: [],
     client_aliases: [],
+    inquiries: [],
     clients: [
       {_id:'client:1',name:'Fixture Client',phone_number:'0123456789',created_at:'2026-01-01',updated_at:'2026-01-01'},
       {_id:'client:2',name:'Fixture Client',phone_number:'0123456789',created_at:'2026-01-02',updated_at:'2026-01-02'},
@@ -27,8 +28,8 @@ function fixture(authenticated = true) {
       const predicates = [];
       const q = {
         withIndex(name, callback) {
-          assert.ok(['by_client_id','by_key','by_alias_client_id','by_archived','by_family_revision'].includes(name));
-          const index = {eq(field,value) { assert.equal(field,name === 'by_key' ? 'key' : name === 'by_alias_client_id' ? 'alias_client_id' : name === 'by_archived' ? 'archived' : name === 'by_family_revision' ? 'family_id' : 'client_id'); predicates.push([field,value]); return index; }};
+          assert.ok(['by_client_id','by_key','by_alias_client_id','by_open_client','by_archived','by_family_revision'].includes(name));
+          const index = {eq(field,value) { assert.equal(field,name === 'by_key' ? 'key' : name === 'by_alias_client_id' ? 'alias_client_id' : name === 'by_open_client' ? 'open_client_id' : name === 'by_archived' ? 'archived' : name === 'by_family_revision' ? 'family_id' : 'client_id'); predicates.push([field,value]); return index; }};
           callback(index);
           return q;
         },
@@ -151,6 +152,7 @@ test('client pagination removes aliases before selecting each stable page', asyn
   let cursor = null;
   for (let pageNumber=0;pageNumber<10;pageNumber++) {
     const result = await clients.listWithStatsPaginated._handler(s.ctx,{paginationOpts:{cursor,numItems:5}});
+    assert.equal(result.total,28);
     seen.push(...result.page.map(row => row.id));
     if(result.isDone) break;
     assert.equal(result.page.length,5);

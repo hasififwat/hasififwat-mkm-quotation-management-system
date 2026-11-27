@@ -1,0 +1,40 @@
+{
+  "simultaneousFirstSaves": {
+    "committed": 1,
+    "rejectedStale": 1,
+    "openInquiries": 1,
+    "optionsAfterReviewAndRetry": 2
+  },
+  "acceptance": {
+    "simultaneousWinners": 1,
+    "staleRevisionRejected": true,
+    "immutableSavedRows": true,
+    "otherOptionClosed": true
+  },
+  "undo": {
+    "restoredOnlyOptionsClosedByAcceptance": true,
+    "blockedWhenAnotherInquiryOpen": true
+  },
+  "canonicalMerge": {
+    "twoOpenRejected": true,
+    "soleOpenTransferred": true,
+    "priorInquiryHistoryVisible": true
+  },
+  "fourteenDayBoundary": {
+    "periodMs": 1209600000,
+    "openOneMillisecondBefore": true,
+    "closedAtDeadline": true,
+    "repeatNoEffect": true
+  },
+  "followUp": {
+    "recordedOnSimulatedDay13": true,
+    "extensionMs": 1209600000,
+    "openAtOldDeadline": true,
+    "duplicateFollowUpNoEffect": true,
+    "closesAtExtendedDeadline": true
+  },
+  "scheduler": {
+    "productionInternalMutationRan": true,
+    "persistedInactivityClosure": true
+  }
+}

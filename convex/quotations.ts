@@ -2,6 +2,7 @@ import { quotationRefreshToken, snapshotRefreshToken } from "./lib/quotationRefr
 import { SNAPSHOT_REFRESH_CONFLICT, SNAPSHOT_REFRESH_CONFLICT_MESSAGE } from "../src/domain/snapshot-refresh-review";
 import { readCurrentQuotations, quotationMatches, quotationReference, currentPage } from "./lib/currentQuotations";
 import { canonicalClientId } from "./lib/clientCanonical";
+import { currentOptionState } from "./lib/inquiryLifecycle";
 import { readSavedQuotation, revisionContext } from "./lib/savedQuotation";
 import { saveCommand, saveRevision } from "./quotationRevisionSaves";
 import { assertLegacyWritesAllowed, assertMutableLegacyQuotation, reserveBaseReference } from "./lib/quotationFamilyIdentity";
@@ -262,6 +263,7 @@ export const list = query({
 					quotation.hotels_snapshot,
 				);
 				const is_stale = stale_fields.length > 0;
+				const option = await currentOptionState(ctx, quotation);
 
 				return {
 					id: String(quotation._id),
@@ -277,7 +279,8 @@ export const list = query({
                     package_id: quotation.package_id,
 					pic_name: quotation.pic_name,
 					branch: quotation.branch,
-					status: quotation.status,
+					status: option?.status ?? quotation.status,
+					...(option ? { inquiry_id: option.inquiry_id } : {}),
 					total_amount: quotation.total_amount,
 					notes: quotation.notes ?? "",
 					hijri_year: quotation.hijri_year,
@@ -459,6 +462,7 @@ export const listPaginated = query({
 					quotation.hotels_snapshot,
 				);
 				const is_stale = rowStaleFields.length > 0;
+				const option = await currentOptionState(ctx, quotation);
 
 				return {
 					id: String(quotation._id),
@@ -474,7 +478,8 @@ export const listPaginated = query({
                     package_id: quotation.package_id,
 					pic_name: quotation.pic_name,
 					branch: quotation.branch,
-					status: quotation.status,
+					status: option?.status ?? quotation.status,
+					...(option ? { inquiry_id: option.inquiry_id } : {}),
 					total_amount: quotation.total_amount,
 					notes: quotation.notes ?? "",
 					hijri_year: quotation.hijri_year,

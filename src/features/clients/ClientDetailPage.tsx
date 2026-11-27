@@ -2,9 +2,12 @@
 
 import { ChevronLeft, Eye, FileText, PencilIcon, Phone, Plus, User } from "lucide-react";
 import Link from "next/link";
+import type { Id } from "convex/_generated/dataModel";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { StaffPageColumn } from "~/components/ui/list-page-layout";
+import InquiryComparison from "./InquiryComparison";
 
 type ClientQuotation = {
 	id: string;
@@ -20,6 +23,7 @@ type ClientQuotation = {
 	client_name: string;
 	archived: boolean;
 	current_revision_id: string | null;
+	inquiry_id?: Id<"inquiries">;
 };
 
 type ClientDetail = {
@@ -56,73 +60,71 @@ function formatCurrency(amount: number) {
 
 export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 	const totalQuotedValue = client.total_quoted_value;
+	const standaloneQuotations = client.quotations.filter(quotation => !quotation.inquiry_id);
 
 	return (
-		<div className="workspace-page max-w-5xl space-y-4 md:space-y-6 animate-fadeIn">
-			{/* Back nav */}
+		<StaffPageColumn>
 			<Button variant="ghost" size="sm" asChild className="-ml-2 gap-1 text-muted-foreground">
 				<Link href="/clients">
-					<ChevronLeft className="h-4 w-4" />
+					<ChevronLeft aria-hidden="true" className="size-4" />
 					All Clients
 				</Link>
 			</Button>
 
-			{/* Client info card */}
-			<Card>
-				<CardHeader className="pb-3">
-					<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-						<div className="flex items-center gap-3">
-							<div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-								<User className="h-5 w-5 text-primary" />
-							</div>
-							<div>
-								<CardTitle className="wrap-anywhere text-xl font-bold tracking-tight md:text-2xl">{client.name}</CardTitle>
-								{client.phone_number && (
-									<div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
-										<Phone className="h-3.5 w-3.5" />
-										{client.phone_number}
-									</div>
-								)}
-							</div>
+			<section className="space-y-4" aria-label="Client summary">
+				<div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+					<div className="flex min-w-0 items-center gap-3">
+						<div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 sm:size-12">
+							<User aria-hidden="true" className="size-5 text-primary sm:size-6" />
 						</div>
-						<Button asChild className="gap-2 w-full md:w-auto">
-							<Link href={`/quotations/create?client_id=${client.id}`}>
-								<Plus className="h-4 w-4" />
-								New Quotation
-							</Link>
-						</Button>
-					</div>
-				</CardHeader>
-				<CardContent className="pt-0">
-					<div className="flex flex-wrap gap-6 text-sm">
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Quotations</p>
-							<p className="font-semibold">{client.quotations.length}</p>
-						</div>
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Current Quoted Value</p>
-							<p className="font-semibold">{formatCurrency(totalQuotedValue)}</p>
-						</div>
-						<div>
-							<p className="text-muted-foreground text-xs mb-0.5">Client Since</p>
-							<p className="font-semibold">{formatDate(client.created_at)}</p>
+						<div className="min-w-0">
+							<h2 className="text-xl font-bold tracking-tight wrap-anywhere md:text-2xl">{client.name}</h2>
+							{client.phone_number && (
+								<div className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+									<Phone aria-hidden="true" className="size-3.5 shrink-0" />
+									<span className="wrap-anywhere">{client.phone_number}</span>
+								</div>
+							)}
 						</div>
 					</div>
-				</CardContent>
-			</Card>
+					<Button asChild className="w-full md:w-auto">
+						<Link href={`/quotations/create?client_id=${client.id}`}>
+							<Plus aria-hidden="true" className="size-4" />
+							Create Quotation
+						</Link>
+					</Button>
+				</div>
+				<Card className="py-3 sm:py-4">
+					<dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_minmax(0,1.2fr)] divide-x divide-border sm:grid-cols-3">
+						<div className="grid content-between gap-1 px-2.5 sm:px-6">
+							<dt className="text-xs text-muted-foreground wrap-anywhere sm:text-sm">Quotations</dt>
+							<dd className="text-sm font-semibold tabular-nums sm:text-lg">{client.quotations.length}</dd>
+						</div>
+						<div className="grid content-between gap-1 px-2.5 sm:px-6">
+							<dt className="text-xs text-muted-foreground sm:text-sm">Current Quoted Value</dt>
+							<dd className="text-sm font-semibold tabular-nums wrap-anywhere sm:text-lg">{formatCurrency(totalQuotedValue)}</dd>
+						</div>
+						<div className="grid content-between gap-1 px-2.5 sm:px-6">
+							<dt className="text-xs text-muted-foreground sm:text-sm">Client Since</dt>
+							<dd className="text-sm font-semibold tabular-nums sm:text-lg">{formatDate(client.created_at)}</dd>
+						</div>
+					</dl>
+				</Card>
+			</section>
 
-			{/* Quotation timeline */}
-			<Card className="overflow-hidden">
+			<InquiryComparison key={client.id} clientId={client.id as Id<"clients">} />
+
+			{(standaloneQuotations.length > 0 || client.quotations.length === 0) && <Card className="overflow-hidden">
 				<CardHeader className="p-4 md:p-6 pb-3 border-b border-border">
 					<CardTitle className="text-base">
 						Current Quotations
 						<span className="ml-2 text-sm font-normal text-muted-foreground">
-							({client.quotations.length})
+							({standaloneQuotations.length})
 						</span>
 					</CardTitle>
 				</CardHeader>
 				<CardContent className="p-4 md:p-6">
-					{client.quotations.length === 0 ? (
+					{standaloneQuotations.length === 0 ? (
 						<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
 							<p className="text-sm">No current quotations for this client.</p>
 							<Button asChild size="sm" variant="outline">
@@ -133,7 +135,7 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						</div>
 					) : (
 						<ol className="relative border-l border-border ml-3">
-							{client.quotations.map((q) => (
+							{standaloneQuotations.map((q) => (
 								<li key={q.id} className="mb-8 ml-6 last:mb-0">
 									{/* Timeline dot */}
 									<span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border ring-4 ring-background">
@@ -192,21 +194,21 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 						</ol>
 					)}
 				</CardContent>
-			</Card>
-			<Card>
+			</Card>}
+			<Card className="gap-5">
 				<CardHeader>
-					<CardTitle className="text-base">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+					<CardTitle className="text-base leading-normal sm:text-lg">Historical and Archived Revisions ({client.historical_quotations.length})</CardTitle>
+					<CardDescription>These revisions are excluded from current quoted value.</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p className="text-sm text-muted-foreground mb-4">Saved revisions associated with this client. These amounts are excluded from current quoted value.</p>
 					{client.historical_quotations.length === 0 ? <p className="text-sm text-muted-foreground">No historical revisions.</p> : (
-						<ul className="divide-y">
+						<ul className="divide-y divide-border">
 							{client.historical_quotations.map(q => (
-								<li key={q.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-									<div className="space-y-1">
-										<Link href={`/quotations/review/${q.id}`} className="font-mono text-sm text-primary hover:underline">{q.quotation_number}</Link>
-										<p className="text-sm">{q.client_name} · {q.package_name}</p>
-										<p className="text-xs text-muted-foreground">{formatCurrency(q.total_amount)} · {formatDate(q.created_at)}{q.archived ? " · Family archived" : " · Historical revision"}</p>
+								<li key={q.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-1 last:pb-0">
+									<div className="min-w-0 space-y-1">
+										<Link href={`/quotations/review/${q.id}`} className="break-words font-mono text-sm text-primary hover:underline">{q.quotation_number}</Link>
+										<p className="break-words text-sm">{q.client_name} · {q.package_name}</p>
+										<p className="break-words text-sm text-muted-foreground">{formatCurrency(q.total_amount)} · {formatDate(q.created_at)}{q.archived ? " · Family archived" : " · Historical revision"}</p>
 									</div>
 									<Button variant="outline" size="sm" asChild><Link href={`/quotations/review/${q.id}`}>View saved revision</Link></Button>
 								</li>
@@ -215,6 +217,6 @@ export default function ClientDetailPage({ client }: { client: ClientDetail }) {
 					)}
 				</CardContent>
 			</Card>
-		</div>
+		</StaffPageColumn>
 	);
 }

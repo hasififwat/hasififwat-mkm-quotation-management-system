@@ -15,10 +15,38 @@ export default defineSchema({
     // Timestamps for clean data health
     created_at: v.string(),
     updated_at: v.string(),
+    open_client_id: v.optional(v.id("clients")),
+    lifecycle: v.optional(v.object({
+      cycle: v.number(),
+      deadline: v.number(),
+      outcome: v.optional(v.union(
+        v.object({ type: v.literal("accepted"), family_id: v.id("quotation_families"), revision_id: v.id("quotations"), event_id: v.id("inquiry_events"), at: v.number() }),
+        v.object({ type: v.union(v.literal("manual"), v.literal("inactivity")), at: v.number() }),
+      )),
+    })),
   })
     .index("by_client_id", ["client_id"])
+    .index("by_open_client", ["open_client_id"])
     .index("by_status", ["status"]),
 
+  inquiry_events: defineTable({
+    inquiry_id: v.id("inquiries"),
+    cycle: v.number(),
+    action: v.union(
+      v.literal("opened"), v.literal("option_added"), v.literal("option_revised"),
+      v.literal("follow_up"), v.literal("close_option"), v.literal("close"),
+      v.literal("accept"), v.literal("undo_acceptance"), v.literal("expire"), v.literal("client_transferred"),
+    ),
+    actor: v.union(v.object({ type: v.literal("staff"), user_id: v.string() }), v.object({ type: v.literal("system") })),
+    at: v.number(),
+    family_id: v.optional(v.id("quotation_families")),
+    revision_id: v.optional(v.id("quotations")),
+    acceptance_id: v.optional(v.id("inquiry_events")),
+    canonical_client_id: v.optional(v.id("clients")),
+    request_key: v.optional(v.string()),
+    command_content: v.optional(v.string()),
+  }).index("by_inquiry", ["inquiry_id"])
+    .index("by_inquiry_actor_request", ["inquiry_id", "actor.user_id", "request_key"]),
 
   clients: defineTable({
     name: v.string(),
@@ -33,7 +61,8 @@ export default defineSchema({
     canonical_client_id: v.id("clients"),
     updated_by: v.string(),
     updated_at: v.string(),
-  }).index("by_alias_client_id", ["alias_client_id"]),
+  }).index("by_alias_client_id", ["alias_client_id"])
+    .index("by_canonical_client_id", ["canonical_client_id"]),
 
   hotel_templates: defineTable({
     hotel_type: v.string(),
@@ -108,8 +137,14 @@ export default defineSchema({
     sequence_num: v.number(),
     current_revision_id: v.id("quotations"),
     archived: v.boolean(),
+    inquiry_id: v.optional(v.id("inquiries")),
+    inquiry_closure: v.optional(v.object({
+      revision_id: v.id("quotations"),
+      event_id: v.id("inquiry_events"),
+    })),
   })
     .index("by_reference", ["hijri_year", "sequence_num"])
+    .index("by_inquiry", ["inquiry_id"])
     .index("by_archived", ["archived"]),
 
   quotation_revision_release: defineTable({

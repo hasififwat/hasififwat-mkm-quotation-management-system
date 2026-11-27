@@ -53,7 +53,7 @@ export async function saveQuotation(
 
 export type RevisionSaveResult =
 	| { kind: "saved"; id: string; reference: string }
-	| { kind: "rejected"; message: string; conflict?: "stale" | "selection"; reauthenticate?: true }
+	| { kind: "rejected"; message: string; conflict?: "stale" | "selection" | "inquiry"; reauthenticate?: true }
 	| { kind: "uncertain"; message: string };
 
 export async function saveRevisionAttempt(
@@ -73,10 +73,16 @@ export async function saveRevisionAttempt(
 				? "Your session expired. Your entries are kept on this page. Sign in in another tab, then save again."
 				: code === "QUOTATION_STALE_EDITOR" ? "A newer revision exists. Your entries are kept on this page and were not saved. View the current revision before reconciling your draft."
 				: code === "QUOTATION_SELECTION_CONFLICT" ? "The catalog selection changed. Your entries are kept on this page and were not saved. Review the latest package before replacing the selection."
+				: code === "INQUIRY_DESTINATION_CHANGED" ? "The Inquiry destination changed. Your draft is kept. Review the destination before saving."
+				: code === "INQUIRY_CYCLE_CHANGED" ? "The Inquiry reopened. Your draft is kept. Review the current saved revision before editing again."
+				: code === "INQUIRY_OPTION_READ_ONLY" || code === "INQUIRY_NOT_OPEN" ? "This Inquiry option is now read-only. Your draft is kept."
+				: code === "INQUIRY_CLIENT_LOCKED" ? "Close this option and create a quotation for the correct client. Your draft is kept."
 				: code === "QUOTATION_ACTOR_CONFLICT" ? "Your sign-in account changed. Your entries are kept on this page. Sign in as the original editor before retrying."
 				: "Save was rejected. Your entries are kept on this page. Review the entered details before saving again.",
 				...(response.status === 401 || code === "QUOTATION_ACTOR_CONFLICT" ? {reauthenticate: true as const} : {}),
-				...(code === "QUOTATION_STALE_EDITOR" ? {conflict: "stale" as const} : code === "QUOTATION_SELECTION_CONFLICT" ? {conflict: "selection" as const} : {})};
+				...(code === "QUOTATION_STALE_EDITOR" || code === "INQUIRY_CYCLE_CHANGED" ? {conflict: "stale" as const}
+					: code === "QUOTATION_SELECTION_CONFLICT" ? {conflict: "selection" as const}
+					: code === "INQUIRY_DESTINATION_CHANGED" ? {conflict: "inquiry" as const} : {})};
 		}
 		if (body && typeof body === "object" && "id" in body && typeof body.id === "string" && body.id.trim() &&
 			"quotation_number" in body && typeof body.quotation_number === "string" && body.quotation_number.trim()) {

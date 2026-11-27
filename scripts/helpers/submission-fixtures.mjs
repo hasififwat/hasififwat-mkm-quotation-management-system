@@ -11,7 +11,7 @@ export const { transformConvexPackage: transform } = load(path.join(repo, "src/f
 export const { packageSchema } = load(path.join(repo, "src/features/packages/schema.ts"));
 import assert from "node:assert/strict";
 export function state(authenticated = true) {
-  const tables = { client_aliases: [], packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_pdf_artifacts: [], quotation_pdf_attempts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
+  const tables = { inquiries: [], inquiry_events: [], client_aliases: [], packages: [], package_hotels: [], package_meals: [], package_rooms: [], package_flights: [], quotations: [], quotation_items: [], quotation_logs: [], quotation_create_receipts: [], quotation_save_receipts: [], quotation_pdf_artifacts: [], quotation_pdf_attempts: [], quotation_revision_release: [], quotation_families: [], quotation_family_migrations: [], quotation_reference_counters: [], profiles: [], hotel_templates: [], room_templates: [], clients: [{_id:'client:1', name:'Fixture Client'}] };
   let serial = 0;
   const operations = [];
   const locate = id => Object.values(tables).flat().find(row => row._id === id);
@@ -27,7 +27,7 @@ export function state(authenticated = true) {
       let direction = 'asc';
       const q = {
         withIndex(name, callback) {
-          const valid = {by_alias_client_id:'alias_client_id', by_client_id:'client_id', by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at', by_actor_request_key:['actor', 'request_key'], by_key:'key', by_reference:table === 'quotation_create_receipts' ? ['result.hijri_year','result.sequence_num'] : ['hijri_year','sequence_num'], by_reference_revision:['hijri_year','sequence_num','revision'], by_family_revision:['family_id','revision'], by_archived:'archived'};
+          const valid = {by_open_client:'open_client_id', by_inquiry:'inquiry_id', by_inquiry_actor_request:['inquiry_id','actor.user_id','request_key'], by_canonical_client_id:'canonical_client_id', by_alias_client_id:'alias_client_id', by_client_id:'client_id', by_package_id:'package_id', by_package_hotel_id:'package_hotel_id', by_quotation_id:'quotation_id', by_hijri_year:'hijri_year', by_updated_at:'updated_at', by_actor_request_key:['actor', 'request_key'], by_key:'key', by_reference:table === 'quotation_create_receipts' ? ['result.hijri_year','result.sequence_num'] : ['hijri_year','sequence_num'], by_reference_revision:['hijri_year','sequence_num','revision'], by_family_revision:['family_id','revision'], by_archived:'archived'};
           assert.ok(name in valid, `Unknown index ${name}`);
           const fields = Array.isArray(valid[name]) ? valid[name] : [valid[name]];
           let fieldIndex = 0;
@@ -60,7 +60,7 @@ export function state(authenticated = true) {
     async patch(id, patch) { const row = locate(id); assert.ok(row, `Missing patch ${id}`); for (const [key,value] of Object.entries(patch)) { if (value === undefined) delete row[key]; else row[key] = structuredClone(value); } operations.push(['patch',id]); },
     async delete(id) { const rows = Object.values(tables).find(rows => rows.some(row => row._id === id)); assert.ok(rows, `Missing delete ${id}`); rows.splice(rows.findIndex(row => row._id === id),1); operations.push(['delete',id]); },
   };
-  const ctx = {scheduler: {runAfter: async (...args) => {operations.push(['schedule', ...args]);return 'schedule:1';}}, db, auth: { async getUserIdentity() { return authenticated ? {subject:'fixture-staff'} : null; } } };
+  const ctx = {scheduler: {runAfter: async (...args) => {operations.push(['schedule', ...args]);return 'schedule:1';}, runAt: async (...args) => {operations.push(['scheduleAt', ...args]);return 'schedule:1';}}, db, auth: { async getUserIdentity() { return authenticated ? {subject:'fixture-staff'} : null; } } };
   return {ctx,tables,operations};
 }
 export function form(year='2026/2027') {

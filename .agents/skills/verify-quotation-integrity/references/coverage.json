@@ -1,9 +1,9 @@
 {
-  "lastSyncCommit": "ab9b33f0dc852c3739b9780ac36ae3577f4bf02e",
+  "lastSyncCommit": "4927b13592003d752cf3657b6e10ad2c1b1246f6",
   "sourceWasUncommitted": false,
-  "checkedAt": "2026-11-23",
+  "checkedAt": "2026-11-24",
   "source": "convex/quotations.ts",
-  "sourceSha256": "d7071613fc3af5f6f3d3e76212d486718ba5f3b0c68f6c3abf7e3241284fd9cb",
+  "sourceSha256": "89796f76b624b43350efda4201d1bb162b7a70ae38e57e7cad2ec96553af5683",
   "functions": [
     "create",
     "update",
@@ -37,7 +37,11 @@
     "freezeRevisionPdf",
     "dispatchPendingPdf",
     "quotationRefreshToken",
-    "snapshotRefreshToken"
+    "snapshotRefreshToken",
+    "canonicalClientId",
+    "placeNewOption",
+    "editInquiryOption",
+    "auditOptionSave"
   ],
   "supportingFilesToReviewOnChange": [
     "convex/schema.ts",
@@ -61,14 +65,18 @@
     "scripts/helpers/revision-integrity.mjs",
     "scripts/helpers/submission-fixtures.mjs",
     "convex/lib/quotationRefreshToken.ts",
-    "scripts/quotation-legacy-update.test.mjs"
+    "scripts/quotation-legacy-update.test.mjs",
+    "convex/inquiries.ts",
+    "convex/lib/inquiryLifecycle.ts",
+    "convex/lib/clientCanonical.ts",
+    "src/features/quotation/revision-command.ts"
   ],
   "versions": {
     "node": "24.19.0",
     "typescript": "5.9.3",
     "convex": "1.45.0"
   },
-  "finiteCases": 1728,
+  "finiteCases": 2160,
   "properties": {
     "authenticated_writes": "passes; removing either session guard is detected",
     "flight_matches_package": "passes; removing either real guard is detected"
@@ -78,36 +86,40 @@
     "scripts/helpers/load-typescript.mjs": "5e6d12f97ac1c60139271635e89dcb04f80cc766c784aeede6e2d35ff1aea894",
     "src/domain/submission-validation.ts": "b43b0415610203823c2bd842a537588b3a616dd2dc9916d98ff593bd89683360",
     "src/domain/quotation-selection-context.ts": "ef498214c852f4636d92e483e013bc33f21557f85664b1c72696deec9e0faca0",
-    "convex/packages.ts": "332d92868689af347607677d4ca05e44e2bd5daac13b256dc906df113b3045b9",
-    "src/features/quotation/QuotationBuilder.tsx": "436c329aa2a7b0e6c90350d748a9e68955d33de103c451a54f6a519945ed0fe4",
-    "convex/schema.ts": "a9c207d4ba0d483cef65391ef86e70a4171b93be16eabbe1ccf212773e1aa1cb",
+    "convex/packages.ts": "e67340b4cc2f09ead46de764ca690b8e397f3ae9e300ac3872b28194d4ea5ef5",
+    "src/features/quotation/QuotationBuilder.tsx": "a0f81acce3e4aa0cd8c1ae61525153879f65f4f9c1bf074c3821a18821e00005",
+    "convex/schema.ts": "212e7418e5a086cf8982d30e6acc5f4df1556501150532d2af1f390f733c39c1",
     "src/app/api/quotations/create/route.ts": "ab382d6832783231fe4670848b129eecaccd1165f983dfd63804b472da80c9e4",
-    "src/features/quotation/save-quotation.ts": "db50e1cbfb48f27bc2a9f8f0d7e2bad540acb59ec28ad78c83bdba515abd4802",
-    "convex/lib/quotationFamilyIdentity.ts": "4ffd707af8e461e394488795e19cd0ba851db032f53e1ee4de0fde9854ce6d21",
+    "src/features/quotation/save-quotation.ts": "0363b6f0abb9afc3d586785c42759283f75527bef0e3ed473d50c6e9f3f0df77",
+    "convex/lib/quotationFamilyIdentity.ts": "70424d64da51f59c3db48a5673cd0db654b10ec2831ac8354f9d9301d38e5dbd",
     "convex/quotationPdfArtifacts.ts": "60a9441801b3db8f68ec17ecde583705654dc962ffbe38575a88f99bc2df294c",
     "convex/quotationPdfWorker.ts": "3d488ad8e215798dda4b03f9dac2efbdbf302a76ec4ee3c2ad7a4b808c685976",
-    "convex/lib/savedQuotation.ts": "6da2e629c5c2e1ecaafda354b81026774bacd8f33278216a954fd7045cd8da61",
+    "convex/lib/savedQuotation.ts": "4de9a1b7b427574c5e5fc8675c69cda1d5523927215bd93c6607c976f93eb88c",
     "convex/lib/currentQuotations.ts": "3379cf24d47c8333f8a94dea2330061a4e7ab26f977551fe8b3e10189164504c",
     "src/features/quotation/revision-api.ts": "f7adb000bdc143eca93ac5cf36bdbea2bd6804ebc9f49244db6afa07f8ef9e74",
-    "src/features/quotation/revision-command.ts": "55db4cd613344409d0ca0de253a80f8d9307a35bbf55e3dd078c51e3af864de2",
+    "src/features/quotation/revision-command.ts": "bfc4ef993efea30b2747a90f079d5fe51c8cd3542c3cdb246788c3556dd50856",
     "convex/_generated/server.js": "0cdd1d842b9458d8a6f2444c35eb9929312316a384ca76a4b1d964bedde8a6f2",
     "src/lib/convex-server.ts": "6060685bfba0ac7cffa79afa7f7b36037c0fc9d5bb13bf5a26932b758e3290e4",
     "src/app/api/quotations/update/route.ts": "d9eb752614ab71424b748abf64c0956bcdc8250daa63d6a2b6ec66a8264b9132",
     "src/app/(protected)/layout.tsx": "415abe3a0e6bd76634bdaf6c1f7224a17a6d8d9da44e4b5ff582b5ea8225df82",
     "src/proxy.ts": "019593c0631d213c96f4caf73c586e158737443dbdc3950fe71eeee2ca2abdeb",
-    "src/app/(protected)/quotations/page.tsx": "8a4db7e546cb8b8b2f572804c033422233b68ecb3baea345e7756316538d6c47",
-    "src/app/(protected)/quotations/duplicates/page.tsx": "38dfdffb702cd544142615f08b1a328864dac128e9b1decc566e379153740a77",
-    "convex/quotationRevisionSaves.ts": "35b5196fff87f1eaa0ac52b2b4ddf586256d29f30cbcdb5ee4bf3344554b25a8",
-    "scripts/helpers/revision-integrity.mjs": "d0c55a3aef96930543487a1403b619a4b40ab960d6c6eeb47f67b709fb26afb6",
-    "scripts/helpers/submission-fixtures.mjs": "f596b0c6b3aaaa2288eba9e5851780ac6433db7a23b46fcd051fd1a1d66db7b3",
+    "src/app/(protected)/quotations/page.tsx": "83e646bd14bef55e703950bb1bc125d547e1bafc249fe99262672b9235fd86d9",
+    "src/app/(protected)/quotations/duplicates/page.tsx": "830ef2508267603988065b985eef59f99cbbcb8dc0a17e8e18b0873d60d8d740",
+    "convex/quotationRevisionSaves.ts": "4879273f5cfc33086de3b94f3a3946217cb1eb292067662ac8463e996d7dc402",
+    "scripts/helpers/revision-integrity.mjs": "ff2b3d009500346a832454da57adb9135d43e49f9a20e4c3ec4ba617728ff9ac",
+    "scripts/helpers/submission-fixtures.mjs": "266ddd12ed6a41f70ae7638531b0a3941bf39a7954b2b712a91518db9ff78577",
     "convex/lib/quotationRefreshToken.ts": "2524cb8f81cdd8c1321c8345489d9009edc4f49360b87c6f80601e1edbe3b922",
-    "scripts/quotation-legacy-update.test.mjs": "412868251c59db3e738596e31c55c029b21e6cb226d490e2568ce756aac0c018"
+    "scripts/quotation-legacy-update.test.mjs": "412868251c59db3e738596e31c55c029b21e6cb226d490e2568ce756aac0c018",
+    "convex/inquiries.ts": "b1b587acfcbd7d191e5af13e77798fd14659b21078e53f1ad0e087fab5f4c949",
+    "convex/lib/inquiryLifecycle.ts": "d5675bdd1e6dff57ec134fa30db373957ec6f4b4b2b28ff308e543c87594ca13",
+    "convex/lib/clientCanonical.ts": "1d8f66ce0abfc0922384fdd38578c6f0f8520c40d66438aebb160c75bd0594d4"
   },
   "additionalVerification": {
     "createRetries": "scripts/quotation-create-retry.test.mjs executes actual handlers with a sequential in-memory adapter. Actual Convex concurrency is outside this checker.",
     "revisionTransactions": "scripts/check-revision-backend.mjs executes real public saves on isolated Convex with HTTP queue bypass and injected post-write rollback.",
     "integratedJWT": "scripts/check-integrated-revision-backend.mjs uses actual password JWT on ownedlocalConvex. Includesrow/PDFbefore-after, explicitfailedretrycounts, nomanualpendingrescue andindependentrestore.",
-    "expiredJWT": "scripts/check-revision-session.mjs uses actualsignedexpiredRS256JWT, HTTP401 andsamekeyoriginalactorrecovery withunchangedbusinessdump."
+    "expiredJWT": "scripts/check-revision-session.mjs uses actualsignedexpiredRS256JWT, HTTP401 andsamekeyoriginalactorrecovery withunchangedbusinessdump.",
+    "inquiryTransactions": "scripts/check-inquiry-backend.mjs uses real Convex transactions and a controlled clock for simultaneous first saves, deadline expiry, and renewal."
   },
-  "revisionSourceSha256": "35b5196fff87f1eaa0ac52b2b4ddf586256d29f30cbcdb5ee4bf3344554b25a8"
+  "revisionSourceSha256": "4879273f5cfc33086de3b94f3a3946217cb1eb292067662ac8463e996d7dc402"
 }

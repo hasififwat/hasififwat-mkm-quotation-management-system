@@ -8,6 +8,7 @@ import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { SeasonBadge } from "~/components/ui/season-badge";
 import { Skeleton } from "~/components/ui/skeleton";
+import { QUOTATION_STATUSES } from "~/domain/quotation-status";
 import {
 	Table,
 	TableBody,
@@ -17,13 +18,14 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 
-const QUOTATION_STATUSES = ["draft", "sent", "accepted", "rejected", "revised", "superseded"] as const;
 type Status = typeof QUOTATION_STATUSES[number];
 
 const STATUS_VARIANT: Record<Status, "default" | "secondary" | "destructive" | "outline"> = {
 	draft:      "secondary",
+	active:     "secondary",
 	sent:       "outline",
 	accepted:   "default",
+	closed:     "secondary",
 	rejected:   "destructive",
 	revised:    "outline",
 	superseded: "secondary",
