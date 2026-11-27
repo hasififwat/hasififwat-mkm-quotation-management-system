@@ -1,0 +1,37 @@
+{
+  "preview": "http://127.0.0.1:3509/",
+  "testedCommit": "f3f9d5e8081d2bb260bdf2b4177e736d7ff820da",
+  "chromium": "157.0.8103.79",
+  "passed": [
+    "Autoplay advances through all three steps and shows the computed total.",
+    "Pause holds the stage, manual steps select immediately, and Play resumes and loops.",
+    "The rendered sign-in button, headline accent, and selected demo step use MKM's light and dark palette.",
+    "Reduced motion starts paused with no transition, manual steps work, and at 320px the form comes before the demo with no horizontal overflow.",
+    "Dark theme persists on reload.",
+    "Autoplay waits until the demo enters the phone viewport.",
+    "Blank credentials are blocked, an invalid attempt keeps keyboard focus, and a successful retry reaches Travel Packages and survives reload."
+  ],
+  "lightPalette": {
+    "backgroundToken": "#f4f7f8",
+    "primaryToken": "#253ad0",
+    "submitFill": "rgb(37, 58, 208)",
+    "heroAccent": "rgb(37, 58, 208)",
+    "activeStepFill": "rgb(232, 235, 255)"
+  },
+  "darkPalette": {
+    "backgroundToken": "#101820",
+    "primaryToken": "#7396ff",
+    "submitFill": "rgb(115, 150, 255)",
+    "heroAccent": "rgb(115, 150, 255)",
+    "activeStepFill": "rgb(38, 56, 94)"
+  },
+  "productionBuild": "Next.js 16.3.4, exit code 0",
+  "scopedLint": "Exit code 0",
+  "typecheck": "Exit code 0",
+  "fullSuite": {
+    "passed": 721,
+    "failed": 13,
+    "matchesMigrationBaseline": true
+  },
+  "cleanup": true
+}

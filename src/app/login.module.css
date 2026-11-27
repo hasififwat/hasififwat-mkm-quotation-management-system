@@ -1,0 +1,150 @@
+.page {
+	--preview-background: color-mix(in srgb, var(--muted) 70%, var(--background));
+	--page-gutter: clamp(1rem, 4vw, 3.5rem);
+	position: relative;
+	display: grid;
+	justify-items: center;
+	align-content: start;
+	min-height: 100svh;
+	padding: 1.25rem var(--page-gutter) 2.5rem;
+	background: linear-gradient(var(--preview-background) 16.5rem, var(--background) 16.5rem);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	width: min(100%, 37rem);
+}
+
+.header button {
+	width: 2.75rem;
+	height: 2.75rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	background-color: var(--card);
+}
+
+.header button:hover {
+	background-color: var(--accent);
+}
+
+.intro {
+	width: min(100%, 37rem);
+	margin-block: 2rem 1.75rem;
+	text-align: center;
+}
+
+.headline {
+	font-size: 2rem;
+	font-weight: 600;
+	letter-spacing: -0.04em;
+	line-height: 1.08;
+	text-wrap: balance;
+}
+
+.headline span {
+	display: block;
+	color: var(--primary);
+}
+
+.explanation {
+	max-width: 34rem;
+	margin-inline: auto;
+	margin-top: 1rem;
+	color: var(--muted-foreground);
+	font-size: 1rem;
+	line-height: 1.5;
+	text-wrap: balance;
+}
+
+.form {
+	width: min(100%, 29rem);
+	padding: clamp(1.25rem, 5vw, 2rem);
+	border: 1px solid var(--border);
+	border-radius: 1.5rem;
+	background: var(--card);
+	box-shadow: 0 8px 28px color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.preview {
+	width: min(100%, 37rem);
+	margin-top: 2.25rem;
+}
+
+@media (width < 40rem) and (height < 42rem) {
+	.page {
+		padding-top: 1rem;
+		background: linear-gradient(var(--preview-background) 14rem, var(--background) 14rem);
+	}
+
+	.intro {
+		margin-block: 1rem;
+	}
+
+	.explanation {
+		margin-top: 0.5rem;
+	}
+
+	.form > form {
+		margin-top: 1rem;
+	}
+}
+
+@media (min-width: 64rem) {
+	.page {
+		--form-column: 42%;
+		grid-template-columns: var(--form-column) minmax(0, 1fr);
+		align-content: center;
+		padding: 4rem 0;
+		background: linear-gradient(
+			90deg,
+			var(--card) calc(var(--form-column) - 1px),
+			var(--border) calc(var(--form-column) - 1px) var(--form-column),
+			var(--preview-background) var(--form-column)
+		);
+	}
+
+	.header {
+		position: absolute;
+		inset: 1.75rem auto auto var(--page-gutter);
+		width: calc(var(--form-column) - 2 * var(--page-gutter));
+	}
+
+	.form {
+		grid-area: 1 / 1 / 3 / 2;
+		align-self: center;
+		width: min(calc(100% - 2 * var(--page-gutter)), 25rem);
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	.intro,
+	.preview {
+		grid-column: 2;
+		width: min(calc(100% - 2 * var(--page-gutter)), 37rem);
+	}
+
+	.intro {
+		grid-row: 1;
+		margin-block: 0;
+		text-align: left;
+	}
+
+	.headline {
+		font-size: clamp(2.75rem, 4vw, 3.5rem);
+	}
+
+	.explanation {
+		margin-inline: 0;
+		margin-top: 1.25rem;
+	}
+
+	.preview {
+		grid-row: 2;
+		margin-top: 2rem;
+	}
+}

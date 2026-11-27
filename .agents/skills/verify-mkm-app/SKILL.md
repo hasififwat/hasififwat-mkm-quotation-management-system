@@ -31,7 +31,7 @@ starts only the web service against the already configured deployment.
 An empty snapshot needs no application rows for the anonymous login and theme
 journeys. The helper first requires a 200 response with the MKM page title.
 Then open the returned port with `preview_open` in an `incognito` profile and
-wait for `Email`, `Password`, `Login`, and `Toggle theme`. Only that hydrated
+wait for `Email`, `Password`, `Sign in`, and `Toggle theme`. Only that hydrated
 state is ready for the anonymous journey.
 
 Data journeys additionally need an authenticated verification agent and

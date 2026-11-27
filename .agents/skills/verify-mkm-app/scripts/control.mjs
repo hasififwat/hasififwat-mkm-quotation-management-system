@@ -161,7 +161,7 @@ try {
     if (page.status !== 200 || !page.body.includes("MKM Quotation")) throw new Error("Expected MKM login page was not served");
     if (require("next/package.json").version !== run.nextVersion) throw new Error("Dependencies changed; restart the snapshot");
     console.log(JSON.stringify({ healthy: true, url: run.url, pid: run.pid, next: run.nextVersion,
-      scope: "anonymous UI; require hydrated Email/Password/Login controls before driving", backendAuthVerified: false }));
+      scope: "anonymous UI; require the hydrated Email, Password, and Sign in controls before driving", backendAuthVerified: false }));
   } else if (command === "stop") {
     const run = readRun(args[0]);
     await stopRun(run);

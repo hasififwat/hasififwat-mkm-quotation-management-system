@@ -1,15 +1,35 @@
 import { LoginForm } from "~/features/authentication/components/LoginForm";
+import { QuotationDemo } from "~/features/authentication/components/QuotationDemo";
 import { ThemeToggle } from "~/features/theme/components/ThemeToggle";
+import styles from "./login.module.css";
 
 export default function Login() {
 	return (
-		<div className="relative flex min-h-svh w-full items-center justify-center bg-background bg-radial-[at_50%_0%] from-primary/15 via-muted/65 to-background to-80% px-4 py-20 sm:px-8">
-			<div className="absolute top-4 right-4 rounded-xl border bg-card shadow-xs sm:top-6 sm:right-6 [&>button]:size-11 [&>button]:rounded-xl">
+		<main className={styles.page}>
+			<header className={styles.header}>
+				<div className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
+					<span className="text-base font-extrabold tracking-[-0.075em]">MKM</span>
+					<span className="border-l border-input pl-2.5">Quotation</span>
+				</div>
 				<ThemeToggle />
+			</header>
+
+			<div className={styles.intro}>
+				<p className={styles.headline}>
+					Umrah packages, <span>ready to quote.</span>
+				</p>
+				<p className={styles.explanation}>
+					See how a package becomes a quotation for your client.
+				</p>
 			</div>
-			<div className="w-full max-w-md">
+
+			<div className={styles.form}>
 				<LoginForm />
 			</div>
-		</div>
+
+			<div className={styles.preview}>
+				<QuotationDemo />
+			</div>
+		</main>
 	);
 }

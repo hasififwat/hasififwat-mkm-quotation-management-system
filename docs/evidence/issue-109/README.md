@@ -1,0 +1,42 @@
+# MKM sign-in verification
+
+## Sign-in layout on short phones
+
+At 320 × 568 CSS pixels, the full Sign in button fits on the initial screen. The previous build required 71 px of scrolling. The three passes compacted the introduction on short phones, shortened the account instruction, and reduced the gap before the fields. The inputs and button remain 48 px tall.
+
+[Before](short-phone-before.png) · [After](short-phone-after.png) · [After in dark mode with the demo](short-phone-dark.png) · [Measurements](short-phone-verification.json)
+
+The tested production build was `98025b8c73cf117bbccecce89295038996bb9da8` at `http://127.0.0.1:3509/`. Chromium measured the idle form at four phone sizes in both themes. It also checked layout, keyboard focus, required fields, and demo controls on phones, tablet, and desktop.
+
+## Right-side typography
+
+The production build of `6e5b26f8343c5a240978c878a426ef39ee78508a` ran at `http://127.0.0.1:3509/`. The headline uses the app's Inter font. The demo gives more weight to the stage heading and the quotation total, and uses larger supporting text and detail labels.
+
+![The sign-in screen cycles through the three quotation demo steps](quotation-demo.gif)
+
+[Before on desktop](before-typography.png) · [After on desktop](desktop-review.png) · [After on a phone in dark mode](phone-pricing-dark.png) · [Typography verification](typography-verification.json)
+
+Chromium checked all three demo steps in both themes at 320, 390, 768, 1,024, 1,280, and 1,440 CSS pixels. The demo kept the same height between steps at each width. Autoplay went through all three steps and showed the RM 15,800.00 total.
+
+## Animated quotation demo
+
+The palette and playback verification ran against production build `f3f9d5e8081d2bb260bdf2b4177e736d7ff820da` at `http://127.0.0.1:3509/`. The demo uses a fictional 12-day Umrah package to show package selection, room pricing, and quotation review. [Verification results](demo-verification.json)
+
+Chromium checked the rendered colors of the sign-in button, headline accent, and selected demo step in both themes. It also verified autoplay, pause and resume, manual step selection, and the RM 15,800.00 total. On a narrow phone, playback waited until the demo entered the viewport. With reduced motion, the demo started paused and manual step changes appeared immediately.
+
+The form rejected blank fields, kept keyboard focus after an invalid sign-in, and reached **Travel Packages** on a successful retry. The session survived reload. The run stopped the local services and removed the disposable Convex database, account, and signing keys.
+
+## First layout iteration
+
+The local preview ran at `http://127.0.0.1:3509/`. The baseline was `851ec67c4a3cace5333c35232b83581a6cf92aac`. The refreshed screen ran from production build `0578df1b55c7182aa99fff3e6216f9f40e303e0b`.
+
+| State | Desktop | Phone |
+| --- | --- | --- |
+| Before | [Light](before-desktop.png) | [Light](before-phone.png) |
+| After | [Light](desktop-light.png), [dark](desktop-dark.png) | [Light](phone-light.png), [dark](phone-dark.png), [dark with invalid credentials](phone-dark-error.png) |
+
+Chromium verified the split or stacked layout at 1,440, 1,024, 768, 390, and 320 CSS pixels. It checked horizontal overflow, keyboard focus, and theme persistence after reload. The before screenshot on mobile shows a 390 × 844 viewport on the baseline production build.
+
+Blank and malformed credentials triggered browser validation without an auth request. While the first auth request was held, pressing Enter again sent no duplicate request. The failed attempt kept focus on the password field. A retry with the disposable account opened **Travel Packages**, and the session survived reload. [Required-field focus](phone-dark-required.png) · [Pending state with masked inputs](phone-dark-pending.png)
+
+The production build, TypeScript, scoped ESLint, and 32 package/auth tests passed. The full suite reported 721 passes and the same 13 quotation-save test failures on both commits. The run stopped the local servers and removed the disposable Convex database, account, and signing keys. [Browser measurements and command results](verification.json)
